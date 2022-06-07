@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "exasol-transformers-extension"
+version = "0.1.0"
+description = "An Exasol extension to use state-of-the-art pretrained machine learning models via the transformers api."
+
+authors = [
+    	"Umit Buyuksahin <umit.buyuksahin@exasol.com>",
+    	"Torsten Kilias <torsten.kilias@exasol.com>"
+]
+
+readme = 'README.md'
+
+repository = "https://github.com/exasol/transformers-extension"
+homepage = "https://github.com/exasol/transformers-extension"
+
+
+keywords = ['exasol']
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+Jinja2 = "^3.0.3"
+importlib-resources = "^5.4.0"
+exasol-bucketfs-utils-python = { git = "https://github.com/exasol/bucketfs-utils-python.git", branch = "main" }
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.1.1"
+exasol-udf-mock-python = { git = "https://github.com/exasol/udf-mock-python.git", branch = "master" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
