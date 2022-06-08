@@ -3,7 +3,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 REPO_DIR=$(git rev-parse --show-toplevel)
 REPO_DIR="$(readlink -f "${REPO_DIR}")"
 GIT_DIR="$REPO_DIR/.git"
