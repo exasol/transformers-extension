@@ -3,7 +3,7 @@
 **This project is at an early development stage.**
 
 An Exasol extension to use state-of-the-art pretrained machine learning models 
-via the transformers api.
+via the [transformers api](https://github.com/huggingface/transformers).
 
 ## Information for Users
 

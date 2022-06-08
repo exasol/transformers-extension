@@ -17,7 +17,7 @@ setup_kwargs = {
     'name': 'exasol-transformers-extension',
     'version': '0.1.0',
     'description': 'An Exasol extension to use state-of-the-art pretrained machine learning models via the transformers api.',
-    'long_description': '# Exasol Transformers Extension\n\n**This project is at an early development stage.**\n\nAn Exasol extension to use state-of-the-art pretrained machine learning models \nvia the transformers api.\n\n## Information for Users\n\n- [User Guide](doc/user_guide/user_guide.md)\n- [License](LICENSE)\n\n## Information for Developers\n\n- [Developers Guide](doc/developer_guide/developer_guide.md)\n\n',
+    'long_description': '# Exasol Transformers Extension\n\n**This project is at an early development stage.**\n\nAn Exasol extension to use state-of-the-art pretrained machine learning models \nvia the [transformers api](https://github.com/huggingface/transformers).\n\n## Information for Users\n\n- [User Guide](doc/user_guide/user_guide.md)\n- [License](LICENSE)\n\n## Information for Developers\n\n- [Developers Guide](doc/developer_guide/developer_guide.md)\n\n',
     'author': 'Umit Buyuksahin',
     'author_email': 'umit.buyuksahin@exasol.com',
     'maintainer': None,

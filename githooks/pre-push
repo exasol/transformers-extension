@@ -9,7 +9,7 @@ do
 
     protected_branch=$i
 
-    policy='[Policy] Never push, force push or delete the '$protected_branch' branch! (Prevented with pre-push hook.)'
+    policy="[Policy] Never push, force push or delete the "$protected_branch" branch! (Prevented with pre-push hook.)"
 
     current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
 
