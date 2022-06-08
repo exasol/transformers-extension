@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: abatilo/actions-poetry@v2.0.0
+      - uses: abatilo/actions-poetry@v2.1.4
         with:
-          poetry-version: 1.1.6
+          poetry-version: 1.1.13
       - name: Install Poetry
         run: poetry install
       - name: Build Poetry
@@ -39,7 +39,7 @@ jobs:
           upload_url: ${{ github.event.inputs.upload_url }}
           asset_path: dist/*
 
-      # Since the container was built in the pytest run above, no need to rebuilt before the upload.
+      # Since the container was built in the pytest run above, no need to rebuild before the upload.
       - name: Upload script-language container
         uses: shogo82148/actions-upload-release-asset@v1
         with:

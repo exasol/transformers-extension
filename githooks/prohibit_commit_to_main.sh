@@ -1,4 +1,7 @@
 #!/bin/sh
+set -o errexit
+set -o nounset
+set -o pipefail
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
 

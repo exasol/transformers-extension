@@ -1,4 +1,8 @@
 #!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
 protected_branches=( master main )
 for i in "${protected_branches[@]}"
 do
