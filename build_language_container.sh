@@ -6,7 +6,7 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 pushd  $SCRIPT_DIR &> /dev/null
 poetry build
 
-FLAVOR_NAME=exasol_transformers-extension_container
+FLAVOR_NAME=exasol_transformers_extension_container
 echo "$FLAVOR_NAME"
 FLAVOR_PATH="language_container/$FLAVOR_NAME"
 RELEASE_BUILD_STEP_DIST_DIRECTORY="$FLAVOR_PATH/flavor_base/release/dist"
