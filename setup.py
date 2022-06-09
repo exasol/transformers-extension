@@ -2,16 +2,23 @@
 from setuptools import setup
 
 packages = \
-['exasol_transformers_extension']
+['exasol_transformers_extension',
+ 'exasol_transformers_extension.deployment',
+ 'exasol_transformers_extension.resources',
+ 'exasol_transformers_extension.udfs']
 
 package_data = \
-{'': ['*']}
+{'': ['*'], 'exasol_transformers_extension.resources': ['templates/*']}
 
 install_requires = \
 ['Jinja2>=3.0.3,<4.0.0',
+ 'click>=8.0.4,<9.0.0',
  'exasol-bucketfs-utils-python @ '
  'git+https://github.com/exasol/bucketfs-utils-python.git@main',
- 'importlib-resources>=5.4.0,<6.0.0']
+ 'exasol-script-languages-container-tool @ '
+ 'git+https://github.com/exasol/script-languages-container-tool.git@0.14.0',
+ 'importlib-resources>=5.4.0,<6.0.0',
+ 'pyexasol>=0.17.0,<0.18.0']
 
 setup_kwargs = {
     'name': 'exasol-transformers-extension',
