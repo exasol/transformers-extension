@@ -5,4 +5,4 @@ class ModelDownloader:
         self.exa = exa
 
     def run(self, ctx) -> None:
-        pass
+        raise NotImplementedError

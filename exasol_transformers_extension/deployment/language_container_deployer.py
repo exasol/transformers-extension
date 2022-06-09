@@ -52,7 +52,8 @@ class LanguageContainerDeployer:
             self, alter_type: str, path_in_udf: PurePosixPath) -> str:
         prev_lang_settings = self._get_previous_language_settings(alter_type)
         prev_lang_aliases = prev_lang_settings.split(" ")
-        self.check_if_requested_language_alias_already_exists(prev_lang_aliases)
+        self._check_if_requested_language_alias_already_exists(
+            prev_lang_aliases)
         new_definitions_str = self._generate_new_language_settings(
             path_in_udf, prev_lang_aliases)
         return new_definitions_str
@@ -71,7 +72,7 @@ class LanguageContainerDeployer:
         new_definitions_str = " ".join(new_definitions)
         return new_definitions_str
 
-    def check_if_requested_language_alias_already_exists(
+    def _check_if_requested_language_alias_already_exists(
             self, prev_lang_aliases: List[str]) -> None:
         definition_for_requested_alias = [
             alias_definition for alias_definition in prev_lang_aliases

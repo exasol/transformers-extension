@@ -15,6 +15,8 @@ install_requires = \
  'click>=8.0.4,<9.0.0',
  'exasol-bucketfs-utils-python @ '
  'git+https://github.com/exasol/bucketfs-utils-python.git@main',
+ 'exasol-script-languages-container-tool @ '
+ 'git+https://github.com/exasol/script-languages-container-tool.git@0.14.0',
  'importlib-resources>=5.4.0,<6.0.0',
  'pyexasol>=0.17.0,<0.18.0']
 
