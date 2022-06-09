@@ -2,10 +2,13 @@
 from setuptools import setup
 
 packages = \
-['exasol_transformers_extension']
+['exasol_transformers_extension',
+ 'exasol_transformers_extension.deployment',
+ 'exasol_transformers_extension.resources',
+ 'exasol_transformers_extension.udfs']
 
 package_data = \
-{'': ['*']}
+{'': ['*'], 'exasol_transformers_extension.resources': ['templates/*']}
 
 install_requires = \
 ['Jinja2>=3.0.3,<4.0.0',
