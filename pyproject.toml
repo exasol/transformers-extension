@@ -20,6 +20,8 @@ keywords = ['exasol']
 python = ">=3.8,<4.0"
 Jinja2 = "^3.0.3"
 importlib-resources = "^5.4.0"
+click = "^8.0.4"
+pyexasol = "^0.17.0"
 exasol-bucketfs-utils-python = { git = "https://github.com/exasol/bucketfs-utils-python.git", branch = "main" }
 
 
