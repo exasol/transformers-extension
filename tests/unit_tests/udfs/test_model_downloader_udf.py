@@ -1,4 +1,4 @@
-import os
+import pathlib
 from tempfile import TemporaryDirectory
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
@@ -11,9 +11,12 @@ from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
 MODEL_NAME = "test-model-name"
 BFS_CONN_NAME = "test_bfs_conn_name"
-FILE_DATA_MAP = {
-    "file1.txt": "Sample data in file1.txt",
-    "file2.txt": "Sample data in file2.txt"}
+MODEL_FILE_DATA_MAP = {
+    "model_file1.txt": "Sample data in model_file1.txt",
+    "model_file2.txt": "Sample data in model_file1.txt"}
+TOKENIZER_FILE_DATA_MAP = {
+    "tokenizer_file1.txt": "Sample data in tokenizer_file1.txt",
+    "tokenizer_file2.txt": "Sample data in tokenizer_file1.txt"}
 
 
 def udf_wrapper():
@@ -22,18 +25,31 @@ def udf_wrapper():
     from exasol_transformers_extension.udfs.model_downloader_udf import \
         ModelDownloader
 
-    file_data_map = {
-        "file1.txt": "Sample data in file1.txt",
-        "file2.txt": "Sample data in file2.txt"}
-
     class MockModelDownloader:
+        model_file_data_map = {
+            "model_file1.txt": "Sample data in model_file1.txt",
+            "model_file2.txt": "Sample data in model_file1.txt"}
+
         @classmethod
         def from_pretrained(cls, model_name, cache_dir):
-            for file_name, content in file_data_map.items():
+            for file_name, content in cls.model_file_data_map.items():
                 with open(os.path.join(cache_dir, file_name), 'w') as file:
                     file.write(content)
 
-    udf = ModelDownloader(exa, downloader_method=MockModelDownloader)
+    class MockTokenizerDownloader:
+        tokenizer_file_data_map = {
+            "tokenizer_file1.txt": "Sample data in tokenizer_file1.txt",
+            "tokenizer_file2.txt": "Sample data in tokenizer_file1.txt"}
+
+        @classmethod
+        def from_pretrained(cls, model_name, cache_dir):
+            for file_name, content in cls.tokenizer_file_data_map.items():
+                with open(os.path.join(cache_dir, file_name), 'w') as file:
+                    file.write(content)
+
+    udf = ModelDownloader(exa, base_model_downloader=MockModelDownloader,
+                          tokenizer_downloader=MockTokenizerDownloader)
+
     def run(ctx: UDFContext):
         udf.run(ctx)
 
@@ -71,11 +87,17 @@ def test_model_downloader():
         result = executor.run([Group([input_data])], exa)
 
         relative_model_path = MODEL_NAME.replace('-', '_')
-        full_model_path = os.path.join(path, relative_model_path)
+        full_model_path = pathlib.PurePath(path, relative_model_path)
         assert result[0].rows[0][0] == relative_model_path \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            os.path.join(full_model_path, "file1.txt")) \
-               == FILE_DATA_MAP["file1.txt"] \
+            str(full_model_path.joinpath("model_file1.txt"))) \
+               == MODEL_FILE_DATA_MAP["model_file1.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            os.path.join(full_model_path, "file2.txt")) \
-               == FILE_DATA_MAP["file2.txt"]
+            str(full_model_path.joinpath("model_file2.txt"))) \
+               == MODEL_FILE_DATA_MAP["model_file2.txt"] \
+               and bucketfs_location_read.read_file_from_bucketfs_to_string(
+            str(full_model_path.joinpath("tokenizer_file1.txt"))) \
+               == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
+               and bucketfs_location_read.read_file_from_bucketfs_to_string(
+            str(full_model_path.joinpath("tokenizer_file2.txt"))) \
+               == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]
