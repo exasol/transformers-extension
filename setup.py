@@ -18,7 +18,10 @@ install_requires = \
  'exasol-script-languages-container-tool @ '
  'git+https://github.com/exasol/script-languages-container-tool.git@0.14.0',
  'importlib-resources>=5.4.0,<6.0.0',
- 'pyexasol>=0.17.0,<0.18.0']
+ 'pyexasol>=0.17.0,<0.18.0',
+ 'sacremoses>=0.0.53,<0.0.54',
+ 'torch>=1.11.0,<2.0.0',
+ 'transformers[torch]>=4.19.2,<5.0.0']
 
 setup_kwargs = {
     'name': 'exasol-transformers-extension',
