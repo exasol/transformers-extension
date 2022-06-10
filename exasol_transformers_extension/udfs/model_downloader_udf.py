@@ -1,12 +1,12 @@
 import os
 import tempfile
-import pytorch_transformers
+import transformers
 from pathlib import PurePosixPath
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 
 
 class ModelDownloader:
-    def __init__(self, exa, downloader_method=pytorch_transformers.AutoModel):
+    def __init__(self, exa, downloader_method=transformers.AutoModel):
         self.exa = exa
         self.downloader_method = downloader_method
 
