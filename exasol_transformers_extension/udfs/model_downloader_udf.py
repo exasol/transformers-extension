@@ -1,4 +1,3 @@
-import os
 import tempfile
 import transformers
 from pathlib import PurePosixPath, Path

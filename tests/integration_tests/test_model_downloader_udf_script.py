@@ -1,9 +1,8 @@
 import pathlib
-from tests.utils.parameters import bucketfs_params
 from exasol_bucketfs_utils_python import list_files, delete
 
 
-def test_mode_downloader_udf_real(
+def test_model_downloader_udf_script(
         upload_language_container, setup_database,
         pyexasol_connection, bucket_config):
 
@@ -23,10 +22,10 @@ def test_mode_downloader_udf_real(
             bucket_config, path_in_the_bucket)
         assert result[0][0] == model_path and files
     finally:
-        # revert, delete donwloaded model files
+        # revert, delete downloaded model files
         try:
             for file_ in files:
                 delete.delete_file_in_bucketfs(
                     bucket_config, pathlib.PurePath(path_in_the_bucket, file_))
         except Exception as exc:
-            print(f"Error while deleting donwloaded files, {str(exc)}")
+            print(f"Error while deleting downloaded files, {str(exc)}")
