@@ -1,8 +1,9 @@
 import os
 import tempfile
 import transformers
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath, Path
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
 
 class ModelDownloader:
@@ -21,25 +22,37 @@ class ModelDownloader:
 
         # create bucketfs location
         bfs_conn_obj = self.exa.get_connection(bfs_conn)
-        bucketfs_location = BucketFSFactory().create_bucketfs_location(
-            url=bfs_conn_obj.address,
-            user=bfs_conn_obj.user,
-            pwd=bfs_conn_obj.password)
+        bucketfs_location = _create_bucketfs_location(bfs_conn_obj)
 
         # download base model and tokenizer into the model path
         for downloader in \
                 [self.base_model_downloader, self.tokenizer_downloader]:
 
-            with tempfile.TemporaryDirectory() as tmpdirname:
+            with tempfile.TemporaryDirectory() as tmpdir_name:
                 # download model into tmp folder
-                downloader.from_pretrained(model_name, cache_dir=tmpdirname)
+                downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
 
                 # upload the downloaded model files into bucketfs
-                for tmp_file_name in os.listdir(tmpdirname):
-                    tmp_file_path = os.path.join(tmpdirname, tmp_file_name)
-                    with open(tmp_file_path, mode='rb') as file:
-                        bucketfs_path = PurePosixPath(model_path, tmp_file_name)
-                        bucketfs_location.upload_fileobj_to_bucketfs(
-                            file, str(bucketfs_path))
+                _upload_model_files_to_bucketfs(
+                    tmpdir_name, model_path, bucketfs_location)
 
         ctx.emit(model_path)
+
+
+def _create_bucketfs_location(bfs_conn_obj) -> BucketFSLocation:
+    return BucketFSFactory().create_bucketfs_location(
+        url=bfs_conn_obj.address,
+        user=bfs_conn_obj.user,
+        pwd=bfs_conn_obj.password)
+
+
+def _upload_model_files_to_bucketfs(
+        tmpdir_name: str, model_path: str, bucketfs_location: BucketFSLocation):
+    for tmp_file_name in Path(tmpdir_name).iterdir():
+        tmp_file_path = Path(tmpdir_name, tmp_file_name)
+        with open(tmp_file_path, mode='rb') as file:
+            bucketfs_path = PurePosixPath(model_path, tmp_file_name)
+            bucketfs_location.upload_fileobj_to_bucketfs(
+                file, str(bucketfs_path))
+
+
