@@ -28,13 +28,13 @@ class ModelDownloader:
         for downloader in \
                 [self.base_model_downloader, self.tokenizer_downloader]:
 
-            with tempfile.TemporaryDirectory() as tmpdir_name:
+            with tempfile.TemporaryDirectory() as tmpdirname:
                 # download model into tmp folder
-                downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
+                downloader.from_pretrained(model_name, cache_dir=tmpdirname)
 
                 # upload the downloaded model files into bucketfs
-                _upload_model_files_to_bucketfs(
-                    tmpdir_name, model_path, bucketfs_location)
+                _upload_model_file_to_bucketfs(
+                    tmpdirname, model_path, bucketfs_location)
 
         ctx.emit(model_path)
 
@@ -46,13 +46,11 @@ def _create_bucketfs_location(bfs_conn_obj) -> BucketFSLocation:
         pwd=bfs_conn_obj.password)
 
 
-def _upload_model_files_to_bucketfs(
-        tmpdir_name: str, model_path: str, bucketfs_location: BucketFSLocation):
-    for tmp_file_name in Path(tmpdir_name).iterdir():
-        tmp_file_path = Path(tmpdir_name, tmp_file_name)
+def _upload_model_file_to_bucketfs(
+        tmpdirname: str, model_path:str,  bucketfs_location: BucketFSLocation):
+    for tmp_file_path in Path(tmpdirname).iterdir():
         with open(tmp_file_path, mode='rb') as file:
-            bucketfs_path = PurePosixPath(model_path, tmp_file_name)
+            bucketfs_path = PurePosixPath(
+                model_path, tmp_file_path.relative_to(tmpdirname))
             bucketfs_location.upload_fileobj_to_bucketfs(
                 file, str(bucketfs_path))
-
-
