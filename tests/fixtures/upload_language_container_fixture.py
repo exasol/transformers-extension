@@ -9,7 +9,7 @@ def upload_language_container(pyexasol_connection, language_container) -> str:
     bucket_fs_factory = BucketFSFactory()
     container_bucketfs_location = \
         bucket_fs_factory.create_bucketfs_location(
-            url=bucketfs_params.address(port=bucketfs_params.real_port),
+            url=bucketfs_params.address(),
             user=bucketfs_params.user,
             pwd=bucketfs_params.password,
             base_path=None)
