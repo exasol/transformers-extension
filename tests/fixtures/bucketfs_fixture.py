@@ -1,4 +1,6 @@
 import pytest
+from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from tests.utils.parameters import bucketfs_params
 from exasol_bucketfs_utils_python.bucket_config import BucketConfig
 from exasol_bucketfs_utils_python.bucketfs_config import BucketFSConfig
@@ -17,3 +19,11 @@ def bucket_config() -> BucketConfig:
     bucket_config = BucketConfig(
         bucket_name="default", bucketfs_config=bucketfs_config)
     return bucket_config
+
+
+@pytest.fixture(scope="session")
+def bucketfs_location() -> BucketFSLocation:
+    return BucketFSFactory().create_bucketfs_location(
+        url=bucketfs_params.address(),
+        user=bucketfs_params.user,
+        pwd=bucketfs_params.password)
