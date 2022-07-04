@@ -8,6 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
+        testbeds:
+          - tests/deployment_tests/
+          - tests/integration_tests/
+          - tests/unit_tests/
     runs-on: ubuntu-latest
 
     steps:
@@ -32,4 +36,4 @@ jobs:
         run: bash ./scripts/start_integration_test_environment.sh
 
       - name: Run Python tests
-        run: poetry run pytest tests
+        run: poetry run pytest ${{ matrix['testbeds'] }}
