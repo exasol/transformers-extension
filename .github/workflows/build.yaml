@@ -12,8 +12,7 @@ jobs:
           - tests/deployment_tests/test_language_container_deployer.py
           - tests/deployment_tests/test_language_container_deployer_cli.py
           - tests/deployment_tests/test_scripts_* tests/unit_tests/
-          - tests/integration_tests/test_model_downloader_udf_script.py
-          - tests/integration_tests/test_model_downloader_udf_implementation.py tests/integration_tests/test_download_pretrained_model.py
+          - tests/integration_tests/
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +29,6 @@ jobs:
         run: poetry build
       - name: Install project whl
         run: pip install dist/*.whl
-
-      - name: Build language container
-        run: ./build_language_container.sh
 
       - name: Start test environment
         run: bash ./scripts/start_integration_test_environment.sh
