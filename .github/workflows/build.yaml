@@ -12,7 +12,8 @@ jobs:
           - tests/deployment_tests/test_language_container_deployer.py
           - tests/deployment_tests/test_language_container_deployer_cli.py
           - tests/deployment_tests/test_scripts_* tests/unit_tests/
-          - tests/integration_tests/
+          - tests/integration_tests/test_model_downloader_udf_script.py
+          - tests/integration_tests/test_model_downloader_udf_implementation.py tests/integration_tests/test_download_pretrained_model.py
     runs-on: ubuntu-latest
 
     steps:
