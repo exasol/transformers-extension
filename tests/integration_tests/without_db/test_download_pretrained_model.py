@@ -5,6 +5,10 @@ from pathlib import Path
 
 
 def test_download_pretrained_model():
+    """
+    Checks the expected behavior of the 3rd party api.
+    """
+
     model_name = 'bert-base-uncased'
     with tempfile.TemporaryDirectory() as tmpdir_name:
         transformers.AutoModel.from_pretrained(
