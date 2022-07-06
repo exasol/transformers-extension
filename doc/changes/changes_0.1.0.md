@@ -7,6 +7,8 @@
 ### Features
 
   - #1: Added the initial setup of the project
+  - #5: Prepared the skeleton of the project
+  - #4: Added model downloader UDF 
   
 ### Bug Fixes
 
