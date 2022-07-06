@@ -8,11 +8,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
-        testbeds:
-          - tests/deployment_tests/test_language_container_deployer.py
-          - tests/deployment_tests/test_language_container_deployer_cli.py
-          - tests/deployment_tests/test_scripts_* tests/unit_tests/
-          - tests/integration_tests/
     runs-on: ubuntu-latest
 
     steps:
@@ -30,8 +25,15 @@ jobs:
       - name: Install project whl
         run: pip install dist/*.whl
 
+      - name: A workaround to increase available disk size
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Start test environment
         run: bash ./scripts/start_integration_test_environment.sh
 
       - name: Run Python tests
-        run: poetry run pytest ${{ matrix['testbeds'] }}
+        run: poetry run pytest tests
