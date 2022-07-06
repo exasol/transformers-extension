@@ -20,9 +20,9 @@ def test_model_downloader_udf_script(
         assert result[0][0] == model_path and bucketfs_files
     finally:
         # revert, delete downloaded model files
-        try:
-            for file_ in bucketfs_files:
+        for file_ in bucketfs_files:
+            try:
                 bucketfs_location.delete_file_in_bucketfs(
                     pathlib.PurePath(model_path, file_))
-        except Exception as exc:
-            print(f"Error while deleting downloaded files, {str(exc)}")
+            except Exception as exc:
+                print(f"Error while deleting downloaded files, {str(exc)}")
