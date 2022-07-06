@@ -2,6 +2,7 @@ from typing import List
 
 deployed_script_list = [
     "TE_MODEL_DOWNLOADER_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_UDF"
 ]
 
 
