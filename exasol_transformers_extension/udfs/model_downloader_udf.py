@@ -1,8 +1,6 @@
 import tempfile
 import transformers
-from pathlib import PurePosixPath, Path
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+from exasol_transformers_extension.udfs import bucketfs_operations
 
 
 class ModelDownloader:
@@ -17,11 +15,12 @@ class ModelDownloader:
         bfs_conn = ctx.bfs_conn
 
         # set model path in buckets
-        model_path = model_name.replace('-', '_')
+        model_path = bucketfs_operations.get_model_path(model_name)
 
         # create bucketfs location
         bfs_conn_obj = self.exa.get_connection(bfs_conn)
-        bucketfs_location = _create_bucketfs_location(bfs_conn_obj)
+        bucketfs_location = bucketfs_operations.create_bucketfs_location(
+            bfs_conn_obj)
 
         # download base model and tokenizer into the model path
         for downloader in \
@@ -32,24 +31,8 @@ class ModelDownloader:
                 downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
 
                 # upload the downloaded model files into bucketfs
-                _upload_model_file_to_bucketfs(
+                bucketfs_operations.upload_model_files_to_bucketfs(
                     tmpdir_name, model_path, bucketfs_location)
 
         ctx.emit(model_path)
 
-
-def _create_bucketfs_location(bfs_conn_obj) -> BucketFSLocation:
-    return BucketFSFactory().create_bucketfs_location(
-        url=bfs_conn_obj.address,
-        user=bfs_conn_obj.user,
-        pwd=bfs_conn_obj.password)
-
-
-def _upload_model_file_to_bucketfs(
-        tmpdir_name: str, model_path:str,  bucketfs_location: BucketFSLocation):
-    for tmp_file_path in Path(tmpdir_name).iterdir():
-        with open(tmp_file_path, mode='rb') as file:
-            bucketfs_path = PurePosixPath(
-                model_path, tmp_file_path.relative_to(tmpdir_name))
-            bucketfs_location.upload_fileobj_to_bucketfs(
-                file, str(bucketfs_path))
