@@ -29,6 +29,11 @@ class BucketFSParams:
                f"{self.path_in_bucket};{self.name}"
 
 
+@dataclass(frozen=True)
+class ModelParams:
+    name: str
+
+
 db_params = DBParams(
     host="127.0.0.1",
     port="9563",
@@ -44,3 +49,6 @@ bucketfs_params = BucketFSParams(
     name="bfsdefault",
     bucket="default",
     path_in_bucket="container")
+
+model_params = ModelParams(
+    name='bert-base-uncased')

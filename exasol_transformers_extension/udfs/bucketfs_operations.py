@@ -1,5 +1,7 @@
 from pathlib import PurePosixPath, Path
 from exasol_bucketfs_utils_python import bucketfs_utils
+from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
+    AbstractBucketFSLocation
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
@@ -13,7 +15,7 @@ def create_bucketfs_location(bfs_conn_obj) -> BucketFSLocation:
 
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: str,
-        bucketfs_location: BucketFSLocation) -> None:
+        bucketfs_location: AbstractBucketFSLocation) -> None:
     for tmp_file_path in Path(tmpdir_name).iterdir():
         with open(tmp_file_path, mode='rb') as file:
             bucketfs_path = PurePosixPath(
@@ -24,13 +26,8 @@ def upload_model_files_to_bucketfs(
 
 def get_local_bucketfs_path(
         bucketfs_location: BucketFSLocation, model_path: str):
-    # TODO: there is updated for unit test
-    if bucketfs_location.__class__.__name__ == 'LocalFSMockBucketFSLocation':
-        bucketfs_local_path = bucketfs_location.\
-            get_complete_file_path_in_bucket(model_path)
-    else:
-        bucketfs_local_path = bucketfs_utils.generate_bucket_udf_path(
-            bucketfs_location.bucket_config, model_path)
+    bucketfs_local_path = bucketfs_utils.generate_bucket_udf_path(
+        bucketfs_location.bucket_config, model_path)
     return bucketfs_local_path
 
 
