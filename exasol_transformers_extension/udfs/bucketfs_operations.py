@@ -1,4 +1,5 @@
 from pathlib import PurePosixPath, Path
+from exasol_bucketfs_utils_python import bucketfs_utils
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
@@ -21,14 +22,16 @@ def upload_model_files_to_bucketfs(
                 file, str(bucketfs_path))
 
 
-def download_model_files_from_bucketfs(
-        tmpdir_name: str, model_path,
-        bucketfs_location: BucketFSLocation) -> None:
-    model_files = bucketfs_location.list_files_in_bucketfs(model_path)
-    for model_file in model_files:
-        bucketfs_location.read_file_from_bucketfs_to_file(
-            bucket_file_path=str(Path(model_path, model_file)),
-            local_file_path=Path(tmpdir_name, model_file))
+def get_local_bucketfs_path(
+        bucketfs_location: BucketFSLocation, model_path: str):
+    # TODO: there is updated for unit test
+    if bucketfs_location.__class__.__name__ == 'LocalFSMockBucketFSLocation':
+        bucketfs_local_path = bucketfs_location.\
+            get_complete_file_path_in_bucket(model_path)
+    else:
+        bucketfs_local_path = bucketfs_utils.generate_bucket_udf_path(
+            bucketfs_location.bucket_config, model_path)
+    return bucketfs_local_path
 
 
 def get_model_path(model_name) -> str:

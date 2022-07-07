@@ -7,7 +7,6 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-
 from exasol_transformers_extension.udfs import bucketfs_operations
 from tests.integration_tests.without_db.\
     test_model_downloader_udf_implementation import Connection
@@ -20,8 +19,9 @@ BFS_CONN_NAME = "test_bfs_conn_name"
 def udf_wrapper():
     import torch
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.sequence_classification_udf import \
-        SequenceClassification
+    from exasol_transformers_extension.udfs.\
+        sequence_classification_single_text_udf import \
+        SequenceClassificationSingleText
 
     class MockSequenceClassification:
         def __init__(self, **kwargs):
@@ -43,7 +43,7 @@ def udf_wrapper():
         def from_pretrained(cls, model_name, cache_dir):
             return cls
 
-    udf = SequenceClassification(
+    udf = SequenceClassificationSingleText(
         exa,
         base_model=MockSequenceClassification,
         tokenizer=MockSequenceTokenizer)
@@ -57,18 +57,15 @@ def create_mock_metadata():
         script_code_wrapper_function=udf_wrapper,
         input_type="SET",
         input_columns=[
-            Column("1", str, "VARCHAR(2000000)"),   # bucketfs_connection_name
-            Column("2", str, "VARCHAR(2000000)"),   # model_name
-            Column("3", str, "VARCHAR(2000000)"),   # text_to_be_classified_1
-            Column("4", str, "VARCHAR(2000000)"),   # text_to_be_classified_2
-            Column("5", str, "VARCHAR(2000000)"),   # text_to_be_classified_3
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("model_name", str, "VARCHAR(2000000)"),
+            Column("text", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
             Column("label_0", float, "DOUBLE"),
             Column("label_1", float, "DOUBLE"),
         ],
-        is_variadic_input=True
     )
     return meta
 
@@ -92,14 +89,12 @@ def test_sequence_classification():
 
         input_data = (
             BFS_CONN_NAME,
-            str(model_path),  # note that model name is used as model path TODO!
+            str(model_path),  # note that model name is used as model path
             "Test text 1",
-            "Test text 2",
-            "Test text 3"
         )
         result = executor.run([Group([input_data])], exa)
         logits = result[0].rows
-        assert logits == [(0.5, 0.5)] * 3
+        assert logits == [(0.5, 0.5)]
 
 
 def _upload_dummy_model_files_to_localfs(bucketfs_location, tmpdir_name):
