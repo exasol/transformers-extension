@@ -50,7 +50,7 @@ def create_mock_metadata():
         input_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("text", str, "VARCHAR(2000000)"),
+            Column("text_data", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[

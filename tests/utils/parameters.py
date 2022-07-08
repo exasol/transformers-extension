@@ -32,7 +32,7 @@ class BucketFSParams:
 @dataclass(frozen=True)
 class ModelParams:
     name: str
-    text: str
+    text_data: str
 
 
 db_params = DBParams(
@@ -53,4 +53,4 @@ bucketfs_params = BucketFSParams(
 
 model_params = ModelParams(
     name='bert-base-uncased',
-    text='The company Exasol is based in Nuremberg')
+    text_data='The company Exasol is based in Nuremberg')
