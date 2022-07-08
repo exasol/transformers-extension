@@ -11,8 +11,8 @@ from tests.utils.parameters import model_params
 @pytest.fixture(scope="session")
 def download_model() -> str:
     with tempfile.TemporaryDirectory() as tmpdir_name:
-        transformers.AutoModel.from_pretrained(
-            model_params.name, cache_dir=tmpdir_name)
+        for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
+            downloader.from_pretrained(model_params.name, cache_dir=tmpdir_name)
         yield tmpdir_name
 
 
@@ -46,6 +46,25 @@ def upload_dummy_model_to_local_bucketfs():
 
         for file_name, content in model_file_data_map.items():
             bucketfs_location.upload_string_to_bucketfs(
-                PurePosixPath(tmpdir_name, file_name), content)
+                str(PurePosixPath(tmpdir_name, file_name)), content)
 
         yield model_path
+
+
+@pytest.fixture(scope="session")
+def upload_model_to_bucketfs(download_model, bucketfs_location):
+    tmpdir_name = download_model
+    model_path = bucketfs_operations.get_model_path(model_params.name)
+
+    bucketfs_operations.upload_model_files_to_bucketfs(
+        tmpdir_name, model_path, bucketfs_location)
+
+    yield
+
+    bucketfs_files = bucketfs_location.list_files_in_bucketfs(model_path)
+    for file_ in bucketfs_files:
+        try:
+            bucketfs_location.delete_file_in_bucketfs(
+                str(PurePosixPath(model_path, file_)))
+        except Exception as exc:
+            print(f"Error while deleting downloaded files, {str(exc)}")

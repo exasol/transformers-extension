@@ -29,7 +29,7 @@ class SequenceClassificationSingleText:
             model_path = bucketfs_operations.get_model_path(model_name)
             self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
                 bucketfs_location=bucketfs_location,
-                model_path=model_path)
+                model_path=f"container/{model_path}")
 
         # load models
         model = self.base_model.from_pretrained(

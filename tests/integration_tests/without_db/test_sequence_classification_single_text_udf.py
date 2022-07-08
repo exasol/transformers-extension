@@ -33,14 +33,13 @@ def test_sequence_classification_single_text_udf(
         upload_model_to_local_bucketfs):
 
     model_path = str(upload_model_to_local_bucketfs)
-    text = "The company Exasol is based in Nuremberg"
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file:///{model_path}")
 
     ctx = Context(
         bucketfs_conn_name,
         model_params.name,
-        text)
+        model_params.text)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
     sequence_classifier = SequenceClassificationSingleText(
