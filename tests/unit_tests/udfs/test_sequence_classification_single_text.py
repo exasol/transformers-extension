@@ -65,8 +65,8 @@ def create_mock_metadata():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("labels", str, "VARCHAR(2000000)"),
-            Column("scores", float, "DOUBLE"),
+            Column("label", str, "VARCHAR(2000000)"),
+            Column("score", float, "DOUBLE"),
         ],
     )
     return meta

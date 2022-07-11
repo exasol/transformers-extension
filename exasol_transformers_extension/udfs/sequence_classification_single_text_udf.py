@@ -70,7 +70,7 @@ class SequenceClassificationSingleText:
 
         model_pred_df = pd.DataFrame(data=model_preds,
                                      columns=['bucketfs_conn', 'model_name',
-                                              'text_data', 'labels', 'scores'])
+                                              'text_data', 'label', 'score'])
         return model_pred_df
 
     def _get_bucketfs_location(self, bucketfs_conn: str):
