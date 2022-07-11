@@ -1,3 +1,4 @@
+import pandas as pd
 from typing import Dict
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.sequence_classification_single_text_udf import \
@@ -16,17 +17,21 @@ class ExaEnvironment:
 
 
 class Context:
-    def __init__(self, bucketfs_conn: str, model_name: str, text: str):
-        self.bucketfs_conn = bucketfs_conn
-        self.model_name = model_name
-        self.text = text
+    def __init__(self, input_df):
+        self.input_df = input_df
         self._emitted = []
+        self._is_accessed_once = False
 
     def emit(self, *args):
         self._emitted.append(args)
 
     def get_emitted(self):
         return self._emitted
+
+    def get_dataframe(self, num_rows='all'):
+        return_df = None if self._is_accessed_once else self.input_df
+        self._is_accessed_once = True
+        return return_df
 
 
 def test_sequence_classification_single_text_udf(
@@ -36,13 +41,21 @@ def test_sequence_classification_single_text_udf(
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file:///{model_path}")
 
-    ctx = Context(
-        bucketfs_conn_name,
-        model_params.name,
-        model_params.text)
+    n_rows = 3
+    batch_size = 2
+    sample_data = [(bucketfs_conn_name, model_params.name,
+                    model_params.text_data + str(i)) for i in range(n_rows)]
+    sample_df = pd.DataFrame(
+        data=sample_data,
+        columns=['bucketfs_conn', 'model_name', 'text_data'])
+
+    ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
     sequence_classifier = SequenceClassificationSingleText(
-        exa, cache_dir=model_path)
+        exa, cache_dir=model_path, batch_size=batch_size)
     sequence_classifier.run(ctx)
-    assert ctx.get_emitted()[0][0]
+
+    result_df = ctx.get_emitted()[0][0]
+    assert result_df.groupby('text_data')['labels'].nunique().to_list() == \
+           [2] * n_rows and result_df.shape == (n_rows*2, 5)
