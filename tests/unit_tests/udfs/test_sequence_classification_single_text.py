@@ -8,7 +8,7 @@ from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
 def udf_wrapper():
     import torch
-    from typing import List
+    from typing import Dict
     from dataclasses import dataclass
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.\
@@ -18,8 +18,9 @@ def udf_wrapper():
     class MockSequenceClassification:
         @dataclass
         class Config:
-            id2label: List[str]
-        config = Config(id2label=['label_1', 'label_2'])
+            id2label: Dict[int, str]
+        config = Config(id2label={
+            0: 'label_1', 1: 'label_2', 2: 'label_3', 3: 'label_4'})
 
         def __init__(self, **kwargs):
             self.kwargs = kwargs
@@ -30,7 +31,8 @@ def udf_wrapper():
 
         @property
         def logits(self) -> torch.FloatTensor:
-            return torch.FloatTensor([[0.1, 0.1]])
+            return torch.FloatTensor([
+                [0.1, 0.1, 0.1, 0.1], [0.1, 0.2, 0.3, 0.4]])
 
     class MockSequenceTokenizer:
         def __new__(cls, text: str, return_tensors: str):
@@ -72,29 +74,7 @@ def create_mock_metadata():
     return meta
 
 
-def test_sequence_classification_single_text_single_input(
-        upload_dummy_model_to_local_bucketfs):
-
-    bucketfs_connection_name = "test_bfs_conn_name"
-    model_path = upload_dummy_model_to_local_bucketfs
-
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata()
-    bucketfs_connection = Connection(address=f"file://{model_path}")
-    exa = MockExaEnvironment(
-        metadata=meta,
-        connections={bucketfs_connection_name: bucketfs_connection})
-
-    input_data = [(bucketfs_connection_name, str(model_path), "Test text 1")]
-    result = executor.run([Group(input_data)], exa)
-
-    n_labels = 2
-    assert len(result[0].rows) == len(input_data) * n_labels \
-           and result[0].rows[0] == (input_data[0] + ('label_1', 0.5)) \
-           and result[0].rows[1] == (input_data[0] + ('label_2', 0.5))
-
-
-def test_sequence_classification_single_text_multiple_inputs(
+def test_sequence_classification_single_text(
         upload_dummy_model_to_local_bucketfs):
 
     bucketfs_connection_name = "test_bfs_conn_name"
@@ -109,11 +89,17 @@ def test_sequence_classification_single_text_multiple_inputs(
 
     input_data = [
         (bucketfs_connection_name, str(model_path), "Test text 1"),
-        (bucketfs_connection_name, str(model_path), "Test text 2"),
-        (bucketfs_connection_name, str(model_path), "Test text 3")
-    ]
+        (bucketfs_connection_name, str(model_path), "Test text 2")]
     result = executor.run([Group(input_data)], exa)
 
-    n_labels = 2
+    n_labels = 4
     assert len(result[0].rows) == len(input_data) * n_labels \
-           and all(row[-1] == 0.5 for row in result[0].rows)
+           and result[0].rows[0] == (input_data[0] + ('label_1', 0.25)) \
+           and result[0].rows[1] == (input_data[0] + ('label_2', 0.25)) \
+           and result[0].rows[2] == (input_data[0] + ('label_3', 0.25)) \
+           and result[0].rows[3] == (input_data[0] + ('label_4', 0.25)) \
+           and result[0].rows[4][:4] == (input_data[1] + ('label_1',)) \
+           and result[0].rows[5][:4] == (input_data[1] + ('label_2',)) \
+           and result[0].rows[6][:4] == (input_data[1] + ('label_3',)) \
+           and result[0].rows[7][:4] == (input_data[1] + ('label_4',))
+

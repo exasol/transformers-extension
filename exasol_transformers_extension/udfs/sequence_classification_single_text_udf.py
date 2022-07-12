@@ -54,24 +54,20 @@ class SequenceClassificationSingleText:
         self.last_loaded_model_name = model_name
 
     def model_prediction(self, model_df):
-        bucketfs_conn = model_df['bucketfs_conn'].iloc[0]
-        model_name = model_df['model_name'].iloc[0]
 
-        model_preds = []
-        for ix, row in model_df.iterrows():
-            text_data = row['text_data']
-            tokens = self.last_loaded_tokenizer(text_data, return_tensors="pt")
-            logits = self.last_loaded_model(**tokens).logits
-            preds = torch.softmax(logits, dim=1).tolist()[0]
-            labels = self.last_loaded_model.config.id2label
-            for i in range(len(preds)):
-                model_preds.append([bucketfs_conn, model_name,
-                                    text_data, labels[i], preds[i]])
+        tokens = self.last_loaded_tokenizer(
+            list(model_df['text_data']), return_tensors="pt")
+        logits = self.last_loaded_model(**tokens).logits
+        preds = torch.softmax(logits, dim=1).tolist()
+        labels_dict = self.last_loaded_model.config.id2label
+        labels = list(map(lambda x: x[1], sorted(labels_dict.items())))
 
-        model_pred_df = pd.DataFrame(data=model_preds,
-                                     columns=['bucketfs_conn', 'model_name',
-                                              'text_data', 'label', 'score'])
-        return model_pred_df
+        model_df = model_df.loc[
+            model_df.index.repeat(len(labels))].reset_index(drop=True)
+        model_df['label'] = labels * (model_df.shape[0]//len(labels))
+        model_df['score'] = sum(preds, [])
+
+        return model_df
 
     def _get_bucketfs_location(self, bucketfs_conn: str):
         bucketfs_conn = self.exa.get_connection(bucketfs_conn)
