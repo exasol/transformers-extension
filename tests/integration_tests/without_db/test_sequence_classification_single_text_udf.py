@@ -58,4 +58,4 @@ def test_sequence_classification_single_text_udf(
 
     result_df = ctx.get_emitted()[0][0]
     assert result_df.groupby('text_data')['label'].nunique().to_list() == \
-           [2] * n_rows and result_df.shape == (n_rows*2, 5)
+           [2] * n_rows and result_df.shape == (n_rows*2, 6)

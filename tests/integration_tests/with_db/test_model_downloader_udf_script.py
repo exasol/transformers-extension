@@ -22,7 +22,7 @@ def test_model_downloader_udf_script(
 
         # assertions
         bucketfs_files = bucketfs_location.list_files_in_bucketfs(model_path)
-        assert result[0][0] == model_path and bucketfs_files
+        assert result[0][0] == str(model_path) and bucketfs_files
     finally:
         # revert, delete downloaded model files
         for file_ in bucketfs_files:
