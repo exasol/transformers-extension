@@ -14,7 +14,7 @@ def create_bucketfs_location(bfs_conn_obj) -> BucketFSLocation:
 
 
 def upload_model_files_to_bucketfs(
-        tmpdir_name: str, model_path: str,
+        tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> None:
     for tmp_file_path in Path(tmpdir_name).iterdir():
         with open(tmp_file_path, mode='rb') as file:
@@ -31,5 +31,5 @@ def get_local_bucketfs_path(
     return bucketfs_local_path
 
 
-def get_model_path(model_name) -> str:
-    return model_name.replace('-', '_')
+def get_model_path(sub_dir: str, model_name: str) -> Path:
+    return Path(sub_dir, model_name.replace('-', '_'))

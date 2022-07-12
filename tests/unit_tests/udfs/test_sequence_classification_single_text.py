@@ -4,6 +4,9 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+from tests.utils.parameters import model_params
+
+BFS_CONN_NAME = "test_bfs_conn_name"
 
 
 def udf_wrapper():
@@ -59,12 +62,14 @@ def create_mock_metadata():
         input_type="SET",
         input_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
@@ -77,19 +82,18 @@ def create_mock_metadata():
 def test_sequence_classification_single_text(
         upload_dummy_model_to_local_bucketfs):
 
-    bucketfs_connection_name = "test_bfs_conn_name"
-    model_path = upload_dummy_model_to_local_bucketfs
+    model_path = str(upload_dummy_model_to_local_bucketfs)
 
     executor = UDFMockExecutor()
     meta = create_mock_metadata()
     bucketfs_connection = Connection(address=f"file://{model_path}")
     exa = MockExaEnvironment(
         metadata=meta,
-        connections={bucketfs_connection_name: bucketfs_connection})
+        connections={BFS_CONN_NAME: bucketfs_connection})
 
     input_data = [
-        (bucketfs_connection_name, str(model_path), "Test text 1"),
-        (bucketfs_connection_name, str(model_path), "Test text 2")]
+        (BFS_CONN_NAME, model_params.sub_dir, model_path, "Test text 1"),
+        (BFS_CONN_NAME, model_params.sub_dir, model_path, "Test text 2")]
     result = executor.run([Group(input_data)], exa)
 
     n_labels = 4
@@ -98,8 +102,8 @@ def test_sequence_classification_single_text(
            and result[0].rows[1] == (input_data[0] + ('label_2', 0.25)) \
            and result[0].rows[2] == (input_data[0] + ('label_3', 0.25)) \
            and result[0].rows[3] == (input_data[0] + ('label_4', 0.25)) \
-           and result[0].rows[4][:4] == (input_data[1] + ('label_1',)) \
-           and result[0].rows[5][:4] == (input_data[1] + ('label_2',)) \
-           and result[0].rows[6][:4] == (input_data[1] + ('label_3',)) \
-           and result[0].rows[7][:4] == (input_data[1] + ('label_4',))
+           and result[0].rows[4][:5] == (input_data[1] + ('label_1',)) \
+           and result[0].rows[5][:5] == (input_data[1] + ('label_2',)) \
+           and result[0].rows[6][:5] == (input_data[1] + ('label_3',)) \
+           and result[0].rows[7][:5] == (input_data[1] + ('label_4',))
 

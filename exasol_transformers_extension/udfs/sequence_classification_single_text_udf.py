@@ -33,10 +33,12 @@ class SequenceClassificationSingleText:
         result_df_list = []
         for model_name in batch_df['model_name'].unique():
             model_df = batch_df[batch_df['model_name'] == model_name]
-            bucketfs_conn = model_df['bucketfs_conn'].iloc[0]
 
             if self.last_loaded_model_name != model_name:
-                self.load_models(model_name, bucketfs_conn)
+                bucketfs_conn = model_df['bucketfs_conn'].iloc[0]
+                sub_dir = model_df['sub_dir'].iloc[0]
+                self._set_cache_dir(sub_dir, model_name, bucketfs_conn)
+                self.load_models(model_name)
 
             model_pred_df = self.model_prediction(model_df)
             result_df_list.append(model_pred_df)
@@ -44,9 +46,7 @@ class SequenceClassificationSingleText:
         result_df = pd.concat(result_df_list)
         return result_df
 
-    def load_models(self, model_name, bucketfs_conn):
-        self._set_cache_directory(model_name, bucketfs_conn)
-
+    def load_models(self, model_name):
         self.last_loaded_model = self.base_model.from_pretrained(
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
@@ -73,10 +73,10 @@ class SequenceClassificationSingleText:
         bucketfs_conn = self.exa.get_connection(bucketfs_conn)
         return bucketfs_operations.create_bucketfs_location(bucketfs_conn)
 
-    def _set_cache_directory(self, model_name, bucketfs_conn_name):
+    def _set_cache_dir(self, sub_dir, model_name, bucketfs_conn_name):
         bucketfs_location = self._get_bucketfs_location(bucketfs_conn_name)
         if not self.cache_dir:
-            model_path = bucketfs_operations.get_model_path(model_name)
+            model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
             self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
                 bucketfs_location=bucketfs_location,
                 model_path=f"container/{model_path}")

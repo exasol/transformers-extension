@@ -1,7 +1,9 @@
 from pathlib import Path
-
 from exasol_transformers_extension.udfs import bucketfs_operations
 from tests.utils.parameters import model_params
+
+
+SUB_DIR = "test_downloader_udf_sub_dir"
 
 
 def test_model_downloader_udf_script(
@@ -9,13 +11,14 @@ def test_model_downloader_udf_script(
         pyexasol_connection, bucketfs_location):
 
     bucketfs_conn_name, schema_name = setup_database
-    model_path = bucketfs_operations.get_model_path(model_params.name)
+    model_path = bucketfs_operations.get_model_path(SUB_DIR, model_params.name)
     bucketfs_files = []
     try:
         # execute downloader UDF
         result = pyexasol_connection.execute(
             f"SELECT TE_MODEL_DOWNLOADER_UDF("
-            f"'{model_params.name}', '{bucketfs_conn_name}');").fetchall()
+            f"'{model_params.name}', '{SUB_DIR}', '{bucketfs_conn_name}');")\
+            .fetchall()
 
         # assertions
         bucketfs_files = bucketfs_location.list_files_in_bucketfs(model_path)

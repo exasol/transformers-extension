@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-
 from tests.utils.parameters import model_params
 
 

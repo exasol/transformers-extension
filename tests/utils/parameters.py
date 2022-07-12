@@ -33,6 +33,7 @@ class BucketFSParams:
 class ModelParams:
     name: str
     text_data: str
+    sub_dir: str
 
 
 db_params = DBParams(
@@ -53,4 +54,5 @@ bucketfs_params = BucketFSParams(
 
 model_params = ModelParams(
     name='bert-base-uncased',
-    text_data='The company Exasol is based in Nuremberg')
+    text_data='The company Exasol is based in Nuremberg',
+    sub_dir='model_sub_dir')

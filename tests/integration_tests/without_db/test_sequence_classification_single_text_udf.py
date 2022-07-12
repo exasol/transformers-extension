@@ -43,11 +43,11 @@ def test_sequence_classification_single_text_udf(
 
     n_rows = 3
     batch_size = 2
-    sample_data = [(bucketfs_conn_name, model_params.name,
+    sample_data = [(bucketfs_conn_name, model_params.sub_dir, model_params.name,
                     model_params.text_data + str(i)) for i in range(n_rows)]
     sample_df = pd.DataFrame(
         data=sample_data,
-        columns=['bucketfs_conn', 'model_name', 'text_data'])
+        columns=['bucketfs_conn', 'sub_dir', 'model_name', 'text_data'])
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})

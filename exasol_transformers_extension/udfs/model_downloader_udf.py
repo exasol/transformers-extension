@@ -12,10 +12,11 @@ class ModelDownloader:
 
     def run(self, ctx) -> None:
         model_name = ctx.model_name
+        sub_dir = ctx.sub_dir
         bfs_conn = ctx.bfs_conn
 
         # set model path in buckets
-        model_path = bucketfs_operations.get_model_path(model_name)
+        model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
 
         # create bucketfs location
         bfs_conn_obj = self.exa.get_connection(bfs_conn)
@@ -34,5 +35,5 @@ class ModelDownloader:
                 bucketfs_operations.upload_model_files_to_bucketfs(
                     tmpdir_name, model_path, bucketfs_location)
 
-        ctx.emit(model_path)
+        ctx.emit(str(model_path))
 
