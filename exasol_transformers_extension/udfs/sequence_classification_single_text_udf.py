@@ -133,6 +133,7 @@ class SequenceClassificationSingleText:
         :return: Prepared dataframe including input data and predictions
         """
         n_labels = len(labels)
+        n_input_row = model_df.shape[0]
 
         # Repeat each row consecutively as the number of labels. At the end,
         # the dataframe is expanded from (m, n) to (m*n_labels, n)
@@ -141,13 +142,11 @@ class SequenceClassificationSingleText:
 
         # Fill the dataframe with labels repeatedly, such that each input row
         # has a row for each label
-        extension_factor = model_df.shape[0]//n_labels
-        model_df['label'] = labels * extension_factor
+        model_df['label'] = labels * n_input_row
 
         # Flatten 2D prediction scores to 1D list and assign it to score
-        # column of the dataframe. We use for this the sum function with a list as inital value 
-        # and + operator of lists
-        preds_flatten = sum(preds, [])
-        model_df['score'] = [round(pred, 2) for pred in preds_flatten]
+        # column of the dataframe. We use for this the sum function with a
+        # list as initial value and + operator of lists
+        model_df['score'] = sum(preds, [])
 
         return model_df
