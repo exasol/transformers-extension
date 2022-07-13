@@ -139,13 +139,14 @@ class SequenceClassificationSingleText:
         repeated_indexes = model_df.index.repeat(n_labels)
         model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
 
-        # Fill the dataframe with labels repeatedly, such that each input rows
+        # Fill the dataframe with labels repeatedly, such that each input row
         # has a row for each label
         extension_factor = model_df.shape[0]//n_labels
         model_df['label'] = labels * extension_factor
 
         # Flatten 2D prediction scores to 1D list and assign it to score
-        # column of the dataframe
+        # column of the dataframe. We use for this the sum function with a list as inital value 
+        # and + operator of lists
         preds_flatten = sum(preds, [])
         model_df['score'] = [round(pred, 2) for pred in preds_flatten]
 
