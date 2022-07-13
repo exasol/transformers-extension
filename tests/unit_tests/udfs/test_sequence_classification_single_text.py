@@ -4,7 +4,7 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-from tests.utils.parameters import model_params
+
 
 BFS_CONN_NAME = "test_bfs_conn_name"
 
@@ -34,8 +34,7 @@ def udf_wrapper():
 
         @property
         def logits(self) -> torch.FloatTensor:
-            return torch.FloatTensor([
-                [0.1, 0.1, 0.1, 0.1], [0.1, 0.2, 0.3, 0.4]])
+            return torch.FloatTensor([[0.1, 0.2, 0.3, 0.4]])
 
     class MockSequenceTokenizer:
         def __new__(cls, text: str, return_tensors: str):
@@ -82,28 +81,31 @@ def create_mock_metadata():
 def test_sequence_classification_single_text(
         upload_dummy_model_to_local_bucketfs):
 
-    model_path = str(upload_dummy_model_to_local_bucketfs)
+    models_metadata = upload_dummy_model_to_local_bucketfs
 
     executor = UDFMockExecutor()
     meta = create_mock_metadata()
-    bucketfs_connection = Connection(address=f"file://{model_path}")
+    bucketfs_connection = Connection(
+        address=f"file://{str(models_metadata[0][1])}")
     exa = MockExaEnvironment(
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})
 
     input_data = [
-        (BFS_CONN_NAME, model_params.sub_dir, model_path, "Test text 1"),
-        (BFS_CONN_NAME, model_params.sub_dir, model_path, "Test text 2")]
+        (BFS_CONN_NAME, models_metadata[0][0],
+         str(models_metadata[0][1]), "Test text 1"),
+        (BFS_CONN_NAME, models_metadata[1][0],
+         str(models_metadata[1][1]), "Test text 2")]
     result = executor.run([Group(input_data)], exa)
 
     n_labels = 4
     assert len(result[0].rows) == len(input_data) * n_labels \
-           and result[0].rows[0] == (input_data[0] + ('label_1', 0.25)) \
-           and result[0].rows[1] == (input_data[0] + ('label_2', 0.25)) \
-           and result[0].rows[2] == (input_data[0] + ('label_3', 0.25)) \
-           and result[0].rows[3] == (input_data[0] + ('label_4', 0.25)) \
-           and result[0].rows[4][:5] == (input_data[1] + ('label_1',)) \
-           and result[0].rows[5][:5] == (input_data[1] + ('label_2',)) \
-           and result[0].rows[6][:5] == (input_data[1] + ('label_3',)) \
-           and result[0].rows[7][:5] == (input_data[1] + ('label_4',))
+           and result[0].rows[0] == (input_data[0] + ('label_1', 0.21)) \
+           and result[0].rows[1] == (input_data[0] + ('label_2', 0.24)) \
+           and result[0].rows[2] == (input_data[0] + ('label_3', 0.26)) \
+           and result[0].rows[3] == (input_data[0] + ('label_4', 0.29)) \
+           and result[0].rows[4] == (input_data[1] + ('label_1', 0.21)) \
+           and result[0].rows[5] == (input_data[1] + ('label_2', 0.24)) \
+           and result[0].rows[6] == (input_data[1] + ('label_3', 0.26)) \
+           and result[0].rows[7] == (input_data[1] + ('label_4', 0.29))
 

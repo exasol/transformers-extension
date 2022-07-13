@@ -1,4 +1,6 @@
 from pathlib import PurePosixPath, Path
+from typing import Tuple, List
+
 import pytest
 import tempfile
 import transformers
@@ -35,23 +37,25 @@ def upload_model_to_local_bucketfs(download_model) -> PurePosixPath:
 
 
 @pytest.fixture(scope="session")
-def upload_dummy_model_to_local_bucketfs() -> PurePosixPath:
+def upload_dummy_model_to_local_bucketfs() -> List[Tuple[str, PurePosixPath]] :
     model_file_data_map = {
         "model_file1.txt": "Sample data in model_file1.txt",
         "model_file2.txt": "Sample data in model_file1.txt"}
 
+    models_metadata = []
     with tempfile.TemporaryDirectory() as tmpdir_name:
-        model_path = PurePosixPath(
-            tmpdir_name,
-            bucketfs_operations.get_model_path(
-                model_params.sub_dir, model_params.name))
-        bucketfs_location = LocalFSMockBucketFSLocation(model_path)
+        for sub_dir in ['sub_dir_1', 'sub_dir_2']:
+            model_path = PurePosixPath(
+                tmpdir_name,
+                bucketfs_operations.get_model_path(sub_dir, model_params.name))
+            bucketfs_location = LocalFSMockBucketFSLocation(model_path)
 
-        for file_name, content in model_file_data_map.items():
-            bucketfs_location.upload_string_to_bucketfs(
-                str(PurePosixPath(tmpdir_name, file_name)), content)
+            for file_name, content in model_file_data_map.items():
+                bucketfs_location.upload_string_to_bucketfs(
+                    str(PurePosixPath(tmpdir_name, file_name)), content)
 
-        yield model_path
+            models_metadata.append((sub_dir, model_path))
+        yield models_metadata
 
 
 @pytest.fixture(scope="session")

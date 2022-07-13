@@ -136,14 +136,17 @@ class SequenceClassificationSingleText:
 
         # Repeat each row consecutively as the number of labels. At the end,
         # the dataframe is expanded from (m, n) to (m*n_labels, n)
-        model_df = model_df.loc[
-            model_df.index.repeat(n_labels)].reset_index(drop=True)
+        repeated_indexes = model_df.index.repeat(n_labels)
+        model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
+
         # Fill the dataframe with labels repeatedly, such that each input rows
         # has a row for each label
-        model_df['label'] = labels * (model_df.shape[0]//n_labels)
+        extension_factor = model_df.shape[0]//n_labels
+        model_df['label'] = labels * extension_factor
+
         # Flatten 2D prediction scores to 1D list and assign it to score
         # column of the dataframe
-        model_df['score'] = sum(preds, [])
+        preds_flatten = sum(preds, [])
+        model_df['score'] = [round(pred, 2) for pred in preds_flatten]
 
         return model_df
-
