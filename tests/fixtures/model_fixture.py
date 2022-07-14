@@ -44,7 +44,7 @@ def upload_dummy_model_to_local_bucketfs() -> List[Tuple[str, PurePosixPath]] :
 
     models_metadata = []
     with tempfile.TemporaryDirectory() as tmpdir_name:
-        for sub_dir in ['sub_dir_1', 'sub_dir_2']:
+        for sub_dir in ['sub_dir_1', 'sub_dir_2', 'sub_dir_3', 'sub_dir_4']:
             model_path = PurePosixPath(
                 tmpdir_name,
                 bucketfs_operations.get_model_path(sub_dir, model_params.name))
