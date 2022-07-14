@@ -54,7 +54,7 @@ def upload_dummy_model_to_local_bucketfs() -> List[Tuple[str, PurePosixPath]] :
                 bucketfs_location.upload_string_to_bucketfs(
                     str(PurePosixPath(tmpdir_name, file_name)), content)
 
-            models_metadata.append((sub_dir, model_path))
+            models_metadata.append((sub_dir, str(model_path)))
         yield models_metadata
 
 

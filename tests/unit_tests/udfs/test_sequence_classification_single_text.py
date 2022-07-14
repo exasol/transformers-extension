@@ -1,3 +1,4 @@
+import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.group import Group
@@ -5,57 +6,19 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
+from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelMultipleBatchComplete import \
+    SingleModelMultipleBatchComplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelMultipleBatchIncomplete import \
+    SingleModelMultipleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelSingleBatchComplete import \
+    SingleModelSingleBatchComplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelSingleBatchIncomplete import \
+    SingleModelSingleBatchIncomplete
 
 BFS_CONN_NAME = "test_bfs_conn_name"
 
 
-def udf_wrapper():
-    import torch
-    from typing import Dict
-    from dataclasses import dataclass
-    from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.\
-        sequence_classification_single_text_udf import \
-        SequenceClassificationSingleText
-
-    class MockSequenceClassification:
-        @dataclass
-        class Config:
-            id2label: Dict[int, str]
-        config = Config(id2label={
-            0: 'label_1', 1: 'label_2', 2: 'label_3', 3: 'label_4'})
-
-        def __init__(self, **kwargs):
-            self.kwargs = kwargs
-
-        @classmethod
-        def from_pretrained(cls, model_name, cache_dir):
-            return cls
-
-        @property
-        def logits(self) -> torch.FloatTensor:
-            return torch.FloatTensor([[0.1, 0.2, 0.3, 0.4]])
-
-    class MockSequenceTokenizer:
-        def __new__(cls, text: str, return_tensors: str):
-            return {}
-
-        @classmethod
-        def from_pretrained(cls, model_name, cache_dir):
-            return cls
-
-    udf = SequenceClassificationSingleText(
-        exa,
-        cache_dir="dummy_cache_dir",
-        batch_size=2,
-        base_model=MockSequenceClassification,
-        tokenizer=MockSequenceTokenizer)
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
-
-
-def create_mock_metadata():
+def create_mock_metadata(udf_wrapper):
     meta = MockMetaData(
         script_code_wrapper_function=udf_wrapper,
         input_type="SET",
@@ -78,34 +41,38 @@ def create_mock_metadata():
     return meta
 
 
-def test_sequence_classification_single_text(
-        upload_dummy_model_to_local_bucketfs):
+@pytest.mark.parametrize("params", [
+    SingleModelSingleBatchComplete(),
+    SingleModelSingleBatchIncomplete(),
+    SingleModelMultipleBatchComplete(),
+    SingleModelMultipleBatchIncomplete()
+])
+def test_sequence_classification_single_text_single_model(
+        params, upload_dummy_model_to_local_bucketfs):
 
-    models_metadata = upload_dummy_model_to_local_bucketfs
+    model_metadata = upload_dummy_model_to_local_bucketfs[0]
 
     executor = UDFMockExecutor()
-    meta = create_mock_metadata()
-    bucketfs_connection = Connection(
-        address=f"file://{str(models_metadata[0][1])}")
+    meta = create_mock_metadata(params.udf_wrapper)
+    bucketfs_connection = Connection(address=f"file://{model_metadata[1]}")
     exa = MockExaEnvironment(
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})
 
-    input_data = [
-        (BFS_CONN_NAME, models_metadata[0][0],
-         str(models_metadata[0][1]), "Test text 1"),
-        (BFS_CONN_NAME, models_metadata[1][0],
-         str(models_metadata[1][1]), "Test text 2")]
+    input_data = []
+    for text in params.single_text:
+        input_data.append((
+            BFS_CONN_NAME, model_metadata[0], model_metadata[1], text))
     result = executor.run([Group(input_data)], exa)
 
-    n_labels = 4
-    assert len(result[0].rows) == len(input_data) * n_labels \
-           and result[0].rows[0] == (input_data[0] + ('label_1', 0.21)) \
-           and result[0].rows[1] == (input_data[0] + ('label_2', 0.24)) \
-           and result[0].rows[2] == (input_data[0] + ('label_3', 0.26)) \
-           and result[0].rows[3] == (input_data[0] + ('label_4', 0.29)) \
-           and result[0].rows[4] == (input_data[1] + ('label_1', 0.21)) \
-           and result[0].rows[5] == (input_data[1] + ('label_2', 0.24)) \
-           and result[0].rows[6] == (input_data[1] + ('label_3', 0.26)) \
-           and result[0].rows[7] == (input_data[1] + ('label_4', 0.29))
+    labels_score_map = {'label_1': 0.21, 'label_2': 0.24,
+                        'label_3': 0.26, 'label_4': 0.29}
+    expected_result = []
+    rounded_result = result[0].rows
+    for i in range(len(input_data)):
+        rounded_result[i] = rounded_result[i][:-1] +\
+                            (round(rounded_result[i][-1], 2),)
+        for label, score in sorted(labels_score_map.items()):
+            expected_result.append((input_data[i] + (label, score)))
 
+    assert rounded_result == expected_result
