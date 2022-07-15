@@ -53,37 +53,17 @@ def create_mock_metadata(udf_wrapper):
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchComplete(),
-    SingleModelSingleBatchIncomplete(),
-    SingleModelMultipleBatchComplete(),
-    SingleModelMultipleBatchIncomplete()
+    SingleModelSingleBatchComplete,
+    SingleModelSingleBatchIncomplete,
+    SingleModelMultipleBatchComplete,
+    SingleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelSingleBatchComplete,
+    MultipleModelSingleBatchIncomplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch
 ])
-def test_sequence_classification_single_text_single_model(
-        params, upload_dummy_model_to_local_bucketfs):
-    model_metadata = upload_dummy_model_to_local_bucketfs[0]
-
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata(params.udf_wrapper)
-    bucketfs_connection = Connection(address=f"file://{model_metadata[1]}")
-    exa = MockExaEnvironment(
-        metadata=meta,
-        connections={BFS_CONN_NAME: bucketfs_connection})
-
-    input_data = []
-    for text in params.single_text:
-        input_data.append((
-            BFS_CONN_NAME, model_metadata[0], model_metadata[1], text))
-    result = executor.run([Group(input_data)], exa)
-
-    rounded_result = _get_rounded_result(result)
-    expected_result = _prepare_expected_result(input_data)
-    assert rounded_result == expected_result
-
-
-@pytest.mark.parametrize("params", [
-    MultipleModelMultipleBatchComplete
-])
-def test_sequence_classification_single_text_multiple_models_with_factory(
+def test_sequence_classification_single_text(
         params, upload_dummy_model_to_local_bucketfs):
     models_metadata = upload_dummy_model_to_local_bucketfs
 
@@ -94,50 +74,12 @@ def test_sequence_classification_single_text_multiple_models_with_factory(
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})
 
-    input_data = None
-    expected_result = None
-    for model_metadata in models_metadata:
-        input_data = [(BFS_CONN_NAME, model_metadata[0], model, text)
-                      for model, text in params.inputs]
-        expected_result = [(BFS_CONN_NAME, model_metadata[0], model, text, label, score)
-                                for model, text, label, score in params.outputs]
-
+    input_data = [(BFS_CONN_NAME, ) + input for input in params.inputs]
     result = executor.run([Group(input_data)], exa)
 
-    for row in result[0].rows:
-        print(row)
-    rounded_actual_result = [row[:5] + (round(row[5], 2),)
-                             for row in result[0].rows]
+    rounded_actual_result = _get_rounded_result(result)
+    expected_result = [(BFS_CONN_NAME, ) + output for output in params.outputs]
     assert rounded_actual_result == expected_result
-
-
-@pytest.mark.parametrize("params", [
-    MultipleModelSingleBatchComplete(),
-    MultipleModelSingleBatchIncomplete(),
-    MultipleModelMultipleBatchIncomplete(),
-    MultipleModelMultipleBatchMultipleModelsPerBatch()
-])
-def test_sequence_classification_single_text_multiple_models(
-        params, upload_dummy_model_to_local_bucketfs):
-    models_metadata = upload_dummy_model_to_local_bucketfs
-
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata(params.udf_wrapper)
-    bucketfs_connection = Connection(address=f"file://{models_metadata[0][1]}")
-    exa = MockExaEnvironment(
-        metadata=meta,
-        connections={BFS_CONN_NAME: bucketfs_connection})
-
-    input_data = []
-    for model_metadata in models_metadata:
-        for text in params.single_text:
-            input_data.append((
-                BFS_CONN_NAME, model_metadata[0], model_metadata[1], text))
-    result = executor.run([Group(input_data)], exa)
-
-    rounded_result = _get_rounded_result(result)
-    expected_result = _prepare_expected_result(input_data)
-    assert rounded_result == expected_result
 
 
 def _get_rounded_result(result):
@@ -147,10 +89,3 @@ def _get_rounded_result(result):
                             (round(rounded_result[i][-1], 2),)
     return rounded_result
 
-
-def _prepare_expected_result(input_data):
-    expected_result = []
-    for i in range(len(input_data)):
-        for label, score in sorted(LABEL_SCORE_MAP.items()):
-            expected_result.append((input_data[i] + (label, score)))
-    return expected_result
