@@ -30,8 +30,7 @@ class SingleModelMultipleBatchIncomplete(BaseUDFWrapperParams):
             exa,
             cache_dir="dummy_cache_dir",
             batch_size=2,
-            base_model=MockSequenceClassification(
-                model_based_data_size_at_each_batch=[2, 2, 1]),
+            base_model=MockSequenceClassification,
             tokenizer=MockSequenceTokenizer)
 
         def run(ctx: UDFContext):
