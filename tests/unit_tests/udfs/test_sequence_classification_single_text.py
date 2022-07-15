@@ -60,7 +60,6 @@ def create_mock_metadata(udf_wrapper):
 ])
 def test_sequence_classification_single_text_single_model(
         params, upload_dummy_model_to_local_bucketfs):
-
     model_metadata = upload_dummy_model_to_local_bucketfs[0]
 
     executor = UDFMockExecutor()
@@ -82,15 +81,44 @@ def test_sequence_classification_single_text_single_model(
 
 
 @pytest.mark.parametrize("params", [
+    MultipleModelMultipleBatchComplete
+])
+def test_sequence_classification_single_text_multiple_models_with_factory(
+        params, upload_dummy_model_to_local_bucketfs):
+    models_metadata = upload_dummy_model_to_local_bucketfs
+
+    executor = UDFMockExecutor()
+    meta = create_mock_metadata(params.udf_wrapper)
+    bucketfs_connection = Connection(address=f"file://{models_metadata[0][1]}")
+    exa = MockExaEnvironment(
+        metadata=meta,
+        connections={BFS_CONN_NAME: bucketfs_connection})
+
+    input_data = None
+    expected_result = None
+    for model_metadata in models_metadata:
+        input_data = [(BFS_CONN_NAME, model_metadata[0], model, text)
+                      for model, text in params.inputs]
+        expected_result = [(BFS_CONN_NAME, model_metadata[0], model, text, label, score)
+                                for model, text, label, score in params.outputs]
+
+    result = executor.run([Group(input_data)], exa)
+
+    for row in result[0].rows:
+        print(row)
+    rounded_actual_result = [row[:5] + (round(row[5], 2),)
+                             for row in result[0].rows]
+    assert rounded_actual_result == expected_result
+
+
+@pytest.mark.parametrize("params", [
     MultipleModelSingleBatchComplete(),
     MultipleModelSingleBatchIncomplete(),
-    MultipleModelMultipleBatchComplete(),
     MultipleModelMultipleBatchIncomplete(),
     MultipleModelMultipleBatchMultipleModelsPerBatch()
 ])
 def test_sequence_classification_single_text_multiple_models(
         params, upload_dummy_model_to_local_bucketfs):
-
     models_metadata = upload_dummy_model_to_local_bucketfs
 
     executor = UDFMockExecutor()
