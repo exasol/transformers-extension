@@ -30,7 +30,7 @@ class MultipleModelSingleBatchComplete:
     multiple model, single batch, last batch complete
     """
 
-    batch_size = 8
+    batch_size = 4
     data_size = 2
 
     config = Config({

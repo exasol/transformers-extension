@@ -65,11 +65,11 @@ def create_mock_metadata(udf_wrapper):
 ])
 def test_sequence_classification_single_text(
         params, upload_dummy_model_to_local_bucketfs):
-    models_metadata = upload_dummy_model_to_local_bucketfs
+    model_path = upload_dummy_model_to_local_bucketfs
 
     executor = UDFMockExecutor()
     meta = create_mock_metadata(params.udf_wrapper)
-    bucketfs_connection = Connection(address=f"file://{models_metadata[0][1]}")
+    bucketfs_connection = Connection(address=f"file://asdads")
     exa = MockExaEnvironment(
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})

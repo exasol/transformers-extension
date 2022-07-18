@@ -54,10 +54,12 @@ class MultipleModelMultipleBatchComplete:
     outputs = [("sub_dir1", "model1", "My test text", "label1", 0.21),
                ("sub_dir1", "model1", "My test text", "label2", 0.24),
                ("sub_dir1", "model1", "My test text", "label3", 0.26),
-               ("sub_dir1", "model1", "My test text", "label4", 0.29)] * 2 + \
+               ("sub_dir1", "model1", "My test text", "label4", 0.29)
+               ] * data_size + \
               [("sub_dir2", "model2", "My test text", "label1", 0.21),
                ("sub_dir2", "model2", "My test text", "label2", 0.24),
                ("sub_dir2", "model2", "My test text", "label3", 0.26),
-               ("sub_dir2", "model2", "My test text", "label4", 0.29)] * 2
+               ("sub_dir2", "model2", "My test text", "label4", 0.29)
+               ] * data_size
 
     udf_wrapper = udf_wrapper
