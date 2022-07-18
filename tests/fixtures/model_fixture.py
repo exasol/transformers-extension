@@ -37,21 +37,12 @@ def upload_model_to_local_bucketfs(download_model) -> PurePosixPath:
 
 
 @pytest.fixture(scope="session")
-def upload_dummy_model_to_local_bucketfs() -> List[Tuple[str, PurePosixPath]] :
+def get_local_bucketfs_path() -> str:
     sub_dir = 'sub_dir'
-    model_file_data_map = {
-        "model_file1.txt": "Sample data in model_file1.txt",
-        "model_file2.txt": "Sample data in model_file1.txt"}
-
     with tempfile.TemporaryDirectory() as tmpdir_name:
         model_path = PurePosixPath(
             tmpdir_name,
             bucketfs_operations.get_model_path(sub_dir, model_params.name))
-        bucketfs_location = LocalFSMockBucketFSLocation(model_path)
-
-        for file_name, content in model_file_data_map.items():
-            bucketfs_location.upload_string_to_bucketfs(
-                str(PurePosixPath(tmpdir_name, file_name)), content)
 
         yield str(model_path)
 

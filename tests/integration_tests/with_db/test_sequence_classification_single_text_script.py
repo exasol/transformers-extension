@@ -1,7 +1,7 @@
 from tests.utils.parameters import model_params
 
 
-def test_model_downloader_udf_script(
+def test_sequence_classification_single_text_script(
         upload_language_container, setup_database,
         pyexasol_connection, upload_model_to_bucketfs):
 
