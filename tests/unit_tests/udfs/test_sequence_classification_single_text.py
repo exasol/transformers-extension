@@ -5,23 +5,23 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-from tests.unit_tests.udf_wrapper_params.sequence_classification.MultipleModelMultipleBatchComplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.MultipleModelMultipleBatchIncomplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_incomplete import \
     MultipleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.MultipleModelMultipleBatchMultipleModelsPerBatch import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_multiple_models_per_batch import \
     MultipleModelMultipleBatchMultipleModelsPerBatch
-from tests.unit_tests.udf_wrapper_params.sequence_classification.MultipleModelSingleBatchComplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_single_batch_complete import \
     MultipleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.MultipleModelSingleBatchIncomplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelMultipleBatchComplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_multiple_batch_complete import \
     SingleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelMultipleBatchIncomplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_multiple_batch_incomplete import \
     SingleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelSingleBatchComplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_single_batch_complete import \
     SingleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.SingleModelSingleBatchIncomplete import \
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
 
 BFS_CONN_NAME = "test_bfs_conn_name"

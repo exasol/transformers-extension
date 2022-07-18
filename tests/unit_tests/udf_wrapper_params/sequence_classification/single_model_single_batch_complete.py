@@ -1,5 +1,5 @@
 from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-    MockSequenceClassificationFactory import \
+    mock_sequence_classification_factory import \
     Config, MockSequenceClassificationFactory, MockSequenceClassificationModel
 
 
@@ -9,9 +9,9 @@ def udf_wrapper():
         sequence_classification_single_text_udf import \
         SequenceClassificationSingleText
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
-        MockSequenceTokenizer import MockSequenceTokenizer
+        mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        SingleModelSingleBatchComplete import \
+        single_model_single_batch_complete import \
         SingleModelSingleBatchComplete as params
 
     udf = SequenceClassificationSingleText(

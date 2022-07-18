@@ -1,5 +1,5 @@
 from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-    MockSequenceClassificationFactory import \
+    mock_sequence_classification_factory import \
     Config, MockSequenceClassificationFactory, MockSequenceClassificationModel
 
 
@@ -9,10 +9,10 @@ def udf_wrapper():
         sequence_classification_single_text_udf import \
         SequenceClassificationSingleText
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
-        MockSequenceTokenizer import MockSequenceTokenizer
+        mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        SingleModelSingleBatchIncomplete import \
-        SingleModelSingleBatchIncomplete as params
+        multiple_model_multiple_batch_complete import \
+        MultipleModelMultipleBatchComplete as params
 
     udf = SequenceClassificationSingleText(
         exa,
@@ -25,13 +25,13 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class SingleModelSingleBatchIncomplete:
+class MultipleModelMultipleBatchComplete:
     """
-    single model, single batch, batch incomplete
+    multiple model, multiple batch, last batch complete
     """
 
     batch_size = 2
-    data_size = 1
+    data_size = 2
 
     config = Config({
         0: 'label1', 1: 'label2',
@@ -42,14 +42,22 @@ class SingleModelSingleBatchIncomplete:
     mock_factory = MockSequenceClassificationFactory({
         "model1": MockSequenceClassificationModel(
             config=config,
+            logits=logits),
+        "model2": MockSequenceClassificationModel(
+            config=config,
             logits=logits)
     })
 
-    inputs = [("sub_dir1", "model1", "My test text")] * data_size
+    inputs = [("sub_dir1", "model1", "My test text")] * data_size + \
+             [("sub_dir2", "model2", "My test text")] * data_size
 
     outputs = [("sub_dir1", "model1", "My test text", "label1", 0.21),
                ("sub_dir1", "model1", "My test text", "label2", 0.24),
                ("sub_dir1", "model1", "My test text", "label3", 0.26),
-               ("sub_dir1", "model1", "My test text", "label4", 0.29)]
+               ("sub_dir1", "model1", "My test text", "label4", 0.29)] * 2 + \
+              [("sub_dir2", "model2", "My test text", "label1", 0.21),
+               ("sub_dir2", "model2", "My test text", "label2", 0.24),
+               ("sub_dir2", "model2", "My test text", "label3", 0.26),
+               ("sub_dir2", "model2", "My test text", "label4", 0.29)] * 2
 
     udf_wrapper = udf_wrapper
