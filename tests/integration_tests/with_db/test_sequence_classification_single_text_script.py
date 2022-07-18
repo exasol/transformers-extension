@@ -21,7 +21,6 @@ def test_sequence_classification_single_text_script(
             f"FROM (VALUES {str(tuple(input_data))} " \
             f"AS t(bucketfs_conn_name, sub_dir, model_name, text_data));"
 
-    print(query)
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
 
