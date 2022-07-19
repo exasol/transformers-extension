@@ -29,6 +29,13 @@ class BucketFSParams:
                f"{self.path_in_bucket};{self.name}"
 
 
+@dataclass(frozen=True)
+class ModelParams:
+    name: str
+    text_data: str
+    sub_dir: str
+
+
 db_params = DBParams(
     host="127.0.0.1",
     port="9563",
@@ -44,3 +51,8 @@ bucketfs_params = BucketFSParams(
     name="bfsdefault",
     bucket="default",
     path_in_bucket="container")
+
+model_params = ModelParams(
+    name='bert-base-uncased',
+    text_data='The company Exasol is based in Nuremberg',
+    sub_dir='model_sub_dir')
