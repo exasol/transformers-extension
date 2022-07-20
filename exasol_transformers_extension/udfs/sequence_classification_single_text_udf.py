@@ -9,15 +9,14 @@ from exasol_transformers_extension.udfs import bucketfs_operations
 class SequenceClassificationSingleText:
     def __init__(self,
                  exa,
-                 cache_dir=None,
                  batch_size=100,
                  base_model=transformers.AutoModelForSequenceClassification,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
-        self.cache_dir = cache_dir
         self.bacth_size = batch_size
         self.base_model = base_model
         self.tokenizer = tokenizer
+        self.cache_dir = None
         self.last_loaded_model_name = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
@@ -68,11 +67,9 @@ class SequenceClassificationSingleText:
         bucketfs_location = bucketfs_operations.create_bucketfs_location(
             self.exa.get_connection(bucketfs_conn_name))
 
-        if not self.cache_dir:
-            model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
-            self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
-                bucketfs_location=bucketfs_location,
-                model_path=f"container/{model_path}")
+        model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
+        self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
+            bucketfs_location=bucketfs_location, model_path=str(model_path))
 
     def load_models(self, model_name: str) -> None:
         """

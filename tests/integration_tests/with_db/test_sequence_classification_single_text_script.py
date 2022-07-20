@@ -2,7 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_single_text_script(
-        setup_database,
+        upload_language_container, setup_database,
         pyexasol_connection, upload_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database

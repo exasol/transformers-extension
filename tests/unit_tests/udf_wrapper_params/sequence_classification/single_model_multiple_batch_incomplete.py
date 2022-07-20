@@ -16,7 +16,6 @@ def udf_wrapper():
 
     udf = SequenceClassificationSingleText(
         exa,
-        cache_dir="dummy_cache_dir",
         batch_size=params.batch_size,
         base_model=params.mock_factory,
         tokenizer=MockSequenceTokenizer)

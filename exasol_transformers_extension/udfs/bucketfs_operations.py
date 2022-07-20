@@ -1,5 +1,4 @@
 from pathlib import PurePosixPath, Path
-from exasol_bucketfs_utils_python import bucketfs_utils
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
@@ -25,9 +24,8 @@ def upload_model_files_to_bucketfs(
 
 
 def get_local_bucketfs_path(
-        bucketfs_location: BucketFSLocation, model_path: str):
-    bucketfs_local_path = bucketfs_utils.generate_bucket_udf_path(
-        bucketfs_location.bucket_config, model_path)
+        bucketfs_location: BucketFSLocation, model_path: str) -> PurePosixPath:
+    bucketfs_local_path = bucketfs_location.generate_bucket_udf_path(model_path)
     return bucketfs_local_path
 
 
