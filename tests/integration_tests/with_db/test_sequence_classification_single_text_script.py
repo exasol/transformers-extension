@@ -1,4 +1,4 @@
-from tests.utils.parameters import model_params
+from tests.utils.parameters import model_params, bucketfs_params
 
 
 def test_sequence_classification_single_text_script(
@@ -12,7 +12,7 @@ def test_sequence_classification_single_text_script(
     for i in range(n_rows):
         input_data.append((
             bucketfs_conn_name,
-            model_params.sub_dir,
+            f"{bucketfs_params.path_in_bucket}/{model_params.sub_dir}",
             model_params.name,
             model_params.text_data))
 
