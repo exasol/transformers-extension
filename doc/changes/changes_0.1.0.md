@@ -14,7 +14,11 @@
 ### Bug Fixes
 
   - #2: Renamed master branch to main
-  
+
+### Refactoring
+
+ - #12: Updated method for generating bucket udf path
+
 ### Documentation
 
   
