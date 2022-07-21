@@ -1,9 +1,9 @@
 from pathlib import Path
 from exasol_transformers_extension.udfs import bucketfs_operations
-from tests.utils.parameters import model_params, bucketfs_params
+from tests.utils.parameters import model_params
 
 
-SUB_DIR = f"{bucketfs_params.path_in_bucket}/test_downloader_udf_sub_dir"
+SUB_DIR = f"test_downloader_udf_sub_dir"
 
 
 def test_model_downloader_udf_script(
