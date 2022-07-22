@@ -25,6 +25,8 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_si
     SingleModelSingleBatchIncomplete
 
 BFS_CONN_NAME = "test_bfs_conn_name"
+LABEL_SCORE_MAP = {'label_1': 0.21, 'label_2': 0.24,
+                   'label_3': 0.26, 'label_4': 0.29}
 
 
 def create_mock_metadata(udf_wrapper):
@@ -35,14 +37,16 @@ def create_mock_metadata(udf_wrapper):
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("text_data", str, "VARCHAR(2000000)"),
+            Column("first_text", str, "VARCHAR(2000000)"),
+            Column("second_text", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("text_data", str, "VARCHAR(2000000)"),
+            Column("first_text", str, "VARCHAR(2000000)"),
+            Column("second_text", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
         ],
@@ -65,19 +69,17 @@ def test_sequence_classification_single_text(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path
 
     executor = UDFMockExecutor()
-    meta = create_mock_metadata(params.udf_wrapper_single_text)
+    meta = create_mock_metadata(params.udf_wrapper_text_pair)
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
     exa = MockExaEnvironment(
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})
 
-    input_data = [(BFS_CONN_NAME, ) + input
-                  for input in params.inputs_single_text]
+    input_data = [(BFS_CONN_NAME, ) + input for input in params.inputs_pair_text]
     result = executor.run([Group(input_data)], exa)
 
     rounded_actual_result = _get_rounded_result(result)
-    expected_result = [(BFS_CONN_NAME, ) + output
-                       for output in params.outputs_single_text]
+    expected_result = [(BFS_CONN_NAME, ) + output for output in params.outputs_text_pair]
     assert rounded_actual_result == expected_result
 
 
