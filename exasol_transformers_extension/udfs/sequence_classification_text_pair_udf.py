@@ -1,12 +1,11 @@
-from typing import Tuple, List
-
-import pandas as pd
 import torch
+import pandas as pd
 import transformers
+from typing import Tuple, List
 from exasol_transformers_extension.udfs import bucketfs_operations
 
 
-class SequenceClassificationSingleText:
+class SequenceClassificationTextPair:
     def __init__(self,
                  exa,
                  batch_size=100,
@@ -107,8 +106,10 @@ class SequenceClassificationSingleText:
 
         :return: A tuple containing prediction score list and label list
         """
-        sequences = list(model_df['text_data'])
-        tokens = self.last_loaded_tokenizer(sequences, return_tensors="pt")
+        first_sequences = list(model_df['first_text'])
+        second_sequences = list(model_df['second_text'])
+        tokens = self.last_loaded_tokenizer(
+            first_sequences, second_sequences, return_tensors="pt")
         logits = self.last_loaded_model(**tokens).logits
         preds = torch.softmax(logits, dim=1).tolist()
         labels_dict = self.last_loaded_model.config.id2label
