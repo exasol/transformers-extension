@@ -10,6 +10,8 @@ UDF_CALL_TEMPLATES = {
         "model_downloader_udf.jinja.sql",
     "sequence_classification_single_text_udf_call.py":
         "sequence_classification_single_text_udf.jinja.sql",
+    "sequence_classification_text_pair_udf_call.py":
+        "sequence_classification_text_pair_udf.jinja.sql",
 }
 
 
