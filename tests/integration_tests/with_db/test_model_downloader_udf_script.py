@@ -3,7 +3,7 @@ from exasol_transformers_extension.udfs import bucketfs_operations
 from tests.utils.parameters import model_params
 
 
-SUB_DIR = "test_downloader_udf_sub_dir"
+SUB_DIR = f"test_downloader_udf_sub_dir"
 
 
 def test_model_downloader_udf_script(
@@ -21,7 +21,8 @@ def test_model_downloader_udf_script(
             .fetchall()
 
         # assertions
-        bucketfs_files = bucketfs_location.list_files_in_bucketfs(model_path)
+        bucketfs_files = bucketfs_location.list_files_in_bucketfs(
+            str(model_path))
         assert result[0][0] == str(model_path) and bucketfs_files
     finally:
         # revert, delete downloaded model files

@@ -37,9 +37,9 @@ class Context:
 def test_sequence_classification_single_text_udf(
         upload_model_to_local_bucketfs):
 
-    model_path = str(upload_model_to_local_bucketfs)
+    bucketfs_base_path = upload_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file:///{model_path}")
+    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
     n_rows = 3
     batch_size = 2
@@ -53,7 +53,7 @@ def test_sequence_classification_single_text_udf(
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
     sequence_classifier = SequenceClassificationSingleText(
-        exa, cache_dir=model_path, batch_size=batch_size)
+        exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

@@ -33,16 +33,14 @@ def upload_model_to_local_bucketfs(download_model) -> PurePosixPath:
             model_path=Path(model_path),
             bucketfs_location=bucketfs_location)
 
-        yield model_path
+        yield upload_tmpdir_name
 
 
 @pytest.fixture(scope="session")
 def get_local_bucketfs_path() -> str:
-    sub_dir = 'sub_dir'
+    bucket_base_path = ''
     with tempfile.TemporaryDirectory() as tmpdir_name:
-        model_path = PurePosixPath(
-            tmpdir_name,
-            bucketfs_operations.get_model_path(sub_dir, model_params.name))
+        model_path = PurePosixPath(tmpdir_name, bucket_base_path)
 
         yield str(model_path)
 
