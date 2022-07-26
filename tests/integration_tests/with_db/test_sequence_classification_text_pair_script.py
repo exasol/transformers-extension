@@ -1,7 +1,7 @@
 from tests.utils.parameters import model_params, bucketfs_params
 
 
-def test_sequence_classification_single_text_script(
+def test_sequence_classification_text_pair_script(
         upload_language_container, setup_database,
         pyexasol_connection, upload_model_to_bucketfs):
 

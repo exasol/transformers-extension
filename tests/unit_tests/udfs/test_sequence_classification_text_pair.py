@@ -65,7 +65,7 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelSingleBatchIncomplete,
     MultipleModelMultipleBatchMultipleModelsPerBatch
 ])
-def test_sequence_classification_single_text(params, get_local_bucketfs_path):
+def test_sequence_classification_text_pair(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path
 
     executor = UDFMockExecutor()

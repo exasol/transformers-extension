@@ -57,5 +57,9 @@ def test_sequence_classification_single_text_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.groupby('text_data')['label'].nunique().to_list() == \
-           [2] * n_rows and result_df.shape == (n_rows*2, 6)
+    grouped_by_inputs = result_df.groupby('text_data')
+    n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
+    n_labels_per_input_expected = [2] * n_rows
+
+    assert n_unique_labels_per_input == n_labels_per_input_expected \
+           and result_df.shape == (n_rows*2, 6)
