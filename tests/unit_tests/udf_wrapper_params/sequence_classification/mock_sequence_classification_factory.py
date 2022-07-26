@@ -20,8 +20,8 @@ class MockSequenceClassificationModel:
         self._logits = logits
         self.config = config
 
-    def __call__(self, texts):
-        batch_logits = torch.FloatTensor([self._logits] * len(texts))
+    def __call__(self, first_texts, second_texts=None):
+        batch_logits = torch.FloatTensor([self._logits] * len(first_texts))
         return MockSequenceClassificationResult(batch_logits)
 
 
