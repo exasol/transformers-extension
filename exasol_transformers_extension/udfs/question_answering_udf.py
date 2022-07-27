@@ -1,7 +1,6 @@
 import pandas as pd
 import transformers
 from typing import Tuple, List
-from transformers import pipeline
 from exasol_transformers_extension.udfs import bucketfs_operations
 
 
@@ -9,10 +8,12 @@ class QuestionAnswering:
     def __init__(self,
                  exa,
                  batch_size=100,
+                 pipeline=transformers.pipeline,
                  base_model=transformers.AutoModelForQuestionAnswering,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
         self.bacth_size = batch_size
+        self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
         self.cache_dir = None
@@ -108,9 +109,10 @@ class QuestionAnswering:
         """
         questions = list(model_df['question'])
         contexts = list(model_df['context_text'])
-        question_answerer = pipeline("question-answering",
-                                     model=self.last_loaded_model,
-                                     tokenizer=self.last_loaded_tokenizer)
+        question_answerer = self.pipeline(
+            "question-answering",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer)
         results = question_answerer(question=questions, context=contexts)
 
         answers = []
