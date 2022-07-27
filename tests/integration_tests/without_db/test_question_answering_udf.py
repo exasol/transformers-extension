@@ -67,5 +67,5 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
 
     result_df = ctx.get_emitted()[0][0]
     assert result_df.shape == (3, 7) \
-           and list(result_df.columns) == columns + ['score', 'answer'] \
+           and list(result_df.columns) == columns + ['answer', 'score'] \
            and result_df['score'].dtypes == 'float'

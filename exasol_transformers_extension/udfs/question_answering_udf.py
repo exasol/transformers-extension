@@ -135,6 +135,6 @@ class QuestionAnswering:
 
         :return: Prepared dataframe including input data and predictions
         """
-        model_df['score'] = scores
         model_df['answer'] = answers
+        model_df['score'] = scores
         return model_df
