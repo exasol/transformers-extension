@@ -11,6 +11,7 @@ def test_sequence_classification_text_pair_script(
     input_data = []
     for i in range(n_rows):
         input_data.append((
+            "cpu",
             bucketfs_conn_name,
             str(model_params.sub_dir),
             model_params.name,
@@ -18,18 +19,19 @@ def test_sequence_classification_text_pair_script(
             ' '.join((model_params.text_data, str(i)))))
 
     query = f"SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(" \
+            f"t.device_name, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.first_text, " \
             f"t.second_text" \
             f") FROM (VALUES {str(tuple(input_data))} " \
-            f"AS t(bucketfs_conn_name, sub_dir, model_name, " \
-            f"first_text, second_text));"
+            f"AS t(device_name, bucketfs_conn_name, sub_dir, " \
+            f"model_name, first_text, second_text));"
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-
+    print(result)
     # assertions
     assert len(result) == n_rows * n_labels and \
            len(result[0]) == len(input_data[0]) + 2
