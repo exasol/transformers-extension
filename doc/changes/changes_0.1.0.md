@@ -11,6 +11,8 @@
   - #4: Added model downloader UDF 
   - #9: Created sequence classification UDF for single text
   - #14: Created sequence classification UDF for pair text
+  - #16: Created question answering UDF
+  - #21: Added parameter specifying GPU device
   
 ### Bug Fixes
 
