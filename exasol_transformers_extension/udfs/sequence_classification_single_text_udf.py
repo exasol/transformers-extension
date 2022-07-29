@@ -16,12 +16,17 @@ class SequenceClassificationSingleText:
         self.bacth_size = batch_size
         self.base_model = base_model
         self.tokenizer = tokenizer
+        self.device = None
         self.cache_dir = None
         self.last_loaded_model_name = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
 
     def run(self, ctx):
+        device_name = ctx.get_dataframe(1).iloc[0]['device_name']
+        self.device = torch.device(device_name.lower())
+        ctx.reset()
+
         while True:
             batch_df = ctx.get_dataframe(self.bacth_size)
             if batch_df is None:
@@ -29,6 +34,8 @@ class SequenceClassificationSingleText:
 
             result_df = self.get_batched_predictions(batch_df)
             ctx.emit(result_df)
+
+        self.clear_device_memory()
 
     def get_batched_predictions(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -45,6 +52,7 @@ class SequenceClassificationSingleText:
 
             if self.last_loaded_model_name != model_name:
                 self.set_cache_dir(model_df)
+                self.clear_device_memory()
                 self.load_models(model_name)
 
             model_pred_df = self.get_prediction(model_df)
@@ -108,7 +116,9 @@ class SequenceClassificationSingleText:
         :return: A tuple containing prediction score list and label list
         """
         sequences = list(model_df['text_data'])
-        tokens = self.last_loaded_tokenizer(sequences, return_tensors="pt")
+        tokens = self.last_loaded_tokenizer(
+            sequences, return_tensors="pt").to(self.device)
+        self.last_loaded_model = self.last_loaded_model.to(self.device)
         logits = self.last_loaded_model(**tokens).logits
         preds = torch.softmax(logits, dim=1).tolist()
         labels_dict = self.last_loaded_model.config.id2label
@@ -148,3 +158,13 @@ class SequenceClassificationSingleText:
         model_df['score'] = sum(preds, [])
 
         return model_df
+
+    def clear_device_memory(self):
+        """
+        Delete models and free device memory
+        """
+
+        del self.last_loaded_model
+        del self.last_loaded_tokenizer
+        torch.cuda.empty_cache()
+
