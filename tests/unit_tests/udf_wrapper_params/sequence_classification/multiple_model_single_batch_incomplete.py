@@ -47,7 +47,7 @@ def udf_wrapper_text_pair():
 
 class MultipleModelSingleBatchIncomplete:
     """
-    multiple model, single batch, last batch complete
+    multiple model, single batch, last batch incomplete
     """
 
     batch_size = 9
