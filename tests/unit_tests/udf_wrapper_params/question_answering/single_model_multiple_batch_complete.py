@@ -32,9 +32,9 @@ class SingleModelMultipleBatchComplete:
     data_size = 4
 
     input_data = \
-        [("sub_dir1", "model1", "question", "context")] * data_size
+        [("cpu", "sub_dir1", "model1", "question", "context")] * data_size
     output_data = \
-        [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
+        [("cpu", "sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size
 
     mock_factory = MockQuestionAnsweringFactory({

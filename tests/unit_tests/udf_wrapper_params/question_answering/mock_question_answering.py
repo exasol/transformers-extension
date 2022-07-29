@@ -24,10 +24,12 @@ class MockPipeline:
     def __init__(self,
                  task_type: str,
                  model: MockQuestionAnsweringModel,
-                 tokenizer: MockSequenceTokenizer):
+                 tokenizer: MockSequenceTokenizer,
+                 device : str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
+        self.device = device
 
     def __call__(self, question: List[str], context: List[str]) -> \
             List[Dict[str, Union[str, float]]]:

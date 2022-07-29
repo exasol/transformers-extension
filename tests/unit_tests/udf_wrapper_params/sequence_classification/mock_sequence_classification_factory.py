@@ -19,10 +19,15 @@ class MockSequenceClassificationModel:
     def __init__(self, config: Config, logits: List[float]):
         self._logits = logits
         self.config = config
+        self.device_name = None
 
     def __call__(self, first_texts, second_texts=None):
         batch_logits = torch.FloatTensor([self._logits] * len(first_texts))
         return MockSequenceClassificationResult(batch_logits)
+
+    def to(self, device_name: str):
+        self.device_name = device_name
+        return self
 
 
 class MockSequenceClassificationFactory:

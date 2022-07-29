@@ -34,6 +34,7 @@ def create_mock_metadata(udf_wrapper):
         script_code_wrapper_function=udf_wrapper,
         input_type="SET",
         input_columns=[
+            Column("device_name", str, "VARCHAR(2000000)"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
@@ -42,6 +43,7 @@ def create_mock_metadata(udf_wrapper):
         ],
         output_type="EMITS",
         output_columns=[
+            Column("device_name", str, "VARCHAR(2000000)"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
@@ -75,11 +77,13 @@ def test_sequence_classification_text_pair(params, get_local_bucketfs_path):
         metadata=meta,
         connections={BFS_CONN_NAME: bucketfs_connection})
 
-    input_data = [(BFS_CONN_NAME, ) + input for input in params.inputs_pair_text]
+    input_data = [(input[0], BFS_CONN_NAME) + input[1:]
+                  for input in params.inputs_pair_text]
     result = executor.run([Group(input_data)], exa)
 
     rounded_actual_result = _get_rounded_result(result)
-    expected_result = [(BFS_CONN_NAME, ) + output for output in params.outputs_text_pair]
+    expected_result = [(output[0], BFS_CONN_NAME) + output[1:]
+                       for output in params.outputs_text_pair]
     assert rounded_actual_result == expected_result
 
 
