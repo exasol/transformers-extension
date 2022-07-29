@@ -25,6 +25,9 @@ class Context:
     def emit(self, *args):
         self._emitted.append(args)
 
+    def reset(self):
+        self._is_accessed_once = False
+
     def get_emitted(self):
         return self._emitted
 
@@ -44,6 +47,7 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
     batch_size = 2
     question = "Where is the Exasol?"
     sample_data = [(
+        "CPU",
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
@@ -51,6 +55,7 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
         model_params.text_data
     ) for _ in range(n_rows)]
     columns = [
+        'device_name',
         'bucketfs_conn',
         'sub_dir',
         'model_name',
@@ -66,6 +71,6 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape == (3, 7) \
+    assert result_df.shape == (3, 8) \
            and list(result_df.columns) == columns + ['answer', 'score'] \
            and result_df['score'].dtypes == 'float'

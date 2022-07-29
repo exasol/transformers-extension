@@ -25,6 +25,9 @@ class Context:
     def emit(self, *args):
         self._emitted.append(args)
 
+    def reset(self):
+        self._is_accessed_once = False
+
     def get_emitted(self):
         return self._emitted
 
@@ -44,6 +47,7 @@ def test_sequence_classification_text_pair_udf(
     n_rows = 3
     batch_size = 2
     sample_data = [(
+        "CPU",
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
@@ -51,11 +55,13 @@ def test_sequence_classification_text_pair_udf(
         model_params.text_data + str(i * i)) for i in range(n_rows)]
     sample_df = pd.DataFrame(
         data=sample_data,
-        columns=['bucketfs_conn',
-                 'sub_dir',
-                 'model_name',
-                 'first_text',
-                 'second_text'])
+        columns=[
+            'device_name',
+            'bucketfs_conn',
+            'sub_dir',
+            'model_name',
+            'first_text',
+            'second_text'])
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
@@ -69,4 +75,4 @@ def test_sequence_classification_text_pair_udf(
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
     n_labels_per_input_expected = [2] * n_rows
     assert n_unique_labels_per_input == n_labels_per_input_expected \
-           and result_df.shape == (n_rows*2, 7)
+           and result_df.shape == (n_rows*2, 8)
