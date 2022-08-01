@@ -5,7 +5,8 @@ packages = \
 ['exasol_transformers_extension',
  'exasol_transformers_extension.deployment',
  'exasol_transformers_extension.resources',
- 'exasol_transformers_extension.udfs']
+ 'exasol_transformers_extension.udfs',
+ 'exasol_transformers_extension.utils']
 
 package_data = \
 {'': ['*'], 'exasol_transformers_extension.resources': ['templates/*']}

@@ -3,6 +3,7 @@ import pandas as pd
 import transformers
 from typing import Tuple, List, Optional
 from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import device_management
 
 
 class SequenceClassificationSingleText:
@@ -23,7 +24,7 @@ class SequenceClassificationSingleText:
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
-        self._set_device(device_id)
+        self.device = device_management.get_torch_device(device_id)
         ctx.reset()
 
         while True:
@@ -35,16 +36,6 @@ class SequenceClassificationSingleText:
             ctx.emit(result_df)
 
         self.clear_device_memory()
-
-    def _set_device(self, device_id: Optional[int]) -> None:
-        """
-        Set device to push models
-
-        :param device_id: Either the id of cuda device or None implying CPU
-        """
-        device_name = f"cuda:{device_id}" \
-            if torch.cuda.is_available() and device_id is not None else "cpu"
-        self.device = torch.device(device_name)
 
     def get_batched_predictions(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
