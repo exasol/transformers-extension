@@ -1,7 +1,7 @@
 import torch
 import pandas as pd
 import transformers
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from exasol_transformers_extension.udfs import bucketfs_operations
 
 
@@ -23,13 +23,11 @@ class SequenceClassificationTextPair:
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
-        device_name = f"cuda:{device_id}" \
-            if torch.cuda.is_available() and device_id is not None else "cpu"
-        self.device = torch.device(device_name)
+        self._set_device(device_id)
         ctx.reset()
 
         while True:
-            batch_df = ctx.get_dataframe(self.bacth_size)
+            batch_df = ctx.get_dataframe(num_rows=self.bacth_size, start_col=1)
             if batch_df is None:
                 break
 
@@ -37,6 +35,16 @@ class SequenceClassificationTextPair:
             ctx.emit(result_df)
 
         self.clear_device_memory()
+
+    def _set_device(self, device_id: Optional[int]) -> None:
+        """
+        Set device to push models
+
+        :param device_id: Either the id of cuda device or None implying CPU
+        """
+        device_name = f"cuda:{device_id}" \
+            if torch.cuda.is_available() and device_id is not None else "cpu"
+        self.device = torch.device(device_name)
 
     def get_batched_predictions(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -157,9 +165,6 @@ class SequenceClassificationTextPair:
         # column of the dataframe. We use for this the sum function with a
         # list as initial value and + operator of lists
         model_df['score'] = sum(preds, [])
-
-        # extract device_id column
-        model_df = model_df[model_df.columns[1:]]
 
         return model_df
 

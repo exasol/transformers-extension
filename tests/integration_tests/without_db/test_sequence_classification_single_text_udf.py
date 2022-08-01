@@ -31,8 +31,9 @@ class Context:
     def get_emitted(self):
         return self._emitted
 
-    def get_dataframe(self, num_rows='all'):
-        return_df = None if self._is_accessed_once else self.input_df
+    def get_dataframe(self, num_rows='all', start_col=0):
+        return_df = None if self._is_accessed_once \
+            else self.input_df[self.input_df.columns[start_col:]]
         self._is_accessed_once = True
         return return_df
 

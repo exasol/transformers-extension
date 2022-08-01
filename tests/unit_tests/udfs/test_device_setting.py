@@ -1,9 +1,13 @@
-import pandas as pd
 from typing import Dict
-from tests.utils.parameters import model_params
-from exasol_udf_mock_python.connection import Connection
+from unittest.mock import patch, MagicMock
+
+import pandas as pd
+import pytest
+
 from exasol_transformers_extension.udfs.question_answering_udf import \
     QuestionAnswering
+from tests.utils.parameters import model_params
+from exasol_udf_mock_python.connection import Connection
 
 
 class ExaEnvironment:
@@ -20,35 +24,39 @@ class Context:
     def __init__(self, input_df):
         self.input_df = input_df
         self._emitted = []
-        self._is_accessed_once = False
 
     def emit(self, *args):
         self._emitted.append(args)
 
     def reset(self):
-        self._is_accessed_once = False
+        pass
 
     def get_emitted(self):
         return self._emitted
 
     def get_dataframe(self, num_rows='all', start_col=0):
-        return_df = None if self._is_accessed_once \
-            else self.input_df[self.input_df.columns[start_col:]]
-        self._is_accessed_once = True
+        return_df = self.input_df[self.input_df.columns[start_col:]] \
+            if num_rows > 0 else None
         return return_df
 
 
-def test_question_answering_udf(upload_model_to_local_bucketfs):
+class MockedTorchLibrary:
+    @staticmethod
+    def is_available():
+        return True
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+
+@patch('torch.cuda', MagicMock(return_value=MockedTorchLibrary))
+@pytest.mark.parametrize("device_id, expected",
+                         [(None, "cpu"), (0, "cuda:0"), (1, "cuda:1")])
+def test_device_setting(device_id, expected):
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = Connection(address=f"file://test_path")
 
     n_rows = 3
-    batch_size = 2
     question = "Where is the Exasol?"
     sample_data = [(
-        None,
+        device_id,
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
@@ -67,11 +75,12 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = QuestionAnswering(
-        exa, batch_size=batch_size)
+    sequence_classifier = QuestionAnswering(exa, batch_size=0)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape == (3, 7) \
-           and list(result_df.columns) == columns[1:] + ['answer', 'score'] \
-           and result_df['score'].dtypes == 'float'
+    device = sequence_classifier.device
+    device_name = f"{device.type}:{device.index}" \
+        if device.index is not None else device.type
+    assert device_name == expected
+
+
