@@ -87,7 +87,7 @@ class SequenceClassificationTextPair:
         :param model_name: The model name to be loaded
         """
         self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir)
+            model_name, cache_dir=self.cache_dir).to(self.device)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_model_name = model_name
@@ -119,9 +119,7 @@ class SequenceClassificationTextPair:
         first_sequences = list(model_df['first_text'])
         second_sequences = list(model_df['second_text'])
         tokens = self.last_loaded_tokenizer(
-            first_sequences, second_sequences,
-            return_tensors="pt").to(self.device)
-        self.last_loaded_model = self.last_loaded_model.to(self.device)
+            first_sequences, second_sequences, return_tensors="pt")
         logits = self.last_loaded_model(**tokens).logits
         preds = torch.softmax(logits, dim=1).tolist()
         labels_dict = self.last_loaded_model.config.id2label

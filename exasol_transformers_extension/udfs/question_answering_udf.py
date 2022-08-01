@@ -22,6 +22,7 @@ class QuestionAnswering:
         self.last_loaded_model_name = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
+        self.last_created_pipeline = None
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -92,6 +93,11 @@ class QuestionAnswering:
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+        self.last_created_pipeline = self.pipeline(
+            "question-answering",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer,
+            device=self.device)
         self.last_loaded_model_name = model_name
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
@@ -120,12 +126,8 @@ class QuestionAnswering:
         """
         questions = list(model_df['question'])
         contexts = list(model_df['context_text'])
-        question_answerer = self.pipeline(
-            "question-answering",
-            model=self.last_loaded_model,
-            tokenizer=self.last_loaded_tokenizer,
-            device=self.device)
-        results = question_answerer(question=questions, context=contexts)
+        results = self.last_created_pipeline(
+            question=questions, context=contexts)
 
         answers = []
         scores = []
