@@ -32,9 +32,9 @@ class SingleModelSingleBatchIncomplete:
     data_size = 1
 
     input_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context")] * data_size
+        [(None, "sub_dir1", "model1", "question", "context")] * data_size
     output_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
+        [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size
 
     mock_factory = MockQuestionAnsweringFactory({

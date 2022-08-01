@@ -1,5 +1,5 @@
 CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_QUESTION_ANSWERING_UDF"(
-    device_name VARCHAR(2000000),
+    device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
@@ -7,7 +7,6 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_QUESTION_ANSWERING_UDF"(
     context_text VARCHAR(2000000)
     ORDER BY model_name
 )EMITS (
-    device_name VARCHAR(2000000),
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),

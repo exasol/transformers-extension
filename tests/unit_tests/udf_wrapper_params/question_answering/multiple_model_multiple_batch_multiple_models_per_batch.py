@@ -32,18 +32,18 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     data_size = 1
 
     input_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context")] * data_size + \
-        [("cpu", "sub_dir2", "model2", "question", "context")] * data_size + \
-        [("cpu", "sub_dir3", "model3", "question", "context")] * data_size + \
-        [("cpu", "sub_dir4", "model4", "question", "context")] * data_size
+        [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
+        [(None, "sub_dir2", "model2", "question", "context")] * data_size + \
+        [(None, "sub_dir3", "model3", "question", "context")] * data_size + \
+        [(None, "sub_dir4", "model4", "question", "context")] * data_size
     output_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
+        [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
-        [("cpu", "sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
+        [("sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
         * data_size + \
-        [("cpu", "sub_dir3", "model3", "question", "context", "answer 3", 0.3)] \
+        [("sub_dir3", "model3", "question", "context", "answer 3", 0.3)] \
         * data_size + \
-        [("cpu", "sub_dir4", "model4", "question", "context", "answer 4", 0.4)] \
+        [("sub_dir4", "model4", "question", "context", "answer 4", 0.4)] \
         * data_size
 
     mock_factory = MockQuestionAnsweringFactory({

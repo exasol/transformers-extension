@@ -66,21 +66,21 @@ class SingleModelMultipleBatchComplete:
     })
 
     inputs_single_text = \
-        [("cpu", "sub_dir1", "model1", "My test text")] * data_size
+        [(None, "sub_dir1", "model1", "My test text")] * data_size
     inputs_pair_text = \
-        [("cpu", "sub_dir1", "model1", "My text 1", "My text 2")] * data_size
+        [(None, "sub_dir1", "model1", "My text 1", "My text 2")] * data_size
 
     outputs_single_text = \
-        [("cpu", "sub_dir1", "model1", "My test text", "label1", 0.21),
-         ("cpu", "sub_dir1", "model1", "My test text", "label2", 0.24),
-         ("cpu", "sub_dir1", "model1", "My test text", "label3", 0.26),
-         ("cpu", "sub_dir1", "model1", "My test text", "label4", 0.29)] \
+        [("sub_dir1", "model1", "My test text", "label1", 0.21),
+         ("sub_dir1", "model1", "My test text", "label2", 0.24),
+         ("sub_dir1", "model1", "My test text", "label3", 0.26),
+         ("sub_dir1", "model1", "My test text", "label4", 0.29)] \
         * data_size
     outputs_text_pair = \
-        [("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label1", 0.21),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label2", 0.24),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label3", 0.26),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label4", 0.29)] \
+        [("sub_dir1", "model1", "My text 1", "My text 2", "label1", 0.21),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label2", 0.24),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label3", 0.26),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label4", 0.29)] \
         * data_size
 
     udf_wrapper_single_text = udf_wrapper_single_text

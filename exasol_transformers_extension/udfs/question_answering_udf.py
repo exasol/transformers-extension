@@ -24,8 +24,10 @@ class QuestionAnswering:
         self.last_loaded_tokenizer = None
 
     def run(self, ctx):
-        device_name = ctx.get_dataframe(1).iloc[0]['device_name']
-        self.device = torch.device(device_name.lower())
+        device_id = ctx.get_dataframe(1).iloc[0]['device_id']
+        device_name = f"cuda:{device_id}" \
+            if torch.cuda.is_available() and device_id is not None else "cpu"
+        self.device = torch.device(device_name)
         ctx.reset()
 
         while True:
@@ -149,6 +151,10 @@ class QuestionAnswering:
         """
         model_df['answer'] = answers
         model_df['score'] = scores
+
+        # extract device_id column
+        model_df = model_df[model_df.columns[1:]]
+
         return model_df
 
     def clear_device_memory(self):

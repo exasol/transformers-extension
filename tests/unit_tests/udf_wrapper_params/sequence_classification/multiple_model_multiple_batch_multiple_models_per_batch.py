@@ -75,52 +75,52 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     })
 
     inputs_single_text = \
-        [("cpu", "sub_dir1", "model1", "My test text")] * data_size + \
-        [("cpu", "sub_dir2", "model2", "My test text")] * data_size + \
-        [("cpu", "sub_dir3", "model3", "My test text")] * data_size + \
-        [("cpu", "sub_dir4", "model4", "My test text")] * data_size
+        [(None, "sub_dir1", "model1", "My test text")] * data_size + \
+        [(None, "sub_dir2", "model2", "My test text")] * data_size + \
+        [(None, "sub_dir3", "model3", "My test text")] * data_size + \
+        [(None, "sub_dir4", "model4", "My test text")] * data_size
 
     inputs_pair_text = \
-        [("cpu", "sub_dir1", "model1", "My text 1", "My text 2")] * data_size + \
-        [("cpu", "sub_dir2", "model2", "My text 1", "My text 2")] * data_size + \
-        [("cpu", "sub_dir3", "model3", "My text 1", "My text 2")] * data_size + \
-        [("cpu", "sub_dir4", "model4", "My text 1", "My text 2")] * data_size
+        [(None, "sub_dir1", "model1", "My text 1", "My text 2")] * data_size + \
+        [(None, "sub_dir2", "model2", "My text 1", "My text 2")] * data_size + \
+        [(None, "sub_dir3", "model3", "My text 1", "My text 2")] * data_size + \
+        [(None, "sub_dir4", "model4", "My text 1", "My text 2")] * data_size
 
     outputs_single_text = \
-        [("cpu", "sub_dir1", "model1", "My test text", "label1", 0.21),
-         ("cpu", "sub_dir1", "model1", "My test text", "label2", 0.24),
-         ("cpu", "sub_dir1", "model1", "My test text", "label3", 0.26),
-         ("cpu", "sub_dir1", "model1", "My test text", "label4", 0.29)] + \
-        [("cpu", "sub_dir2", "model2", "My test text", "label1", 0.21),
-         ("cpu", "sub_dir2", "model2", "My test text", "label2", 0.24),
-         ("cpu", "sub_dir2", "model2", "My test text", "label3", 0.26),
-         ("cpu", "sub_dir2", "model2", "My test text", "label4", 0.29)] + \
-        [("cpu", "sub_dir3", "model3", "My test text", "label1", 0.21),
-         ("cpu", "sub_dir3", "model3", "My test text", "label2", 0.24),
-         ("cpu", "sub_dir3", "model3", "My test text", "label3", 0.26),
-         ("cpu", "sub_dir3", "model3", "My test text", "label4", 0.29)] + \
-        [("cpu", "sub_dir4", "model4", "My test text", "label1", 0.21),
-         ("cpu", "sub_dir4", "model4", "My test text", "label2", 0.24),
-         ("cpu", "sub_dir4", "model4", "My test text", "label3", 0.26),
-         ("cpu", "sub_dir4", "model4", "My test text", "label4", 0.29)]
+        [("sub_dir1", "model1", "My test text", "label1", 0.21),
+         ("sub_dir1", "model1", "My test text", "label2", 0.24),
+         ("sub_dir1", "model1", "My test text", "label3", 0.26),
+         ("sub_dir1", "model1", "My test text", "label4", 0.29)] + \
+        [("sub_dir2", "model2", "My test text", "label1", 0.21),
+         ("sub_dir2", "model2", "My test text", "label2", 0.24),
+         ("sub_dir2", "model2", "My test text", "label3", 0.26),
+         ("sub_dir2", "model2", "My test text", "label4", 0.29)] + \
+        [("sub_dir3", "model3", "My test text", "label1", 0.21),
+         ("sub_dir3", "model3", "My test text", "label2", 0.24),
+         ("sub_dir3", "model3", "My test text", "label3", 0.26),
+         ("sub_dir3", "model3", "My test text", "label4", 0.29)] + \
+        [("sub_dir4", "model4", "My test text", "label1", 0.21),
+         ("sub_dir4", "model4", "My test text", "label2", 0.24),
+         ("sub_dir4", "model4", "My test text", "label3", 0.26),
+         ("sub_dir4", "model4", "My test text", "label4", 0.29)]
 
     outputs_text_pair = \
-        [("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label1", 0.21),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label2", 0.24),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label3", 0.26),
-         ("cpu", "sub_dir1", "model1", "My text 1", "My text 2", "label4", 0.29)] + \
-        [("cpu", "sub_dir2", "model2", "My text 1", "My text 2", "label1", 0.21),
-         ("cpu", "sub_dir2", "model2", "My text 1", "My text 2", "label2", 0.24),
-         ("cpu", "sub_dir2", "model2", "My text 1", "My text 2", "label3", 0.26),
-         ("cpu", "sub_dir2", "model2", "My text 1", "My text 2", "label4", 0.29)] + \
-        [("cpu", "sub_dir3", "model3", "My text 1", "My text 2", "label1", 0.21),
-         ("cpu", "sub_dir3", "model3", "My text 1", "My text 2", "label2", 0.24),
-         ("cpu", "sub_dir3", "model3", "My text 1", "My text 2", "label3", 0.26),
-         ("cpu", "sub_dir3", "model3", "My text 1", "My text 2", "label4", 0.29)] + \
-        [("cpu", "sub_dir4", "model4", "My text 1", "My text 2", "label1", 0.21),
-         ("cpu", "sub_dir4", "model4", "My text 1", "My text 2", "label2", 0.24),
-         ("cpu", "sub_dir4", "model4", "My text 1", "My text 2", "label3", 0.26),
-         ("cpu", "sub_dir4", "model4", "My text 1", "My text 2", "label4", 0.29)]
+        [("sub_dir1", "model1", "My text 1", "My text 2", "label1", 0.21),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label2", 0.24),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label3", 0.26),
+         ("sub_dir1", "model1", "My text 1", "My text 2", "label4", 0.29)] + \
+        [("sub_dir2", "model2", "My text 1", "My text 2", "label1", 0.21),
+         ("sub_dir2", "model2", "My text 1", "My text 2", "label2", 0.24),
+         ("sub_dir2", "model2", "My text 1", "My text 2", "label3", 0.26),
+         ("sub_dir2", "model2", "My text 1", "My text 2", "label4", 0.29)] + \
+        [("sub_dir3", "model3", "My text 1", "My text 2", "label1", 0.21),
+         ("sub_dir3", "model3", "My text 1", "My text 2", "label2", 0.24),
+         ("sub_dir3", "model3", "My text 1", "My text 2", "label3", 0.26),
+         ("sub_dir3", "model3", "My text 1", "My text 2", "label4", 0.29)] + \
+        [("sub_dir4", "model4", "My text 1", "My text 2", "label1", 0.21),
+         ("sub_dir4", "model4", "My text 1", "My text 2", "label2", 0.24),
+         ("sub_dir4", "model4", "My text 1", "My text 2", "label3", 0.26),
+         ("sub_dir4", "model4", "My text 1", "My text 2", "label4", 0.29)]
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair

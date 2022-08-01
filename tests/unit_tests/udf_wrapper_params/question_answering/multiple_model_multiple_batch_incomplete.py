@@ -32,12 +32,12 @@ class MultipleModelMultipleBatchIncomplete:
     data_size = 2
 
     input_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context")] * data_size + \
-        [("cpu", "sub_dir2", "model2", "question", "context")] * data_size
+        [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
+        [(None, "sub_dir2", "model2", "question", "context")] * data_size
     output_data = \
-        [("cpu", "sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
+        [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
-        [("cpu", "sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
+        [("sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
         * data_size
 
     mock_factory = MockQuestionAnsweringFactory({

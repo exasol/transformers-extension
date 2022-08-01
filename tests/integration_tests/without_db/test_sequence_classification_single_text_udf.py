@@ -47,7 +47,7 @@ def test_sequence_classification_single_text_udf(
     n_rows = 3
     batch_size = 2
     sample_data = [(
-        "CPU",
+        None,
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
@@ -56,7 +56,7 @@ def test_sequence_classification_single_text_udf(
     sample_df = pd.DataFrame(
         data=sample_data,
         columns=[
-            'device_name',
+            'device_id',
             'bucketfs_conn',
             'sub_dir',
             'model_name',
@@ -74,4 +74,4 @@ def test_sequence_classification_single_text_udf(
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
     n_labels_per_input_expected = [2] * n_rows
     assert n_unique_labels_per_input == n_labels_per_input_expected \
-           and result_df.shape == (n_rows*2, 7)
+           and result_df.shape == (n_rows*2, 6)
