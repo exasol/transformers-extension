@@ -1,5 +1,8 @@
 import pandas as pd
 from typing import Dict
+
+import pytest
+import torch
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.sequence_classification_text_pair_udf import \
     SequenceClassificationTextPair
@@ -38,8 +41,12 @@ class Context:
         return return_df
 
 
+@pytest.mark.parametrize("device_id", [None, 0])
 def test_sequence_classification_text_pair_udf(
-        upload_model_to_local_bucketfs):
+        device_id, upload_model_to_local_bucketfs):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
 
     bucketfs_base_path = upload_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
