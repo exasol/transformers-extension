@@ -1,8 +1,9 @@
 import torch
 import pandas as pd
 import transformers
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import device_management
 
 
 class SequenceClassificationTextPair:
@@ -15,19 +16,26 @@ class SequenceClassificationTextPair:
         self.bacth_size = batch_size
         self.base_model = base_model
         self.tokenizer = tokenizer
+        self.device = None
         self.cache_dir = None
         self.last_loaded_model_name = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
 
     def run(self, ctx):
+        device_id = ctx.get_dataframe(1).iloc[0]['device_id']
+        self.device = device_management.get_torch_device(device_id)
+        ctx.reset()
+
         while True:
-            batch_df = ctx.get_dataframe(self.bacth_size)
+            batch_df = ctx.get_dataframe(num_rows=self.bacth_size, start_col=1)
             if batch_df is None:
                 break
 
             result_df = self.get_batched_predictions(batch_df)
             ctx.emit(result_df)
+
+        self.clear_device_memory()
 
     def get_batched_predictions(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -44,6 +52,7 @@ class SequenceClassificationTextPair:
 
             if self.last_loaded_model_name != model_name:
                 self.set_cache_dir(model_df)
+                self.clear_device_memory()
                 self.load_models(model_name)
 
             model_pred_df = self.get_prediction(model_df)
@@ -77,7 +86,7 @@ class SequenceClassificationTextPair:
         :param model_name: The model name to be loaded
         """
         self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir)
+            model_name, cache_dir=self.cache_dir).to(self.device)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_model_name = model_name
@@ -149,3 +158,12 @@ class SequenceClassificationTextPair:
         model_df['score'] = sum(preds, [])
 
         return model_df
+
+    def clear_device_memory(self):
+        """
+        Delete models and free device memory
+        """
+
+        del self.last_loaded_model
+        del self.last_loaded_tokenizer
+        torch.cuda.empty_cache()

@@ -69,11 +69,11 @@ class MultipleModelSingleBatchIncomplete:
     })
 
     inputs_single_text = \
-        [("sub_dir1", "model1", "My test text")] * data_size + \
-        [("sub_dir2", "model2", "My test text")] * data_size
+        [(None, "sub_dir1", "model1", "My test text")] * data_size + \
+        [(None, "sub_dir2", "model2", "My test text")] * data_size
     inputs_pair_text = \
-        [("sub_dir1", "model1", "My text 1", "My text 2")] * data_size + \
-        [("sub_dir2", "model2", "My text 1", "My text 2")] * data_size
+        [(None, "sub_dir1", "model1", "My text 1", "My text 2")] * data_size + \
+        [(None, "sub_dir2", "model2", "My text 1", "My text 2")] * data_size
 
     outputs_single_text = \
         [("sub_dir1", "model1", "My test text", "label1", 0.21),

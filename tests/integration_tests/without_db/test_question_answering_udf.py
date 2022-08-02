@@ -1,5 +1,9 @@
 import pandas as pd
 from typing import Dict
+
+import pytest
+import torch
+
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.question_answering_udf import \
@@ -25,16 +29,24 @@ class Context:
     def emit(self, *args):
         self._emitted.append(args)
 
+    def reset(self):
+        self._is_accessed_once = False
+
     def get_emitted(self):
         return self._emitted
 
-    def get_dataframe(self, num_rows='all'):
-        return_df = None if self._is_accessed_once else self.input_df
+    def get_dataframe(self, num_rows='all', start_col=0):
+        return_df = None if self._is_accessed_once \
+            else self.input_df[self.input_df.columns[start_col:]]
         self._is_accessed_once = True
         return return_df
 
 
-def test_question_answering_udf(upload_model_to_local_bucketfs):
+@pytest.mark.parametrize("device_id", [None, 0])
+def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
 
     bucketfs_base_path = upload_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -44,6 +56,7 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
     batch_size = 2
     question = "Where is the Exasol?"
     sample_data = [(
+        None,
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
@@ -51,6 +64,7 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
         model_params.text_data
     ) for _ in range(n_rows)]
     columns = [
+        'device_id',
         'bucketfs_conn',
         'sub_dir',
         'model_name',
@@ -67,5 +81,5 @@ def test_question_answering_udf(upload_model_to_local_bucketfs):
 
     result_df = ctx.get_emitted()[0][0]
     assert result_df.shape == (3, 7) \
-           and list(result_df.columns) == columns + ['answer', 'score'] \
+           and list(result_df.columns) == columns[1:] + ['answer', 'score'] \
            and result_df['score'].dtypes == 'float'

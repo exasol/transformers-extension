@@ -1,7 +1,9 @@
+import torch
 import pandas as pd
 import transformers
 from typing import Tuple, List
 from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import device_management
 
 
 class QuestionAnswering:
@@ -16,19 +18,27 @@ class QuestionAnswering:
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
+        self.device = None
         self.cache_dir = None
         self.last_loaded_model_name = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
+        self.last_created_pipeline = None
 
     def run(self, ctx):
+        device_id = ctx.get_dataframe(1).iloc[0]['device_id']
+        self.device = device_management.get_torch_device(device_id)
+        ctx.reset()
+
         while True:
-            batch_df = ctx.get_dataframe(self.bacth_size)
+            batch_df = ctx.get_dataframe(num_rows=self.bacth_size, start_col=1)
             if batch_df is None:
                 break
 
             result_df = self.get_batched_predictions(batch_df)
             ctx.emit(result_df)
+
+        self.clear_device_memory()
 
     def get_batched_predictions(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -45,6 +55,7 @@ class QuestionAnswering:
 
             if self.last_loaded_model_name != model_name:
                 self.set_cache_dir(model_df)
+                self.clear_device_memory()
                 self.load_models(model_name)
 
             model_pred_df = self.get_prediction(model_df)
@@ -81,6 +92,11 @@ class QuestionAnswering:
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+        self.last_created_pipeline = self.pipeline(
+            "question-answering",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer,
+            device=self.device)
         self.last_loaded_model_name = model_name
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
@@ -109,11 +125,8 @@ class QuestionAnswering:
         """
         questions = list(model_df['question'])
         contexts = list(model_df['context_text'])
-        question_answerer = self.pipeline(
-            "question-answering",
-            model=self.last_loaded_model,
-            tokenizer=self.last_loaded_tokenizer)
-        results = question_answerer(question=questions, context=contexts)
+        results = self.last_created_pipeline(
+            question=questions, context=contexts)
 
         answers = []
         scores = []
@@ -139,4 +152,14 @@ class QuestionAnswering:
         """
         model_df['answer'] = answers
         model_df['score'] = scores
+
         return model_df
+
+    def clear_device_memory(self):
+        """
+        Delete models and free device memory
+        """
+
+        del self.last_loaded_model
+        del self.last_loaded_tokenizer
+        torch.cuda.empty_cache()

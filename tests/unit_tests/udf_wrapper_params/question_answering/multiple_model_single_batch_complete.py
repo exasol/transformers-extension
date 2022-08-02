@@ -32,8 +32,8 @@ class MultipleModelSingleBatchComplete:
     data_size = 2
 
     input_data = \
-        [("sub_dir1", "model1", "question", "context")] * data_size + \
-        [("sub_dir2", "model2", "question", "context")] * data_size
+        [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
+        [(None, "sub_dir2", "model2", "question", "context")] * data_size
     output_data = \
         [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
