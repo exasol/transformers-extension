@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from exasol_transformers_extension.utils import device_management
 
 
-@patch('torch.cuda.is_available', MagicMock(return_value=MagicMock(True)))
+@patch('torch.cuda.is_available', MagicMock(return_value=True))
 @pytest.mark.parametrize("device_id, expected",
                          [(None, "cpu"), (0, "cuda:0"), (1, "cuda:1")])
 def test_getting_torch_device_available(device_id, expected):
