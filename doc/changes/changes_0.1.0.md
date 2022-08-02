@@ -17,6 +17,7 @@
 ### Bug Fixes
 
   - #2: Renamed master branch to main
+  - #18: Corrected model filtering in prediction UDFs
 
 ### Refactoring
 

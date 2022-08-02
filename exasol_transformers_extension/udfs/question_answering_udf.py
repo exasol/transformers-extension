@@ -50,8 +50,13 @@ class QuestionAnswering:
         :return: Prediction results of the corresponding dataframe
         """
         result_df_list = []
-        for model_name in batch_df['model_name'].unique():
-            model_df = batch_df[batch_df['model_name'] == model_name]
+        unique_values = batch_df[
+            ['model_name', 'bucketfs_conn', 'sub_dir']].drop_duplicates().values
+        for model_name, bucketfs_conn, sub_dir in unique_values:
+            model_df = batch_df[
+                (batch_df['model_name'] == model_name) &
+                (batch_df['bucketfs_conn'] == bucketfs_conn) &
+                (batch_df['sub_dir'] == sub_dir)]
 
             if self.last_loaded_model_name != model_name:
                 self.set_cache_dir(model_df)
