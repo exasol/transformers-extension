@@ -6,6 +6,8 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_locations import \
+    MultipleModelLocations
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_multiple_batch_incomplete import \
@@ -63,7 +65,8 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelSingleBatchIncomplete,
     MultipleModelMultipleBatchComplete,
     MultipleModelMultipleBatchIncomplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
+    MultipleModelLocations
 ])
 def test_question_answering(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path

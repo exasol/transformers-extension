@@ -10,8 +10,7 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        multiple_model_multiple_batch_complete import \
-        MultipleModelMultipleBatchComplete as params
+        multiple_model_locations import MultipleModelLocations as params
 
     udf = QuestionAnswering(
         exa,
@@ -24,31 +23,30 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class MultipleModelMultipleBatchComplete:
+class MultipleModelLocations:
     """
-    multiple model, multiple batch, last batch complete
+    multiple model, multiple batch, multiple models per batch
     """
     batch_size = 2
-    data_size = 2
+    data_size = 1
 
     input_data = \
         [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
-        [(None, "sub_dir2", "model2", "question", "context")] * data_size + \
+        [(None, "sub_dir2", "model1", "question", "context")] * data_size + \
         [(None, "sub_dir3", "model1", "question", "context")] * data_size + \
-        [(None, "sub_dir4", "model2", "question", "context")] * data_size
+        [(None, "sub_dir4", "model1", "question", "context")] * data_size
     output_data = \
         [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
-        [("sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
+        [("sub_dir2", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
         [("sub_dir3", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
-        [("sub_dir4", "model2", "question", "context", "answer 2", 0.2)] \
+        [("sub_dir4", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size
 
     mock_factory = MockQuestionAnsweringFactory({
-        "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1),
-        "model2": MockQuestionAnsweringModel(answer="answer 2", score=0.2)
+        "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1)
     })
 
     mock_pipeline = MockPipeline

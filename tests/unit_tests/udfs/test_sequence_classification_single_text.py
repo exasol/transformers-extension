@@ -5,6 +5,9 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_locations import \
+    MultipleModelLocations
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_incomplete import \
@@ -60,7 +63,8 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelMultipleBatchIncomplete,
     MultipleModelSingleBatchComplete,
     MultipleModelSingleBatchIncomplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
+    MultipleModelLocations
 ])
 def test_sequence_classification_single_text(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path

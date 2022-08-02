@@ -33,13 +33,18 @@ class MultipleModelMultipleBatchIncomplete:
 
     input_data = \
         [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
-        [(None, "sub_dir2", "model2", "question", "context")] * data_size
+        [(None, "sub_dir2", "model2", "question", "context")] * data_size + \
+        [(None, "sub_dir3", "model1", "question", "context")] * data_size + \
+        [(None, "sub_dir4", "model2", "question", "context")] * data_size
     output_data = \
         [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
         * data_size + \
         [("sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
+        * data_size + \
+        [("sub_dir3", "model1", "question", "context", "answer 1", 0.1)] \
+        * data_size + \
+        [("sub_dir4", "model2", "question", "context", "answer 2", 0.2)] \
         * data_size
-
     mock_factory = MockQuestionAnsweringFactory({
         "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1),
         "model2": MockQuestionAnsweringModel(answer="answer 2", score=0.2)
