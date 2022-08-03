@@ -6,8 +6,14 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
-from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_locations import \
-    MultipleModelLocations
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_multiple_batch_incomplete import \
+    MultipleLocationsMultipleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_multiple_batch_multiple_locations_per_batch import \
+    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_single_batch_complete import \
+    MultipleLocationsSingleBatchComplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_single_batch_incomplete import \
+    MultipleLocationsSingleBatchIncomplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_incomplete import \
@@ -26,10 +32,7 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_si
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
-
-BFS_CONN_NAME = "test_bfs_conn_name"
-LABEL_SCORE_MAP = {'label_1': 0.21, 'label_2': 0.24,
-                   'label_3': 0.26, 'label_4': 0.29}
+from tests.utils import postprocessing
 
 
 def create_mock_metadata(udf_wrapper):
@@ -68,7 +71,10 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelSingleBatchComplete,
     MultipleModelSingleBatchIncomplete,
     MultipleModelMultipleBatchMultipleModelsPerBatch,
-    MultipleModelLocations
+    MultipleLocationsSingleBatchComplete,
+    MultipleLocationsSingleBatchIncomplete,
+    MultipleLocationsMultipleBatchIncomplete,
+    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
 ])
 def test_sequence_classification_text_pair(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path
@@ -78,22 +84,16 @@ def test_sequence_classification_text_pair(params, get_local_bucketfs_path):
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
     exa = MockExaEnvironment(
         metadata=meta,
-        connections={BFS_CONN_NAME: bucketfs_connection})
+        connections={
+            "bfs_conn1": bucketfs_connection,
+            "bfs_conn2": bucketfs_connection,
+            "bfs_conn3": bucketfs_connection,
+            "bfs_conn4": bucketfs_connection})
 
-    input_data = [(input[0], BFS_CONN_NAME) + input[1:]
-                  for input in params.inputs_pair_text]
-    result = executor.run([Group(input_data)], exa)
-
-    rounded_actual_result = _get_rounded_result(result)
-    expected_result = [(BFS_CONN_NAME, ) + output
-                       for output in params.outputs_text_pair]
-    assert rounded_actual_result == expected_result
+    result = executor.run([Group(params.inputs_pair_text)], exa)
+    rounded_actual_result = postprocessing.get_rounded_result(result)
+    assert rounded_actual_result == params.outputs_text_pair
 
 
-def _get_rounded_result(result):
-    rounded_result = result[0].rows
-    for i in range(len(rounded_result)):
-        rounded_result[i] = rounded_result[i][:-1] + \
-                            (round(rounded_result[i][-1], 2),)
-    return rounded_result
+
 

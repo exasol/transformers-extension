@@ -10,7 +10,7 @@ from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_m
     MultipleModelLocationsMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_incomplete import \
     MultipleModelLocationsMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_multiple_location_per_batch import \
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_multiple_locations_per_batch import \
     MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_single_batch_complete import \
     MultipleModelLocationsSingleBatchComplete

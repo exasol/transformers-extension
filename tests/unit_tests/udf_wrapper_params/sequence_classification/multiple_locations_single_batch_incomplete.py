@@ -11,8 +11,8 @@ def udf_wrapper_single_text():
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        multiple_model_single_batch_incomplete import \
-        MultipleModelSingleBatchIncomplete as params
+        multiple_model_single_batch_complete import \
+        MultipleModelSingleBatchComplete as params
 
     udf = SequenceClassificationSingleText(
         exa,
@@ -32,8 +32,8 @@ def udf_wrapper_text_pair():
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        multiple_model_single_batch_incomplete import \
-        MultipleModelSingleBatchIncomplete as params
+        multiple_locations_single_batch_incomplete import \
+        MultipleLocationsSingleBatchIncomplete as params
 
     udf = SequenceClassificationTextPair(
         exa,
@@ -45,9 +45,9 @@ def udf_wrapper_text_pair():
         udf.run(ctx)
 
 
-class MultipleModelSingleBatchIncomplete:
+class MultipleLocationsSingleBatchIncomplete:
     """
-    multiple model, single batch, last batch incomplete
+    multiple locations, single batch, last batch incomplete
     """
 
     batch_size = 9
@@ -70,11 +70,19 @@ class MultipleModelSingleBatchIncomplete:
 
     inputs_single_text = [(None, "bfs_conn1", "sub_dir1",
                            "model1", "My test text")] * data_size + \
-                         [(None, "bfs_conn2", "sub_dir2",
+                         [(None, "bfs_conn2", "sub_dir1",
+                           "model1", "My test text")] * data_size + \
+                         [(None, "bfs_conn1", "sub_dir2",
+                           "model1", "My test text")] * data_size + \
+                         [(None, "bfs_conn1", "sub_dir1",
                            "model2", "My test text")] * data_size
     inputs_pair_text = [(None, "bfs_conn1", "sub_dir1", "model1",
                          "My text 1", "My text 2")] * data_size + \
-                       [(None, "bfs_conn2", "sub_dir2", "model2",
+                       [(None, "bfs_conn2", "sub_dir1", "model1",
+                         "My text 1", "My text 2")] * data_size + \
+                       [(None, "bfs_conn1", "sub_dir2", "model1",
+                         "My text 1", "My text 2")] * data_size + \
+                       [(None, "bfs_conn1", "sub_dir1", "model2",
                          "My text 1", "My text 2")] * data_size
 
     outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
@@ -85,30 +93,62 @@ class MultipleModelSingleBatchIncomplete:
                             "My test text", "label3", 0.26),
                            ("bfs_conn1", "sub_dir1", "model1",
                             "My test text", "label4", 0.29)] * data_size + \
-                          [("bfs_conn2", "sub_dir2", "model2",
+                          [("bfs_conn2", "sub_dir1", "model1",
                             "My test text", "label1", 0.21),
-                           ("bfs_conn2", "sub_dir2", "model2",
+                           ("bfs_conn2", "sub_dir1", "model1",
                             "My test text", "label2", 0.24),
-                           ("bfs_conn2", "sub_dir2", "model2",
+                           ("bfs_conn2", "sub_dir1", "model1",
                             "My test text", "label3", 0.26),
-                           ("bfs_conn2", "sub_dir2", "model2",
+                           ("bfs_conn2", "sub_dir1", "model1",
+                            "My test text", "label4", 0.29)] * data_size + \
+                          [("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label1", 0.21),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label2", 0.24),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label3", 0.26),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label4", 0.29)] * data_size + \
+                          [("bfs_conn1", "sub_dir1", "model2",
+                            "My test text", "label1", 0.21),
+                           ("bfs_conn1", "sub_dir1", "model2",
+                            "My test text", "label2", 0.24),
+                           ("bfs_conn1", "sub_dir1", "model2",
+                            "My test text", "label3", 0.26),
+                           ("bfs_conn1", "sub_dir1", "model2",
                             "My test text", "label4", 0.29)] * data_size
 
     outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label1", 0.21),
-                         ("bfs_conn1", "sub_dir1", "model1",  "My text 1",
+                         ("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label2", 0.24),
                          ("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label3", 0.26),
                          ("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label4", 0.29)] * data_size + \
-                        [("bfs_conn2", "sub_dir2", "model2", "My text 1",
+                        [("bfs_conn2", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label1", 0.21),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
+                         ("bfs_conn2", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label2", 0.24),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
+                         ("bfs_conn2", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label3", 0.26),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
+                         ("bfs_conn2", "sub_dir1", "model1", "My text 1",
+                          "My text 2", "label4", 0.29)] * data_size + \
+                        [("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label1", 0.21),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label2", 0.24),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label3", 0.26),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label4", 0.29)] * data_size + \
+                        [("bfs_conn1", "sub_dir1", "model2", "My text 1",
+                          "My text 2", "label1", 0.21),
+                         ("bfs_conn1", "sub_dir1", "model2", "My text 1",
+                          "My text 2", "label2", 0.24),
+                         ("bfs_conn1", "sub_dir1", "model2", "My text 1",
+                          "My text 2", "label3", 0.26),
+                         ("bfs_conn1", "sub_dir1", "model2", "My text 1",
                           "My text 2", "label4", 0.29)] * data_size
 
     udf_wrapper_single_text = udf_wrapper_single_text

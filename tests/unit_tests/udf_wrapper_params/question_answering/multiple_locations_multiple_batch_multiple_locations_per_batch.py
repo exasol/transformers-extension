@@ -10,7 +10,7 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        multiple_locations_multiple_batch_multiple_location_per_batch \
+        multiple_locations_multiple_batch_multiple_locations_per_batch \
         import MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch \
         as params
 

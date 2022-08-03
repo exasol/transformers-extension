@@ -65,21 +65,27 @@ class SingleModelSingleBatchIncomplete:
             logits=logits)
     })
 
-    inputs_single_text = \
-        [(None, "sub_dir1", "model1", "My test text")] * data_size
-    inputs_pair_text = \
-        [(None, "sub_dir1", "model1", "My text 1", "My text 2")] * data_size
+    inputs_single_text = [(None, "bfs_conn1", "sub_dir1", "model1",
+                           "My test text")] * data_size
+    inputs_pair_text = [(None, "bfs_conn1", "sub_dir1", "model1",
+                         "My text 1", "My text 2")] * data_size
 
-    outputs_single_text = \
-        [("sub_dir1", "model1", "My test text", "label1", 0.21),
-         ("sub_dir1", "model1", "My test text", "label2", 0.24),
-         ("sub_dir1", "model1", "My test text", "label3", 0.26),
-         ("sub_dir1", "model1", "My test text", "label4", 0.29)]
-    outputs_text_pair = \
-        [("sub_dir1", "model1", "My text 1", "My text 2", "label1", 0.21),
-         ("sub_dir1", "model1", "My text 1", "My text 2", "label2", 0.24),
-         ("sub_dir1", "model1", "My text 1", "My text 2", "label3", 0.26),
-         ("sub_dir1", "model1", "My text 1", "My text 2", "label4", 0.29)]
+    outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
+                            "My test text", "label1", 0.21),
+                           ("bfs_conn1", "sub_dir1", "model1",
+                            "My test text", "label2", 0.24),
+                           ("bfs_conn1", "sub_dir1", "model1",
+                            "My test text", "label3", 0.26),
+                           ("bfs_conn1", "sub_dir1", "model1",
+                            "My test text", "label4", 0.29)]
+    outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1",
+                          "My text 1", "My text 2", "label1", 0.21),
+                         ("bfs_conn1", "sub_dir1", "model1",
+                          "My text 1", "My text 2", "label2", 0.24),
+                         ("bfs_conn1", "sub_dir1", "model1",
+                          "My text 1", "My text 2", "label3", 0.26),
+                         ("bfs_conn1", "sub_dir1", "model1",
+                          "My text 1", "My text 2", "label4", 0.29)]
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair
