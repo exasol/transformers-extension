@@ -6,8 +6,16 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
-from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_locations import \
-    MultipleModelLocations
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_complete import \
+    MultipleModelLocationsMultipleBatchComplete
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_incomplete import \
+    MultipleModelLocationsMultipleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_multiple_batch_multiple_location_per_batch import \
+    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_single_batch_complete import \
+    MultipleModelLocationsSingleBatchComplete
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_locations_single_batch_incomplete import \
+    MultipleModelLocationsSingleBatchIncomplete
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_multiple_batch_incomplete import \
@@ -26,8 +34,6 @@ from tests.unit_tests.udf_wrapper_params.question_answering.single_model_single_
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
-
-BFS_CONN_NAME = "test_bfs_conn_name"
 
 
 def create_mock_metadata(udf_wrapper):
@@ -66,7 +72,11 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelMultipleBatchComplete,
     MultipleModelMultipleBatchIncomplete,
     MultipleModelMultipleBatchMultipleModelsPerBatch,
-    MultipleModelLocations
+    MultipleModelLocationsSingleBatchComplete,
+    MultipleModelLocationsSingleBatchIncomplete,
+    MultipleModelLocationsMultipleBatchComplete,
+    MultipleModelLocationsMultipleBatchIncomplete,
+    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
 ])
 def test_question_answering(params, get_local_bucketfs_path):
     bucketfs_base_path = get_local_bucketfs_path
@@ -76,13 +86,12 @@ def test_question_answering(params, get_local_bucketfs_path):
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
     exa = MockExaEnvironment(
         metadata=meta,
-        connections={BFS_CONN_NAME: bucketfs_connection})
+        connections={
+            "bfs_conn1": bucketfs_connection,
+            "bfs_conn2": bucketfs_connection,
+            "bfs_conn3": bucketfs_connection,
+            "bfs_conn4": bucketfs_connection})
 
-    input_data = [(input[0], BFS_CONN_NAME) + input[1:]
-                  for input in params.input_data]
-    result = executor.run([Group(input_data)], exa)
-
-    expected_result = [(BFS_CONN_NAME, ) + output
-                       for output in params.output_data]
-    assert result[0].rows == expected_result
+    result = executor.run([Group(params.input_data)], exa)
+    assert result[0].rows == params.output_data
 

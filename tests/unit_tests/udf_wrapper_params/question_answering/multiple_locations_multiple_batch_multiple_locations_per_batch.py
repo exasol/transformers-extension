@@ -10,8 +10,9 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        multiple_model_single_batch_complete import \
-        MultipleModelSingleBatchComplete as params
+        multiple_locations_multiple_batch_multiple_location_per_batch \
+        import MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch \
+        as params
 
     udf = QuestionAnswering(
         exa,
@@ -24,21 +25,29 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class MultipleModelSingleBatchComplete:
+class MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch:
     """
-    multiple model, single batch, last batch complete
+    multiple locations, multiple batch, multiple locations per batch
     """
-    batch_size = 4
-    data_size = 2
+    batch_size = 2
+    data_size = 1
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "question", "context")] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir1", "model1",
+                   "question", "context")] * data_size + \
+                 [(None, "bfs_conn1", "sub_dir2", "model1",
+                   "question", "context")] * data_size + \
+                 [(None, "bfs_conn1", "sub_dir1", "model2",
                    "question", "context")] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1",
-                    "question", "context", "answer 1", 0.1)] * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2",
-                    "question", "context", "answer 2", 0.2)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
+                    "context", "answer 1", 0.1)] * data_size + \
+                  [("bfs_conn2", "sub_dir1", "model1", "question",
+                    "context", "answer 1", 0.1)] * data_size + \
+                  [("bfs_conn1", "sub_dir2", "model1", "question",
+                    "context", "answer 1", 0.1)] * data_size + \
+                  [("bfs_conn1", "sub_dir1", "model2", "question",
+                    "context", "answer 2", 0.2)] * data_size
 
     mock_factory = MockQuestionAnsweringFactory({
         "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1),

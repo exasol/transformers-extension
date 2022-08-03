@@ -31,20 +31,14 @@ class MultipleModelMultipleBatchComplete:
     batch_size = 2
     data_size = 2
 
-    input_data = \
-        [(None, "sub_dir1", "model1", "question", "context")] * data_size + \
-        [(None, "sub_dir2", "model2", "question", "context")] * data_size + \
-        [(None, "sub_dir3", "model1", "question", "context")] * data_size + \
-        [(None, "sub_dir4", "model2", "question", "context")] * data_size
-    output_data = \
-        [("sub_dir1", "model1", "question", "context", "answer 1", 0.1)] \
-        * data_size + \
-        [("sub_dir2", "model2", "question", "context", "answer 2", 0.2)] \
-        * data_size + \
-        [("sub_dir3", "model1", "question", "context", "answer 1", 0.1)] \
-        * data_size + \
-        [("sub_dir4", "model2", "question", "context", "answer 2", 0.2)] \
-        * data_size
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+                   "question", "context")] * data_size + \
+                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                   "question", "context")] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
+                    "context", "answer 1", 0.1)] * data_size + \
+                  [("bfs_conn2", "sub_dir2", "model2", "question",
+                    "context", "answer 2", 0.2)] * data_size
 
     mock_factory = MockQuestionAnsweringFactory({
         "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1),
