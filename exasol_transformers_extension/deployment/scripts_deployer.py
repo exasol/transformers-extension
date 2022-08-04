@@ -26,7 +26,9 @@ class ScriptsDeployer:
             udf_query = utils.load_and_render_statement(
                 template_src,
                 script_content=udf_content,
-                language_alias=self._language_alias)
+                language_alias=self._language_alias,
+                ordered_columns=constants.ORDERED_COLUMNS)
+
             self._pyexasol_conn.execute(udf_query)
             logger.debug(f"The UDF statement of the template "
                          f"{template_src} is executed.")

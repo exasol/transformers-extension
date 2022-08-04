@@ -5,7 +5,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_SEQUENCE_CLASSIFICATION_TE
     model_name VARCHAR(2000000),
     first_text VARCHAR(2000000),
     second_text VARCHAR(2000000)
-    ORDER BY model_name, bucketfs_conn, sub_dir
+    ORDER BY {{ ordered_columns }}
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
