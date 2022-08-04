@@ -5,7 +5,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_QUESTION_ANSWERING_UDF"(
     model_name VARCHAR(2000000),
     question VARCHAR(2000000),
     context_text VARCHAR(2000000)
-    ORDER BY {{ ordered_columns }}
+    ORDER BY {{ ordered_columns | join(",") }} ASC
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),

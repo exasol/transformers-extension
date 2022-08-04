@@ -13,4 +13,8 @@ def get_sorted_unique_values(
     :param columns: List of columns to be filtered and sorted accordingly
     """
 
-    return df[columns].drop_duplicates().sort_values(by=columns).values.tolist()
+    return df[columns]\
+        .drop_duplicates()\
+        .sort_values(by=columns, ascending=True)\
+        .values\
+        .tolist()
