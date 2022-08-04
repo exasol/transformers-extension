@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.sequence_classification.\
@@ -105,19 +104,17 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
                          ("bfs_conn1", "sub_dir2", "model1", "My text 1",
                           "My text 2", "label4", 0.25)] * data_size
 
-    with tempfile.TemporaryDirectory() as tmpdir_name:
-        base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    tmpdir_name = "_".join(("/tmpdir", __qualname__))
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    bfs_connections = {
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
-        bfs_connections = {
-            "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
-        }
-
-        mock_factory = MockSequenceClassificationFactory({
-            PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-                MockSequenceClassificationModel(config=config, logits=logits1),
-            PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
-                MockSequenceClassificationModel(config=config, logits=logits2),
-        })
+    mock_factory = MockSequenceClassificationFactory({
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+            MockSequenceClassificationModel(config=config, logits=logits1),
+        PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
+            MockSequenceClassificationModel(config=config, logits=logits2),
+    })
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair

@@ -60,19 +60,19 @@ def create_mock_metadata(udf_wrapper):
 
 
 @pytest.mark.parametrize("params", [
-    # SingleModelSingleBatchComplete,
+    SingleModelSingleBatchComplete,
     SingleModelSingleBatchIncomplete,
-    # SingleModelMultipleBatchComplete,
-    # SingleModelMultipleBatchIncomplete,
-    # MultipleModelSingleBatchComplete,
-    # MultipleModelSingleBatchIncomplete,
-    # MultipleModelMultipleBatchComplete,
-    # MultipleModelMultipleBatchIncomplete,
-    # MultipleModelMultipleBatchMultipleModelsPerBatch,
-    # MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    # MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
-    # SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    # SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
+    SingleModelMultipleBatchComplete,
+    SingleModelMultipleBatchIncomplete,
+    MultipleModelSingleBatchComplete,
+    MultipleModelSingleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 ])
 def test_question_answering(params):
     executor = UDFMockExecutor()

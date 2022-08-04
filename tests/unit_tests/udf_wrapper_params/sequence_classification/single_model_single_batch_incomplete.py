@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.sequence_classification.\
@@ -62,17 +61,15 @@ class SingleModelSingleBatchIncomplete:
 
     logits = [0.1, 0.2, 0.3, 0.4]
 
-    with tempfile.TemporaryDirectory() as tmpdir_name:
-        base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    tmpdir_name = "_".join(("/tmpdir", __qualname__))
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    bfs_connections = {
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
-        bfs_connections = {
-            "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
-        }
-
-        mock_factory = MockSequenceClassificationFactory({
-            PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-                MockSequenceClassificationModel(config=config, logits=logits),
-        })
+    mock_factory = MockSequenceClassificationFactory({
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+            MockSequenceClassificationModel(config=config, logits=logits),
+    })
 
     inputs_single_text = [(None, "bfs_conn1", "sub_dir1", "model1",
                            "My test text")] * data_size
