@@ -13,8 +13,8 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        multiple_model_multiple_batch_incomplete import \
-        MultipleModelMultipleBatchIncomplete as params
+        multiple_bfsconn_single_subdir_single_model_multiple_batch import \
+        MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch as params
 
     udf = QuestionAnswering(
         exa,
@@ -27,20 +27,20 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class MultipleModelMultipleBatchIncomplete:
+class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
     """
-    multiple model, multiple batch, last batch incomplete
+    multiple bucketfs connection, single subdir, single model, multiple_batch
     """
-    batch_size = 3
+    batch_size = 2
     data_size = 2
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "question", "context")] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir1", "model1",
                    "question", "context")] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1",
                     "question", "context", "answer 1", 0.1)] * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2",
+                  [("bfs_conn2", "sub_dir1", "model1",
                     "question", "context", "answer 2", 0.2)] * data_size
 
     with tempfile.TemporaryDirectory() as tmpdir_name:
@@ -55,7 +55,7 @@ class MultipleModelMultipleBatchIncomplete:
         mock_factory = MockQuestionAnsweringFactory({
             PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
                 MockQuestionAnsweringModel(answer="answer 1", score=0.1),
-            PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+            PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
                 MockQuestionAnsweringModel(answer="answer 2", score=0.2),
         })
 

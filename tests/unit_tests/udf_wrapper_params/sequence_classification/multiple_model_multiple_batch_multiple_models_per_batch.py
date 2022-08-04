@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import PurePosixPath
+from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.sequence_classification.\
     mock_sequence_classification_factory import \
     Config, MockSequenceClassificationFactory, MockSequenceClassificationModel
@@ -59,20 +62,29 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
 
     logits = [0.1, 0.2, 0.3, 0.4]
 
-    mock_factory = MockSequenceClassificationFactory({
-        "model1": MockSequenceClassificationModel(
-            config=config,
-            logits=logits),
-        "model2": MockSequenceClassificationModel(
-            config=config,
-            logits=logits),
-        "model3": MockSequenceClassificationModel(
-            config=config,
-            logits=logits),
-        "model4": MockSequenceClassificationModel(
-            config=config,
-            logits=logits)
-    })
+    with tempfile.TemporaryDirectory() as tmpdir_name:
+        base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+        base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+        cache_dir3 = PurePosixPath(tmpdir_name, "bfs_conn3")
+        cache_dir4 = PurePosixPath(tmpdir_name, "bfs_conn4")
+
+        bfs_connections = {
+            "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+            "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+            "bfs_conn3": Connection(address=f"file://{cache_dir3}"),
+            "bfs_conn4": Connection(address=f"file://{cache_dir4}"),
+        }
+
+        mock_factory = MockSequenceClassificationFactory({
+            PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+                MockSequenceClassificationModel(config=config, logits=logits),
+            PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+                MockSequenceClassificationModel(config=config, logits=logits),
+            PurePosixPath(cache_dir3, "sub_dir3", "model3"):
+                MockSequenceClassificationModel(config=config, logits=logits),
+            PurePosixPath(cache_dir4, "sub_dir4", "model4"):
+                MockSequenceClassificationModel(config=config, logits=logits),
+        })
 
     inputs_single_text = [(None, "bfs_conn1", "sub_dir1",
                            "model1", "My test text")] * data_size + \

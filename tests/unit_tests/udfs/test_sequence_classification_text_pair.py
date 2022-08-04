@@ -1,19 +1,14 @@
 import pytest
 from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
-from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_multiple_batch_incomplete import \
-    MultipleLocationsMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_multiple_batch_multiple_locations_per_batch import \
-    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
-from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_single_batch_complete import \
-    MultipleLocationsSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_locations_single_batch_incomplete import \
-    MultipleLocationsSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_bfsconn_single_subdir_single_model_single_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_incomplete import \
@@ -24,6 +19,10 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_
     MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.sequence_classification.single_bfsconn_multiple_subdir_single_model_single_batch import \
+    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_multiple_batch_complete import \
     SingleModelMultipleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_multiple_batch_incomplete import \
@@ -71,24 +70,19 @@ def create_mock_metadata(udf_wrapper):
     MultipleModelSingleBatchComplete,
     MultipleModelSingleBatchIncomplete,
     MultipleModelMultipleBatchMultipleModelsPerBatch,
-    MultipleLocationsSingleBatchComplete,
-    MultipleLocationsSingleBatchIncomplete,
-    MultipleLocationsMultipleBatchIncomplete,
-    MultipleModelLocationsMultipleBatchMultipleLocationsPerBatch
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 ])
-def test_sequence_classification_text_pair(params, get_local_bucketfs_path):
-    bucketfs_base_path = get_local_bucketfs_path
+def test_sequence_classification_text_pair(params):
 
     executor = UDFMockExecutor()
     meta = create_mock_metadata(params.udf_wrapper_text_pair)
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+
     exa = MockExaEnvironment(
         metadata=meta,
-        connections={
-            "bfs_conn1": bucketfs_connection,
-            "bfs_conn2": bucketfs_connection,
-            "bfs_conn3": bucketfs_connection,
-            "bfs_conn4": bucketfs_connection})
+        connections=params.bfs_connections)
 
     result = executor.run([Group(params.inputs_pair_text)], exa)
     rounded_actual_result = postprocessing.get_rounded_result(result)

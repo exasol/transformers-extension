@@ -1,3 +1,4 @@
+from pathlib import PurePosixPath
 from typing import Dict, List, Union
 from tests.unit_tests.udf_wrapper_params.question_answering.\
     mock_sequence_tokenizer import MockSequenceTokenizer
@@ -13,11 +14,13 @@ class MockQuestionAnsweringModel:
 
 
 class MockQuestionAnsweringFactory:
-    def __init__(self, mock_models: Dict[str, MockQuestionAnsweringModel]):
+    def __init__(self, mock_models: Dict[PurePosixPath,
+                                         MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_name, cache_dir):
-        return self.mock_models[model_name]
+        # the cache_dir path already has model_name
+        return self.mock_models[cache_dir]
 
 
 class MockPipeline:

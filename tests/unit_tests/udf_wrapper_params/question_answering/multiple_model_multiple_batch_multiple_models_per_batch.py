@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import PurePosixPath
+from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.question_answering.\
     mock_question_answering import \
     MockQuestionAnsweringFactory, MockQuestionAnsweringModel, MockPipeline
@@ -48,12 +51,29 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                   [("bfs_conn4", "sub_dir4", "model4", "question",
                     "context", "answer 4", 0.4)] * data_size
 
-    mock_factory = MockQuestionAnsweringFactory({
-        "model1": MockQuestionAnsweringModel(answer="answer 1", score=0.1),
-        "model2": MockQuestionAnsweringModel(answer="answer 2", score=0.2),
-        "model3": MockQuestionAnsweringModel(answer="answer 3", score=0.3),
-        "model4": MockQuestionAnsweringModel(answer="answer 4", score=0.4)
-    })
+    with tempfile.TemporaryDirectory() as tmpdir_name:
+        base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+        base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+        cache_dir3 = PurePosixPath(tmpdir_name, "bfs_conn3")
+        cache_dir4 = PurePosixPath(tmpdir_name, "bfs_conn4")
+
+        bfs_connections = {
+            "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+            "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+            "bfs_conn3": Connection(address=f"file://{cache_dir3}"),
+            "bfs_conn4": Connection(address=f"file://{cache_dir4}")
+        }
+
+        mock_factory = MockQuestionAnsweringFactory({
+            PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+                MockQuestionAnsweringModel(answer="answer 1", score=0.1),
+            PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+                MockQuestionAnsweringModel(answer="answer 2", score=0.2),
+            PurePosixPath(cache_dir3, "sub_dir3", "model3"):
+                MockQuestionAnsweringModel(answer="answer 3", score=0.3),
+            PurePosixPath(cache_dir4, "sub_dir4", "model4"):
+                MockQuestionAnsweringModel(answer="answer 4", score=0.4),
+        })
 
     mock_pipeline = MockPipeline
     udf_wrapper = udf_wrapper

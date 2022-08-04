@@ -1,7 +1,7 @@
 import torch
 import pandas as pd
 import transformers
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 from exasol_transformers_extension.udfs import bucketfs_operations
 from exasol_transformers_extension.utils import device_management
 
@@ -18,7 +18,7 @@ class SequenceClassificationTextPair:
         self.tokenizer = tokenizer
         self.device = None
         self.cache_dir = None
-        self.last_loaded_model_name = None
+        self.last_loaded_model_key = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
 
@@ -55,10 +55,12 @@ class SequenceClassificationTextPair:
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
-            if self.last_loaded_model_name != model_name:
+            current_model_key = (bucketfs_conn, sub_dir, model_name)
+            if self.last_loaded_model_key != current_model_key:
                 self.set_cache_dir(model_df)
                 self.clear_device_memory()
                 self.load_models(model_name)
+                self.last_loaded_model_key = current_model_key
 
             model_pred_df = self.get_prediction(model_df)
             result_df_list.append(model_pred_df)
@@ -94,7 +96,6 @@ class SequenceClassificationTextPair:
             model_name, cache_dir=self.cache_dir).to(self.device)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
-        self.last_loaded_model_name = model_name
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
