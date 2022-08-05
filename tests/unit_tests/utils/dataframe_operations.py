@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 import pytest
 from exasol_transformers_extension.utils import dataframe_operations
@@ -29,7 +31,8 @@ sample_df = pd.DataFrame({
         [4, 3], [4, 4],
         [5, 0], [5, 1], [5, 2], [5, 3]]),
 ])
-def test_get_sorted_unique_values(description, columns, expected):
+def test_get_sorted_unique_values(
+        description: str, columns: List[str], expected: List[List[int]]):
     sorted_unique_values = dataframe_operations.get_sorted_unique_values(
         sample_df, columns)
 
