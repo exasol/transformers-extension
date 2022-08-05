@@ -1,3 +1,5 @@
+from pathlib import PurePosixPath
+
 import torch
 from typing import Dict, List
 from dataclasses import dataclass
@@ -32,8 +34,10 @@ class MockSequenceClassificationModel:
 
 class MockSequenceClassificationFactory:
 
-    def __init__(self, mock_models: Dict[str, MockSequenceClassificationModel]):
+    def __init__(self, mock_models: Dict[PurePosixPath,
+                                         MockSequenceClassificationModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_name, cache_dir):
-        return self.mock_models[model_name]
+        # the cache_dir path already has model_name
+        return self.mock_models[cache_dir]

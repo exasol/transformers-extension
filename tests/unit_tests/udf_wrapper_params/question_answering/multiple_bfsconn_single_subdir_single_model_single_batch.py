@@ -12,8 +12,8 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        single_model_single_batch_incomplete import \
-        SingleModelSingleBatchIncomplete as params
+        multiple_bfsconn_single_subdir_single_model_single_batch import \
+        MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch as params
 
     udf = QuestionAnswering(
         exa,
@@ -26,26 +26,35 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class SingleModelSingleBatchIncomplete:
+class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     """
-    single model, single batch, batch incomplete
+    multiple bucketfs connection, single subdir, single model, single batch
     """
-    batch_size = 2
-    data_size = 1
+    batch_size = 4
+    data_size = 2
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+                   "question", "context")] * data_size + \
+                 [(None, "bfs_conn2", "sub_dir1", "model1",
                    "question", "context")] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
-                    "context", "answer 1", 0.1)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1",
+                    "question", "context", "answer 1", 0.1)] * data_size + \
+                  [("bfs_conn2", "sub_dir1", "model1",
+                    "question", "context", "answer 2", 0.2)] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")}
 
     mock_factory = MockQuestionAnsweringFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockQuestionAnsweringModel(answer="answer 1", score=0.1)
+            MockQuestionAnsweringModel(answer="answer 1", score=0.1),
+        PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
+            MockQuestionAnsweringModel(answer="answer 2", score=0.2),
     })
 
     mock_pipeline = MockPipeline

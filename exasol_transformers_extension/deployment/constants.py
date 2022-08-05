@@ -16,4 +16,4 @@ UDF_CALL_TEMPLATES = {
         "question_answering_udf.jinja.sql",
 }
 
-
+ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']

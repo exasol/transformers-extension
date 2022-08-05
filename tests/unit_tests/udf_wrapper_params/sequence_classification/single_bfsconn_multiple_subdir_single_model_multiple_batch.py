@@ -12,9 +12,9 @@ def udf_wrapper_single_text():
         SequenceClassificationSingleText
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        multiple_model_single_batch_complete import \
-        MultipleModelSingleBatchComplete as params
+    from tests.unit_tests.udf_wrapper_params.sequence_classification. \
+        single_bfsconn_multiple_subdir_single_model_multiple_batch import \
+        SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch as params
 
     udf = SequenceClassificationSingleText(
         exa,
@@ -34,8 +34,8 @@ def udf_wrapper_text_pair():
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
-        multiple_model_single_batch_complete import \
-        MultipleModelSingleBatchComplete as params
+        single_bfsconn_multiple_subdir_single_model_multiple_batch import \
+        SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch as params
 
     udf = SequenceClassificationTextPair(
         exa,
@@ -47,41 +47,27 @@ def udf_wrapper_text_pair():
         udf.run(ctx)
 
 
-class MultipleModelSingleBatchComplete:
+class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
     """
-    None, None, "sub_dir
+    single bucketfs connection, multiple subdir, single model, multiple batch
     """
-
-    batch_size = 4
+    batch_size = 2
     data_size = 2
 
     config = Config({
         0: 'label1', 1: 'label2',
         2: 'label3', 3: 'label4'})
 
-    logits = [0.1, 0.2, 0.3, 0.4]
-
-    tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
-    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
-    bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")}
-
-    mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockSequenceClassificationModel(config=config, logits=logits),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
-            MockSequenceClassificationModel(config=config, logits=logits),
-    })
+    logits1 = [0.1, 0.2, 0.3, 0.4]
+    logits2 = [0.1, 0.1, 0.1, 0.1]
 
     inputs_single_text = [(None, "bfs_conn1", "sub_dir1",
                            "model1", "My test text")] * data_size + \
-                         [(None, "bfs_conn2", "sub_dir2",
-                           "model2", "My test text")] * data_size
+                         [(None, "bfs_conn1", "sub_dir2",
+                           "model1", "My test text")] * data_size
     inputs_pair_text = [(None, "bfs_conn1", "sub_dir1", "model1",
                          "My text 1", "My text 2")] * data_size + \
-                       [(None, "bfs_conn2", "sub_dir2", "model2",
+                       [(None, "bfs_conn1", "sub_dir2", "model1",
                          "My text 1", "My text 2")] * data_size
 
     outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
@@ -92,14 +78,14 @@ class MultipleModelSingleBatchComplete:
                             "My test text", "label3", 0.26),
                            ("bfs_conn1", "sub_dir1", "model1",
                             "My test text", "label4", 0.29)] * data_size + \
-                          [("bfs_conn2", "sub_dir2", "model2",
-                            "My test text", "label1", 0.21),
-                           ("bfs_conn2", "sub_dir2", "model2",
-                            "My test text", "label2", 0.24),
-                           ("bfs_conn2", "sub_dir2", "model2",
-                            "My test text", "label3", 0.26),
-                           ("bfs_conn2", "sub_dir2", "model2",
-                            "My test text", "label4", 0.29)] * data_size
+                          [("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label1", 0.25),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label2", 0.25),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label3", 0.25),
+                           ("bfs_conn1", "sub_dir2", "model1",
+                            "My test text", "label4", 0.25)] * data_size
 
     outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label1", 0.21),
@@ -109,14 +95,26 @@ class MultipleModelSingleBatchComplete:
                           "My text 2", "label3", 0.26),
                          ("bfs_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label4", 0.29)] * data_size + \
-                        [("bfs_conn2", "sub_dir2", "model2", "My text 1",
-                          "My text 2", "label1", 0.21),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
-                          "My text 2", "label2", 0.24),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
-                          "My text 2", "label3", 0.26),
-                         ("bfs_conn2", "sub_dir2", "model2", "My text 1",
-                          "My text 2", "label4", 0.29)] * data_size
+                        [("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label1", 0.25),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label2", 0.25),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label3", 0.25),
+                         ("bfs_conn1", "sub_dir2", "model1", "My text 1",
+                          "My text 2", "label4", 0.25)] * data_size
+
+    tmpdir_name = "_".join(("/tmpdir", __qualname__))
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    bfs_connections = {
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+
+    mock_factory = MockSequenceClassificationFactory({
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+            MockSequenceClassificationModel(config=config, logits=logits1),
+        PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
+            MockSequenceClassificationModel(config=config, logits=logits2),
+    })
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair
