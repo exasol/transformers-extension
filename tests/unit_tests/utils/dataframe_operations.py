@@ -12,17 +12,22 @@ sample_df = pd.DataFrame({
 })
 
 
-@pytest.mark.parametrize("columns, expected", [
-    (['A'], [[0], [1], [2], [3], [4], [5]]),
-    (['B'], [[0], [1], [2], [3], [4], [5]]),
-    (['A', 'D'], [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]),
-    (['C'], [[i] for i in range(len(sample_arr))]),
-    (['A', 'B'], [[0, 5],
-                  [1, 5],
-                  [2, 5],
-                  [3, 4], [3, 5],
-                  [4, 3], [4, 4],
-                  [5, 0], [5, 1], [5, 2], [5, 3]]),
+@pytest.mark.parametrize("description, columns, expected", [
+    ("sorted_column_with_duplicates", ['A'],
+        [[0], [1], [2], [3], [4], [5]]),
+    ("reverse_sorted_column_with_duplicates", ['B'],
+        [[0], [1], [2], [3], [4], [5]]),
+    ("two_column_same_sorting", ['A', 'D'],
+        [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]),
+    ("range", ['C'],
+        [[i] for i in range(len(sample_arr))]),
+    ("two_columns_different_sorting", ['A', 'B'],
+        [[0, 5],
+        [1, 5],
+        [2, 5],
+        [3, 4], [3, 5],
+        [4, 3], [4, 4],
+        [5, 0], [5, 1], [5, 2], [5, 3]]),
 ])
 def test_get_sorted_unique_values(columns, expected):
     sorted_unique_values = dataframe_operations.get_sorted_unique_values(
