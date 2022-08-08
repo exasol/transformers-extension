@@ -105,7 +105,8 @@ class QuestionAnswering:
             "question-answering",
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
-            device=self.device)
+            device=self.device,
+            framework="pt")
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

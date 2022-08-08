@@ -12,7 +12,6 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_FILLING_MASK_UDF"(
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
     top_k INTEGER,
-    filled_mask VARCHAR(2000000),
     filled_text VARCHAR(2000000),
     score DOUBLE ) AS
 

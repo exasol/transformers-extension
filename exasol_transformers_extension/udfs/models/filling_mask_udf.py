@@ -2,7 +2,6 @@ import torch
 import pandas as pd
 import transformers
 from typing import Tuple, List
-
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     dataframe_operations, bucketfs_operations
@@ -26,6 +25,7 @@ class FillingMask:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
+        self.mask_token = "<mask>"
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -60,11 +60,18 @@ class FillingMask:
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
+            top_k = model_df['top_k'].iloc[0]
+            if not dataframe_operations.check_all_values_equal(
+                    model_df['top_k']):
+                raise Exception(
+                    "Inputs with the same model_name & bucketfs_conn & sub_dir "
+                    "values must have the same top_k values")
+
             current_model_key = (bucketfs_conn, sub_dir, model_name)
             if self.last_loaded_model_key != current_model_key:
                 self.set_cache_dir(model_df)
                 self.clear_device_memory()
-                self.load_models(model_name)
+                self.load_models(model_name, top_k=top_k)
                 self.last_loaded_model_key = current_model_key
 
             model_pred_df = self.get_prediction(model_df)
@@ -91,7 +98,7 @@ class FillingMask:
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 
-    def load_models(self, model_name: str) -> None:
+    def load_models(self, model_name: str, **kwargs) -> None:
         """
         Load model and tokenizer model from the cached location in bucketfs
 
@@ -102,10 +109,12 @@ class FillingMask:
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
         self.last_created_pipeline = self.pipeline(
-            "question-answering",
+            "fill-mask",
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
-            device=self.device)
+            device=self.device,
+            framework="pt",
+            top_k=kwargs['top_k'])
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -125,40 +134,52 @@ class FillingMask:
             Tuple[List[float], List[str]]:
         """
         Predict the given text list using recently loaded models, return
-        probability scores and labels
+        probability scores and filled texts
 
         :param model_df: The dataframe to be predicted
 
-        :return: A tuple containing prediction score list and label list
+        :return: A tuple containing prediction score list and filled texts list
         """
-        questions = list(model_df['question'])
-        contexts = list(model_df['context_text'])
-        results = self.last_created_pipeline(
-            question=questions, context=contexts)
+        text_data_raw = list(model_df['text_data'])
+        text_data_with_valid_mask_token = \
+            [text_data.replace(self.mask_token,
+                               self.last_created_pipeline.tokenizer.mask_token)
+             for text_data in text_data_raw]
+        results = self.last_created_pipeline(text_data_with_valid_mask_token)
 
-        answers = []
+        filled_texts = []
         scores = []
         for result in results:
-            answers.append(result['answer'])
-            scores.append(result['score'])
+            for pred in result:
+                filled_texts.append(pred['sequence'])
+                scores.append(pred['score'])
 
-        return scores, answers
+        return scores, filled_texts
 
     @staticmethod
     def _prepare_prediction_dataframe(
-            model_df: pd.DataFrame, scores: List[float], answers: List[str]) \
-            -> pd.DataFrame:
+            model_df: pd.DataFrame,
+            scores: List[float],
+            filled_texts: List[str]) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
 
         :param model_df: Dataframe used in prediction
         :param scores: List of prediction probabilities
-        :param answers: List of predicted answers
+        :param filled_texts: List of text filled with the predicted tokens
 
         :return: Prepared dataframe including input data and predictions
         """
-        model_df['answer'] = answers
+        top_k = model_df['top_k'].iloc[0]
+
+        # Repeat each row consecutively as the number of labels. At the end,
+        # the dataframe is expanded from (m, n) to (m*top_k, n)
+        repeated_indexes = model_df.index.repeat(top_k)
+        model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
+
+        # Assign predicted texts and probability scores to the dataframe
+        model_df['filled_texts'] = filled_texts
         model_df['score'] = scores
 
         return model_df
