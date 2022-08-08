@@ -179,7 +179,7 @@ class FillingMask:
         model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
 
         # Assign predicted texts and probability scores to the dataframe
-        model_df['filled_texts'] = filled_texts
+        model_df['filled_text'] = filled_texts
         model_df['score'] = scores
 
         return model_df
