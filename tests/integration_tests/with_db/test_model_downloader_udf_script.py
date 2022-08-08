@@ -1,5 +1,5 @@
 from pathlib import Path
-from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 

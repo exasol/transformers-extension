@@ -4,17 +4,16 @@ import transformers
 from typing import Tuple, List
 
 from exasol_transformers_extension.deployment import constants
-from exasol_transformers_extension.udfs import bucketfs_operations
 from exasol_transformers_extension.utils import device_management, \
-    dataframe_operations
+    dataframe_operations, bucketfs_operations
 
 
-class QuestionAnswering:
+class FillingMask:
     def __init__(self,
                  exa,
                  batch_size=100,
                  pipeline=transformers.pipeline,
-                 base_model=transformers.AutoModelForQuestionAnswering,
+                 base_model=transformers.AutoModelForMaskedLM,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
         self.bacth_size = batch_size

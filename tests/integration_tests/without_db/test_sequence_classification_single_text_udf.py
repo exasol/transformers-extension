@@ -4,7 +4,7 @@ from typing import Dict
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.sequence_classification_single_text_udf import \
+from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import \
     SequenceClassificationSingleText
 from tests.utils.parameters import model_params
 

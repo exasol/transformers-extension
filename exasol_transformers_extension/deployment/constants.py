@@ -3,7 +3,7 @@ from importlib_resources import files
 
 BASE_DIR = "exasol_transformers_extension"
 TEMPLATES_DIR = pathlib.Path("resources", "templates")
-SOURCE_DIR = files(f"{BASE_DIR}.udfs")
+UDF_CALLERS_DIR = files(f"{BASE_DIR}.udfs.callers")
 
 UDF_CALL_TEMPLATES = {
     "model_downloader_udf_call.py":

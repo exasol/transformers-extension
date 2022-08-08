@@ -8,7 +8,7 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 
@@ -24,7 +24,7 @@ TOKENIZER_FILE_DATA_MAP = {
 def udf_wrapper():
     import os
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.model_downloader_udf import \
+    from exasol_transformers_extension.udfs.models.model_downloader_udf import \
         ModelDownloader
 
     class MockModelDownloader:

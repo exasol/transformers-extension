@@ -1,6 +1,6 @@
 import tempfile
 import transformers
-from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import bucketfs_operations
 
 
 class ModelDownloader:

@@ -21,7 +21,7 @@ class ScriptsDeployer:
 
     def _deploy_udf_scripts(self) -> None:
         for udf_call_src, template_src in constants.UDF_CALL_TEMPLATES.items():
-            udf_content = constants.SOURCE_DIR.joinpath(
+            udf_content = constants.UDF_CALLERS_DIR.joinpath(
                 udf_call_src).read_text()
             udf_query = utils.load_and_render_statement(
                 template_src,
