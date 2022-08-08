@@ -14,6 +14,8 @@ UDF_CALL_TEMPLATES = {
         "sequence_classification_text_pair_udf.jinja.sql",
     "question_answering_udf_call.py":
         "question_answering_udf.jinja.sql",
+    "filling_mask_udf_call.py":
+        "filling_mask_udf.jinja.sql",
 }
 
 ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']
