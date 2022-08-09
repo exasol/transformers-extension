@@ -40,8 +40,14 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("device_id", [None, 0])
-def test_filling_mask_udf(device_id, upload_model_to_local_bucketfs):
+@pytest.mark.parametrize("description,  device_id, n_rows", [
+    ("on CPU with batch input", None, 3),
+    ("on CPU with single input", None, 1),
+    ("on GPU with batch input", 0, 3),
+    ("on GPU with single input", 0, 1)])
+def test_filling_mask_udf(
+        description, device_id, n_rows, upload_model_to_local_bucketfs):
+
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -50,7 +56,6 @@ def test_filling_mask_udf(device_id, upload_model_to_local_bucketfs):
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
-    n_rows = 3
     top_k = 3
     batch_size = 2
     text_data = "Exasol is an analytics <mask> management software company."

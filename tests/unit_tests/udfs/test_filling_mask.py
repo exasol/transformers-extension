@@ -4,6 +4,8 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+from tests.unit_tests.udf_wrapper_params.filling_mask.invalid_input import \
+    InvalidInput
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_single_batch import \
@@ -83,3 +85,18 @@ def test_filling_mask(params):
 
     result = executor.run([Group(params.input_data)], exa)
     assert result[0].rows == params.output_data
+
+
+def test_filling_mask_with_invalid_input():
+    params = InvalidInput
+    executor = UDFMockExecutor()
+    meta = create_mock_metadata(params.udf_wrapper)
+    exa = MockExaEnvironment(
+        metadata=meta,
+        connections=params.bfs_connections)
+
+    with pytest.raises(Exception) as exception:
+        executor.run([Group(params.input_data)], exa)
+    assert str(exception.value) == \
+           "Inputs with the same model_name & bucketfs_conn & " \
+           "sub_dir values must have the same top_k values"
