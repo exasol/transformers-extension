@@ -90,19 +90,18 @@ def test_model_downloader():
             BFS_CONN_NAME)
         result = executor.run([Group([input_data])], exa)
 
-        relative_model_path = str(bucketfs_operations.get_model_path(
-            model_params.sub_dir, model_params.name))
-        full_model_path = pathlib.PurePath(path, relative_model_path)
-        assert result[0].rows[0][0] == relative_model_path \
+        relative_model_path = bucketfs_operations.get_model_path(
+            model_params.sub_dir, model_params.name)
+        assert result[0].rows[0][0] == str(relative_model_path) \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("model_file1.txt"))) \
+            str(relative_model_path.joinpath("model_file1.txt"))) \
                == MODEL_FILE_DATA_MAP["model_file1.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("model_file2.txt"))) \
+            str(relative_model_path.joinpath("model_file2.txt"))) \
                == MODEL_FILE_DATA_MAP["model_file2.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("tokenizer_file1.txt"))) \
+            str(relative_model_path.joinpath("tokenizer_file1.txt"))) \
                == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("tokenizer_file2.txt"))) \
+            str(relative_model_path.joinpath("tokenizer_file2.txt"))) \
                == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]
