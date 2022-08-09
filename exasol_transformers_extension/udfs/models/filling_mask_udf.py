@@ -147,12 +147,16 @@ class FillingMask:
              for text_data in text_data_raw]
         results = self.last_created_pipeline(text_data_with_valid_mask_token)
 
+        #  Batch prediction returns list of list while single prediction just
+        #  return a list. In case of batch predictions, we need to flatten
+        #  2D prediction results to 1D list
+        results = sum(results, []) if type(results[0]) == list else results
+
         filled_texts = []
         scores = []
         for result in results:
-            for pred in result:
-                filled_texts.append(pred['sequence'])
-                scores.append(pred['score'])
+            filled_texts.append(result['sequence'])
+            scores.append(result['score'])
 
         return scores, filled_texts
 
