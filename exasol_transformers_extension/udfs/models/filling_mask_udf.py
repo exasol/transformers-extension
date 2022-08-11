@@ -60,22 +60,19 @@ class FillingMask:
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
-            top_k = model_df['top_k'].iloc[0]
-            if not dataframe_operations.check_all_values_equal(
-                    model_df['top_k']):
-                raise Exception(
-                    "Inputs with the same model_name & bucketfs_conn & sub_dir "
-                    "values must have the same top_k values")
-
             current_model_key = (bucketfs_conn, sub_dir, model_name)
             if self.last_loaded_model_key != current_model_key:
                 self.set_cache_dir(model_df)
                 self.clear_device_memory()
-                self.load_models(model_name, top_k=top_k)
+                self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
 
-            model_pred_df = self.get_prediction(model_df)
-            result_df_list.append(model_pred_df)
+            unique_top_k_values = model_df['top_k'].unique()
+            for top_k in unique_top_k_values:
+                model_by_top_k_df = model_df[model_df['top_k'] == top_k]
+                self.setup_pipeline(top_k=top_k)
+                model_pred_df = self.get_prediction(model_by_top_k_df)
+                result_df_list.append(model_pred_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
@@ -108,6 +105,12 @@ class FillingMask:
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+
+    def setup_pipeline(self, **kwargs) -> None:
+        """
+        Setup pipeline with the loaded models and the current topk value
+        """
+
         self.last_created_pipeline = self.pipeline(
             "fill-mask",
             model=self.last_loaded_model,
@@ -115,6 +118,7 @@ class FillingMask:
             device=self.device,
             framework="pt",
             top_k=kwargs['top_k'])
+
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

@@ -18,15 +18,3 @@ def get_sorted_unique_values(
         .sort_values(by=columns, ascending=True)\
         .values\
         .tolist()
-
-
-def check_all_values_equal(df: pd.DataFrame) -> bool:
-    """
-    Check if all values in a columns are equal
-
-    :param df: Dataframe to be checked
-
-    :return: True if all values in the given column are the same
-    """
-
-    return all(df == df.iloc[0])
