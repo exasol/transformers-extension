@@ -18,6 +18,10 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batc
     MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_multiple_batch import \
+    MultipleTopkSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_single_batch import \
+    MultipleTopkSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_bfsconn_multiple_subdir_single_model_single_batch import \
@@ -30,6 +34,10 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_single_batch_
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_multiple_batch import \
+    SingleTopkMultipleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import \
+    SingleTopkMultipleModelNameSingleBatch
 
 
 def create_mock_metadata(udf_wrapper):
@@ -71,7 +79,11 @@ def create_mock_metadata(udf_wrapper):
     MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    MultipleTopkSingleModelNameMultipleBatch,
+    MultipleTopkSingleModelNameSingleBatch,
+    SingleTopkMultipleModelNameSingleBatch,
+    SingleTopkMultipleModelNameMultipleBatch
 ])
 def test_filling_mask(params):
     executor = UDFMockExecutor()
