@@ -11,6 +11,9 @@ class MockFillingMaskModel:
     def from_pretrained(cls, model_name, cache_dir):
         return cls
 
+    def to(self, device):
+        self.device = device
+        return self
 
 class MockFillingMaskFactory:
     def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
@@ -26,13 +29,11 @@ class MockPipeline:
                  task_type: str,
                  model: MockFillingMaskModel,
                  tokenizer: MockSequenceTokenizer,
-                 device: str,
                  framework: str,
                  top_k: int):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
-        self.device = device
         self.framework = framework
         self.top_k = top_k
 

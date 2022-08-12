@@ -108,6 +108,8 @@ class FillingMask:
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
 
+        self.last_loaded_model = self.last_loaded_model.to(self.device)
+
     def setup_pipeline(self, **kwargs) -> None:
         """
         Setup pipeline if new models are loaded or if the top_k value
@@ -119,7 +121,6 @@ class FillingMask:
                 "fill-mask",
                 model=self.last_loaded_model,
                 tokenizer=self.last_loaded_tokenizer,
-                device=self.device,
                 framework="pt",
                 top_k=top_k)
             self.last_used_top_k = top_k
