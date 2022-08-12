@@ -31,27 +31,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     """
     batch_size = 2
     data_size = 1
-    top_k1 = 2
-    top_k2 = 3
-    top_k3 = 4
-    top_k4 = 5
+    top_k = 2
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "text <mask> 1", top_k1)] * data_size + \
+                   "text <mask> 1", top_k)] * data_size + \
                  [(None, "bfs_conn2", "sub_dir2", "model2",
-                   "text <mask> 2", top_k2)] * data_size + \
+                   "text <mask> 2", top_k)] * data_size + \
                  [(None, "bfs_conn3", "sub_dir3", "model3",
-                   "text <mask> 3", top_k3)] * data_size + \
+                   "text <mask> 3", top_k)] * data_size + \
                  [(None, "bfs_conn4", "sub_dir4", "model4",
-                   "text <mask> 4", top_k4)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k1,
-                    "text valid 1", 0.1)] * data_size * top_k1 + \
-                  [("bfs_conn2", "sub_dir2", "model2", "text <mask> 2", top_k2,
-                    "text valid 2", 0.2)] * data_size * top_k2 + \
-                  [("bfs_conn3", "sub_dir3", "model3", "text <mask> 3", top_k3,
-                    "text valid 3", 0.3)] * data_size * top_k3 + \
-                  [("bfs_conn4", "sub_dir4", "model4", "text <mask> 4", top_k4,
-                    "text valid 4", 0.4)] * data_size * top_k4
+                   "text <mask> 4", top_k)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+                    "text valid 1", 0.1)] * data_size * top_k + \
+                  [("bfs_conn2", "sub_dir2", "model2", "text <mask> 2", top_k,
+                    "text valid 2", 0.2)] * data_size * top_k + \
+                  [("bfs_conn3", "sub_dir3", "model3", "text <mask> 3", top_k,
+                    "text valid 3", 0.3)] * data_size * top_k + \
+                  [("bfs_conn4", "sub_dir4", "model4", "text <mask> 4", top_k,
+                    "text valid 4", 0.4)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
