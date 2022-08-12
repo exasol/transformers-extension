@@ -25,6 +25,7 @@ class FillingMask:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
+        self.last_used_top_k = None
         self.mask_token = "<mask>"
 
     def run(self, ctx):
@@ -66,6 +67,7 @@ class FillingMask:
                 self.clear_device_memory()
                 self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
+                self.last_used_top_k = None
 
             unique_top_k_values = model_df['top_k'].unique()
             for top_k in unique_top_k_values:
@@ -108,16 +110,19 @@ class FillingMask:
 
     def setup_pipeline(self, **kwargs) -> None:
         """
-        Setup pipeline with the loaded models and the current topk value
+        Setup pipeline if new models are loaded or if the top_k value
+        for the same model changes
         """
-
-        self.last_created_pipeline = self.pipeline(
-            "fill-mask",
-            model=self.last_loaded_model,
-            tokenizer=self.last_loaded_tokenizer,
-            device=self.device,
-            framework="pt",
-            top_k=kwargs['top_k'])
+        top_k = kwargs['top_k']
+        if self.last_used_top_k is None or self.last_used_top_k != top_k:
+            self.last_created_pipeline = self.pipeline(
+                "fill-mask",
+                model=self.last_loaded_model,
+                tokenizer=self.last_loaded_tokenizer,
+                device=self.device,
+                framework="pt",
+                top_k=top_k)
+            self.last_used_top_k = top_k
 
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
