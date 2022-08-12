@@ -1,12 +1,11 @@
 from pathlib import PurePosixPath, Path
-from typing import Tuple, List
 
 import pytest
 import tempfile
 import transformers
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
-from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 

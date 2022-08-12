@@ -13,6 +13,7 @@
   - #14: Created sequence classification UDF for pair text
   - #16: Created question answering UDF
   - #21: Added parameter specifying GPU device
+  - #26: Created masked language modelling UDF
   
 ### Bug Fixes
 

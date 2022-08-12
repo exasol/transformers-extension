@@ -1,7 +1,6 @@
-from typing import List
-
-import pandas as pd
 import pytest
+import pandas as pd
+from typing import List
 from exasol_transformers_extension.utils import dataframe_operations
 
 
@@ -10,7 +9,8 @@ sample_df = pd.DataFrame({
     'A': sample_arr,
     'B': sorted(sample_arr, reverse=True),
     'C': list(range(len(sample_arr))),
-    'D': sample_arr
+    'D': sample_arr,
+    'E': [1] * len(sample_arr)
 })
 
 

@@ -6,6 +6,8 @@ packages = \
  'exasol_transformers_extension.deployment',
  'exasol_transformers_extension.resources',
  'exasol_transformers_extension.udfs',
+ 'exasol_transformers_extension.udfs.callers',
+ 'exasol_transformers_extension.udfs.models',
  'exasol_transformers_extension.utils']
 
 package_data = \

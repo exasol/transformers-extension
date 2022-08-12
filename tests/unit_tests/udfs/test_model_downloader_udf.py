@@ -8,7 +8,7 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-from exasol_transformers_extension.udfs import bucketfs_operations
+from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 
@@ -24,7 +24,7 @@ TOKENIZER_FILE_DATA_MAP = {
 def udf_wrapper():
     import os
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.model_downloader_udf import \
+    from exasol_transformers_extension.udfs.models.model_downloader_udf import \
         ModelDownloader
 
     class MockModelDownloader:
@@ -90,19 +90,18 @@ def test_model_downloader():
             BFS_CONN_NAME)
         result = executor.run([Group([input_data])], exa)
 
-        relative_model_path = str(bucketfs_operations.get_model_path(
-            model_params.sub_dir, model_params.name))
-        full_model_path = pathlib.PurePath(path, relative_model_path)
-        assert result[0].rows[0][0] == relative_model_path \
+        relative_model_path = bucketfs_operations.get_model_path(
+            model_params.sub_dir, model_params.name)
+        assert result[0].rows[0][0] == str(relative_model_path) \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("model_file1.txt"))) \
+            str(relative_model_path.joinpath("model_file1.txt"))) \
                == MODEL_FILE_DATA_MAP["model_file1.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("model_file2.txt"))) \
+            str(relative_model_path.joinpath("model_file2.txt"))) \
                == MODEL_FILE_DATA_MAP["model_file2.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("tokenizer_file1.txt"))) \
+            str(relative_model_path.joinpath("tokenizer_file1.txt"))) \
                == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(full_model_path.joinpath("tokenizer_file2.txt"))) \
+            str(relative_model_path.joinpath("tokenizer_file2.txt"))) \
                == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]

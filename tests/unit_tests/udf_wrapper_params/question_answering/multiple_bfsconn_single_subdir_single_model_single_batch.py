@@ -7,7 +7,7 @@ from tests.unit_tests.udf_wrapper_params.question_answering.\
 
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.question_answering_udf import \
+    from exasol_transformers_extension.udfs.models.question_answering_udf import \
         QuestionAnswering
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer

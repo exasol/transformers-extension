@@ -1,4 +1,4 @@
-from exasol_transformers_extension.udfs.model_downloader_udf import \
+from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloader
 
 udf = ModelDownloader(exa)

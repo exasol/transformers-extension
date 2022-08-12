@@ -1,12 +1,11 @@
+import torch
+import pytest
 import pandas as pd
 from typing import Dict
-
-import pytest
-import torch
-from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.sequence_classification_text_pair_udf import \
-    SequenceClassificationTextPair
 from tests.utils.parameters import model_params
+from exasol_udf_mock_python.connection import Connection
+from exasol_transformers_extension.udfs.models.filling_mask_udf import \
+    FillingMask
 
 
 class ExaEnvironment:
@@ -41,9 +40,14 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("device_id", [None, 0])
-def test_sequence_classification_text_pair_udf(
-        device_id, upload_model_to_local_bucketfs):
+@pytest.mark.parametrize("description,  device_id, n_rows", [
+    ("on CPU with batch input", None, 3),
+    ("on CPU with single input", None, 1),
+    ("on GPU with batch input", 0, 3),
+    ("on GPU with single input", 0, 1)])
+def test_filling_mask_udf(
+        description, device_id, n_rows, upload_model_to_local_bucketfs):
+
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -52,35 +56,33 @@ def test_sequence_classification_text_pair_udf(
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
-    n_rows = 3
+    top_k = 3
     batch_size = 2
+    text_data = "Exasol is an analytics <mask> management software company."
     sample_data = [(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
-        model_params.text_data + str(i),
-        model_params.text_data + str(i * i)) for i in range(n_rows)]
-    sample_df = pd.DataFrame(
-        data=sample_data,
-        columns=[
-            'device_id',
-            'bucketfs_conn',
-            'sub_dir',
-            'model_name',
-            'first_text',
-            'second_text'])
+        text_data,
+        top_k
+    ) for _ in range(n_rows)]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'top_k']
 
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = SequenceClassificationTextPair(
-        exa, batch_size=batch_size)
+    sequence_classifier = FillingMask(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    grouped_by_inputs = result_df.groupby('first_text')
-    n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
-    n_labels_per_input_expected = [2] * n_rows
-    assert n_unique_labels_per_input == n_labels_per_input_expected \
-           and result_df.shape == (n_rows*2, 7)
+    assert result_df.shape == (n_rows * top_k, 7) and \
+           result_df['score'].dtypes == 'float' and \
+           list(result_df.columns) == columns[1:] + ['filled_text', 'score']

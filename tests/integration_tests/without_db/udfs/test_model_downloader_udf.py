@@ -1,8 +1,8 @@
 import tempfile
 from typing import Dict
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
-from exasol_transformers_extension.udfs import bucketfs_operations
-from exasol_transformers_extension.udfs.model_downloader_udf import \
+from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloader
 from tests.utils.parameters import model_params
 

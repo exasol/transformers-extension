@@ -4,8 +4,8 @@ from typing import Dict
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.sequence_classification_single_text_udf import \
-    SequenceClassificationSingleText
+from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import \
+    SequenceClassificationTextPair
 from tests.utils.parameters import model_params
 
 
@@ -42,7 +42,7 @@ class Context:
 
 
 @pytest.mark.parametrize("device_id", [None, 0])
-def test_sequence_classification_single_text_udf(
+def test_sequence_classification_text_pair_udf(
         device_id, upload_model_to_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
@@ -59,8 +59,8 @@ def test_sequence_classification_single_text_udf(
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.name,
-        model_params.text_data + str(i)
-    ) for i in range(n_rows)]
+        model_params.text_data + str(i),
+        model_params.text_data + str(i * i)) for i in range(n_rows)]
     sample_df = pd.DataFrame(
         data=sample_data,
         columns=[
@@ -68,18 +68,19 @@ def test_sequence_classification_single_text_udf(
             'bucketfs_conn',
             'sub_dir',
             'model_name',
-            'text_data'])
+            'first_text',
+            'second_text'])
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = SequenceClassificationSingleText(
+    sequence_classifier = SequenceClassificationTextPair(
         exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    grouped_by_inputs = result_df.groupby('text_data')
+    grouped_by_inputs = result_df.groupby('first_text')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
     n_labels_per_input_expected = [2] * n_rows
     assert n_unique_labels_per_input == n_labels_per_input_expected \
-           and result_df.shape == (n_rows*2, 6)
+           and result_df.shape == (n_rows*2, 7)

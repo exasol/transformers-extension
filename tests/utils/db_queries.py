@@ -3,7 +3,8 @@ from typing import List
 deployed_script_list = [
     "TE_MODEL_DOWNLOADER_UDF",
     "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
-    "TE_QUESTION_ANSWERING_UDF"
+    "TE_QUESTION_ANSWERING_UDF",
+    "TE_FILLING_MASK_UDF"
 ]
 
 
