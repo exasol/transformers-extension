@@ -18,6 +18,8 @@ UDF_CALL_TEMPLATES = {
         "filling_mask_udf.jinja.sql",
     "text_generation_udf_call.py":
         "text_generation_udf.jinja.sql",
+    "named_entity_recognition_udf_call.py":
+        "named_entity_recognition_udf.jinja.sql",
 }
 
 ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']
