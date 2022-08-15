@@ -50,8 +50,8 @@ class SequenceClassificationSingleText:
         :return: Prediction results of the corresponding dataframe
         """
         result_df_list = []
-        unique_values = dataframe_operations.get_sorted_unique_values(
-            batch_df, constants.ORDERED_COLUMNS)
+        unique_values = dataframe_operations.get_unique_values(
+            batch_df, constants.ORDERED_COLUMNS, sort=True)
         for model_name, bucketfs_conn, sub_dir in unique_values:
             model_df = batch_df[
                 (batch_df['model_name'] == model_name) &
