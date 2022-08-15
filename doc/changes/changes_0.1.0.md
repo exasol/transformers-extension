@@ -14,6 +14,7 @@
   - #16: Created question answering UDF
   - #21: Added parameter specifying GPU device
   - #26: Created masked language modelling UDF
+  - #29: Created text generation UDF
   
 ### Bug Fixes
 
