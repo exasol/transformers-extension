@@ -1,18 +1,18 @@
 import torch
 import pandas as pd
 import transformers
-from typing import Tuple, List
+from typing import List, Any, Dict
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     dataframe_operations, bucketfs_operations
 
 
-class FillingMask:
+class TextGeneration:
     def __init__(self,
                  exa,
                  batch_size=100,
                  pipeline=transformers.pipeline,
-                 base_model=transformers.AutoModelForMaskedLM,
+                 base_model=transformers.AutoModelForCausalLM,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
         self.bacth_size = batch_size
@@ -25,8 +25,6 @@ class FillingMask:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
-        self.last_used_top_k = None
-        self.mask_token = "<mask>"
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -67,14 +65,16 @@ class FillingMask:
                 self.clear_device_memory()
                 self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
-                self.last_used_top_k = None
 
-            unique_top_k_values = model_df['top_k'].unique()
-            for top_k in unique_top_k_values:
-                model_by_top_k_df = model_df[model_df['top_k'] == top_k]
-                self.setup_pipeline(top_k=top_k)
-                model_pred_df = self.get_prediction(model_by_top_k_df)
-                result_df_list.append(model_pred_df)
+            unique_params = dataframe_operations.get_unique_values(
+                model_df, ['max_length', 'return_full_text'])
+            for max_length, return_full_text in unique_params:
+                param_based_model_df = model_df[
+                    (model_df['max_length'] == max_length) &
+                    (model_df['return_full_text'] == return_full_text)]
+
+                pred_df = self.get_prediction(param_based_model_df)
+                result_df_list.append(pred_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
@@ -97,7 +97,7 @@ class FillingMask:
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 
-    def load_models(self, model_name: str, **kwargs) -> None:
+    def load_models(self, model_name: str) -> None:
         """
         Load model and tokenizer model from the cached location in bucketfs
 
@@ -107,24 +107,13 @@ class FillingMask:
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+        self.last_created_pipeline = self.pipeline(
+            "text-generation",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer,
+            framework="pt")
 
         self.last_loaded_model = self.last_loaded_model.to(self.device)
-
-    def setup_pipeline(self, **kwargs) -> None:
-        """
-        Setup pipeline if new models are loaded or if the top_k value
-        for the same model changes
-        """
-        top_k = kwargs['top_k']
-        if self.last_used_top_k is None or self.last_used_top_k != top_k:
-            self.last_created_pipeline = self.pipeline(
-                "fill-mask",
-                model=self.last_loaded_model,
-                tokenizer=self.last_loaded_tokenizer,
-                framework="pt",
-                top_k=top_k)
-            self.last_used_top_k = top_k
-
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -136,65 +125,49 @@ class FillingMask:
         :return: The dataframe where the model_df is formatted with the
         prediction results
         """
-        preds, labels = self._predict_model(model_df)
-        pred_df = self._prepare_prediction_dataframe(model_df, preds, labels)
+        preds = self._predict_model(model_df)
+        pred_df = self._prepare_prediction_dataframe(model_df, preds)
         return pred_df
 
-    def _predict_model(self, model_df: pd.DataFrame) -> \
-            Tuple[List[float], List[str]]:
+    def _predict_model(self, model_df: pd.DataFrame) -> List[str]:
         """
         Predict the given text list using recently loaded models, return
-        probability scores and filled texts
+        probability scores and labels
 
         :param model_df: The dataframe to be predicted
 
-        :return: A tuple containing prediction score list and filled texts list
+        :return: A tuple containing prediction score list and label list
         """
-        text_data_raw = list(model_df['text_data'])
-        text_data_with_valid_mask_token = \
-            [text_data.replace(self.mask_token,
-                               self.last_created_pipeline.tokenizer.mask_token)
-             for text_data in text_data_raw]
-        results = self.last_created_pipeline(text_data_with_valid_mask_token)
+        text_data = list(model_df['text_data'])
+        max_length = int(model_df['max_length'].iloc[0])
+        return_full_text = bool(model_df['return_full_text'].iloc[0])
+        results = self.last_created_pipeline(
+            text_data, max_length=max_length, return_full_text=return_full_text)
 
         #  Batch prediction returns list of list while single prediction just
         #  return a list. In case of batch predictions, we need to flatten
         #  2D prediction results to 1D list
         results = sum(results, []) if type(results[0]) == list else results
 
-        filled_texts = []
-        scores = []
+        generated_texts = []
         for result in results:
-            filled_texts.append(result['sequence'])
-            scores.append(result['score'])
+            generated_texts.append(result['generated_text'])
 
-        return scores, filled_texts
+        return generated_texts
 
     @staticmethod
     def _prepare_prediction_dataframe(
-            model_df: pd.DataFrame,
-            scores: List[float],
-            filled_texts: List[str]) -> pd.DataFrame:
+            model_df: pd.DataFrame, generated_texts: List[str]) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
-        has a row for each label and its probability score
+        has a generated text
 
         :param model_df: Dataframe used in prediction
-        :param scores: List of prediction probabilities
-        :param filled_texts: List of text filled with the predicted tokens
+        :param generated_texts: List of generated texts
 
         :return: Prepared dataframe including input data and predictions
         """
-        top_k = model_df['top_k'].iloc[0]
-
-        # Repeat each row consecutively as the number of labels. At the end,
-        # the dataframe is expanded from (m, n) to (m*top_k, n)
-        repeated_indexes = model_df.index.repeat(top_k)
-        model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
-
-        # Assign predicted texts and probability scores to the dataframe
-        model_df['filled_text'] = filled_texts
-        model_df['score'] = scores
+        model_df['generated_text'] = generated_texts
 
         return model_df
 
