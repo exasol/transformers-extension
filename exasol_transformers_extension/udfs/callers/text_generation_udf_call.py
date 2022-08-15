@@ -1,7 +1,7 @@
 from exasol_transformers_extension.udfs.models.text_generation_udf \
-    import TextGeneration
+    import TextGenerationUDF
 
-udf = TextGeneration(exa)
+udf = TextGenerationUDF(exa)
 
 
 def run(ctx):

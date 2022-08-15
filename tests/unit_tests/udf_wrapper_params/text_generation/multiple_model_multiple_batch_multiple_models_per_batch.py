@@ -7,14 +7,14 @@ from tests.unit_tests.udf_wrapper_params.text_generation.mock_token_generation i
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.text_generation_udf import \
-        TextGeneration
+        TextGenerationUDF
     from tests.unit_tests.udf_wrapper_params.text_generation. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.text_generation. \
         multiple_model_multiple_batch_multiple_models_per_batch import \
         MultipleModelMultipleBatchMultipleModelsPerBatch as params
 
-    udf = TextGeneration(
+    udf = TextGenerationUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
