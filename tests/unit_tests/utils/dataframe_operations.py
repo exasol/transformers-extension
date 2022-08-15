@@ -33,7 +33,32 @@ sample_df = pd.DataFrame({
 ])
 def test_get_sorted_unique_values(
         description: str, columns: List[str], expected: List[List[int]]):
-    sorted_unique_values = dataframe_operations.get_sorted_unique_values(
-        sample_df, columns)
+    sorted_unique_values = dataframe_operations.get_unique_values(
+        sample_df, columns, sort=True)
 
     assert expected == sorted_unique_values
+
+
+@pytest.mark.parametrize("description, columns, expected", [
+    ("sorted_column_with_duplicates", ['A'],
+        [[0], [1], [2], [3], [4], [5]]),
+    ("reverse_sorted_column_with_duplicates", ['B'],
+        [[5], [4], [3], [2], [1], [0]]),
+    ("two_column_same_sorting", ['A', 'D'],
+        [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]),
+    ("range", ['C'],
+        [[i] for i in range(len(sample_arr))]),
+    ("two_columns_different_sorting", ['A', 'B'],
+        [[0, 5],
+        [1, 5],
+        [2, 5],
+        [3, 5], [3, 4],
+        [4, 4], [4, 3],
+        [5, 3], [5, 2], [5, 1], [5, 0]]),
+])
+def test_get_unique_values(
+        description: str, columns: List[str], expected: List[List[int]]):
+    unique_values = dataframe_operations.get_unique_values(
+        sample_df, columns)
+
+    assert expected == unique_values
