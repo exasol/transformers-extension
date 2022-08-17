@@ -139,11 +139,13 @@ class NamedEntityRecognitionUDF:
         results = self.last_created_pipeline(text_data)
         results = results if type(results[0]) == list else [results]
 
-        columns = ["word", "entity", "score"]
+        columns = ["index", "word", "entity", "score"]
         results_df_list = []
         for result in results:
             result_df = pd.DataFrame(result)
-            results_df_list.append(result_df[columns])
+            result_df = result_df[columns].rename(
+                columns={"index": "word_index"})
+            results_df_list.append(result_df)
 
         return results_df_list
 

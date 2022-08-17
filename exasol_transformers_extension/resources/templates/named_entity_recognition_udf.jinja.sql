@@ -11,6 +11,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_NAMED_ENTITY_RECOGNITION_U
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
     word VARCHAR(2000000),
+    word_index INTEGER,
     entity VARCHAR(2000000),
     score DOUBLE ) AS
 

@@ -5,10 +5,12 @@ from tests.unit_tests.udf_wrapper_params.named_entity_recognition.\
 
 
 class MockNamedEntityRecognitionModel:
-    def __init__(self, words: List[str],
+    def __init__(self, indexes: List[int], words: List[str],
                  entities: List[str], scores: List[float]):
-        self.result = [{"word": word, "entity": entity, "score": score}
-                       for word, entity, score in zip(words, entities, scores)]
+        self.result = [{"index": index, "word": word,
+                        "entity": entity, "score": score}
+                       for index, word, entity, score
+                       in zip(indexes, words, entities, scores)]
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir):

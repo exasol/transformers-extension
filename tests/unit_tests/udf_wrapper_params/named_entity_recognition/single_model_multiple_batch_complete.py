@@ -37,7 +37,7 @@ class SingleModelMultipleBatchComplete:
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text")
                   ] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text",
-                    "text", "label1", 0.1)
+                    1, "text", "label1", 0.1)
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -47,9 +47,11 @@ class SingleModelMultipleBatchComplete:
 
     mock_factory = MockNamedEntityRecognitionFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockNamedEntityRecognitionModel(words=["text"]*n_entities,
-                                            entities=["label1"]*n_entities,
-                                            scores=[0.1]*n_entities)
+            MockNamedEntityRecognitionModel(
+                indexes=[1] * n_entities,
+                words=["text"] * n_entities,
+                entities=["label1"] * n_entities,
+                scores=[0.1] * n_entities)
     })
 
     mock_pipeline = MockPipeline

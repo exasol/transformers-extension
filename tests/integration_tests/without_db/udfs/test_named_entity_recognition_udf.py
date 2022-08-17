@@ -80,6 +80,6 @@ def test_text_generation_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape[1] == 7 \
-           and list(result_df.columns) == \
-           columns[1:] + ['word', 'entity', 'score']
+    new_columns = ['word_index', 'word', 'entity', 'score']
+    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
+           and list(result_df.columns) == columns[1:] + new_columns

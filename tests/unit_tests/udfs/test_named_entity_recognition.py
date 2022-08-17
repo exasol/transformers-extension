@@ -4,7 +4,6 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-
 from tests.unit_tests.udf_wrapper_params.named_entity_recognition.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.named_entity_recognition.multiple_bfsconn_single_subdir_single_model_single_batch import \
@@ -77,6 +76,7 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
+            Column("word_index", int, "INTEGER"),
             Column("word", str, "VARCHAR(2000000)"),
             Column("entity", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE")
