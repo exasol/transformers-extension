@@ -68,9 +68,9 @@ class QuestionAnswering:
                 self.last_loaded_model_key = current_model_key
 
             unique_params = dataframe_operations.get_unique_values(
-                model_df, 'top_k')
+                model_df, ['top_k'])
             for top_k in unique_params:
-                param_based_model_df = model_df[model_df['top_k'] == top_k]
+                param_based_model_df = model_df[model_df['top_k'] == top_k[0]]
                 pred_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(pred_df)
 
