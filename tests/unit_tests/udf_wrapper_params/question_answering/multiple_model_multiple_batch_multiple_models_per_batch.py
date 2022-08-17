@@ -32,23 +32,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     """
     batch_size = 2
     data_size = 1
+    top_k = 2
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "question", "context")] * data_size + \
+                   "question", "context", top_k)] * data_size + \
                  [(None, "bfs_conn2", "sub_dir2", "model2",
-                   "question", "context")] * data_size + \
+                   "question", "context", top_k)] * data_size + \
                  [(None, "bfs_conn3", "sub_dir3", "model3",
-                   "question", "context")] * data_size + \
+                   "question", "context", top_k)] * data_size + \
                  [(None, "bfs_conn4", "sub_dir4", "model4",
-                   "question", "context")] * data_size
+                   "question", "context", top_k)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
-                    "context", "answer 1", 0.1)] * data_size + \
+                    "context", top_k, "answer 1", 0.1)] * data_size  * top_k+ \
                   [("bfs_conn2", "sub_dir2", "model2", "question",
-                    "context", "answer 2", 0.2)] * data_size + \
+                    "context", top_k, "answer 2", 0.2)] * data_size * top_k + \
                   [("bfs_conn3", "sub_dir3", "model3", "question",
-                    "context", "answer 3", 0.3)] * data_size + \
+                    "context", top_k, "answer 3", 0.3)] * data_size * top_k + \
                   [("bfs_conn4", "sub_dir4", "model4", "question",
-                    "context", "answer 4", 0.4)] * data_size
+                    "context", top_k, "answer 4", 0.4)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

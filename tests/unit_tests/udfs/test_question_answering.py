@@ -43,7 +43,8 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("question", str, "VARCHAR(2000000)"),
-            Column("context_text", str, "VARCHAR(2000000)")
+            Column("context_text", str, "VARCHAR(2000000)"),
+            Column("top_k", int, "INTEGER")
         ],
         output_type="EMITS",
         output_columns=[
@@ -52,6 +53,7 @@ def create_mock_metadata(udf_wrapper):
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("question", str, "VARCHAR(2000000)"),
             Column("context_text", str, "VARCHAR(2000000)"),
+            Column("top_k", int, "INTEGER"),
             Column("answer", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE")
         ],
@@ -60,8 +62,8 @@ def create_mock_metadata(udf_wrapper):
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchComplete,
     SingleModelSingleBatchIncomplete,
+    SingleModelSingleBatchComplete,
     SingleModelMultipleBatchComplete,
     SingleModelMultipleBatchIncomplete,
     MultipleModelSingleBatchComplete,

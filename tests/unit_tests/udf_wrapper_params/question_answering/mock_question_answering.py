@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from typing import Dict, List, Union
+from typing import Dict, List, Union, NewType
 from tests.unit_tests.udf_wrapper_params.question_answering.\
     mock_sequence_tokenizer import MockSequenceTokenizer
 
@@ -24,6 +24,8 @@ class MockQuestionAnsweringFactory:
 
 
 class MockPipeline:
+    ResultDict = NewType("ResultDict", Dict[str, Union[str, float]])
+
     def __init__(self,
                  task_type: str,
                  model: MockQuestionAnsweringModel,
@@ -36,7 +38,11 @@ class MockPipeline:
         self.device = device
         self.framework = framework
 
-    def __call__(self, question: List[str], context: List[str]) -> \
-            List[Dict[str, Union[str, float]]]:
-        return [self.model.result] * len(question)
+    def __call__(self, question: List[str], context: List[str], top_k: int) -> \
+            Union[ResultDict, List[ResultDict],  List[List[ResultDict]]]:
+        input_size = len(question)
+        if input_size == 1 and top_k == 1:
+            return self.model.result
 
+        single_result = [self.model.result] * top_k
+        return [single_result] * input_size if input_size > 1 else single_result
