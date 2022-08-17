@@ -46,7 +46,7 @@ class Context:
     ("on CPU with single input", None, 1),
     ("on GPU with batch input", 0, 3),
     ("on GPU with single input", 0, 1)])
-def test_text_generation_udf(
+def test_named_entity_recognition_udf(
         description, device_id, n_rows, upload_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
