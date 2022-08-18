@@ -5,12 +5,12 @@ from tests.unit_tests.udf_wrapper_params.token_classification.\
 
 
 class MockTokenClassificationModel:
-    def __init__(self, indexes: List[int], words: List[str],
+    def __init__(self, starts: List[int], ends: List[int], words: List[str],
                  entities: List[str], scores: List[float]):
-        self.result = [{"index": index, "word": word,
-                        "entity": entity, "score": score}
-                       for index, word, entity, score
-                       in zip(indexes, words, entities, scores)]
+        self.result = [{"start": start, "end": end, "word": word,
+                        "entity_group": entity, "score": score}
+                       for start, end, word, entity, score
+                       in zip(starts, ends, words, entities, scores)]
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir):
@@ -36,10 +36,12 @@ class MockPipeline:
                  task_type: str,
                  model: MockTokenClassificationModel,
                  tokenizer: MockSequenceTokenizer,
+                 aggregation_strategy: str,
                  framework: str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
+        self.aggregation_strategy = aggregation_strategy
         self.framework = framework
 
     def __call__(self, text_data: List[str]) -> \

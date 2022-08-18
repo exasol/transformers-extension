@@ -80,6 +80,6 @@ def test_token_classification_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['word_index', 'word', 'entity', 'score']
+    new_columns = ['start_pos', 'end_pos', 'word', 'entity', 'score']
     assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
            and list(result_df.columns) == columns[1:] + new_columns

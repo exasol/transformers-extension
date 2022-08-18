@@ -39,10 +39,10 @@ class MultipleModelSingleBatchComplete:
                  [(None, "bfs_conn2", "sub_dir2", "model2", "text2")
                   ] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    1, "text1", "label1", 0.1)
+                    0, 6, "text1", "label1", 0.1)
                    ] * n_entities * data_size + \
                   [("bfs_conn2", "sub_dir2", "model2", "text2",
-                    1, "text2", "label2", 0.2)
+                    0, 6, "text2", "label2", 0.2)
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -55,13 +55,15 @@ class MultipleModelSingleBatchComplete:
     mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
                 scores=[0.1] * n_entities),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text2"] * n_entities,
                 entities=["label2"] * n_entities,
                 scores=[0.2] * n_entities)

@@ -43,16 +43,16 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                  [(None, "bfs_conn4", "sub_dir4", "model4", "text4")
                   ] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    1, "text1", "label1", 0.1)
+                    0, 6, "text1", "label1", 0.1)
                    ] * n_entities * data_size + \
                   [("bfs_conn2", "sub_dir2", "model2", "text2",
-                    1, "text2", "label2", 0.2)
+                    0, 6, "text2", "label2", 0.2)
                    ] * n_entities * data_size + \
                   [("bfs_conn3", "sub_dir3", "model3", "text3",
-                    1, "text3", "label3", 0.3)
+                    0, 6, "text3", "label3", 0.3)
                    ] * n_entities * data_size + \
                   [("bfs_conn4", "sub_dir4", "model4", "text4",
-                    1, "text4", "label4", 0.4)
+                    0, 6, "text4", "label4", 0.4)
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -69,25 +69,29 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
                 scores=[0.1] * n_entities),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text2"] * n_entities,
                 entities=["label2"] * n_entities,
                 scores=[0.2] * n_entities),
         PurePosixPath(base_cache_dir3, "sub_dir3", "model3"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text3"] * n_entities,
                 entities=["label3"] * n_entities,
                 scores=[0.3] * n_entities),
         PurePosixPath(base_cache_dir4, "sub_dir4", "model4"):
             MockTokenClassificationModel(
-                indexes=[1] * n_entities,
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
                 words=["text4"] * n_entities,
                 entities=["label4"] * n_entities,
                 scores=[0.4] * n_entities)

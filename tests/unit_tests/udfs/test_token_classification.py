@@ -76,7 +76,8 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("word_index", int, "INTEGER"),
+            Column("start_pos", int, "INTEGER"),
+            Column("end_pos", int, "INTEGER"),
             Column("word", str, "VARCHAR(2000000)"),
             Column("entity", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE")

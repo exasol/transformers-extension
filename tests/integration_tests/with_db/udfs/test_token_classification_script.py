@@ -31,5 +31,5 @@ def test_token_classification_script(
     print(result)
 
     # assertions
-    n_cols_result = len(input_data[0]) + 3  # + 4 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + 4  # + 5 new cols -1 device_id col
     assert len(result) >= n_rows and len(result[0]) == n_cols_result
