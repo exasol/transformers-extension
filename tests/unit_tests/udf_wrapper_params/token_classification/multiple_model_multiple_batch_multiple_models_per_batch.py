@@ -1,21 +1,21 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
-from tests.unit_tests.udf_wrapper_params.named_entity_recognition.\
-    mock_named_entity_recognition import \
-    MockNamedEntityRecognitionFactory, MockNamedEntityRecognitionModel, MockPipeline
+from tests.unit_tests.udf_wrapper_params.token_classification.\
+    mock_token_classification import \
+    MockTokenClassificationFactory, MockTokenClassificationModel, MockPipeline
 
 
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.models.named_entity_recognition_udf import \
-        NamedEntityRecognitionUDF
-    from tests.unit_tests.udf_wrapper_params.named_entity_recognition. \
+    from exasol_transformers_extension.udfs.models.token_classification_udf import \
+        TokenClassificationUDF
+    from tests.unit_tests.udf_wrapper_params.token_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.named_entity_recognition. \
+    from tests.unit_tests.udf_wrapper_params.token_classification. \
         multiple_model_multiple_batch_multiple_models_per_batch import \
         MultipleModelMultipleBatchMultipleModelsPerBatch as params
 
-    udf = NamedEntityRecognitionUDF(
+    udf = TokenClassificationUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -66,27 +66,27 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
         "bfs_conn4": Connection(address=f"file://{base_cache_dir4}")}
 
-    mock_factory = MockNamedEntityRecognitionFactory({
+    mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
                 scores=[0.1] * n_entities),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text2"] * n_entities,
                 entities=["label2"] * n_entities,
                 scores=[0.2] * n_entities),
         PurePosixPath(base_cache_dir3, "sub_dir3", "model3"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text3"] * n_entities,
                 entities=["label3"] * n_entities,
                 scores=[0.3] * n_entities),
         PurePosixPath(base_cache_dir4, "sub_dir4", "model4"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text4"] * n_entities,
                 entities=["label4"] * n_entities,

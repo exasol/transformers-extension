@@ -1,4 +1,4 @@
-CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_NAMED_ENTITY_RECOGNITION_UDF"(
+CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TOKEN_CLASSIFICATION_UDF"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),

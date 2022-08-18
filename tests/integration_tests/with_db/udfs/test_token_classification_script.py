@@ -1,7 +1,7 @@
 from tests.utils.parameters import model_params
 
 
-def test_named_entity_recognition_script(
+def test_token_classification_script(
         upload_language_container, setup_database,
         pyexasol_connection, upload_model_to_bucketfs):
 
@@ -16,7 +16,7 @@ def test_named_entity_recognition_script(
             model_params.name,
             model_params.text_data))
 
-    query = f"SELECT TE_NAMED_ENTITY_RECOGNITION_UDF(" \
+    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

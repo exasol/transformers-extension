@@ -3,8 +3,8 @@ from typing import Dict
 import pytest
 import torch
 
-from exasol_transformers_extension.udfs.models.named_entity_recognition_udf import \
-    NamedEntityRecognitionUDF
+from exasol_transformers_extension.udfs.models.token_classification_udf import \
+    TokenClassificationUDF
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 
@@ -46,7 +46,7 @@ class Context:
     ("on CPU with single input", None, 1),
     ("on GPU with batch input", 0, 3),
     ("on GPU with single input", 0, 1)])
-def test_named_entity_recognition_udf(
+def test_token_classification_udf(
         description, device_id, n_rows, upload_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
@@ -76,7 +76,7 @@ def test_named_entity_recognition_udf(
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = NamedEntityRecognitionUDF(exa, batch_size=batch_size)
+    sequence_classifier = TokenClassificationUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

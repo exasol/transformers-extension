@@ -1,10 +1,10 @@
 from pathlib import PurePosixPath
 from typing import Dict, List, Union
-from tests.unit_tests.udf_wrapper_params.named_entity_recognition.\
+from tests.unit_tests.udf_wrapper_params.token_classification.\
     mock_sequence_tokenizer import MockSequenceTokenizer
 
 
-class MockNamedEntityRecognitionModel:
+class MockTokenClassificationModel:
     def __init__(self, indexes: List[int], words: List[str],
                  entities: List[str], scores: List[float]):
         self.result = [{"index": index, "word": word,
@@ -21,9 +21,9 @@ class MockNamedEntityRecognitionModel:
         return self
 
 
-class MockNamedEntityRecognitionFactory:
+class MockTokenClassificationFactory:
     def __init__(self, mock_models: Dict[PurePosixPath,
-                                         MockNamedEntityRecognitionModel]):
+                                         MockTokenClassificationModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_name, cache_dir):
@@ -34,7 +34,7 @@ class MockNamedEntityRecognitionFactory:
 class MockPipeline:
     def __init__(self,
                  task_type: str,
-                 model: MockNamedEntityRecognitionModel,
+                 model: MockTokenClassificationModel,
                  tokenizer: MockSequenceTokenizer,
                  framework: str):
         self.task_type = task_type

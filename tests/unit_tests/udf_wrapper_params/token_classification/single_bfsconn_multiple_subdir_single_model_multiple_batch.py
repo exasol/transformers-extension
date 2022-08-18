@@ -1,21 +1,21 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
-from tests.unit_tests.udf_wrapper_params.named_entity_recognition.\
-    mock_named_entity_recognition import \
-    MockNamedEntityRecognitionFactory, MockNamedEntityRecognitionModel, MockPipeline
+from tests.unit_tests.udf_wrapper_params.token_classification.\
+    mock_token_classification import \
+    MockTokenClassificationFactory, MockTokenClassificationModel, MockPipeline
 
 
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.models.named_entity_recognition_udf import \
-        NamedEntityRecognitionUDF
-    from tests.unit_tests.udf_wrapper_params.named_entity_recognition. \
+    from exasol_transformers_extension.udfs.models.token_classification_udf import \
+        TokenClassificationUDF
+    from tests.unit_tests.udf_wrapper_params.token_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.named_entity_recognition.\
-        single_bfsconn_multiple_subdir_single_model_single_batch import \
-        SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch as params
+    from tests.unit_tests.udf_wrapper_params.token_classification.\
+        single_bfsconn_multiple_subdir_single_model_multiple_batch import \
+        SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch as params
 
-    udf = NamedEntityRecognitionUDF(
+    udf = TokenClassificationUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -26,11 +26,11 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
+class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
     """
-    single bucketfs connection, multiple subdir, single model, single batch
+    single bucketfs connection, multiple subdir, single model, multiple batch
     """
-    batch_size = 4
+    batch_size = 2
     data_size = 2
     n_entities = 3
 
@@ -50,15 +50,15 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
-    mock_factory = MockNamedEntityRecognitionFactory({
+    mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text1"]*n_entities,
                 entities=["label1"]*n_entities,
                 scores=[0.1]*n_entities),
         PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
-            MockNamedEntityRecognitionModel(
+            MockTokenClassificationModel(
                 indexes=[1] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label2"] * n_entities,
