@@ -19,6 +19,14 @@ from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_singl
     MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_topk_multiple_size_single_model_multiple_batch_complete import \
+    MultipleTopkMultipleSizeSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_topk_multiple_size_single_model_single_batch_complete import \
+    MultipleTopkMultipleSizeSingleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_topk_single_size_single_model_multiple_batch_complete import \
+    MultipleTopkSingleSizeSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.question_answering.multiple_topk_single_size_single_model_single_batch_complete import \
+    MultipleTopkSingleSizeSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.question_answering.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.question_answering.single_bfsconn_multiple_subdir_single_model_single_batch import \
@@ -74,7 +82,11 @@ def create_mock_metadata(udf_wrapper):
     MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    MultipleTopkSingleSizeSingleModelNameSingleBatch,
+    MultipleTopkSingleSizeSingleModelNameMultipleBatch,
+    MultipleTopkMultipleSizeSingleModelNameSingleBatch,
+    MultipleTopkMultipleSizeSingleModelNameMultipleBatch
 ])
 def test_question_answering(params):
     executor = UDFMockExecutor()
