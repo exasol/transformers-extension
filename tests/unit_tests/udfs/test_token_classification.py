@@ -18,6 +18,10 @@ from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_sin
     MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_multiple_batch import \
+    MultipleStrategySingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import \
+    MultipleStrategySingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_single_batch import \
@@ -45,7 +49,9 @@ from tests.unit_tests.udf_wrapper_params.token_classification.single_model_singl
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
     MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    MultipleStrategySingleModelNameSingleBatch,
+    MultipleStrategySingleModelNameMultipleBatch
 ])
 def test_question_answering(params):
     executor = UDFMockExecutor()

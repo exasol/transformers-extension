@@ -1,3 +1,4 @@
+import copy
 from pathlib import PurePosixPath
 from typing import Dict, List, Union
 from tests.unit_tests.udf_wrapper_params.token_classification.\
@@ -44,6 +45,16 @@ class MockPipeline:
 
     def __call__(self, text_data: List[str], aggregation_strategy: str) -> \
             List[Dict[str, Union[str, float]]]:
-        return [self.model.result] * len(text_data) if len(text_data) > 1 \
-            else self.model.result
+
+        result_list = self._get_result_list(aggregation_strategy)
+        return [result_list] * len(text_data) \
+            if len(text_data) > 1 else result_list
+
+    def _get_result_list(self, aggregation_strategy: str):
+        result_list = copy.deepcopy(self.model.result)
+        if aggregation_strategy == "none":
+            for i, result in enumerate(result_list):
+                result["entity"] = result.pop("entity_group")
+                result_list[i] = result
+        return result_list
 
