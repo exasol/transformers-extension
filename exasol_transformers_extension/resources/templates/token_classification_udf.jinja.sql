@@ -10,7 +10,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TOKEN_CLASSIFICATION_UDF"(
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
-    word_index INTEGER,
+    start_pos INTEGER,
+    end_pos INTEGER,
     word VARCHAR(2000000),
     entity VARCHAR(2000000),
     score DOUBLE ) AS

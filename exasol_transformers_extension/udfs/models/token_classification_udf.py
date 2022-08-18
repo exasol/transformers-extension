@@ -104,9 +104,10 @@ class TokenClassificationUDF:
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
         self.last_created_pipeline = self.pipeline(
-            "ner",
+            "token-classification",
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
+            aggregation_strategy="simple",
             framework="pt")
 
         self.last_loaded_model = self.last_loaded_model.to(self.device)
@@ -139,12 +140,15 @@ class TokenClassificationUDF:
         results = self.last_created_pipeline(text_data)
         results = results if type(results[0]) == list else [results]
 
-        columns = ["index", "word", "entity", "score"]
+        columns = ["start", "end", "word", "entity_group", "score"]
         results_df_list = []
         for result in results:
             result_df = pd.DataFrame(result)
             result_df = result_df[columns].rename(
-                columns={"index": "word_index"})
+                columns={
+                    "start": "start_pos",
+                    "end": "end_pos",
+                    "entity_group": "entity"})
             results_df_list.append(result_df)
 
         return results_df_list
