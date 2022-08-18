@@ -33,27 +33,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     batch_size = 2
     data_size = 1
     n_entities = 3
+    agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text1")
-                  ] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2", "text2")
-                  ] * data_size + \
-                 [(None, "bfs_conn3", "sub_dir3", "model3", "text3")
-                  ] * data_size + \
-                 [(None, "bfs_conn4", "sub_dir4", "model4", "text4")
-                  ] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    0, 6, "text1", "label1", 0.1)
-                   ] * n_entities * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2", "text2",
-                    0, 6, "text2", "label2", 0.2)
-                   ] * n_entities * data_size + \
-                  [("bfs_conn3", "sub_dir3", "model3", "text3",
-                    0, 6, "text3", "label3", 0.3)
-                   ] * n_entities * data_size + \
-                  [("bfs_conn4", "sub_dir4", "model4", "text4",
-                    0, 6, "text4", "label4", 0.4)
-                   ] * n_entities * data_size
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text1",
+                   agg_strategy)] * data_size + \
+                 [(None, "bfs_conn2", "sub_dir2", "model2", "text2",
+                   agg_strategy)] * data_size + \
+                 [(None, "bfs_conn3", "sub_dir3", "model3", "text3",
+                   agg_strategy)] * data_size + \
+                 [(None, "bfs_conn4", "sub_dir4", "model4", "text4",
+                   agg_strategy)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
+                    0, 6, "text1", "label1", 0.1)] * n_entities * data_size + \
+                  [("bfs_conn2", "sub_dir2", "model2", "text2", agg_strategy,
+                    0, 6, "text2", "label2", 0.2)] * n_entities * data_size + \
+                  [("bfs_conn3", "sub_dir3", "model3", "text3", agg_strategy,
+                    0, 6, "text3", "label3", 0.3)] * n_entities * data_size + \
+                  [("bfs_conn4", "sub_dir4", "model4", "text4", agg_strategy,
+                    0, 6, "text4", "label4", 0.4)] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

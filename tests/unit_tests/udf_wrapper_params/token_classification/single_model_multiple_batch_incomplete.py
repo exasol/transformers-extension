@@ -33,12 +33,12 @@ class SingleModelMultipleBatchIncomplete:
     batch_size = 2
     data_size = 5
     n_entities = 3
+    agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text")
-                  ] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text",
-                    0, 6, "text", "label1", 0.1)
-                   ] * n_entities * data_size
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+                   "text", agg_strategy)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
+                    0, 6, "text", "label1", 0.1)] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

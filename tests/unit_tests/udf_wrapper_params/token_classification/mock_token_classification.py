@@ -36,15 +36,13 @@ class MockPipeline:
                  task_type: str,
                  model: MockTokenClassificationModel,
                  tokenizer: MockSequenceTokenizer,
-                 aggregation_strategy: str,
                  framework: str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
-        self.aggregation_strategy = aggregation_strategy
         self.framework = framework
 
-    def __call__(self, text_data: List[str]) -> \
+    def __call__(self, text_data: List[str], aggregation_strategy: str) -> \
             List[Dict[str, Union[str, float]]]:
         return [self.model.result] * len(text_data) if len(text_data) > 1 \
             else self.model.result
