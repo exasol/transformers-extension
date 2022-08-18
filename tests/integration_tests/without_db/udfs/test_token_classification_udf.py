@@ -41,13 +41,23 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("description,  device_id, n_rows", [
-    ("on CPU with batch input", None, 3),
-    ("on CPU with single input", None, 1),
-    ("on GPU with batch input", 0, 3),
-    ("on GPU with single input", 0, 1)])
+@pytest.mark.parametrize("description,  device_id, n_rows, agg_strategy", [
+    ("on CPU with batch input with none aggregation", None, 3, "none"),
+    ("on CPU with batch input with NULL aggregation", None, 3, None),
+    ("on CPU with batch input with max aggregation", None, 3, "max"),
+    ("on CPU with single input with none aggregation", None, 1, "none"),
+    ("on CPU with single input with NULL aggregation", None, 1, None),
+    ("on CPU with single input with max aggregation", None, 1, "max"),
+    ("on GPU with batch input with none aggregation", 0, 3, "none"),
+    ("on GPU with batch input with NULL aggregation", 0, 3, None),
+    ("on GPU with batch input with max aggregation", 0, 3, "max"),
+    ("on GPU with single input with none aggregation", 0, 1, "none"),
+    ("on GPU with single input with NULL aggregation", 0, 1, None),
+    ("on GPU with single input with max aggregation", 0, 1, "max")
+])
 def test_token_classification_udf(
-        description, device_id, n_rows, upload_model_to_local_bucketfs):
+        description, device_id, n_rows, agg_strategy,
+        upload_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
@@ -64,13 +74,16 @@ def test_token_classification_udf(
         model_params.sub_dir,
         model_params.name,
         model_params.text_data * (i+1),
+        agg_strategy
     ) for i in range(n_rows)]
     columns = [
         'device_id',
         'bucketfs_conn',
         'sub_dir',
         'model_name',
-        'text_data']
+        'text_data',
+        'aggregation_strategy'
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
