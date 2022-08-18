@@ -26,7 +26,7 @@ class TokenClassificationUDF:
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
         self.last_used_top_k = None
-        self.mask_token = "<mask>"
+        self.default_aggregation_strategy = 'simple'
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -69,8 +69,14 @@ class TokenClassificationUDF:
                 self.last_loaded_model_key = current_model_key
                 self.last_used_top_k = None
 
-            model_pred_df = self.get_prediction(model_df)
-            result_df_list.append(model_pred_df)
+            model_df.fillna(self.default_aggregation_strategy, inplace=True)
+            unique_params = dataframe_operations.get_unique_values(
+                model_df, ['aggregation_strategy'])
+            for aggregation_strategy in unique_params:
+                param_based_model_df = model_df[
+                    model_df['aggregation_strategy'] == aggregation_strategy[0]]
+                pred_df = self.get_prediction(param_based_model_df)
+                result_df_list.append(pred_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
@@ -107,7 +113,6 @@ class TokenClassificationUDF:
             "token-classification",
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
-            aggregation_strategy="simple",
             framework="pt")
 
         self.last_loaded_model = self.last_loaded_model.to(self.device)
@@ -137,10 +142,16 @@ class TokenClassificationUDF:
         """
 
         text_data = list(model_df['text_data'])
-        results = self.last_created_pipeline(text_data)
+        aggregation_strategy = model_df['aggregation_strategy'].iloc[0]
+        results = self.last_created_pipeline(
+            text_data, aggregation_strategy=aggregation_strategy)
         results = results if type(results[0]) == list else [results]
 
-        columns = ["start", "end", "word", "entity_group", "score"]
+        if aggregation_strategy == "none":
+            columns = ["start", "end", "word", "entity", "score"]
+        else:
+            columns = ["start", "end", "word", "entity_group", "score"]
+
         results_df_list = []
         for result in results:
             result_df = pd.DataFrame(result)
@@ -150,7 +161,6 @@ class TokenClassificationUDF:
                     "end": "end_pos",
                     "entity_group": "entity"})
             results_df_list.append(result_df)
-
         return results_df_list
 
     @staticmethod
