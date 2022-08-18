@@ -15,7 +15,7 @@ class TokenClassificationUDF:
                  base_model=transformers.AutoModelForTokenClassification,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
-        self.bacth_size = batch_size
+        self.batch_size = batch_size
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
@@ -25,7 +25,6 @@ class TokenClassificationUDF:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
-        self.last_used_top_k = None
         self.default_aggregation_strategy = 'simple'
 
     def run(self, ctx):
@@ -34,7 +33,7 @@ class TokenClassificationUDF:
         ctx.reset()
 
         while True:
-            batch_df = ctx.get_dataframe(num_rows=self.bacth_size, start_col=1)
+            batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
 
@@ -67,7 +66,6 @@ class TokenClassificationUDF:
                 self.clear_device_memory()
                 self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
-                self.last_used_top_k = None
 
             model_df.fillna(self.default_aggregation_strategy, inplace=True)
             unique_params = dataframe_operations.get_unique_values(
