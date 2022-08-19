@@ -1,9 +1,7 @@
+import torch
+import pytest
 import pandas as pd
 from typing import Dict
-
-import pytest
-import torch
-
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.question_answering_udf import \
@@ -42,8 +40,19 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("device_id", [None, 0])
-def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
+@pytest.mark.parametrize("description,  device_id, n_rows, top_k", [
+    ("on CPU with batch input and single answer", None, 3, 1),
+    ("on CPU with batch input and multiple answers", None, 3, 2),
+    ("on CPU with single input and single answer", None, 1, 1),
+    ("on CPU with single input and multiple answers", None, 1, 2),
+    ("on GPU with batch input and single answer", 0, 3, 1),
+    ("on GPU with batch input multiple answers", 0, 3, 2),
+    ("on GPU with single input and single answer", 0, 1, 1),
+    ("on GPU with single input multiple answers", 0, 1, 2)
+])
+def test_question_answering_udf(
+        description, device_id, n_rows, top_k, upload_model_to_local_bucketfs):
+
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -52,7 +61,6 @@ def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
-    n_rows = 3
     batch_size = 2
     question = "Where is the Exasol?"
     sample_data = [(
@@ -61,7 +69,8 @@ def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
         model_params.sub_dir,
         model_params.name,
         question,
-        model_params.text_data
+        model_params.text_data,
+        top_k
     ) for _ in range(n_rows)]
     columns = [
         'device_id',
@@ -69,7 +78,8 @@ def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
         'sub_dir',
         'model_name',
         'question',
-        'context_text']
+        'context_text',
+        'top_k']
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
@@ -80,6 +90,7 @@ def test_question_answering_udf(device_id, upload_model_to_local_bucketfs):
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape == (3, 7) \
-           and list(result_df.columns) == columns[1:] + ['answer', 'score'] \
+    new_columns = ['answer', 'score']
+    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
+           and list(result_df.columns) == columns[1:] + new_columns \
            and result_df['score'].dtypes == 'float'
