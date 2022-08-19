@@ -12,8 +12,8 @@ def udf_wrapper():
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
-        single_model_multiple_batch_incomplete import \
-        SingleModelMultipleBatchIncomplete as params
+        multiple_topk_single_size_single_model_single_batch_complete import \
+        MultipleTopkSingleSizeSingleModelNameSingleBatch as params
 
     udf = QuestionAnswering(
         exa,
@@ -26,18 +26,23 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class SingleModelMultipleBatchIncomplete:
+class MultipleTopkSingleSizeSingleModelNameSingleBatch:
     """
-    single model, multiple batch, last batch incomplete
+    multiple topk, single size, single model, single batch
     """
-    batch_size = 2
-    data_size = 5
-    top_k = 2
+    batch_size = 4
+    data_size = 2
+    top_k1 = 3
+    top_k2 = 5
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "question", "context", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
-                    "context", top_k, "answer 1", 0.1)] * data_size * top_k
+                   "question", "context", top_k1)] * data_size + \
+                 [(None, "bfs_conn1", "sub_dir1", "model1",
+                   "question", "context", top_k2)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
+                    top_k1, "answer 1", 0.1)] * data_size * top_k1 + \
+                  [("bfs_conn1", "sub_dir1", "model1", "question", "context",
+                    top_k2, "answer 1", 0.1)] * data_size * top_k2
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
