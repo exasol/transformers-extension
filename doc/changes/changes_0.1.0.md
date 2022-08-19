@@ -15,6 +15,7 @@
   - #21: Added parameter specifying GPU device
   - #26: Created masked language modelling UDF
   - #29: Created text generation UDF
+  - #31: Created named entity recognition UDF
   
 ### Bug Fixes
 
