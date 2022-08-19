@@ -17,6 +17,7 @@
   - #29: Created text generation UDF
   - #31: Created token classification UDF
   - #28: Added top_k result returning feature to question answering UDF
+  - #33: Added text translation UDF
   
 ### Bug Fixes
 
