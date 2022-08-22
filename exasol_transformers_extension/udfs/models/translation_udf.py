@@ -169,8 +169,12 @@ class TranslationUDF:
 
         :return: Prepared dataframe including input data and predictions
         """
-        pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
-        model_df = pd.concat([model_df, pred_df], axis=1)
+        pred_df = pd.concat(pred_df_list, axis=0)\
+            .reset_index(drop=True)
+        model_df = pd.concat([
+            model_df.reset_index(drop=True),
+            pred_df
+        ], axis=1)
 
         return model_df
 
