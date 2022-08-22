@@ -41,7 +41,11 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("device_id", [None, 0])
+@pytest.mark.parametrize(
+    "device_id, upload_model_to_local_bucketfs", [
+        (None, model_params.base),
+        (0, model_params.base)
+    ], indirect=["upload_model_to_local_bucketfs"])
 def test_sequence_classification_text_pair_udf(
         device_id, upload_model_to_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
@@ -58,7 +62,7 @@ def test_sequence_classification_text_pair_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base,
         model_params.text_data + str(i),
         model_params.text_data + str(i * i)) for i in range(n_rows)]
     sample_df = pd.DataFrame(

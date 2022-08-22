@@ -18,7 +18,7 @@ def _call_deploy_language_container_deployer_cli(
     # call language container deployer
     args_list = [
         "language-container",
-        "--bucketfs-name", bucketfs_params.name,
+        "--bucketfs-name", bucketfs_params.base,
         "--bucketfs-host", bucketfs_params.host,
         "--bucketfs-port", bucketfs_params.port,
         "--bucketfs_use-https", False,
@@ -57,7 +57,7 @@ def _call_deploy_language_container_deployer_cli(
 
 def test_language_container_deployer_cli(
         request, pyexasol_connection, language_container):
-    schema_name = request.node.name
+    schema_name = request.node.base
     language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     result = _call_deploy_language_container_deployer_cli(

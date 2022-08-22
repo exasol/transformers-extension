@@ -1,6 +1,9 @@
-from tests.utils.parameters import model_params, bucketfs_params
+import pytest
+from tests.utils.parameters import model_params
 
 
+@pytest.mark.parametrize("upload_model_to_bucketfs", [model_params.base],
+                         indirect=["upload_model_to_bucketfs"])
 def test_sequence_classification_single_text_script(
         upload_language_container, setup_database,
         pyexasol_connection, upload_model_to_bucketfs):
@@ -14,7 +17,7 @@ def test_sequence_classification_single_text_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.name,
+            model_params.base,
             model_params.text_data))
 
     query = f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \

@@ -40,16 +40,25 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("description,  device_id, n_rows, top_k", [
-    ("on CPU with batch input and single answer", None, 3, 1),
-    ("on CPU with batch input and multiple answers", None, 3, 2),
-    ("on CPU with single input and single answer", None, 1, 1),
-    ("on CPU with single input and multiple answers", None, 1, 2),
-    ("on GPU with batch input and single answer", 0, 3, 1),
-    ("on GPU with batch input multiple answers", 0, 3, 2),
-    ("on GPU with single input and single answer", 0, 1, 1),
-    ("on GPU with single input multiple answers", 0, 1, 2)
-])
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows, top_k, upload_model_to_local_bucketfs", [
+        ("on CPU with batch input, single answer",
+         None, 3, 1, model_params.base),
+        ("on CPU with batch input, multiple answers",
+         None, 3, 2, model_params.base),
+        ("on CPU with single input, single answer",
+         None, 1, 1, model_params.base),
+        ("on CPU with single input, multiple answers",
+         None, 1, 2, model_params.base),
+        ("on GPU with batch input, single answer",
+         0, 3, 1, model_params.base),
+        ("on GPU with batch input, multiple answers",
+         0, 3, 2, model_params.base),
+        ("on GPU with single input, single answer",
+         0, 1, 1, model_params.base),
+        ("on GPU with single input, multiple answers",
+         0, 1, 2, model_params.base)
+    ], indirect=["upload_model_to_local_bucketfs"])
 def test_question_answering_udf(
         description, device_id, n_rows, top_k, upload_model_to_local_bucketfs):
 
@@ -67,7 +76,7 @@ def test_question_answering_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base,
         question,
         model_params.text_data,
         top_k

@@ -40,11 +40,13 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("description,  device_id, n_rows", [
-    ("on CPU with batch input", None, 3),
-    ("on CPU with single input", None, 1),
-    ("on GPU with batch input", 0, 3),
-    ("on GPU with single input", 0, 1)])
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows, upload_model_to_local_bucketfs", [
+        ("on CPU with batch input", None, 3, model_params.base),
+        ("on CPU with single input", None, 1, model_params.base),
+        ("on GPU with batch input", 0, 3, model_params.base),
+        ("on GPU with single input", 0, 1, model_params.base)
+    ], indirect=["upload_model_to_local_bucketfs"])
 def test_text_generation_udf(
         description, device_id, n_rows, upload_model_to_local_bucketfs):
 
@@ -64,7 +66,7 @@ def test_text_generation_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base,
         text_data,
         max_length,
         return_full_text

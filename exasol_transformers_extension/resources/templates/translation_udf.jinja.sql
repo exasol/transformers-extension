@@ -4,8 +4,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TRANSLATION_UDF"(
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
-    source_languge VARCHAR(2000000),
-    target_languge VARCHAR(2000000),
+    source_language VARCHAR(2000000),
+    target_language VARCHAR(2000000),
     max_length INTEGER
     ORDER BY {{ ordered_columns | join(" ASC,") }} ASC
 )EMITS (

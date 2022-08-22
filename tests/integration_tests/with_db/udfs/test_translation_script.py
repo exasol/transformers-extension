@@ -1,9 +1,12 @@
-from tests.utils.parameters import model_params, bucketfs_params
+import pytest
+from tests.utils.parameters import model_params
 
 
+@pytest.mark.parametrize("upload_model_to_bucketfs", [model_params.seq2seq],
+                         indirect=["upload_model_to_bucketfs"])
 def test_translation_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_local_bucketfs_translation):
+        pyexasol_connection, upload_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 100
@@ -43,6 +46,6 @@ def test_translation_script(
 
     # assertions
     n_rows_result = n_rows
-    n_cols_result = len(input_data[0]) + 1  # + 2 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + 0  # + 1 new cols -1 device_id col
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 

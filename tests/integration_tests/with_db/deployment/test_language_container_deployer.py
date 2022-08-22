@@ -19,7 +19,7 @@ def _call_deploy_language_container_deployer(
     bucketfs_location = bucket_fs_factory.create_bucketfs_location(
         url=f"http://{bucketfs_params.host}:{bucketfs_params.port}/"
             f"{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};"
-            f"{bucketfs_params.name}",
+            f"{bucketfs_params.base}",
         user=f"{bucketfs_params.user}",
         pwd=f"{bucketfs_params.password}",
         base_path=None)
@@ -43,7 +43,7 @@ def _call_deploy_language_container_deployer(
 
 def test_language_container_deployer(
         request, pyexasol_connection, language_container):
-    schema_name = request.node.name
+    schema_name = request.node.base
     language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     result = _call_deploy_language_container_deployer(

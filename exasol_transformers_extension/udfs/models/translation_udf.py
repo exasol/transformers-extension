@@ -25,7 +25,7 @@ class TranslationUDF:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
-        self.translation_prefix = "translate {src_lang} to {tgt_lang}"
+        self.translation_prefix = "translate {src_lang} to {tgt_lang}: "
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']

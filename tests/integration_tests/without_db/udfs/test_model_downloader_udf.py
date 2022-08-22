@@ -44,13 +44,13 @@ class Context:
 def test_model_downloader_udf_implementation():
     bucketfs_conn_name = "bucketfs_connection"
     model_path = bucketfs_operations.get_model_path(
-        model_params.sub_dir, model_params.name)
+        model_params.sub_dir, model_params.base)
 
     with tempfile.TemporaryDirectory() as tmpdir_name:
         url_localfs = f"file://{tmpdir_name}/bucket"
 
         ctx = Context(
-            model_params.name, model_params.sub_dir, bucketfs_conn_name)
+            model_params.base, model_params.sub_dir, bucketfs_conn_name)
         bucketfs_connection = Connection(
             address=url_localfs,
             user=None,
