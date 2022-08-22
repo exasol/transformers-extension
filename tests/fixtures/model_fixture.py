@@ -62,3 +62,29 @@ def upload_model_to_bucketfs(download_model, bucketfs_location) -> Path:
                 str(PurePosixPath(model_path, file_)))
         except Exception as exc:
             print(f"Error while deleting downloaded files, {str(exc)}")
+
+
+@pytest.fixture(scope="session")
+def download_model_translation() -> str:
+    with tempfile.TemporaryDirectory() as tmpdir_name:
+        for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
+            downloader.from_pretrained("t5-small", cache_dir=tmpdir_name)
+        yield tmpdir_name
+
+
+@pytest.fixture(scope="session")
+def upload_model_to_local_bucketfs_translation(download_model_translation) -> PurePosixPath:
+    with tempfile.TemporaryDirectory() as upload_tmpdir_name:
+        model_path = PurePosixPath(
+            upload_tmpdir_name,
+            bucketfs_operations.get_model_path(
+                model_params.sub_dir, "t5-small"))
+        bucketfs_location = LocalFSMockBucketFSLocation(model_path)
+
+        downloaded_tmpdir_name = download_model_translation
+        bucketfs_operations.upload_model_files_to_bucketfs(
+            tmpdir_name=downloaded_tmpdir_name,
+            model_path=Path(model_path),
+            bucketfs_location=bucketfs_location)
+
+        yield upload_tmpdir_name

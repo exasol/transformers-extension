@@ -20,6 +20,8 @@ UDF_CALL_TEMPLATES = {
         "text_generation_udf.jinja.sql",
     "token_classification_udf_call.py":
         "token_classification_udf.jinja.sql",
+    "translation_udf_call.py":
+        "translation_udf.jinja.sql"
 }
 
 ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']
