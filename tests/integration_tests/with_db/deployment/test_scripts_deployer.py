@@ -7,7 +7,7 @@ from tests.utils.parameters import db_params
 def test_scripts_deployer(upload_language_container,
                           pyexasol_connection, request):
 
-    schema_name = request.node.base
+    schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
     language_alias = upload_language_container
