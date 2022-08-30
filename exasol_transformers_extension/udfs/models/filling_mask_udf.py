@@ -125,19 +125,18 @@ class FillingMask:
         :return: The dataframe where the model_df is formatted with the
         prediction results
         """
-        preds, labels = self._predict_model(model_df)
-        pred_df = self._prepare_prediction_dataframe(model_df, preds, labels)
+        pred_df_list = self._predict_model(model_df)
+        pred_df = self._prepare_prediction_dataframe(model_df, pred_df_list)
         return pred_df
 
-    def _predict_model(self, model_df: pd.DataFrame) -> \
-            Tuple[List[float], List[str]]:
+    def _predict_model(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and filled texts
 
         :param model_df: The dataframe to be predicted
 
-        :return: A tuple containing prediction score list and filled texts list
+        :return: List of dataframe includes prediction details
         """
         top_k = int(model_df['top_k'].iloc[0])
         text_data_raw = list(model_df['text_data'])
@@ -150,43 +149,39 @@ class FillingMask:
             text_data_with_valid_mask_token, top_k=top_k)
 
         #  Batch prediction returns list of list while single prediction just
-        #  return a list. In case of batch predictions, we need to flatten
-        #  2D prediction results to 1D list
-        results = sum(results, []) if type(results[0]) == list else results
+        #  return a list. In order to ease dataframe operations, convert single
+        #  prediction to list of list.
+        results = [results] if len(text_data_raw) == 1 else results
 
-        filled_texts = []
-        scores = []
+        columns = ["sequence", "score"]
+        results_df_list = []
         for result in results:
-            filled_texts.append(result['sequence'])
-            scores.append(result['score'])
-
-        return scores, filled_texts
+            result_df = pd.DataFrame(result)
+            result_df = result_df[columns].rename(
+                columns={"sequence": "filled_text"})
+            results_df_list.append(result_df)
+        return results_df_list
 
     @staticmethod
     def _prepare_prediction_dataframe(
-            model_df: pd.DataFrame,
-            scores: List[float],
-            filled_texts: List[str]) -> pd.DataFrame:
+            model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
+            -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
 
-        :param model_df: Dataframe used in prediction
-        :param scores: List of prediction probabilities
-        :param filled_texts: List of text filled with the predicted tokens
+       :param model_df: Dataframe used in prediction
+        :param pred_df_list: List of predictions dataframes
 
         :return: Prepared dataframe including input data and predictions
         """
-        top_k = model_df['top_k'].iloc[0]
-
-        # Repeat each row consecutively as the number of labels. At the end,
-        # the dataframe is expanded from (m, n) to (m*top_k, n)
-        repeated_indexes = model_df.index.repeat(top_k)
+        n_topk_results = list(map(lambda x: x.shape[0], pred_df_list))
+        repeated_indexes = model_df.index.repeat(repeats=n_topk_results)
         model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
 
-        # Assign predicted texts and probability scores to the dataframe
-        model_df['filled_text'] = filled_texts
-        model_df['score'] = scores
+        # Concat predictions and model_df
+        pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
+        model_df = pd.concat([model_df, pred_df], axis=1)
 
         return model_df
 
