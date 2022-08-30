@@ -69,12 +69,12 @@ class FillingMask:
                 self.last_loaded_model_key = current_model_key
                 self.last_used_top_k = None
 
-            unique_top_k_values = model_df['top_k'].unique()
-            for top_k in unique_top_k_values:
-                model_by_top_k_df = model_df[model_df['top_k'] == top_k]
-                self.setup_pipeline(top_k=top_k)
-                model_pred_df = self.get_prediction(model_by_top_k_df)
-                result_df_list.append(model_pred_df)
+            unique_params = dataframe_operations.get_unique_values(
+                model_df, ['top_k'])
+            for top_k in unique_params:
+                param_based_model_df = model_df[model_df['top_k'] == top_k[0]]
+                pred_df = self.get_prediction(param_based_model_df)
+                result_df_list.append(pred_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
@@ -105,23 +105,14 @@ class FillingMask:
             model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+        self.last_created_pipeline = self.pipeline(
+            "fill-mask",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer,
+            device=self.device,
+            framework="pt")
 
         self.last_loaded_model = self.last_loaded_model.to(self.device)
-
-    def setup_pipeline(self, **kwargs) -> None:
-        """
-        Setup pipeline if new models are loaded or if the top_k value
-        for the same model changes
-        """
-        top_k = kwargs['top_k']
-        if self.last_used_top_k is None or self.last_used_top_k != top_k:
-            self.last_created_pipeline = self.pipeline(
-                "fill-mask",
-                model=self.last_loaded_model,
-                tokenizer=self.last_loaded_tokenizer,
-                framework="pt",
-                top_k=top_k)
-            self.last_used_top_k = top_k
 
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
@@ -148,12 +139,15 @@ class FillingMask:
 
         :return: A tuple containing prediction score list and filled texts list
         """
+        top_k = int(model_df['top_k'].iloc[0])
         text_data_raw = list(model_df['text_data'])
-        text_data_with_valid_mask_token = \
-            [text_data.replace(self.mask_token,
-                               self.last_created_pipeline.tokenizer.mask_token)
-             for text_data in text_data_raw]
-        results = self.last_created_pipeline(text_data_with_valid_mask_token)
+        text_data_with_valid_mask_token = [
+            text_data.replace(
+                self.mask_token,
+                self.last_created_pipeline.tokenizer.mask_token
+            ) for text_data in text_data_raw]
+        results = self.last_created_pipeline(
+            text_data_with_valid_mask_token, top_k=top_k)
 
         #  Batch prediction returns list of list while single prediction just
         #  return a list. In case of batch predictions, we need to flatten

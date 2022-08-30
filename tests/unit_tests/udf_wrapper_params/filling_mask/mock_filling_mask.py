@@ -29,17 +29,17 @@ class MockPipeline:
                  task_type: str,
                  model: MockFillingMaskModel,
                  tokenizer: MockSequenceTokenizer,
-                 framework: str,
-                 top_k: int):
+                 device : str,
+                 framework: str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
+        self.device = device
         self.framework = framework
-        self.top_k = top_k
 
-    def __call__(self, text_data: List[str]) -> \
+    def __call__(self, text_data: List[str], top_k: int) -> \
             List[Dict[str, Union[str, float]]]:
         input_size = len(text_data)
-        single_result = [self.model.result] * self.top_k
+        single_result = [self.model.result] * top_k
         return [single_result] * input_size if input_size > 1 else single_result
 
