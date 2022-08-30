@@ -42,17 +42,18 @@ class Context:
 
 
 @pytest.mark.parametrize(
-    "device_id, upload_model_to_local_bucketfs", [
-        (None, model_params.base),
-        (0, model_params.base)
-    ], indirect=["upload_model_to_local_bucketfs"])
+    "description, device_id", [
+        ("on CPU", None),
+        ("on GPU", 0)
+    ])
 def test_sequence_classification_single_text_udf(
-        device_id, upload_model_to_local_bucketfs):
+        description, device_id, upload_model_base_to_local_bucketfs):
+
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_model_base_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

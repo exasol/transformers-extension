@@ -45,36 +45,31 @@ class Context:
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, languages, upload_model_to_local_bucketfs", [
+    "description,  device_id, languages", [
         ("on CPU with single input", None, [
-            ("English", "French")], model_params.seq2seq
-         ),
+            ("English", "French")]),
         ("on CPU with batch input, single-pair language", None, [
-            ("English", "French")] * 3, model_params.seq2seq
-         ),
+            ("English", "French")] * 3),
         ("on CPU with batch input, multi language", None, [
             ("English", "French"), ("English", "German"),
-            ("English", "Romanian")],  model_params.seq2seq
-         ),
+            ("English", "Romanian")]),
         ("on GPU with single input", 0, [
-            ("English", "French")], model_params.seq2seq
-         ),
+            ("English", "French")]),
         ("on GPU with batch input, single-pair language", 0, [
-            ("English", "French")] * 3, model_params.seq2seq
-         ),
+            ("English", "French")] * 3),
         ("on GPU with batch input, multi language", 0, [
             ("English", "French"), ("English", "German"),
-            ("English", "Romanian")], model_params.seq2seq
-         )
-    ], indirect=["upload_model_to_local_bucketfs"])
+            ("English", "Romanian")])
+    ])
 def test_translation_udf(
-        description, device_id, languages, upload_model_to_local_bucketfs):
+        description, device_id, languages,
+        upload_model_seq2seq_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_model_seq2seq_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

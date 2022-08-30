@@ -1,12 +1,9 @@
-import pytest
 from tests.utils.parameters import model_params
 
 
-@pytest.mark.parametrize("upload_model_to_bucketfs", [model_params.seq2seq],
-                         indirect=["upload_model_to_bucketfs"])
 def test_translation_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_bucketfs):
+        pyexasol_connection, upload_model_seq2seq_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 100

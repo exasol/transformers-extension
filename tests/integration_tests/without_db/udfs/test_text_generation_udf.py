@@ -41,20 +41,20 @@ class Context:
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, n_rows, upload_model_to_local_bucketfs", [
-        ("on CPU with batch input", None, 3, model_params.base),
-        ("on CPU with single input", None, 1, model_params.base),
-        ("on GPU with batch input", 0, 3, model_params.base),
-        ("on GPU with single input", 0, 1, model_params.base)
-    ], indirect=["upload_model_to_local_bucketfs"])
+    "description,  device_id, n_rows", [
+        ("on CPU with batch input", None, 3),
+        ("on CPU with single input", None, 1),
+        ("on GPU with batch input", 0, 3),
+        ("on GPU with single input", 0, 1)
+    ])
 def test_text_generation_udf(
-        description, device_id, n_rows, upload_model_to_local_bucketfs):
+        description, device_id, n_rows, upload_model_base_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_model_base_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
