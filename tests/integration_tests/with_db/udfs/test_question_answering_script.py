@@ -35,7 +35,6 @@ def test_question_answering_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows

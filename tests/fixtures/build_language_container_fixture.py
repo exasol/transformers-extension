@@ -24,7 +24,6 @@ def language_container() -> dict:
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.STDOUT)
     output = completed_process.stdout.decode("UTF-8")
-    print(output)
 
     completed_process.check_returncode()
     lines = output.splitlines()

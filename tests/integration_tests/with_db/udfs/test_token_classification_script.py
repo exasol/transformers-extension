@@ -32,7 +32,6 @@ def test_token_classification_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_cols_result = len(input_data[0]) + 4  # + 5 new cols -1 device_id col

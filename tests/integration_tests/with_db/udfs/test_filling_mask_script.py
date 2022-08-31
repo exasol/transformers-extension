@@ -32,7 +32,6 @@ def test_filling_mask_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows * top_k

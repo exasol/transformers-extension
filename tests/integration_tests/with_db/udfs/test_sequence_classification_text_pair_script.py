@@ -31,7 +31,6 @@ def test_sequence_classification_text_pair_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows * n_labels

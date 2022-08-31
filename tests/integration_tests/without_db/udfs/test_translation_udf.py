@@ -104,7 +104,6 @@ def test_translation_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    print(result_df.to_string())
     new_columns = ['translation_text']
     assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
            and list(result_df.columns) == columns[1:] + new_columns
