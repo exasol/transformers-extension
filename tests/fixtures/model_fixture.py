@@ -3,9 +3,6 @@ import tempfile
 import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
-
-from py._path.local import LocalPath
-
 from tests.utils.parameters import model_params
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
@@ -14,19 +11,19 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 
 
-def download_model(model_name: str, tmpdir_name: str) -> None:
+def download_model(model_name: str, tmpdir_name: Path) -> None:
     for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
         downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
 
 
 @contextmanager
 def upload_model(bucketfs_location: AbstractBucketFSLocation,
-                 model_name: str, model_dir: str) -> str:
+                 model_name: str, model_dir: Path) -> str:
 
     model_path = bucketfs_operations.get_model_path(
         model_params.sub_dir, model_name)
     bucketfs_operations.upload_model_files_to_bucketfs(
-        tmpdir_name=model_dir,
+        tmpdir_name=str(model_dir),
         model_path=Path(model_path),
         bucketfs_location=bucketfs_location)
     yield model_path
@@ -34,13 +31,15 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
 
 @contextmanager
 def upload_model_to_local_bucketfs(
-        model_name: str, download_tmpdir: LocalPath) -> str:
+        model_name: str, download_tmpdir: Path) -> str:
 
     download_model(model_name, download_tmpdir)
-    with tempfile.TemporaryDirectory() as upload_tmpdir_name:
-        bucketfs_location = LocalFSMockBucketFSLocation(upload_tmpdir_name)
-        upload_model(bucketfs_location, model_name, download_tmpdir)
-        yield upload_tmpdir_name
+    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir")
+    upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
+    bucketfs_location = LocalFSMockBucketFSLocation(
+        PurePosixPath(upload_tmpdir_name))
+    upload_model(bucketfs_location, model_name, download_tmpdir)
+    yield upload_tmpdir_name
 
 
 @pytest.fixture(scope="session")
@@ -62,7 +61,7 @@ def upload_seq2seq_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
 @contextmanager
 def upload_model_to_bucketfs(
         model_name: str,
-        download_tmpdir: LocalPath,
+        download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
 
     download_model(model_name, download_tmpdir)
