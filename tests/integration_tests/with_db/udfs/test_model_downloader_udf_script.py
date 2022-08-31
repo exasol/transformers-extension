@@ -11,13 +11,13 @@ def test_model_downloader_udf_script(
         pyexasol_connection, bucketfs_location):
 
     bucketfs_conn_name, schema_name = setup_database
-    model_path = bucketfs_operations.get_model_path(SUB_DIR, model_params.name)
+    model_path = bucketfs_operations.get_model_path(SUB_DIR, model_params.base_model)
     bucketfs_files = []
     try:
         # execute downloader UDF
         result = pyexasol_connection.execute(
             f"SELECT TE_MODEL_DOWNLOADER_UDF("
-            f"'{model_params.name}', '{SUB_DIR}', '{bucketfs_conn_name}');")\
+            f"'{model_params.base_model}', '{SUB_DIR}', '{bucketfs_conn_name}');")\
             .fetchall()
 
         # assertions

@@ -40,19 +40,21 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("description,  device_id, n_rows", [
-    ("on CPU with batch input", None, 3),
-    ("on CPU with single input", None, 1),
-    ("on GPU with batch input", 0, 3),
-    ("on GPU with single input", 0, 1)])
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows", [
+        ("on CPU with batch input", None, 3),
+        ("on CPU with single input", None, 1),
+        ("on GPU with batch input", 0, 3),
+        ("on GPU with single input", 0, 1)
+    ])
 def test_filling_mask_udf(
-        description, device_id, n_rows, upload_model_to_local_bucketfs):
+        description, device_id, n_rows, upload_base_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -63,7 +65,7 @@ def test_filling_mask_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base_model,
         text_data,
         top_k
     ) for _ in range(n_rows)]

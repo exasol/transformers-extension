@@ -40,29 +40,30 @@ class Context:
         return return_df
 
 
-@pytest.mark.parametrize("description,  device_id, n_rows, agg_strategy", [
-    ("on CPU with batch input with none aggregation", None, 3, "none"),
-    ("on CPU with batch input with NULL aggregation", None, 3, None),
-    ("on CPU with batch input with max aggregation", None, 3, "max"),
-    ("on CPU with single input with none aggregation", None, 1, "none"),
-    ("on CPU with single input with NULL aggregation", None, 1, None),
-    ("on CPU with single input with max aggregation", None, 1, "max"),
-    ("on GPU with batch input with none aggregation", 0, 3, "none"),
-    ("on GPU with batch input with NULL aggregation", 0, 3, None),
-    ("on GPU with batch input with max aggregation", 0, 3, "max"),
-    ("on GPU with single input with none aggregation", 0, 1, "none"),
-    ("on GPU with single input with NULL aggregation", 0, 1, None),
-    ("on GPU with single input with max aggregation", 0, 1, "max")
-])
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows, agg", [
+        ("on CPU with batch input with none aggregation", None, 3, "none"),
+        ("on CPU with batch input with NULL aggregation", None, 3, None),
+        ("on CPU with batch input with max aggregation", None, 3, "max"),
+        ("on CPU with single input with none aggregation", None, 1, "none"),
+        ("on CPU with single input with NULL aggregation", None, 1, None),
+        ("on CPU with single input with max aggregation", None, 1, "max"),
+        ("on GPU with batch input with none aggregation", 0, 3, "none"),
+        ("on GPU with batch input with NULL aggregation", 0, 3, None),
+        ("on GPU with batch input with max aggregation", 0, 3, "max"),
+        ("on GPU with single input with none aggregation", 0, 1, "none"),
+        ("on GPU with single input with NULL aggregation", 0, 1, None),
+        ("on GPU with single input with max aggregation", 0, 1, "max")
+    ])
 def test_token_classification_udf(
-        description, device_id, n_rows, agg_strategy,
-        upload_model_to_local_bucketfs):
+        description, device_id, n_rows, agg,
+        upload_base_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -71,9 +72,9 @@ def test_token_classification_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base_model,
         model_params.text_data * (i+1),
-        agg_strategy
+        agg
     ) for i in range(n_rows)]
     columns = [
         'device_id',
@@ -97,17 +98,19 @@ def test_token_classification_udf(
            and list(result_df.columns) == columns[1:] + new_columns
 
 
-@pytest.mark.parametrize("description,  device_id", [
-    ("on CPU", None),
-    ("on GPU", 0)
-])
+@pytest.mark.parametrize(
+    "description,  device_id", [
+        ("on CPU", None),
+        ("on GPU", 0)
+    ])
 def test_token_classification_udf_with_multiple_aggregation_strategies(
-        description, device_id, upload_model_to_local_bucketfs):
+        description, device_id, upload_base_model_to_local_bucketfs):
+
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -117,7 +120,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.name,
+        model_params.base_model,
         model_params.text_data * (i + 1),
         agg_strategy
     ) for i, agg_strategy in enumerate(agg_strategies)]

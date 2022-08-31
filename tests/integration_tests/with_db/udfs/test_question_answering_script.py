@@ -1,9 +1,9 @@
-from tests.utils.parameters import model_params, bucketfs_params
+from tests.utils.parameters import model_params
 
 
 def test_question_answering_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     question = "Where is the Exasol?"
@@ -15,7 +15,7 @@ def test_question_answering_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.name,
+            model_params.base_model,
             question,
             ' '.join((model_params.text_data, str(i))),
             top_k
@@ -35,7 +35,6 @@ def test_question_answering_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows

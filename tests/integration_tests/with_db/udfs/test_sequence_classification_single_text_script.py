@@ -1,9 +1,9 @@
-from tests.utils.parameters import model_params, bucketfs_params
+from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_single_text_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     n_labels = 2
@@ -14,7 +14,7 @@ def test_sequence_classification_single_text_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.name,
+            model_params.base_model,
             model_params.text_data))
 
     query = f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
@@ -29,7 +29,6 @@ def test_sequence_classification_single_text_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows * n_labels

@@ -1,11 +1,15 @@
+import tempfile
 import torch
 import pytest
 import pandas as pd
 from typing import Dict
+import transformers
+from exasol_transformers_extension.udfs.models.translation_udf import \
+    TranslationUDF
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.models.text_generation_udf import \
-    TextGenerationUDF
+from exasol_transformers_extension.udfs.models.question_answering_udf import \
+    QuestionAnswering
 
 
 class ExaEnvironment:
@@ -41,53 +45,66 @@ class Context:
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, n_rows", [
-        ("on CPU with batch input", None, 3),
-        ("on CPU with single input", None, 1),
-        ("on GPU with batch input", 0, 3),
-        ("on GPU with single input", 0, 1)
+    "description,  device_id, languages", [
+        ("on CPU with single input", None, [
+            ("English", "French")]),
+        ("on CPU with batch input, single-pair language", None, [
+            ("English", "French")] * 3),
+        ("on CPU with batch input, multi language", None, [
+            ("English", "French"), ("English", "German"),
+            ("English", "Romanian")]),
+        ("on GPU with single input", 0, [
+            ("English", "French")]),
+        ("on GPU with batch input, single-pair language", 0, [
+            ("English", "French")] * 3),
+        ("on GPU with batch input, multi language", 0, [
+            ("English", "French"), ("English", "German"),
+            ("English", "Romanian")])
     ])
-def test_text_generation_udf(
-        description, device_id, n_rows, upload_base_model_to_local_bucketfs):
+def test_translation_udf(
+        description, device_id, languages,
+        upload_seq2seq_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = upload_seq2seq_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
     batch_size = 2
-    text_data = "Exasol is an analytics database management"
-    max_length = 10
-    return_full_text = True
     sample_data = [(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model,
-        text_data,
-        max_length,
-        return_full_text
-    ) for _ in range(n_rows)]
+        "t5-small",
+        model_params.text_data,
+        src_lang,
+        target_lang,
+        50
+    ) for src_lang, target_lang in languages]
     columns = [
         'device_id',
         'bucketfs_conn',
         'sub_dir',
         'model_name',
         'text_data',
-        'max_length',
-        'return_full_text']
+        'source_language',
+        'target_language',
+        'max_length'
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TextGenerationUDF(exa, batch_size=batch_size)
+    sequence_classifier = TranslationUDF(
+        exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape == (n_rows, 7) \
-           and list(result_df.columns) == columns[1:] + ['generated_text'] \
-           and result_df["generated_text"].str.contains(text_data).all()
+    new_columns = ['translation_text']
+    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
+           and list(result_df.columns) == columns[1:] + new_columns
+

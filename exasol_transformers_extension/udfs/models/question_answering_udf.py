@@ -79,9 +79,7 @@ class QuestionAnswering:
 
     def set_cache_dir(self, model_df: pd.DataFrame) -> None:
         """
-        Set the cache directory in bucketfs of the specified model. Note that,
-        cache_dir class variable is used for testing purpose. This variable is
-        set to a local path only in unit tests.
+        Set the cache directory in bucketfs of the specified model.
 
         :param model_df: The model dataframe to set the cache directory
         """

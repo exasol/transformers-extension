@@ -1,9 +1,9 @@
-from tests.utils.parameters import model_params, bucketfs_params
+from tests.utils.parameters import model_params
 
 
 def test_filling_mask_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics <mask> management software company."
@@ -15,7 +15,7 @@ def test_filling_mask_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.name,
+            model_params.base_model,
             text_data,
             top_k))
 
@@ -32,7 +32,6 @@ def test_filling_mask_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows * top_k

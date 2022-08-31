@@ -85,13 +85,13 @@ def test_model_downloader():
             metadata=meta,
             connections={BFS_CONN_NAME: bucketfs_connection})
         input_data = (
-            model_params.name,
+            model_params.base_model,
             model_params.sub_dir,
             BFS_CONN_NAME)
         result = executor.run([Group([input_data])], exa)
 
         relative_model_path = bucketfs_operations.get_model_path(
-            model_params.sub_dir, model_params.name)
+            model_params.sub_dir, model_params.base_model)
         assert result[0].rows[0][0] == str(relative_model_path) \
                and bucketfs_location_read.read_file_from_bucketfs_to_string(
             str(relative_model_path.joinpath("model_file1.txt"))) \

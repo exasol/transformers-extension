@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 def test_token_classification_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     aggregation_strategy = "simple"
@@ -14,7 +14,7 @@ def test_token_classification_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.name,
+            model_params.base_model,
             model_params.text_data,
             aggregation_strategy
         ))
@@ -32,7 +32,6 @@ def test_token_classification_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_cols_result = len(input_data[0]) + 4  # + 5 new cols -1 device_id col
