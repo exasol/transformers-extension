@@ -3,13 +3,12 @@ from tests.utils.parameters import model_params
 
 def test_translation_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_seq2seq_to_bucketfs):
+        pyexasol_connection, upload_seq2seq_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 100
-    model_name = "t5-small"
     src_lang = "English"
-    tgt_lang = "German"
+    target_lang = "German"
     max_length = 50
     input_data = []
     for i in range(n_rows):
@@ -17,10 +16,10 @@ def test_translation_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_name,
+            model_params.seq2seq_model,
             model_params.text_data,
             src_lang,
-            tgt_lang,
+            target_lang,
             max_length
         ))
 
@@ -39,7 +38,6 @@ def test_translation_script(
 
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
-    print(result)
 
     # assertions
     n_rows_result = n_rows

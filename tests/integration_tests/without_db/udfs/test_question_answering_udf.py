@@ -53,13 +53,13 @@ class Context:
     ])
 def test_question_answering_udf(
         description, device_id, n_rows,
-        top_k, upload_model_base_to_local_bucketfs):
+        top_k, upload_base_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_base_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -69,7 +69,7 @@ def test_question_answering_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base,
+        model_params.base_model,
         question,
         model_params.text_data,
         top_k

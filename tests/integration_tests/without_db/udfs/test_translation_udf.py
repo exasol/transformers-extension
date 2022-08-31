@@ -63,13 +63,13 @@ class Context:
     ])
 def test_translation_udf(
         description, device_id, languages,
-        upload_model_seq2seq_to_local_bucketfs):
+        upload_seq2seq_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_seq2seq_to_local_bucketfs
+    bucketfs_base_path = upload_seq2seq_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -81,9 +81,9 @@ def test_translation_udf(
         "t5-small",
         model_params.text_data,
         src_lang,
-        tgt_lang,
+        target_lang,
         50
-    ) for src_lang, tgt_lang in languages]
+    ) for src_lang, target_lang in languages]
     columns = [
         'device_id',
         'bucketfs_conn',

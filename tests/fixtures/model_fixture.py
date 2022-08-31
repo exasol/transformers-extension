@@ -3,6 +3,9 @@ import tempfile
 import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
+
+from py._path.local import LocalPath
+
 from tests.utils.parameters import model_params
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
@@ -11,20 +14,9 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 
 
-@pytest.fixture(scope="session")
-def get_local_bucketfs_path() -> str:
-    bucket_base_path = ''
-    with tempfile.TemporaryDirectory() as tmpdir_name:
-        model_path = PurePosixPath(tmpdir_name, bucket_base_path)
-        yield str(model_path)
-
-
-@contextmanager
-def download_model(model_name: str) -> str:
-    with tempfile.TemporaryDirectory() as tmpdir_name:
-        for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-            downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
-        yield tmpdir_name
+def download_model(model_name: str, tmpdir_name: str) -> None:
+    for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
+        downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
 
 
 @contextmanager
@@ -41,58 +33,63 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
 
 
 @contextmanager
-def upload_model_to_local_bucketfs(model_name: str) -> str:
-    with download_model(model_name) as download_tmpdir:
-        with tempfile.TemporaryDirectory() as upload_tmpdir_name:
-            bucketfs_location = LocalFSMockBucketFSLocation(upload_tmpdir_name)
-            upload_model(bucketfs_location, model_name, download_tmpdir)
-            yield upload_tmpdir_name
+def upload_model_to_local_bucketfs(
+        model_name: str, download_tmpdir: LocalPath) -> str:
+
+    download_model(model_name, download_tmpdir)
+    with tempfile.TemporaryDirectory() as upload_tmpdir_name:
+        bucketfs_location = LocalFSMockBucketFSLocation(upload_tmpdir_name)
+        upload_model(bucketfs_location, model_name, download_tmpdir)
+        yield upload_tmpdir_name
 
 
 @pytest.fixture(scope="session")
-def upload_model_base_to_local_bucketfs() -> PurePosixPath:
-    with upload_model_to_local_bucketfs(model_params.base) as path:
+def upload_base_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    tmpdir = tmpdir_factory.mktemp(model_params.base_model)
+    with upload_model_to_local_bucketfs(
+            model_params.base_model, tmpdir) as path:
         yield path
 
 
 @pytest.fixture(scope="session")
-def upload_model_seq2seq_to_local_bucketfs() -> PurePosixPath:
-    with upload_model_to_local_bucketfs(model_params.seq2seq) as path:
+def upload_seq2seq_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
+    with upload_model_to_local_bucketfs(
+            model_params.seq2seq_model, tmpdir) as path:
         yield path
 
 
 @contextmanager
 def upload_model_to_bucketfs(
-        model_name: str, bucketfs_location: AbstractBucketFSLocation) -> str:
+        model_name: str,
+        download_tmpdir: LocalPath,
+        bucketfs_location: AbstractBucketFSLocation) -> str:
 
-    with download_model(model_name) as download_tmpdir:
-        with upload_model(
-                bucketfs_location, model_name, download_tmpdir) as model_path:
+    download_model(model_name, download_tmpdir)
+    with upload_model(
+            bucketfs_location, model_name, download_tmpdir) as model_path:
+        try:
             yield model_path
+        finally:
+            _cleanup_buckets(bucketfs_location, model_path)
 
 
 @pytest.fixture(scope="session")
-def upload_model_base_to_bucketfs(
-        bucketfs_location: AbstractBucketFSLocation) -> PurePosixPath:
-
+def upload_base_model_to_bucketfs(
+        bucketfs_location, tmpdir_factory) -> PurePosixPath:
+    tmpdir = tmpdir_factory.mktemp(model_params.base_model)
     with upload_model_to_bucketfs(
-            model_params.base, bucketfs_location) as path:
-        try:
-            yield path
-        finally:
-            _cleanup_buckets(bucketfs_location, path)
+            model_params.base_model, tmpdir, bucketfs_location) as path:
+        yield path
 
 
 @pytest.fixture(scope="session")
-def upload_model_seq2seq_to_bucketfs(
-        bucketfs_location: AbstractBucketFSLocation) -> PurePosixPath:
-
+def upload_seq2seq_model_to_bucketfs(
+        bucketfs_location, tmpdir_factory) -> PurePosixPath:
+    tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
     with upload_model_to_bucketfs(
-            model_params.seq2seq, bucketfs_location) as path:
-        try:
-            yield path
-        finally:
-            _cleanup_buckets(bucketfs_location, path)
+            model_params.seq2seq_model, tmpdir, bucketfs_location) as path:
+        yield path
 
 
 def _cleanup_buckets(bucketfs_location: AbstractBucketFSLocation, path: str):

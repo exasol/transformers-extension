@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 def test_text_generation_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_base_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics database management"
@@ -16,7 +16,7 @@ def test_text_generation_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base,
+            model_params.base_model,
             text_data,
             max_length,
             return_full_text

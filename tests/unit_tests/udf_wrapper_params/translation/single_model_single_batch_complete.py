@@ -29,16 +29,16 @@ class SingleModelSingleBatchComplete:
     """
     single model, single batch, batch complete
     """
-    batch_size = 2
+    batch_size = 1
     data_size = 1
     src_lang = "English"
-    tgt_lang = "German"
+    target_lang = "German"
     max_length = 10
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, tgt_lang, max_length)] * data_size
+                   src_lang, target_lang, max_length)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    tgt_lang,  max_length, "text 1 übersetzt" * max_length)
+                    target_lang,  max_length, "text 1 übersetzt" * max_length)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 def test_sequence_classification_text_pair_script(
         upload_language_container, setup_database,
-        pyexasol_connection, upload_model_base_to_bucketfs):
+        pyexasol_connection, upload_base_model_to_bucketfs):
 
     bucketfs_conn_name, schema_name = setup_database
     n_labels = 2
@@ -14,7 +14,7 @@ def test_sequence_classification_text_pair_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base,
+            model_params.base_model,
             model_params.text_data,
             ' '.join((model_params.text_data, str(i)))))
 

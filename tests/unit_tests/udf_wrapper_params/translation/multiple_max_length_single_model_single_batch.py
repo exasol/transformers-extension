@@ -34,17 +34,17 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
     max_length1 = 10
     max_length2 = 2
     src_lang = "English"
-    tgt_lang = "German"
+    target_lang = "German"
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, tgt_lang, max_length1)] * data_size + \
+                   src_lang, target_lang, max_length1)] * data_size + \
                  [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, tgt_lang, max_length2)] * data_size
+                   src_lang, target_lang, max_length2)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    tgt_lang,  max_length1, "text 1 übersetzt" * max_length1)
+                    target_lang,  max_length1, "text 1 übersetzt" * max_length1)
                    ] * data_size + \
                   [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    tgt_lang,  max_length2, "text 1 übersetzt" * max_length2)
+                    target_lang,  max_length2, "text 1 übersetzt" * max_length2)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

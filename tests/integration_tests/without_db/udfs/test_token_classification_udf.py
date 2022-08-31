@@ -57,13 +57,13 @@ class Context:
     ])
 def test_token_classification_udf(
         description, device_id, n_rows, agg,
-        upload_model_base_to_local_bucketfs):
+        upload_base_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_base_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -72,7 +72,7 @@ def test_token_classification_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base,
+        model_params.base_model,
         model_params.text_data * (i+1),
         agg
     ) for i in range(n_rows)]
@@ -104,13 +104,13 @@ def test_token_classification_udf(
         ("on GPU", 0)
     ])
 def test_token_classification_udf_with_multiple_aggregation_strategies(
-        description, device_id, upload_model_base_to_local_bucketfs):
+        description, device_id, upload_base_model_to_local_bucketfs):
 
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_model_base_to_local_bucketfs
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -120,7 +120,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base,
+        model_params.base_model,
         model_params.text_data * (i + 1),
         agg_strategy
     ) for i, agg_strategy in enumerate(agg_strategies)]

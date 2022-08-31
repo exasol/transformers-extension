@@ -33,18 +33,18 @@ class MultipleLanguageSingleModelNameMultipleBatch:
     data_size = 2
     max_length = 10
     src_lang = "English"
-    tgt_lang1 = "German"
-    tgt_lang2 = "French"
+    target_lang1 = "German"
+    target_lang2 = "French"
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, tgt_lang1, max_length)] * data_size + \
+                   src_lang, target_lang1, max_length)] * data_size + \
                  [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, tgt_lang2, max_length)] * data_size
+                   src_lang, target_lang2, max_length)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    tgt_lang1,  max_length, "text 1 übersetzt" * max_length)
+                    target_lang1,  max_length, "text 1 übersetzt" * max_length)
                    ] * data_size + \
                   [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    tgt_lang2,  max_length, "text 1 traduit" * max_length)
+                    target_lang2,  max_length, "text 1 traduit" * max_length)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

@@ -25,7 +25,7 @@ class TranslationUDF:
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
-        self.translation_prefix = "translate {src_lang} to {tgt_lang}: "
+        self.translation_prefix = "translate {src_lang} to {target_lang}: "
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -82,9 +82,7 @@ class TranslationUDF:
 
     def set_cache_dir(self, model_df: pd.DataFrame) -> None:
         """
-        Set the cache directory in bucketfs of the specified model. Note that,
-        cache_dir class variable is used for testing purpose. This variable is
-        set to a local path only in unit tests.
+        Set the cache directory in bucketfs of the specified model.
 
         :param model_df: The model dataframe to set the cache directory
         """
@@ -118,7 +116,7 @@ class TranslationUDF:
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
-        Perform prediction of the given model and preparation of the prediction
+        Perform prediction of the given model and prepare the prediction
         results according to the format that the UDF can emit.
 
         :param model_df: The dataframe to be predicted
@@ -144,7 +142,7 @@ class TranslationUDF:
         translation_prefix = ''
         if source_language and target_language:
             translation_prefix = self.translation_prefix.format(
-                src_lang=source_language, tgt_lang=target_language)
+                src_lang=source_language, target_lang=target_language)
 
         text_data = list(translation_prefix + model_df['text_data'].astype(str))
         max_length = int(model_df['max_length'].iloc[0])
@@ -161,7 +159,7 @@ class TranslationUDF:
             model_df: pd.DataFrame,
             pred_df_list: List[pd.DataFrame]) -> pd.DataFrame:
         """
-        Reformat the dataframe used in prediction, such that each input rows
+        Reformat the dataframe used in prediction, such that each input row
         has a row for each translated texts
 
         :param model_df: Dataframe used in prediction

@@ -47,9 +47,9 @@ class MockPipeline:
         results = []
         for text in text_data:
             splitted_text = text.split()
-            tgt_lang = splitted_text[3]
+            target_lang = splitted_text[3]
             translated_text = " ".join(
-                (self.model.result, self.lang_translation[tgt_lang]))
+                (self.model.result, self.lang_translation[target_lang]))
             results.append({"translation_text": translated_text * max_len})
 
         return results

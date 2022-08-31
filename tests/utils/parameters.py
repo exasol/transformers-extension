@@ -31,8 +31,8 @@ class BucketFSParams:
 
 @dataclass(frozen=True)
 class ModelParams:
-    base: str
-    seq2seq: str
+    base_model: str
+    seq2seq_model: str
     text_data: str
     sub_dir: str
 
@@ -54,7 +54,7 @@ bucketfs_params = BucketFSParams(
     path_in_bucket="container")
 
 model_params = ModelParams(
-    base='bert-base-uncased',
-    seq2seq="t5-small",
+    base_model='bert-base-uncased',
+    seq2seq_model="t5-small",
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
