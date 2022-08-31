@@ -27,6 +27,7 @@
 ### Refactoring
 
  - #12: Updated method for generating bucket udf path
+ - #35: Setup fillinf mask pipeline once
 
 ### Documentation
 
