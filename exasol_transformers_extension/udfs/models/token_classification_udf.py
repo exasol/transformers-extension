@@ -71,8 +71,9 @@ class TokenClassificationUDF:
             unique_params = dataframe_operations.get_unique_values(
                 model_df, ['aggregation_strategy'])
             for aggregation_strategy in unique_params:
+                current_strategy = aggregation_strategy[0]
                 param_based_model_df = model_df[
-                    model_df['aggregation_strategy'] == aggregation_strategy[0]]
+                    model_df['aggregation_strategy'] == current_strategy]
                 pred_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(pred_df)
 
@@ -110,8 +111,6 @@ class TokenClassificationUDF:
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
             framework="pt")
-
-        self.last_loaded_model = self.last_loaded_model.to(self.device)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

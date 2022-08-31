@@ -72,7 +72,9 @@ class FillingMask:
             unique_params = dataframe_operations.get_unique_values(
                 model_df, ['top_k'])
             for top_k in unique_params:
-                param_based_model_df = model_df[model_df['top_k'] == top_k[0]]
+                current_top_k = top_k[0]
+                param_based_model_df = model_df[
+                    model_df['top_k'] == current_top_k]
                 pred_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(pred_df)
 
@@ -111,8 +113,6 @@ class FillingMask:
             tokenizer=self.last_loaded_tokenizer,
             device=self.device,
             framework="pt")
-
-        self.last_loaded_model = self.last_loaded_model.to(self.device)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -169,7 +169,7 @@ class FillingMask:
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
 
-       :param model_df: Dataframe used in prediction
+        :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
 
         :return: Prepared dataframe including input data and predictions
