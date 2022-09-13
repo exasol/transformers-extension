@@ -3,13 +3,10 @@ import torch
 import pytest
 import pandas as pd
 from typing import Dict
-import transformers
 from exasol_transformers_extension.udfs.models.translation_udf import \
     TranslationUDF
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.models.question_answering_udf import \
-    QuestionAnswering
 
 
 class ExaEnvironment:

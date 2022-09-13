@@ -1,6 +1,5 @@
 import pandas as pd
 from typing import Dict
-
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection

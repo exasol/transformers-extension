@@ -111,8 +111,6 @@ class TextGenerationUDF:
             tokenizer=self.last_loaded_tokenizer,
             framework="pt")
 
-        self.last_loaded_model = self.last_loaded_model.to(self.device)
-
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
         Perform prediction of the given model and preparation of the prediction

@@ -112,7 +112,6 @@ class TranslationUDF:
             tokenizer=self.last_loaded_tokenizer,
             framework="pt")
 
-        self.last_loaded_model = self.last_loaded_model.to(self.device)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
