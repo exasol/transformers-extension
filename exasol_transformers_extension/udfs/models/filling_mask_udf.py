@@ -139,11 +139,8 @@ class FillingMask:
         """
         top_k = int(model_df['top_k'].iloc[0])
         text_data_raw = list(model_df['text_data'])
-        text_data_with_valid_mask_token = [
-            text_data.replace(
-                self.mask_token,
-                self.last_created_pipeline.tokenizer.mask_token
-            ) for text_data in text_data_raw]
+        text_data_with_valid_mask_token = \
+            self._get_text_data_with_valid_mask_token(text_data_raw)
         results = self.last_created_pipeline(
             text_data_with_valid_mask_token, top_k=top_k)
 
@@ -192,3 +189,15 @@ class FillingMask:
         del self.last_loaded_model
         del self.last_loaded_tokenizer
         torch.cuda.empty_cache()
+
+    def _get_text_data_with_valid_mask_token(
+            self, text_data_raw: List[str]) -> List[str]:
+        """
+        Replace user provided mask tokens with valid ones
+        """
+
+        return [
+            text_data.replace(
+                self.mask_token,
+                self.last_created_pipeline.tokenizer.mask_token
+            ) for text_data in text_data_raw]
