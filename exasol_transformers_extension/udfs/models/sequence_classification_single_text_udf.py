@@ -8,7 +8,7 @@ from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations
 
 
-class SequenceClassificationSingleText:
+class SequenceClassificationSingleTextUDF:
     def __init__(self,
                  exa,
                  batch_size=100,

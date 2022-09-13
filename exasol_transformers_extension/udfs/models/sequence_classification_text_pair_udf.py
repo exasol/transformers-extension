@@ -7,7 +7,7 @@ from exasol_transformers_extension.utils import device_management, \
     dataframe_operations, bucketfs_operations
 
 
-class SequenceClassificationTextPair:
+class SequenceClassificationTextPairUDF:
     def __init__(self,
                  exa,
                  batch_size=100,

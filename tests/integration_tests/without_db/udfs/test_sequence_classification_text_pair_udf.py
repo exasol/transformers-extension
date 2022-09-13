@@ -4,7 +4,7 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import \
-    SequenceClassificationTextPair
+    SequenceClassificationTextPairUDF
 from tests.utils.parameters import model_params
 
 
@@ -78,7 +78,7 @@ def test_sequence_classification_text_pair_udf(
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = SequenceClassificationTextPair(
+    sequence_classifier = SequenceClassificationTextPairUDF(
         exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 

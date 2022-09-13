@@ -8,7 +8,7 @@ from exasol_transformers_extension.utils import device_management, \
     dataframe_operations, bucketfs_operations
 
 
-class QuestionAnswering:
+class QuestionAnsweringUDF:
     def __init__(self,
                  exa,
                  batch_size=100,

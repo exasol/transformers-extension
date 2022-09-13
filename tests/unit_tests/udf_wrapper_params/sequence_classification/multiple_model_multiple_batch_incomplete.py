@@ -9,14 +9,14 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification. \
 def udf_wrapper_single_text():
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import \
-        SequenceClassificationSingleText
+        SequenceClassificationSingleTextUDF
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
         multiple_model_multiple_batch_incomplete import \
         MultipleModelMultipleBatchIncomplete as params
 
-    udf = SequenceClassificationSingleText(
+    udf = SequenceClassificationSingleTextUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -30,14 +30,14 @@ def udf_wrapper_single_text():
 def udf_wrapper_text_pair():
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import \
-        SequenceClassificationTextPair
+        SequenceClassificationTextPairUDF
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification.\
         multiple_model_multiple_batch_incomplete import \
         MultipleModelMultipleBatchIncomplete as params
 
-    udf = SequenceClassificationTextPair(
+    udf = SequenceClassificationTextPairUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,

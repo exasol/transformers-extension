@@ -7,14 +7,14 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.mock_filling_mask import \
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.filling_mask_udf import \
-        FillingMask
+        FillingMaskUDF
     from tests.unit_tests.udf_wrapper_params.filling_mask.mock_sequence_tokenizer \
         import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.filling_mask.\
         single_bfsconn_multiple_subdir_single_model_multiple_batch import \
         SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch as params
 
-    udf = FillingMask(
+    udf = FillingMaskUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,

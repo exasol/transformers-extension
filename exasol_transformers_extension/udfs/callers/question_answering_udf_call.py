@@ -1,7 +1,7 @@
 from exasol_transformers_extension.udfs.models.question_answering_udf \
-    import QuestionAnswering
+    import QuestionAnsweringUDF
 
-udf = QuestionAnswering(exa)
+udf = QuestionAnsweringUDF(exa)
 
 
 def run(ctx):
