@@ -67,7 +67,9 @@ class TokenClassificationUDF:
                 self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
 
-            model_df.fillna(self.default_aggregation_strategy, inplace=True)
+            model_df['aggregation_strategy'] = \
+                model_df['aggregation_strategy'].fillna(
+                    self.default_aggregation_strategy)
             unique_params = dataframe_operations.get_unique_values(
                 model_df, ['aggregation_strategy'])
             for aggregation_strategy in unique_params:

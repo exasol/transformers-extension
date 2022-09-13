@@ -163,7 +163,7 @@ class TextGenerationUDF:
 
         :return: Prepared dataframe including input data and predictions
         """
-        model_df['generated_text'] = generated_texts
+        model_df = model_df.assign(generated_text=generated_texts)
 
         return model_df
 
