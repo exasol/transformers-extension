@@ -1,8 +1,9 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
-from tests.unit_tests.udf_wrapper_params.sequence_classification.\
+from tests.unit_tests.udf_wrapper_params.sequence_classification. \
     mock_sequence_classification_factory import \
-    Config, MockSequenceClassificationFactory, MockSequenceClassificationModel
+    LabelScore, MockSequenceClassificationFactory, \
+    MockSequenceClassificationModel, MockPipeline
 
 
 def udf_wrapper_single_text():
@@ -18,6 +19,7 @@ def udf_wrapper_single_text():
     udf = SequenceClassificationSingleText(
         exa,
         batch_size=params.batch_size,
+        pipeline=params.mock_pipeline,
         base_model=params.mock_factory,
         tokenizer=MockSequenceTokenizer)
 
@@ -38,6 +40,7 @@ def udf_wrapper_text_pair():
     udf = SequenceClassificationTextPair(
         exa,
         batch_size=params.batch_size,
+        pipeline=params.mock_pipeline,
         base_model=params.mock_factory,
         tokenizer=MockSequenceTokenizer)
 
@@ -52,12 +55,19 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     batch_size = 4
     data_size = 2
 
-    config = Config({
-        0: 'label1', 1: 'label2',
-        2: 'label3', 3: 'label4'})
+    label_scores1 = [
+        LabelScore('label1', 0.21),
+        LabelScore('label2', 0.24),
+        LabelScore('label3', 0.26),
+        LabelScore('label4', 0.29),
+    ]
 
-    logits1 = [0.1, 0.2, 0.3, 0.4]
-    logits2 = [0.1, 0.1, 0.1, 0.1]
+    label_scores2 = [
+        LabelScore('label1', 0.25),
+        LabelScore('label2', 0.25),
+        LabelScore('label3', 0.25),
+        LabelScore('label4', 0.25),
+    ]
 
     inputs_single_text = [(None, "bfs_conn1", "sub_dir1",
                            "model1", "My test text")] * data_size + \
@@ -111,10 +121,11 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
 
     mock_factory = MockSequenceClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockSequenceClassificationModel(config=config, logits=logits1),
+            MockSequenceClassificationModel(label_scores=label_scores1),
         PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
-            MockSequenceClassificationModel(config=config, logits=logits2),
+            MockSequenceClassificationModel(label_scores=label_scores2),
     })
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair
+    mock_pipeline = MockPipeline

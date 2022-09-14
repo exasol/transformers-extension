@@ -1,35 +1,23 @@
 from pathlib import PurePosixPath
-
-import torch
 from typing import Dict, List
 from dataclasses import dataclass
+from tests.unit_tests.udf_wrapper_params.sequence_classification.mock_sequence_tokenizer import \
+    MockSequenceTokenizer
 
 
 @dataclass
-class Config:
-    id2label: Dict[int, str]
-
-
-class MockSequenceClassificationResult:
-
-    def __init__(self, batch_logits: torch.FloatTensor):
-        self.logits = batch_logits
+class LabelScore:
+    label: str
+    score: float
 
 
 class MockSequenceClassificationModel:
+    def __init__(self, label_scores: List[LabelScore]):
+        self.label_scores = label_scores
 
-    def __init__(self, config: Config, logits: List[float]):
-        self._logits = logits
-        self.config = config
-        self.device_name = None
-
-    def __call__(self, first_texts, second_texts=None):
-        batch_logits = torch.FloatTensor([self._logits] * len(first_texts))
-        return MockSequenceClassificationResult(batch_logits)
-
-    def to(self, device_name: str):
-        self.device_name = device_name
-        return self
+    @classmethod
+    def from_pretrained(cls, model_name, cache_dir):
+        return cls
 
 
 class MockSequenceClassificationFactory:
@@ -41,3 +29,25 @@ class MockSequenceClassificationFactory:
     def from_pretrained(self, model_name, cache_dir):
         # the cache_dir path already has model_name
         return self.mock_models[cache_dir]
+
+
+class MockPipeline:
+
+    def __init__(self,
+                 task_type: str,
+                 model: MockSequenceClassificationModel,
+                 tokenizer: MockSequenceTokenizer,
+                 device: str,
+                 framework: str):
+        self.task_type = task_type
+        self.model = model
+        self.tokenizer = tokenizer
+        self.device = device
+        self.framework = framework
+
+    def __call__(self, sequences: List[str], **kwargs):
+        result = []
+        for label_score in self.model.label_scores:
+            result.append({"label": label_score.label,
+                           "score": label_score.score})
+        return [result] * len(sequences)
