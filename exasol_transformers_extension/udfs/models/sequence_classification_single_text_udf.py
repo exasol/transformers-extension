@@ -2,21 +2,22 @@ import torch
 import pandas as pd
 import transformers
 from typing import Tuple, List
-
 from exasol_transformers_extension.deployment import constants
+from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations
-from exasol_transformers_extension.utils import dataframe_operations
 
 
 class SequenceClassificationSingleText:
     def __init__(self,
                  exa,
                  batch_size=100,
+                 pipeline=transformers.pipeline,
                  base_model=transformers.AutoModelForSequenceClassification,
                  tokenizer=transformers.AutoTokenizer):
         self.exa = exa
         self.bacth_size = batch_size
+        self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
         self.device = None
@@ -24,6 +25,7 @@ class SequenceClassificationSingleText:
         self.last_loaded_model_key = None
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
+        self.last_created_pipeline = None
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -94,9 +96,15 @@ class SequenceClassificationSingleText:
         :param model_name: The model name to be loaded
         """
         self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir).to(self.device)
+            model_name, cache_dir=self.cache_dir)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=self.cache_dir)
+        self.last_created_pipeline = self.pipeline(
+            "text-classification",
+            model=self.last_loaded_model,
+            tokenizer=self.last_loaded_tokenizer,
+            device=self.device,
+            framework="pt")
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -108,59 +116,49 @@ class SequenceClassificationSingleText:
         :return: The dataframe where the model_df is formatted with the
         prediction results
         """
-        preds, labels = self._predict_model(model_df)
-        pred_df = self._prepare_prediction_dataframe(model_df, preds, labels)
+        pred_df_list = self._predict_model(model_df)
+        pred_df = self._prepare_prediction_dataframe(model_df, pred_df_list)
         return pred_df
 
-    def _predict_model(self, model_df: pd.DataFrame) -> \
-            Tuple[List[float], List[str]]:
+    def _predict_model(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
 
         :param model_df: The dataframe to be predicted
 
-        :return: A tuple containing prediction score list and label list
+        :return: List of dataframe includes prediction details
         """
         sequences = list(model_df['text_data'])
-        tokens = self.last_loaded_tokenizer(sequences, return_tensors="pt")
-        logits = self.last_loaded_model(**tokens).logits
-        preds = torch.softmax(logits, dim=1).tolist()
-        labels_dict = self.last_loaded_model.config.id2label
-        labels = list(map(lambda x: x[1], sorted(labels_dict.items())))
+        results = self.last_created_pipeline(sequences, return_all_scores=True)
 
-        return preds, labels
+        results_df_list = []
+        for result in results:
+            result_df = pd.DataFrame(result)
+            results_df_list.append(result_df)
+
+        return results_df_list
 
     @staticmethod
     def _prepare_prediction_dataframe(
-            model_df: pd.DataFrame, preds: List[float], labels: List[str]) \
+            model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
 
         :param model_df: Dataframe used in prediction
-        :param preds: List of prediction probabilities
-        :param labels: List of labels
+        :param pred_df_list: List of predictions dataframes
 
         :return: Prepared dataframe including input data and predictions
         """
-        n_labels = len(labels)
-        n_input_row = model_df.shape[0]
-
-        # Repeat each row consecutively as the number of labels. At the end,
-        # the dataframe is expanded from (m, n) to (m*n_labels, n)
-        repeated_indexes = model_df.index.repeat(n_labels)
+        n_labels = list(map(lambda x: x.shape[0], pred_df_list))
+        repeated_indexes = model_df.index.repeat(repeats=n_labels)
         model_df = model_df.loc[repeated_indexes].reset_index(drop=True)
 
-        # Fill the dataframe with labels repeatedly, such that each input row
-        # has a row for each label
-        model_df['label'] = labels * n_input_row
-
-        # Flatten 2D prediction scores to 1D list and assign it to score
-        # column of the dataframe. We use for this the sum function with a
-        # list as initial value and + operator of lists
-        model_df['score'] = sum(preds, [])
+        # Concat predictions and model_df
+        pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
+        model_df = pd.concat([model_df, pred_df], axis=1)
 
         return model_df
 
