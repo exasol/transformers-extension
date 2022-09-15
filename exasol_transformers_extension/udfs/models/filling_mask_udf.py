@@ -82,7 +82,7 @@ class FillingMaskUDF(BaseModelUDF):
 
     @staticmethod
     def create_dataframes_from_predictions(
-            results: List[Any], columns: Optional[List[pd.DataFrame]] = None) \
+            results: List[Any], columns: Optional[List[str]] = None) \
             -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe.
