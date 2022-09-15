@@ -37,10 +37,12 @@ class MockPipeline:
                  task_type: str,
                  model: MockTokenClassificationModel,
                  tokenizer: MockSequenceTokenizer,
+                 device : str,
                  framework: str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
+        self.device = device
         self.framework = framework
 
     def __call__(self, text_data: List[str], aggregation_strategy: str) -> \

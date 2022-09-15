@@ -32,10 +32,12 @@ class MockPipeline:
                  task_type: str,
                  model: MockTranslationModel,
                  tokenizer: MockSequenceTokenizer,
+                 device : str,
                  framework: str):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
+        self.device = device
         self.framework = framework
         self.lang_translation = {
             "German:": "übersetzt",
