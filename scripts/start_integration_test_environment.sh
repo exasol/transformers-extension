@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GIT_REF=main
+GIT_REF=0.11.0
 CHECKOUT_PATH=/tmp/integration-test-docker-environment
 
 if [ -d "$CHECKOUT_PATH" ]
