@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List
+from typing import List, Iterator, Any, Optional
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
@@ -14,6 +14,19 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='text-classification')
+
+    def extract_unique_param_based_dataframes(
+            self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+        """
+        Extract unique dataframes having same model parameter values. if there
+        is no model specified parameter, the input dataframe return as it is.
+
+        :param model_df: Dataframe used in prediction
+
+        :return: Unique model dataframes having specified parameters
+        """
+
+        yield model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
         """
@@ -49,3 +62,24 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         model_df = pd.concat([model_df, pred_df], axis=1)
 
         return model_df
+
+    def create_dataframes_from_predictions(
+            self, results: List[Any], columns: Optional[List[str]] = None) \
+            -> List[pd.DataFrame]:
+        """
+        Convert predictions to dataframe. If the prediction results can be
+        presented as is, the results are converted directly into the dataframe.
+        Otherwise, model-specific adjustments must be made in each model's
+        own class.
+
+        :param results: Predictions results
+        :param columns: Used columns in prediction
+
+        :return: List of prediction dataframes
+        """
+        results_df_list = []
+        for result in results:
+            result_df = pd.DataFrame(result)
+            results_df_list.append(result_df)
+
+        return results_df_list

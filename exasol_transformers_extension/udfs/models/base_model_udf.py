@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from typing import Iterator, List, Any, Optional
 import torch
 import pandas as pd
@@ -7,7 +7,7 @@ from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
 
 
-class BaseModelUDF:
+class BaseModelUDF(ABC):
     def __init__(self,
                  exa,
                  batch_size,
@@ -85,35 +85,23 @@ class BaseModelUDF:
 
             current_model_key = (bucketfs_conn, sub_dir, model_name)
             if self.last_loaded_model_key != current_model_key:
-                self.set_cache_dir(model_df)
+                self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
                 self.clear_device_memory()
                 self.load_models(model_name)
                 self.last_loaded_model_key = current_model_key
 
             yield model_df
 
-    def extract_unique_param_based_dataframes(
-            self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
-        """
-        Extract unique dataframes having same model parameter values. if there
-        is no model specified parameter, the input dataframe return as it is.
-
-        :param model_df: Dataframe used in prediction
-
-        :return: Unique model dataframes having specified parameters
-        """
-
-        yield model_df
-
-    def set_cache_dir(self, model_df: pd.DataFrame) -> None:
+    def set_cache_dir(
+            self, model_name: str, bucketfs_conn_name: str,
+            sub_dir: str) -> None:
         """
         Set the cache directory in bucketfs of the specified model.
 
-        :param model_df: The model dataframe to set the cache directory
+        :param model_name: Name of the model to be cached
+        :param bucketfs_conn_name: Name of the bucketFS connection
+        :param sub_dir: Directory where the model is cached
         """
-        model_name = model_df['model_name'].iloc[0]
-        bucketfs_conn_name = model_df['bucketfs_conn'].iloc[0]
-        sub_dir = model_df['sub_dir'].iloc[0]
         bucketfs_location = bucketfs_operations.create_bucketfs_location(
             self.exa.get_connection(bucketfs_conn_name))
 
@@ -130,7 +118,7 @@ class BaseModelUDF:
         del self.last_loaded_tokenizer
         torch.cuda.empty_cache()
 
-    def load_models(self, model_name: str, **kwargs) -> None:
+    def load_models(self, model_name: str) -> None:
         """
         Load model and tokenizer model from the cached location in bucketfs
 
@@ -162,27 +150,16 @@ class BaseModelUDF:
             model_df, pred_df_list)
         return pred_df
 
-    @staticmethod
+    @abstractmethod
     def create_dataframes_from_predictions(
-            results: List[Any], columns: Optional[List[str]] = None) \
+            self, results: List[Any], columns: Optional[List[str]] = None) \
             -> List[pd.DataFrame]:
-        """
-        Convert predictions to dataframe. If the prediction results can be
-        presented as is, the results are converted directly into the dataframe.
-        Otherwise, model-specific adjustments must be made in each model's
-        own class.
+        pass
 
-        :param results: Predictions results
-        :param columns: Used columns in prediction
-
-        :return: List of prediction dataframes
-        """
-        results_df_list = []
-        for result in results:
-            result_df = pd.DataFrame(result)
-            results_df_list.append(result_df)
-
-        return results_df_list
+    @abstractmethod
+    def extract_unique_param_based_dataframes(
+            self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+        pass
 
     @abstractmethod
     def execute_prediction(

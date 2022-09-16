@@ -78,9 +78,8 @@ class TextGenerationUDF(BaseModelUDF):
 
         return model_df
 
-    @staticmethod
     def create_dataframes_from_predictions(
-            results: List[Any], columns: Optional[List[str]] = None) \
+            self, results: List[Any], columns: Optional[List[str]] = None) \
             -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe.

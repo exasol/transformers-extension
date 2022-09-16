@@ -85,9 +85,8 @@ class TokenClassificationUDF(BaseModelUDF):
 
         return model_df
 
-    @staticmethod
     def create_dataframes_from_predictions(
-            results: Any, columns: Optional[List[str]] = None) \
+            self, results: Any, columns: Optional[List[str]] = None) \
             -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe. Only score and answer fields are
