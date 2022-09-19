@@ -120,7 +120,11 @@ class BaseModelUDF(ABC):
 
     def load_models(self, model_name: str) -> None:
         """
-        Load model and tokenizer model from the cached location in bucketfs
+        Load model and tokenizer model from the cached location in bucketfs.
+        If the desired model is not cached, this method will attempt to
+        download the model to the read-only path /bucket/.. and cause an error.
+        This error will be addressed in ticket
+        https://github.com/exasol/transformers-extension/issues/43.
 
         :param model_name: The model name to be loaded
         """
@@ -149,12 +153,6 @@ class BaseModelUDF(ABC):
         pred_df = self.append_predictions_to_input_dataframe(
             model_df, pred_df_list)
         return pred_df
-
-    @abstractmethod
-    def create_dataframes_from_predictions(
-            self, results: List[Any], columns: Optional[List[str]] = None) \
-            -> List[pd.DataFrame]:
-        pass
 
     @abstractmethod
     def extract_unique_param_based_dataframes(
