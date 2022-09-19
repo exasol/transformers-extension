@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Any, Iterator, Optional
+from typing import List, Any, Iterator, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
@@ -36,7 +36,8 @@ class TextGenerationUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) \
+            -> List[Dict[str, Any]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -55,7 +56,7 @@ class TextGenerationUDF(BaseModelUDF):
         #  return a list. In case of batch predictions, we need to flatten
         #  2D prediction results to 1D list
         results = sum(results, []) if type(results[0]) == list else results
-        return self.create_dataframes_from_predictions(results)
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -79,18 +80,16 @@ class TextGenerationUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, results: List[Any], columns: Optional[List[str]] = None) \
-            -> List[pd.DataFrame]:
+            self, predictions:  List[Dict[str, Any]]) -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe.
 
-        :param results: predictions results
-        :param columns: Used columns in prediction
+        :param predictions: predictions results
 
         :return: List of prediction dataframes
         """
         results_df_list = []
-        for result in results:
+        for result in predictions:
             results_df_list.append(
                 pd.DataFrame(
                     data=[result['generated_text']],

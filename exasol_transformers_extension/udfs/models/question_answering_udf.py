@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Optional
+from typing import List, Iterator, Any, Dict, Union
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
@@ -15,6 +15,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, 'question-answering')
+        self._desired_fields_in_prediction = ["answer", "score"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
@@ -34,7 +35,8 @@ class QuestionAnsweringUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> \
+            List[Union[Dict[str, Any], List[Dict[str, Any]]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -56,8 +58,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
         # in both cases we need to put the answer(s) in a list to make sure that
         # the answer(s) is from a single question
         results = [results] if len(questions) == 1 else results
-        columns = ["answer", "score"]
-        return self.create_dataframes_from_predictions(results, columns)
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -82,20 +83,20 @@ class QuestionAnsweringUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, results: List[Any], columns: Optional[List[str]] = None) \
-            -> List[pd.DataFrame]:
+            self, predictions: List[Union[
+                Dict[str, Any], List[Dict[str, Any]]]]) -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe.
 
-        :param results: predictions results
-        :param columns: Used columns in prediction
+        :param predictions: predictions results
 
         :return: List of prediction dataframes
         """
         results_df_list = []
-        for result in results:
+        for result in predictions:
             result_df = pd.DataFrame([result]) if type(result) == dict \
                 else pd.DataFrame(result)
-            results_df_list.append(result_df[columns])
+            results_df_list.append(
+                result_df[self._desired_fields_in_prediction])
 
         return results_df_list

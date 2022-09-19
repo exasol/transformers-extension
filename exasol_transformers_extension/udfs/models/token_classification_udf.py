@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Optional
+from typing import List, Iterator, Any, Union, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
@@ -16,6 +16,8 @@ class TokenClassificationUDF(BaseModelUDF):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='token-classification')
         self._default_aggregation_strategy = 'simple'
+        self._desired_fields_in_prediction = [
+            "start", "end", "word", "entity", "score"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
@@ -40,7 +42,8 @@ class TokenClassificationUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> List[Union[
+                Dict[str, Any], List[Dict[str, Any]]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores, entities and associated words
@@ -56,10 +59,13 @@ class TokenClassificationUDF(BaseModelUDF):
         results = results if type(results[0]) == list else [results]
 
         if aggregation_strategy == "none":
-            columns = ["start", "end", "word", "entity", "score"]
+            self._desired_fields_in_prediction = [
+                "start", "end", "word", "entity", "score"]
         else:
-            columns = ["start", "end", "word", "entity_group", "score"]
-        return self.create_dataframes_from_predictions(results, columns)
+            self._desired_fields_in_prediction = [
+                "start", "end", "word", "entity_group", "score"]
+
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -86,25 +92,25 @@ class TokenClassificationUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, results: Any, columns: Optional[List[str]] = None) \
-            -> List[pd.DataFrame]:
+            self, predictions:  List[Union[
+                Dict[str, Any], List[Dict[str, Any]]]]) -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe. Only score and answer fields are
         presented.
 
-        :param results: predictions results
-        :param columns: Used columns in prediction
+        :param predictions: predictions results
 
         :return: List of prediction dataframes
         """
         results_df_list = []
-        for result in results:
+        for result in predictions:
             result_df = pd.DataFrame(result)
-            result_df = result_df[columns].rename(
+            result_df = result_df[self._desired_fields_in_prediction].rename(
                 columns={
                     "start": "start_pos",
                     "end": "end_pos",
                     "entity_group": "entity"})
             results_df_list.append(result_df)
+
         return results_df_list
 

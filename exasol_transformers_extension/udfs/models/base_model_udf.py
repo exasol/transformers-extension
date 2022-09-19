@@ -149,10 +149,17 @@ class BaseModelUDF(ABC):
         :return: The dataframe where the model_df is formatted with the
         prediction results
         """
-        pred_df_list = self.execute_prediction(model_df)
+
+        predictions = self.execute_prediction(model_df)
+        pred_df_list = self.create_dataframes_from_predictions(predictions)
         pred_df = self.append_predictions_to_input_dataframe(
             model_df, pred_df_list)
         return pred_df
+
+    @abstractmethod
+    def create_dataframes_from_predictions(self, predictions: List[Any]) \
+            -> List[pd.DataFrame]:
+        pass
 
     @abstractmethod
     def extract_unique_param_based_dataframes(

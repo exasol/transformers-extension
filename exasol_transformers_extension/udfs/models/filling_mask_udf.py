@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Optional
+from typing import List, Iterator, Any, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
@@ -16,6 +16,7 @@ class FillingMaskUDF(BaseModelUDF):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='fill-mask')
         self._mask_token = "<mask>"
+        self._desired_fields_in_prediction = ["sequence", "score"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
@@ -35,7 +36,8 @@ class FillingMaskUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) \
+            -> List[List[Dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and filled texts
@@ -55,8 +57,7 @@ class FillingMaskUDF(BaseModelUDF):
         #  return a list. In order to ease dataframe operations, convert single
         #  prediction to list of list.
         results = [results] if len(text_data_raw) == 1 else results
-        columns = ["sequence", "score"]
-        return self.create_dataframes_from_predictions(results, columns)
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -81,21 +82,20 @@ class FillingMaskUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, results: List[Any], columns: Optional[List[str]] = None) \
+            self, predictions:  List[List[Dict[str, Any]]]) \
             -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe.
 
-        :param results: predictions results
-        :param columns: Used columns in prediction
+        :param predictions: predictions results
 
         :return: List of prediction dataframes
         """
         results_df_list = []
-        for result in results:
+        for result in predictions:
             result_df = pd.DataFrame(result)
-            result_df = result_df[columns].rename(
-                columns={"sequence": "filled_text"})
+            result_df = result_df[self._desired_fields_in_prediction]\
+                .rename(columns={"sequence": "filled_text"})
             results_df_list.append(result_df)
         return results_df_list
 

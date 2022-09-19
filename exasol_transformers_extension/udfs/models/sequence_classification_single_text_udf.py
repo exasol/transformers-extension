@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Optional
+from typing import List, Iterator, Any, Dict
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
@@ -28,7 +28,8 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
 
         yield model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) \
+            -> List[List[Dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -39,7 +40,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         """
         sequences = list(model_df['text_data'])
         results = self.last_created_pipeline(sequences, return_all_scores=True)
-        return self.create_dataframes_from_predictions(results)
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -64,7 +65,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, results: List[Any], columns: Optional[List[str]] = None) \
+            self, predictions:  List[List[Dict[str, Any]]]) \
             -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe. If the prediction results can be
@@ -72,13 +73,12 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         Otherwise, model-specific adjustments must be made in each model's
         own class.
 
-        :param results: Predictions results
-        :param columns: Used columns in prediction
+        :param predictions: Predictions results
 
         :return: List of prediction dataframes
         """
         results_df_list = []
-        for result in results:
+        for result in predictions:
             result_df = pd.DataFrame(result)
             results_df_list.append(result_df)
 
