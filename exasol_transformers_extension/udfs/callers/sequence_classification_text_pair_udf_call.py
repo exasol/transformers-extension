@@ -1,7 +1,7 @@
 from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf \
-    import SequenceClassificationTextPair
+    import SequenceClassificationTextPairUDF
 
-udf = SequenceClassificationTextPair(exa)
+udf = SequenceClassificationTextPairUDF(exa)
 
 
 def run(ctx):

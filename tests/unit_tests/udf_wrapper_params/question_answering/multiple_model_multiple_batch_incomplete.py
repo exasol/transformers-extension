@@ -8,14 +8,14 @@ from tests.unit_tests.udf_wrapper_params.question_answering.\
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.question_answering_udf import \
-        QuestionAnswering
+        QuestionAnsweringUDF
     from tests.unit_tests.udf_wrapper_params.question_answering. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.question_answering.\
         multiple_model_multiple_batch_incomplete import \
         MultipleModelMultipleBatchIncomplete as params
 
-    udf = QuestionAnswering(
+    udf = QuestionAnsweringUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,

@@ -28,6 +28,8 @@
 
  - #12: Updated method for generating bucket udf path
  - #35: Setup masked language modelling pipeline once
+ - #20: Applied same API call across all prediction UDFs
+ - #19: Inherent prediction UDF classes from same base class
 
 ### Documentation
 

@@ -1,7 +1,7 @@
 from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf \
-    import SequenceClassificationSingleText
+    import SequenceClassificationSingleTextUDF
 
-udf = SequenceClassificationSingleText(exa)
+udf = SequenceClassificationSingleTextUDF(exa)
 
 
 def run(ctx):

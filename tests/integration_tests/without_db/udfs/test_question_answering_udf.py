@@ -5,7 +5,7 @@ from typing import Dict
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.question_answering_udf import \
-    QuestionAnswering
+    QuestionAnsweringUDF
 
 
 class ExaEnvironment:
@@ -87,7 +87,7 @@ def test_question_answering_udf(
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = QuestionAnswering(
+    sequence_classifier = QuestionAnsweringUDF(
         exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
