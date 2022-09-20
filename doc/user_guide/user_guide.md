@@ -21,10 +21,10 @@ The extension provides two types of UDFs:
 - [Getting Started](#getting-started)
 - [Setup](#setup)
 - [Model Downloader UDF](#model-downloader-udf)
-- [Prediction UDFs](#prediction_udfs)
-  1. [Sequence Classification for Single Text UDF](#sequence_classification_for_single_text_udf)
-  2. [Sequence Classification for Text Pair UDF](#sequence_classification_for_text_pair_udf)
-  3. [Question Answering](#question_answering)
+- [Prediction UDFs](#prediction-udfs)
+  1. [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
+  2. [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
+  3. [Question Answering UDF](#question-answering-udf)
 
 
 
@@ -146,10 +146,10 @@ The inference results are presented as predicted _LABEL_ and confidence
  _SCORE_ columns, by combining with the inputs used when calling 
 this UDF. For example:
 
-    | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL | SCORE |
-    | ------------- | ------- | ---------- | --------- | ----- | ----- |
-    | conn_name     | dir/    | model_name | text      | L1    | 0.75  |
-    | ...           | ...     | ...        | ...       | ...   | ...   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL | SCORE |
+| ------------- | ------- | ---------- | --------- | ----- | ----- |
+| conn_name     | dir/    | model_name | text      | L1    | 0.75  |
+| ...           | ...     | ...        | ...       | ...   | ...   |
 
 ### Sequence Classification for Text Pair UDF
 This UDF takes two input sequences and compares them, e.g., it is used to 
@@ -211,11 +211,11 @@ The inference results are presented as predicted _ANSWER_ and confidence
  _SCORE_ columns, by combining with the inputs used when calling this UDF.
 If `top_k` > 1, each input row is repeated for each answer. For example:
 
-    | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION | CONTEXT | TOP_K | ANSWER | SCORE |
-    | ------------- | ------- | ---------- | -------- | ------- | ----- | ------ | ----- |
-    | conn_name     | dir/    | model_name | q1       | c1      | 2     | a1     | 0.75  |
-    | conn_name     | dir/    | model_name | q1       | c1      | 2     | a2     | 0.70  |
-    | ...           | ...     | ...        | ...      | ...     | ...   | ...    | ...   |
-   
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION | CONTEXT | TOP_K | ANSWER | SCORE |
+| ------------- | ------- | ---------- | -------- | ------- | ----- | ------ | ----- |
+| conn_name     | dir/    | model_name | q1       | c1      | 2     | a1     | 0.75  |
+| conn_name     | dir/    | model_name | q1       | c1      | 2     | a2     | 0.70  |
+| ...           | ...     | ...        | ...      | ...     | ...   | ...    | ...   |
+
 
 
