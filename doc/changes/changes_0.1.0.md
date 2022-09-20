@@ -33,4 +33,6 @@
 
 ### Documentation
 
+ - #44: Added User Guide
+
   
