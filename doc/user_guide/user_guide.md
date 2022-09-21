@@ -28,7 +28,7 @@ The extension provides two types of UDFs:
   4. [Masked Language Modelling UDF](#masked-language-modelling-udf)
   5. [Text Generation UDF](#text-generation-udf)
   6. [Token Classification UDF](#token-classification-udf)
-  7. [Text Translation UDF](#text=translation-udf)
+  7. [Text Translation UDF](#text-translation-udf)
 
 
 
@@ -113,7 +113,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 ```
 - Parameters:
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```bucketfs_conn```: The BucketFS connection name 
 
@@ -142,7 +142,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
   - ```bucketfs_conn```: The BucketFS connection name 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The input text to be classified
 
 The inference results are presented with predicted _LABEL_ and confidence 
@@ -174,7 +174,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   - ```bucketfs_conn```: The BucketFS connection name 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```first_text```: The first input text
   - ```second_text```: The second input text
 
@@ -203,11 +203,11 @@ SELECT TE_QUESTION_ANSWERING_UDF(
   - ```bucketfs_conn```: The BucketFS connection name 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```question```: The question text
   - ```context_text```: The context text, associated with question
   - ```top_k```: The number of answers to return. Note that, `k` number of answers are not guaranteed. If there are not enough options 
-in the context, it might return less than `top_k` answers (see the [explanation](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk)).
+in the context, it might return less than `top_k` answers (see the [top_k parameter of QuestoinAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk)).
 
 The inference results are presented with predicted _ANSWER_ and confidence 
  _SCORE_ columns, combined with the inputs used when calling this UDF.
@@ -241,7 +241,7 @@ SELECT TE_FILLING_MASK_UDF(
   - ```bucketfs_conn```: The BucketFS connection name 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text data containing masking tokens
   - ```top_k```: The number of predictions to return.
 
@@ -279,7 +279,7 @@ SELECT TE_TEXT_GENERATION_UDF(
   - ```bucketfs_conn```: The BucketFS connection name. 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The context text.
   - ```max_length```: The maximum total length of text to be generated.
   - ```return_full_text```:  If set to False only added text is returned, otherwise the full text is returned.
@@ -310,7 +310,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   - ```bucketfs_conn```: The BucketFS connection name. 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The context text.
   - ```aggregation_strategy```:  The strategy to fuse (or not) tokens based on the model prediction. 
   It is set to `simple` strategy by default. Please check [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) 
@@ -344,7 +344,7 @@ SELECT TE_TRANSLATION_UDF(
   - ```bucketfs_conn```: The BucketFS connection name. 
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
-  details and names of the models [here](https://huggingface.co/models).
+  details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The context text.
   - ```source_language```: The language of the input. Might be required for multilingual models. 
   It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)). 
