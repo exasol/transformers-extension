@@ -102,7 +102,7 @@ python -m transformers_extension.main scripts
 ```
 
 ## Model Downloader UDF
-Before using pre-trained models, models must be downloaded and cached into the
+Before you can use pre-trained models, the models must be downloaded and cached in the
 BucketFS. For this, you can use the `TE_MODEL_DOWNLOADER_UDF` script as follows
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
@@ -118,7 +118,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   - ```bucketfs_conn```: The BucketFS connection name 
 
 Note that the extension currently only supports the `PyTorch` framework. 
-Please make sure that the selected models are in the `Pytorch` library.
+Please make sure that the selected models are in the `Pytorch` model library section.
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
@@ -138,10 +138,10 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 ```
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The input text to be classified
 
@@ -184,7 +184,7 @@ The inference results are presented with predicted _LABEL_ and confidence
 
 ### Question Answering UDF
 This UDF extracts answer(s) from a given question text. With the `top_k` 
-input parameter, up to `k` answers with the best inference scores can be achieved. 
+input parameter, up to `k` answers with the best inference scores can be returned. 
 An example usage is given below:
 ```sql
 SELECT TE_QUESTION_ANSWERING_UDF(
@@ -311,9 +311,9 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
-  - ```text_data```: The context text.
+  - ```text_data```: The text to analyze.
   - ```aggregation_strategy```:  The strategy to fuse (or not) tokens based on the model prediction. 
-  It is set to `simple` strategy by default. Please check [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) 
+  It is set to `simple` strategy by default, if you supply NULL. Please check [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) 
   for more information.
  
 
@@ -323,7 +323,7 @@ confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
 
 
 ### Text Translation UDF
-This UDF  translates a given text from one language to another.
+This UDF translates a given text from one language to another.
 
 ```sql
 SELECT TE_TRANSLATION_UDF(
@@ -345,12 +345,12 @@ SELECT TE_TRANSLATION_UDF(
   - ```sub_dir```: The directory where the model is downloaded in the cache.
   - ```model_name```: The name of the model to be downloaded. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
-  - ```text_data```: The context text.
+  - ```text_data```: The text to translate.
   - ```source_language```: The language of the input. Might be required for multilingual models. 
   It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)). 
   - ```target_language```:  The language of the desired output. Might be required for multilingual models. 
   It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-  - ```max_length```: The maximum total length of translated text.
+  - ```max_length```: The maximum total length of the translated text. 
 
 The inference results are presented with _TRANSLATION_TEXT_ column, 
 combined with the inputs used when calling this UDF. For example:
