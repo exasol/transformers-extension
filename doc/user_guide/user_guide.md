@@ -39,18 +39,23 @@ The extension provides two types of UDFs:
 - BucketFS Connection 
   - An Exasol connection object must be created with Exasol BucketFS connection 
   information and credentials. 
-  - An example connection object is created 
-  as follows. For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document:  
+  - An example connection object is created as follows: 
   ```buildoutcfg
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASS>'
+  ```
+  - The `BUCKETFS_ADDRESS` looks like the following:
+  ```buildoutcfg
+    http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
+  ```
+  - For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
   
 ## Setup
-### The Built Archive
-#### Download The Built Archive
-- The latest version of the packaged built archive of this extension can be 
+### The Python Package
+#### Download The Python Wheel Package
+- The latest version of the python package of this extension can be 
 downloaded from the Releases in GitHub Repository 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
 Please download the following built archive:
@@ -58,7 +63,7 @@ Please download the following built archive:
 transformers_extension.whl
 ```
 
-#### Install The Built Archive
+#### Install The Python Wheel Package
 - Install the packaged transformers-extension project as follows:
 ```bash
 pip install transformers_extension.whl
@@ -112,9 +117,9 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 )
 ```
 - Parameters:
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
+  - ```sub_dir```: The directory where the model is stored in the cache.
   - ```bucketfs_conn```: The BucketFS connection name 
 
 Note that the extension currently only supports the `PyTorch` framework. 
@@ -170,10 +175,10 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 ```
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```first_text```: The first input text
   - ```second_text```: The second input text
@@ -199,10 +204,10 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 ```
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```question```: The question text
   - ```context_text```: The context text, associated with question
@@ -237,10 +242,10 @@ SELECT TE_FILLING_MASK_UDF(
 
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text data containing masking tokens
   - ```top_k```: The number of predictions to return.
@@ -275,10 +280,10 @@ SELECT TE_TEXT_GENERATION_UDF(
 ```
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The context text.
   - ```max_length```: The maximum total length of text to be generated.
@@ -306,10 +311,10 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 ```
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text to analyze.
   - ```aggregation_strategy```:  The strategy to fuse (or not) tokens based on the model prediction. 
@@ -320,6 +325,13 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 The inference results are presented with _START_POS_ indicating the starting index of the token, 
 _END_POS_ indicating the ending index of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
 confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
+For example:
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE |
+| ------------- | ------- | ---------- |-----------|----------------------|-----------|---------|------|--------|-------|
+| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  |
+| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   |
+
 
 
 ### Text Translation UDF
@@ -340,10 +352,10 @@ SELECT TE_TRANSLATION_UDF(
 
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
-  you can leave this field blank.
+  you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is downloaded in the cache.
-  - ```model_name```: The name of the model to be downloaded. You can find the 
+  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text to translate.
   - ```source_language```: The language of the input. Might be required for multilingual models. 
