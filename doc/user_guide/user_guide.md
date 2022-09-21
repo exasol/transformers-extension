@@ -322,8 +322,8 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   for more information.
  
 
-The inference results are presented with _START_POS_ indicating the starting index of the token, 
-_END_POS_ indicating the ending index of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
+The inference results are presented with _START_POS_ indicating the index of the starting character of the token, 
+_END_POS_ indicating the index of the ending character of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
 confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
 For example:
 
