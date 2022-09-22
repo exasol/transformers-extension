@@ -1,8 +1,15 @@
-# transformers-extension 0.1.0, released XXXX-XX-XX
+# transformers-extension 0.1.0, released 2022-09-22
+
+Add a downloader UDF and a set of prediction UDFs using the transformers API
 
 
 ## Summary
-
+This is the initial release of the transformers-extension which provides a 
+downloader UDF that allows us to cache the pre-trained machine learning model 
+by transformers and a set of Prediction UDFs that allow the use of the cached 
+machine learning models via the transformers api. This version provides the 
+following machine learning tasks: Sequence Classification, Question Answering, 
+Filling Mask, Text Generation, Token Classification, and Text Translation.
 
 ### Features
 
@@ -18,6 +25,7 @@
   - #31: Created token classification UDF
   - #28: Added top_k result returning feature to question answering UDF
   - #33: Added text translation UDF
+  - #48: Prepared the first release
   
 ### Bug Fixes
 
