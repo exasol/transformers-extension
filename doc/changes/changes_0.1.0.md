@@ -1,6 +1,6 @@
-# transformers-extension 0.1.0, released 2022-09-22
+# Transformers Extension 0.1.0, released 2022-09-22
 
-Add a downloader UDF and a set of prediction UDFs using the transformers API
+Code name: Add a downloader UDF and a set of prediction UDFs using the transformers API
 
 
 ## Summary
