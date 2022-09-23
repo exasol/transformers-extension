@@ -38,6 +38,7 @@ This version provides the following machine learning tasks:
 
   - #2: Renamed master branch to main
   - #18: Corrected model filtering in prediction UDFs
+  - #50: Fixed release_droid configuration
 
 ### Refactoring
 

@@ -30,6 +30,9 @@ jobs:
       - name: Install project whl
         run: pip install dist/*.whl
 
+      - name: Start test environment
+        run: bash ./scripts/start_integration_test_environment.sh
+
       - name: Run Python tests
         run: poetry run pytest tests
 
