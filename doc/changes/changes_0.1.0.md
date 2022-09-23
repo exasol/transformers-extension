@@ -4,11 +4,10 @@ Code name: Add a downloader UDF and a set of prediction UDFs using the transform
 
 
 ## Summary
-
 This is the initial release of the transformers-extension which provides a 
 downloader UDF that allows us to store the pre-trained machine learning model 
-by transformers and a set of Prediction UDFs that allow the use of the cached 
-machine learning models via the transformers API.
+by transformers and a set of Prediction UDFs that allow the downloaded model 
+to be cached and used through the transformers API.
 
 This version provides the following machine learning tasks:
 
