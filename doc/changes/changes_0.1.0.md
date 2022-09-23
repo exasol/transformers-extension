@@ -46,6 +46,7 @@ This version provides the following machine learning tasks:
  - #35: Setup masked language modelling pipeline once
  - #20: Applied same API call across all prediction UDFs
  - #19: Inherent prediction UDF classes from same base class
+ - #54: Updated exasol-udf-mock import
 
 ### Documentation
 
