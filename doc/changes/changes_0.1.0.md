@@ -4,12 +4,20 @@ Code name: Add a downloader UDF and a set of prediction UDFs using the transform
 
 
 ## Summary
+
 This is the initial release of the transformers-extension which provides a 
 downloader UDF that allows us to cache the pre-trained machine learning model 
 by transformers and a set of Prediction UDFs that allow the use of the cached 
-machine learning models via the transformers api. This version provides the 
-following machine learning tasks: Sequence Classification, Question Answering, 
-Filling Mask, Text Generation, Token Classification, and Text Translation.
+machine learning models via the transformers API.
+
+This version provides the following machine learning tasks:
+
+* Sequence Classification
+* Question Answering, 
+* Filling Mask
+* Text Generation
+* Token Classification
+* Text Translation.
 
 ### Features
 
