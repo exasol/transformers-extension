@@ -1,4 +1,4 @@
-# Transformers Extension 0.1.0, released 2022-09-23
+# Transformers Extension 0.1.0, released 2022-09-26
 
 Code name: Add a downloader UDF and a set of prediction UDFs using the transformers API
 
@@ -33,6 +33,7 @@ This version provides the following machine learning tasks:
   - #28: Added top_k result returning feature to question answering UDF
   - #33: Added text translation UDF
   - #48: Prepared the initial release
+  - #56: Split language container into parts to upload release artifacts
   
 ### Bug Fixes
 
