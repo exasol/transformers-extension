@@ -72,7 +72,7 @@ pip install transformers_extension.whl
 ### The Pre-built Language Container
 #### Download Language Container
 - In order to get this extension run, the language container of this extension is required.
-- The language container is split into parts and then uploaded to GitHub Repository.
+- The language container is split into parts and then uploaded to GitHub Release section.
    - These parts are named with the `language_container_part_` prefix. 
    - Please download all parts of the language container from the Releases section. 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
