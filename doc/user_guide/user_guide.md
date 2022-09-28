@@ -85,7 +85,7 @@ cat language_container_part_* > language_container.tar.gz
 - To install the language container, it is necessary to load the container into the BucketFS 
 and register it to the database. The following command provides this setup:
 ```buildoutcfg
-python -m transformers_extension.main language-container
+python -m exasol_transformers_extension.deploy language-container
     --dsn <DB_HOST:DB_PORT> \
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
@@ -104,7 +104,7 @@ python -m transformers_extension.main language-container
 - Deploy all necessary scripts installed in the previous step to the specified 
 `SCHEMA` in Exasol DB with the same `LANGUAGE_ALIAS`  using the following python cli command:
 ```buildoutcfg
-python -m transformers_extension.main scripts
+python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
@@ -125,7 +125,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 - Parameters:
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```bucketfs_conn```: The BucketFS connection name 
 
 Note that the extension currently only supports the `PyTorch` framework. 
@@ -133,7 +133,7 @@ Please make sure that the selected models are in the `Pytorch` model library sec
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
-These tasks use models cached in BucketFS to make an inference on user-provided inputs.
+These tasks cache the model downloaded to BucketFS and make an inference using the cached models with user-supplied inputs.
 
 ### Sequence Classification for Single Text UDF
 This UDF classifies the given single text  according to a given number of 
@@ -151,7 +151,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The input text to be classified
@@ -183,7 +183,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```first_text```: The first input text
@@ -212,7 +212,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```question```: The question text
@@ -250,7 +250,7 @@ SELECT TE_FILLING_MASK_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text data containing masking tokens
@@ -288,7 +288,7 @@ SELECT TE_TEXT_GENERATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The context text.
@@ -319,7 +319,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text to analyze.
@@ -360,7 +360,7 @@ SELECT TE_TRANSLATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```sub_dir```: The directory where the model is stored in the cache.
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```text_data```: The text to translate.
