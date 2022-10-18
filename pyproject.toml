@@ -19,8 +19,8 @@ keywords = ['exasol']
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 pandas = ">=1.4.2,<2.0.0"
-torch = "^1.11.0"
-transformers = {extras = ["torch"], version = "4.21.3"}
+torch = "^1.9.0"
+transformers = {extras = ["torch"], version = "4.18.0"}
 Jinja2 = "^3.0.3"
 importlib-resources = "^5.4.0"
 click = "^8.0.4"

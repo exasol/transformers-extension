@@ -21,8 +21,8 @@ install_requires = \
  'importlib-resources>=5.4.0,<6.0.0',
  'pandas>=1.4.2,<2.0.0',
  'pyexasol>=0.17.0,<0.18.0',
- 'torch>=1.11.0,<2.0.0',
- 'transformers[torch]==4.21.3']
+ 'torch>=1.9.0,<2.0.0',
+ 'transformers[torch]==4.18.0']
 
 setup_kwargs = {
     'name': 'exasol-transformers-extension',
