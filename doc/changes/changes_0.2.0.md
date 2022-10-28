@@ -5,7 +5,8 @@ Code name: Bug fix and user guide improvements
 
 ## Summary
 
-This release fixes a the script deployment when it can't create the schema. Furthermore, it also improves the user guide.  
+This release fixes the script deployment. Previously, it failed when it can't create the schema. 
+Now it tries to open the schema. Furthermore, this release also improves the user guide.  
 
 ### Features
 
