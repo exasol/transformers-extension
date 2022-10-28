@@ -1,10 +1,11 @@
-# Transformers Extension 0.2.0, released YYYY-MM-DD
+# Transformers Extension 0.2.0, released 2022-10-28
 
-Code name: TBD
+Code name: Bug fix and user guide improvements
 
 
 ## Summary
-TBD
+
+This release fixes a the script deployment when it can't create the schema. Furthermore, it also improves the user guide.  
 
 ### Features
 
