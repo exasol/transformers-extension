@@ -29,7 +29,7 @@ exasol-bucketfs-utils-python = { git = "https://github.com/exasol/bucketfs-utils
 
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.1.1"
+pytest = "^7.2.0"
 exasol-udf-mock-python = { git = "https://github.com/exasol/udf-mock-python.git", branch = "main" }
 exasol-script-languages-container-tool = { git = "https://github.com/exasol/script-languages-container-tool.git", branch = "0.14.0"}
 

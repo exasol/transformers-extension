@@ -8,12 +8,15 @@ TBD
 
 ### Features
 
+ n/a
   
 ### Bug Fixes
 
+- #62: Fixed that ScriptsDeployer fails when it can't create the schema
 
 ### Refactoring
 
+ n/a
 
 ### Documentation
 

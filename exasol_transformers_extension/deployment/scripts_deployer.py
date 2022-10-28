@@ -1,6 +1,7 @@
 import pyexasol
 from exasol_transformers_extension.deployment import constants, utils
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -13,11 +14,13 @@ class ScriptsDeployer:
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
     def _open_schema(self) -> None:
-        queries = ["CREATE SCHEMA IF NOT EXISTS {schema_name}",
-                   "OPEN SCHEMA {schema_name}"]
-        for query in queries:
-            self._pyexasol_conn.execute(query.format(schema_name=self._schema))
-        logger.debug(f"Schema {self._schema} is opened.")
+        try:
+            self._pyexasol_conn.execute(f"CREATE SCHEMA IF NOT EXISTS {self._schema}")
+        except pyexasol.ExaQueryError as e:
+            logger.warning(f"Could not create schema {self._schema}. Got error: {e}")
+            logger.info(f"Trying to open schema {self._schema} instead.")
+        self._pyexasol_conn.execute(f"OPEN SCHEMA {self._schema}")
+        logger.info(f"Schema {self._schema} is opened.")
 
     def _deploy_udf_scripts(self) -> None:
         for udf_call_src, template_src in constants.UDF_CALL_TEMPLATES.items():
