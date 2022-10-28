@@ -1,6 +1,6 @@
 # Transformers Extension 0.2.0, released 2022-10-28
 
-Code name: Bug fix and user guide improvements
+Code name: Bug fix and user guide improvements on top of 0.1.0
 
 
 ## Summary
