@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+        # This is a fork of "jlumbroso/free-disk-space@main" that fixes a bug with rmovig hhvm.
+        # We should switch it back once this is merged
+        uses: tkilias/free-disk-space@remove_hhvm
         with:
           tool-cache: false
 
