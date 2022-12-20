@@ -25,7 +25,7 @@ install_requires = \
 
 setup_kwargs = {
     'name': 'exasol-transformers-extension',
-    'version': '0.1.0',
+    'version': '0.2.0',
     'description': 'An Exasol extension to use state-of-the-art pretrained machine learning models via the transformers api.',
     'long_description': '# Exasol Transformers Extension\n\nAn Exasol extension to use state-of-the-art pretrained machine learning models \nvia the [transformers api](https://github.com/huggingface/transformers).\n\n\n## Table of Contents\n\n### Information for Users\n\n* [User Guide](doc/user_guide/user_guide.md)\n* [Changelog](doc/changes/changelog.md)\n* [License](LICENSE)\n\n### Information for Contributors\n\n* [Design](doc/design.md)\n* [Dependencies](doc/dependencies.md)\n\n',
     'author': 'Umit Buyuksahin',

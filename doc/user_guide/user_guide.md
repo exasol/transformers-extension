@@ -40,7 +40,7 @@ The extension provides two types of UDFs:
   - An Exasol connection object must be created with Exasol BucketFS connection 
   information and credentials. 
   - An example connection object is created as follows: 
-  ```buildoutcfg
+  ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
@@ -65,7 +65,7 @@ transformers_extension.whl
 
 #### Install The Python Wheel Package
 - Install the packaged transformers-extension project as follows:
-```bash
+```shell
 pip install transformers_extension.whl
 ```
 
@@ -77,28 +77,69 @@ pip install transformers_extension.whl
    - Please download all parts of the language container from the Releases section. 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
 - Before installing the language container, these parts must be combined using the following command::
-```buildoutcfg
+```shell
 cat language_container_part_* > language_container.tar.gz
 ```
 
 #### Install Language Container
-- To install the language container, it is necessary to load the container into the BucketFS 
-and register it to the database. The following command provides this setup:
-```buildoutcfg
-python -m exasol_transformers_extension.deploy language-container
-    --dsn <DB_HOST:DB_PORT> \
-    --db-user <DB_USER> \
-    --db-pass <DB_PASSWORD> \
-    --bucketfs-name <BUCKETFS_NAME> \
-    --bucketfs-host <BUCKETFS_HOST> \
-    --bucketfs-port <BUCKETFS_PORT> \
-    --bucketfs-user <BUCKETFS_USER> \
-    --bucketfs-password <BUCKETFS_PASSWORD> \
-    --bucket <BUCKETFS_NAME> \
-    --path-in-bucket <PATH_IN_BUCKET> \
-    --language-alias <LANGUAGE_ALIAS> \ 
-    --container-file <path/to/language_container.tar.gz>       
-```
+There are two ways to install the language container: (1) using a python script and (2) manual installation. See the next paragraphs for details.
+
+  1. *Installation with Python Script*
+
+     To install the language container, it is necessary to load the container 
+     into the BucketFS and register it to the database. The following command 
+     provides this setup using the python script provided with this library:
+
+      ```buildoutcfg
+      python -m exasol_transformers_extension.deploy language-container
+          --dsn <DB_HOST:DB_PORT> \
+          --db-user <DB_USER> \
+          --db-pass <DB_PASSWORD> \
+          --bucketfs-name <BUCKETFS_NAME> \
+          --bucketfs-host <BUCKETFS_HOST> \
+          --bucketfs-port <BUCKETFS_PORT> \
+          --bucketfs-user <BUCKETFS_USER> \
+          --bucketfs-password <BUCKETFS_PASSWORD> \
+          --bucket <BUCKETFS_NAME> \
+          --path-in-bucket <PATH_IN_BUCKET> \
+          --language-alias <LANGUAGE_ALIAS> \ 
+          --container-file <path/to/language_container.tar.gz>       
+      ```
+
+  2. *Manual Installation*
+
+     In the manual installation, the pre-built container should be firstly 
+     uploaded into BucketFS. In order to do that, you can use 
+     either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
+     or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
+     The following command uploads a given container into BucketFS through curl 
+     command, an http(s) client: 
+      ```shell
+      curl -vX PUT -T \ 
+          "<CONTAINER_FILE>" 
+          "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
+      ```
+
+      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `BUCKETFS_WRITE_PASSWORD`:
+      ```shell 
+        read -sp "password: " BUCKETFS_WRITE_PASSWORD
+      ```
+
+      The uploaded container should be secondly activated through adjusting 
+      the session parameter `SCRIPT_LANGUAGES`. The activation can be scoped
+      either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
+      The following example query activates the container session-wide:
+
+      ```sql
+      ALTER SESSION SET SCRIPT_LANGUAGES=\
+      <ALIAS>=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+              lang=<LANGUAGE>#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
+              exaudf/exaudfclient_py3
+      ```
+     
+      In project transformer-extensions replace `<ALIAS>` by `_PYTHON3_TE_` and `<LANGUAGE>` by `_python_`.
+      For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
+
 
 ### Deployment
 - Deploy all necessary scripts installed in the previous step to the specified 
