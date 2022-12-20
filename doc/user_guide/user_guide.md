@@ -40,7 +40,7 @@ The extension provides two types of UDFs:
   - An Exasol connection object must be created with Exasol BucketFS connection 
   information and credentials. 
   - An example connection object is created as follows: 
-  ```buildoutcfg
+  ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
@@ -65,7 +65,7 @@ transformers_extension.whl
 
 #### Install The Python Wheel Package
 - Install the packaged transformers-extension project as follows:
-```bash
+```shell
 pip install transformers_extension.whl
 ```
 
@@ -77,7 +77,7 @@ pip install transformers_extension.whl
    - Please download all parts of the language container from the Releases section. 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
 - Before installing the language container, these parts must be combined using the following command::
-```buildoutcfg
+```shell
 cat language_container_part_* > language_container.tar.gz
 ```
 
@@ -114,16 +114,17 @@ There are two ways to install the language container: (1) using a python script 
      or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
      The following command uploads a given container into BucketFS through curl 
      command, an http(s) client: 
-      ```buildoutcfg
+      ```shell
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
-          "http://w:<BUCKETFS_WRITE_PASS>@$bucketfs_host:<BUCKETFS_PASS>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
+          "http://w:<BUCKETFS_WRITE_PASSWORD>@$bucketfs_host:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
 
-Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `bucketfs_write_password`:
-```shell 
-read -sp "password: " bucketfs_write_password
-```
+      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `bucketfs_write_password`:
+      ```shell 
+        read -sp "password: " BUCKETFS_WRITE_PASSWORD
+      ```
+
       The uploaded container should be secondly activated through adjusting 
       the session parameter `SCRIPT_LANGUAGES`. The activation can be scoped
       either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
