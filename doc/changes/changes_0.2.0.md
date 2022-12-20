@@ -23,5 +23,6 @@ Now it tries to open the schema. Furthermore, this release also improves the use
 ### Documentation
 
  - #60: Updated the User Guide
+ - #46: Added manual setup description to User Guide
 
   
