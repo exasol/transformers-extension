@@ -24,5 +24,6 @@ Now it tries to open the schema. Furthermore, this release also improves the use
 
  - #60: Updated the User Guide
  - #46: Added manual setup description to User Guide
-
+ - #59: Prepared the Design Document 
+    
   
