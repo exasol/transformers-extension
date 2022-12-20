@@ -117,10 +117,10 @@ There are two ways to install the language container: (1) using a python script 
       ```shell
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
-          "http://w:<BUCKETFS_WRITE_PASSWORD>@$bucketfs_host:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
+          "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
 
-      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `bucketfs_write_password`:
+      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `BUCKETFS_WRITE_PASSWORD`:
       ```shell 
         read -sp "password: " BUCKETFS_WRITE_PASSWORD
       ```
