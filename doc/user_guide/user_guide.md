@@ -82,7 +82,7 @@ cat language_container_part_* > language_container.tar.gz
 ```
 
 #### Install Language Container
-You can install the language container in two different methods, described below:
+There are two ways to install the language container: (1) using a python script and (2) manual installation. See the next paragraphs for details.
 
   1. *Installation with Python Script*
 
@@ -113,27 +113,31 @@ You can install the language container in two different methods, described below
      either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
      or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
      The following command uploads a given container into BucketFS through curl 
-     command, a http(s) client: 
+     command, an http(s) client: 
       ```buildoutcfg
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
           "http://w:<BUCKETFS_WRITE_PASS>@$bucketfs_host:<BUCKETFS_PASS>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
 
+Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `bucketfs_write_password`:
+```shell 
+read -sp "password: " bucketfs_write_password
+```
       The uploaded container should be secondly activated through adjusting 
-      session parameter `SCRIPT_LANGUAGES`. The activating can be performed for 
+      the session parameter `SCRIPT_LANGUAGES`. The activation can be scoped
       either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
       The following example query activates the container session-wide:
 
-      ```buildoutcfg
+      ```sql
       ALTER SESSION SET SCRIPT_LANGUAGES=\
       <ALIAS>=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
               lang=<LANGUAGE>#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
               exaudf/exaudfclient_py3
       ```
      
-      where `ALIAS` is _PYTHON3_TE_, `LANGUAGE` is _python_ in the 
-      transformers-extension project. For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
+      In project transformer-extensions replace `<ALIAS>` by `_PYTHON3_TE_` and `<LANGUAGE>` by `_python_`.
+      For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
 
 
 ### Deployment
