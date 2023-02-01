@@ -4,16 +4,15 @@ from tests.utils.parameters import db_params
 
 
 def revert_language_settings(func):
-    def wrapper(language_alias, schema, db_conn,
-                container_path, language_settings):
+    def wrapper(**kwargs):
         try:
-            return func(language_alias, schema, db_conn,
-                        container_path, language_settings)
+            return func(**kwargs)
         except Exception as exc:
             print("Exception occurred while running the test: %s" % exc)
             raise pytest.fail(exc)
         finally:
             print("Revert language settings")
+            language_settings = kwargs['language_settings']
             db_conn_revert = pyexasol.connect(
                 dsn=db_params.address(),
                 user=db_params.user,
