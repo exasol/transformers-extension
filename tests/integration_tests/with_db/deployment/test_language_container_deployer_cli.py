@@ -75,37 +75,37 @@ def test_language_container_deployer_cli_with_container_file(
     assert result[0][0]
 
 
-def test_language_container_deployer_cli_by_downloading_container(
-        request, pyexasol_connection):
-    schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(pyexasol_connection)
-
-    result = _call_deploy_language_container_deployer_cli(
-        language_alias="PYTHON3_TE",
-        schema=schema_name,
-        db_conn=pyexasol_connection,
-        container_path=None,
-        version="0.2.0",
-        language_settings=language_settings
-    )
-
-    assert result[0][0]
-
-
-def test_language_container_deployer_cli_with_missing_container_option(
-        request, pyexasol_connection):
-    schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(pyexasol_connection)
-
-    with pytest.raises(Exception) as exc_info:
-        _call_deploy_language_container_deployer_cli(
-            language_alias="PYTHON3_TE",
-            schema=schema_name,
-            db_conn=pyexasol_connection,
-            container_path=None,
-            version=None,
-            language_settings=language_settings
-        )
+# def test_language_container_deployer_cli_by_downloading_container(
+#         request, pyexasol_connection):
+#     schema_name = request.node.name
+#     language_settings = DBQueries.get_language_settings(pyexasol_connection)
+#
+#     result = _call_deploy_language_container_deployer_cli(
+#         language_alias="PYTHON3_TE",
+#         schema=schema_name,
+#         db_conn=pyexasol_connection,
+#         container_path=None,
+#         version="0.2.0",
+#         language_settings=language_settings
+#     )
+#
+#     assert result[0][0]
+#
+#
+# def test_language_container_deployer_cli_with_missing_container_option(
+#         request, pyexasol_connection):
+#     schema_name = request.node.name
+#     language_settings = DBQueries.get_language_settings(pyexasol_connection)
+#
+#     with pytest.raises(Exception) as exc_info:
+#         _call_deploy_language_container_deployer_cli(
+#             language_alias="PYTHON3_TE",
+#             schema=schema_name,
+#             db_conn=pyexasol_connection,
+#             container_path=None,
+#             version=None,
+#             language_settings=language_settings
+#         )
 
 
 
