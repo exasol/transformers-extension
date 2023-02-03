@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
