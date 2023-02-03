@@ -3,7 +3,7 @@ import glob
 import logging
 import requests
 import tempfile
-import fileinput
+import subprocess
 from pathlib import Path
 from getpass import getpass
 from contextlib import contextmanager
@@ -50,13 +50,15 @@ def _download_slc_parts(tmp_dir, version):
             f.write(response.content)
 
 
-def _concatenate_slc_parts(directory):
-    destination = Path(directory) / SLC_FINAL_NAME
-    parts = glob.glob(f"{Path(directory) / SLC_PARTS_PREFIX_NAME}*")
-    with fileinput.input(files=parts) as part:
-        with open(destination, 'w') as output:
-            output.writelines(part)
-    return destination
+def _concatenate_slc_parts(tmp_dir):
+    slc_final_path = Path(tmp_dir, SLC_FINAL_NAME)
+    slc_parts_path = glob.glob(str(Path(tmp_dir, SLC_PARTS_PREFIX_NAME)) + "*")
+    cmd = f"cat {' '.join(slc_parts_path)} > {slc_final_path}"
+    subprocess.run(cmd,
+                   stdout=subprocess.PIPE,
+                   stderr=subprocess.STDOUT,
+                   shell=True)
+    return slc_final_path
 
 
 @contextmanager
