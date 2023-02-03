@@ -58,7 +58,6 @@ def _call_deploy_language_container_deployer_cli(
     return result
 
 
-
 def test_language_container_deployer_cli_with_container_file(
         request, pyexasol_connection, language_container):
     schema_name = request.node.name
@@ -76,9 +75,6 @@ def test_language_container_deployer_cli_with_container_file(
     assert result[0][0]
 
 
-@pytest.mark.skip(reason="CI test can not be completed due to the huge size of "
-                         "SLC. Since the following test also tests the "
-                         "functionality of this test, this one is skipped.")
 def test_language_container_deployer_cli_by_downloading_container(
         request, pyexasol_connection):
     schema_name = request.node.name
