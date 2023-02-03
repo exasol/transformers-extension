@@ -14,7 +14,8 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 @click.option('--bucketfs-password', type=str)
 @click.option('--bucket', type=str, required=True)
 @click.option('--path-in-bucket', type=str, required=True, default=None)
-@click.option('--container-file', type=click.Path(exists=True, file_okay=True))
+@click.option('--container-file',
+              type=click.Path(exists=True, file_okay=True), default=None)
 @click.option('--version', type=str, default=None)
 @click.option('--dsn', type=str, required=True)
 @click.option('--db-user', type=str, required=True)

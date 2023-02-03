@@ -1,11 +1,15 @@
-# Transformers Extension 0.3.0, released YYYY-MM-DD
+# Transformers Extension 0.3.0, released 2023-02-03
 
-Code name: TBD
+Code name: Simplify language container setup and fix torch version 1.11.0
 
 
 ## Summary
 
-TBD
+This version allows users to install the language container in one step. 
+The version of language container to be installed is given to the installation 
+script, therefore there is no need to download the container file separately. 
+Moreover, this release fixed torch version to 1.11.0, so that we avoided to 
+package unused nvidia dependencies existing later versions of torch.
 
 ### Features
 
