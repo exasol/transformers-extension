@@ -47,11 +47,11 @@ def test_language_container_deployer(
     language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     result = _call_deploy_language_container_deployer(
-        "PYTHON3_TE",
-        schema_name,
-        pyexasol_connection,
-        Path(language_container["container_path"]),
-        language_settings
+        language_alias="PYTHON3_TE",
+        schema=schema_name,
+        db_conn=pyexasol_connection,
+        container_path=Path(language_container["container_path"]),
+        language_settings=language_settings
     )
 
     assert result[0][0]

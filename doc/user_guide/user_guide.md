@@ -70,9 +70,40 @@ pip install transformers_extension.whl
 ```
 
 ### The Pre-built Language Container
-#### Download Language Container
-- In order to get this extension run, the language container of this extension is required.
-- The language container is split into parts and then uploaded to GitHub Release section.
+
+This extension requires the installation of the language container for this 
+extension to run. It can be installed in two ways:Quick and Customized 
+installations
+
+#### Quick Installation
+The desired language container is downloaded and installed by executing the 
+deployment script below with the desired version. (see GitHub Releases 
+[the latest release](https://github.com/exasol/transformers-extension/releases).
+
+  ```buildoutcfg
+  python -m exasol_transformers_extension.deploy language-container
+      --dsn <DB_HOST:DB_PORT> \
+      --db-user <DB_USER> \
+      --db-pass <DB_PASSWORD> \
+      --bucketfs-name <BUCKETFS_NAME> \
+      --bucketfs-host <BUCKETFS_HOST> \
+      --bucketfs-port <BUCKETFS_PORT> \
+      --bucketfs-user <BUCKETFS_USER> \
+      --bucketfs-password <BUCKETFS_PASSWORD> \
+      --bucket <BUCKETFS_NAME> \
+      --path-in-bucket <PATH_IN_BUCKET> \
+      --language-alias <LANGUAGE_ALIAS> \ 
+      --version <RELEASE_VERSION>       
+  ```
+
+#### Customized Installation
+In this installation, you can install the desired or customized language 
+container. In the following steps,  it is explained how to install the 
+language container file released in GitHub Releases section.
+
+
+##### Download Language Container
+   - The language container is split into parts and then uploaded to GitHub Release section.
    - These parts are named with the `language_container_part_` prefix. 
    - Please download all parts of the language container from the Releases section. 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
@@ -81,7 +112,7 @@ pip install transformers_extension.whl
 cat language_container_part_* > language_container.tar.gz
 ```
 
-#### Install Language Container
+##### Install Language Container
 There are two ways to install the language container: (1) using a python script and (2) manual installation. See the next paragraphs for details.
 
   1. *Installation with Python Script*
