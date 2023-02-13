@@ -1,4 +1,3 @@
-import pathlib
 from tempfile import TemporaryDirectory
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
@@ -59,7 +58,7 @@ def udf_wrapper():
 def create_mock_metadata():
     meta = MockMetaData(
         script_code_wrapper_function=udf_wrapper,
-        input_type="SCALAR",
+        input_type="SET",
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
@@ -83,25 +82,37 @@ def test_model_downloader():
         bucketfs_connection = Connection(address=f"file://{path}")
         exa = MockExaEnvironment(
             metadata=meta,
-            connections={BFS_CONN_NAME: bucketfs_connection})
-        input_data = (
-            model_params.base_model,
-            model_params.sub_dir,
-            BFS_CONN_NAME)
-        result = executor.run([Group([input_data])], exa)
+            connections={
+                BFS_CONN_NAME + "0": bucketfs_connection,
+                BFS_CONN_NAME + "1": bucketfs_connection
+            }
+        )
+        input_data = [
+            (
+                model_params.base_model + "0",
+                model_params.sub_dir + "0",
+                BFS_CONN_NAME + "0"
+            ),
+            (
+                model_params.base_model + "1",
+                model_params.sub_dir + "1",
+                BFS_CONN_NAME + "1"),
+        ]
 
-        relative_model_path = bucketfs_operations.get_model_path(
-            model_params.sub_dir, model_params.base_model)
-        assert result[0].rows[0][0] == str(relative_model_path) \
-               and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(relative_model_path.joinpath("model_file1.txt"))) \
-               == MODEL_FILE_DATA_MAP["model_file1.txt"] \
-               and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(relative_model_path.joinpath("model_file2.txt"))) \
-               == MODEL_FILE_DATA_MAP["model_file2.txt"] \
-               and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(relative_model_path.joinpath("tokenizer_file1.txt"))) \
-               == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
-               and bucketfs_location_read.read_file_from_bucketfs_to_string(
-            str(relative_model_path.joinpath("tokenizer_file2.txt"))) \
-               == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]
+        result = executor.run([Group(input_data)], exa)
+        for i, result_row in enumerate(result[0]):
+            relative_model_path = bucketfs_operations.get_model_path(
+                model_params.sub_dir + str(i), model_params.base_model + str(i))
+            assert result_row[0] == str(relative_model_path) \
+                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
+                str(relative_model_path.joinpath("model_file1.txt"))) \
+                   == MODEL_FILE_DATA_MAP["model_file1.txt"] \
+                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
+                str(relative_model_path.joinpath("model_file2.txt"))) \
+                   == MODEL_FILE_DATA_MAP["model_file2.txt"] \
+                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
+                str(relative_model_path.joinpath("tokenizer_file1.txt"))) \
+                   == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
+                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
+                str(relative_model_path.joinpath("tokenizer_file2.txt"))) \
+                   == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]
