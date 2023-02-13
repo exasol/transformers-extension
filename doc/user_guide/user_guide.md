@@ -178,8 +178,8 @@ There are two ways to install the language container: (1) using a python script 
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
-    --db-user <DB_USER> \
-    --db-pass <DB_PASSWORD> \
+    --user <DB_USER> \
+    --pass <DB_PASSWORD> \
     --schema <SCHEMA> \
     --language-alias <LANGUAGE_ALIAS>
 ```
