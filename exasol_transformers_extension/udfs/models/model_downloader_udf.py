@@ -11,6 +11,14 @@ class ModelDownloader:
         self.tokenizer_downloader = tokenizer_downloader
 
     def run(self, ctx) -> None:
+        while True:
+            model_path = self._download_model(ctx)
+            ctx.emit(model_path)
+            if not ctx.next():
+                break
+
+    def _download_model(self, ctx) -> str:
+        # parameters
         model_name = ctx.model_name
         sub_dir = ctx.sub_dir
         bfs_conn = ctx.bfs_conn
@@ -26,7 +34,6 @@ class ModelDownloader:
         # download base model and tokenizer into the model path
         for downloader in \
                 [self.base_model_downloader, self.tokenizer_downloader]:
-
             with tempfile.TemporaryDirectory() as tmpdir_name:
                 # download model into tmp folder
                 downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
@@ -35,5 +42,8 @@ class ModelDownloader:
                 bucketfs_operations.upload_model_files_to_bucketfs(
                     tmpdir_name, model_path, bucketfs_location)
 
-        ctx.emit(str(model_path))
+        return str(model_path)
+
+
+
 
