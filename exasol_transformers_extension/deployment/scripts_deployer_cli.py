@@ -1,5 +1,5 @@
 import click
-from exasol_transformers_extension.deployment import utils
+from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 

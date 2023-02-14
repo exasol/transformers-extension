@@ -1,5 +1,6 @@
 import pyexasol
-from exasol_transformers_extension.deployment import constants, utils
+from exasol_transformers_extension.deployment import constants, \
+    deployment_utils as utils
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,9 +16,11 @@ class ScriptsDeployer:
 
     def _open_schema(self) -> None:
         try:
-            self._pyexasol_conn.execute(f"CREATE SCHEMA IF NOT EXISTS {self._schema}")
+            self._pyexasol_conn.execute(
+                f"CREATE SCHEMA IF NOT EXISTS {self._schema}")
         except pyexasol.ExaQueryError as e:
-            logger.warning(f"Could not create schema {self._schema}. Got error: {e}")
+            logger.warning(
+                f"Could not create schema {self._schema}. Got error: {e}")
             logger.info(f"Trying to open schema {self._schema} instead.")
         self._pyexasol_conn.execute(f"OPEN SCHEMA {self._schema}")
         logger.info(f"Schema {self._schema} is opened.")

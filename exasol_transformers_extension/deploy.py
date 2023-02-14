@@ -10,6 +10,7 @@ from exasol_transformers_extension.deployment.language_container_deployer_cli \
 def main():
     pass
 
+
 main.add_command(scripts_deployer_main)
 main.add_command(language_container_deployer_main)
 
