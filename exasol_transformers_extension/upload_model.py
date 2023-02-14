@@ -1,3 +1,4 @@
+import os
 import click
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.deployment import deployment_utils as utils
@@ -17,7 +18,9 @@ from exasol_transformers_extension.deployment import deployment_utils as utils
 @click.option('--bucketfs-port', type=int, required=True)
 @click.option('--bucketfs_use-https', type=bool, default=False)
 @click.option('--bucketfs-user', type=str, required=True, default="w")
-@click.option('--bucketfs-password', type=str)
+@click.option('--bucketfs-password', prompt='bucketFS password', hide_input=True,
+              default=lambda: os.environ.get(
+                  utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--bucket', type=str, required=True)
 @click.option('--path-in-bucket', type=str, required=True, default=None)
 def main(
@@ -33,11 +36,6 @@ def main(
         sub_dir: str,
         model_path: str,
         tokenizer_path: str):
-
-    # get password
-    bucketfs_password = utils.get_password(
-        bucketfs_password, bucketfs_user,
-        utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, "BucketFS Password")
 
     # create bucketfs location
     bucketfs_location = bucketfs_operations.create_bucketfs_location(

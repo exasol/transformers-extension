@@ -66,7 +66,7 @@ class TestEnvironmentSetup:
         self.model_path = bucketfs_operations.get_model_path(
             self.sub_dir, self.base_model)
         self.bucketfs_connection = Connection(
-            address=url_localfs + f"/bucket{id}",
+            address=f"{url_localfs}/bucket{id}",
             user=None,
             password=None
         )

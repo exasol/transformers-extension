@@ -13,8 +13,8 @@ def test_scripts_deployer_cli(upload_language_container,
     args_list = [
         "scripts",
         "--dsn", db_params.address(),
-        "--user", db_params.user,
-        "--pass", db_params.password,
+        "--db-user", db_params.user,
+        "--db-pass", db_params.password,
         "--schema", schema_name,
         "--language-alias", language_alias
     ]
