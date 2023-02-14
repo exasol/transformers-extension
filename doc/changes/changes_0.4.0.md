@@ -10,6 +10,7 @@ TBD
 ### Features
 
  - #11: Converted DownloadUDF to SET UDF 
+ - #58: Added setup to upload models from local filesystem
   
 
     
