@@ -21,7 +21,8 @@ def test_model_downloader_udf_script(
         input_data.append((
             model_params.base_model,
             sub_dir,
-            bucketfs_conn_name
+            bucketfs_conn_name,
+            ''
         ))
 
     bucketfs_files = []
@@ -30,9 +31,10 @@ def test_model_downloader_udf_script(
                 f"SELECT TE_MODEL_DOWNLOADER_UDF(" 
                 f"t.model_name, "
                 f"t.sub_dir, "
-                f"t.bucketfs_conn_name"
-                f") FROM (VALUES {str(tuple(input_data))} "
-                f"AS t(model_name, sub_dir, bucketfs_conn_name));"
+                f"t.bucketfs_conn_name, "
+                f"t.token_conn_name"
+                f") FROM (VALUES {str(tuple(input_data))} AS "
+                f"t(model_name, sub_dir, bucketfs_conn_name, token_conn_name));"
         )
 
         # execute downloader UDF

@@ -1,4 +1,6 @@
 from tempfile import TemporaryDirectory
+
+import pytest
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
 from exasol_udf_mock_python.column import Column
@@ -22,9 +24,18 @@ TOKENIZER_FILE_DATA_MAP = {
 
 def udf_wrapper():
     import os
+    from typing import Union
     from exasol_udf_mock_python.udf_context import UDFContext
     from exasol_transformers_extension.udfs.models.model_downloader_udf import \
         ModelDownloader
+
+    def check_token(token: Union[bool, str]) -> None:
+        """
+        token should be False or a valid token string.
+        """
+        if not ((isinstance(token, bool) and not token)
+                or (isinstance(token, str) and token != 'invalid')):
+            raise ValueError(f"Not a valid token {token}")
 
     class MockModelDownloader:
         model_file_data_map = {
@@ -32,7 +43,8 @@ def udf_wrapper():
             "model_file2.txt": "Sample data in model_file1.txt"}
 
         @classmethod
-        def from_pretrained(cls, model_name, cache_dir):
+        def from_pretrained(cls, model_name, cache_dir, use_auth_token=False):
+            check_token(use_auth_token)
             for file_name, content in cls.model_file_data_map.items():
                 with open(os.path.join(cache_dir, file_name), 'w') as file:
                     file.write(content)
@@ -43,7 +55,8 @@ def udf_wrapper():
             "tokenizer_file2.txt": "Sample data in tokenizer_file1.txt"}
 
         @classmethod
-        def from_pretrained(cls, model_name, cache_dir):
+        def from_pretrained(cls, model_name, cache_dir, use_auth_token=False):
+            check_token(use_auth_token)
             for file_name, content in cls.tokenizer_file_data_map.items():
                 with open(os.path.join(cache_dir, file_name), 'w') as file:
                     file.write(content)
@@ -62,7 +75,8 @@ def create_mock_metadata():
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("bfs_conn", str, "VARCHAR(2000000)")
+            Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("token_conn", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -72,7 +86,11 @@ def create_mock_metadata():
     return meta
 
 
-def test_model_downloader():
+@pytest.mark.parametrize("description, token_conn_name ,token_conn_obj", [
+    ('without token', '', None),
+    ('with token', 'conn_name', Connection(address="", password="valid")),
+])
+def test_model_downloader(description, token_conn_name, token_conn_obj):
     executor = UDFMockExecutor()
     meta = create_mock_metadata()
 
@@ -84,19 +102,23 @@ def test_model_downloader():
             metadata=meta,
             connections={
                 BFS_CONN_NAME + "0": bucketfs_connection,
-                BFS_CONN_NAME + "1": bucketfs_connection
+                BFS_CONN_NAME + "1": bucketfs_connection,
+                token_conn_name: token_conn_obj
             }
         )
         input_data = [
             (
                 model_params.base_model + "0",
                 model_params.sub_dir + "0",
-                BFS_CONN_NAME + "0"
+                BFS_CONN_NAME + "0",
+                token_conn_name
             ),
             (
                 model_params.base_model + "1",
                 model_params.sub_dir + "1",
-                BFS_CONN_NAME + "1"),
+                BFS_CONN_NAME + "1",
+                token_conn_name
+            ),
         ]
 
         result = executor.run([Group(input_data)], exa)
