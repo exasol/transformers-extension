@@ -38,6 +38,6 @@ def test_question_answering_script(
 
     # assertions
     n_rows_result = n_rows
-    n_cols_result = len(input_data[0]) + 1  # + 2 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + 2  # + 3 new cols -1 device_id col
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
