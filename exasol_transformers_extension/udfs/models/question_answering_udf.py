@@ -88,7 +88,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
         """
         Convert predictions to dataframe.
 
-        :param predictions: predictions results
+        :param predictions: prediction results
 
         :return: List of prediction dataframes
         """
@@ -96,7 +96,9 @@ class QuestionAnsweringUDF(BaseModelUDF):
         for result in predictions:
             result_df = pd.DataFrame([result]) if type(result) == dict \
                 else pd.DataFrame(result)
-            results_df_list.append(
-                result_df[self._desired_fields_in_prediction])
+            result_df = result_df[self._desired_fields_in_prediction]
+            result_df["rank"] = result_df["score"].rank(
+                ascending=False, method='dense').astype(int)
+            results_df_list.append(result_df)
 
         return results_df_list

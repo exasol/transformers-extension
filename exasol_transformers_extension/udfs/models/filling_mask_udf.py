@@ -87,7 +87,7 @@ class FillingMaskUDF(BaseModelUDF):
         """
         Convert predictions to dataframe.
 
-        :param predictions: predictions results
+        :param predictions: prediction results
 
         :return: List of prediction dataframes
         """
@@ -96,6 +96,8 @@ class FillingMaskUDF(BaseModelUDF):
             result_df = pd.DataFrame(result)
             result_df = result_df[self._desired_fields_in_prediction]\
                 .rename(columns={"sequence": "filled_text"})
+            result_df["rank"] = result_df["score"].rank(
+                ascending=False, method='dense').astype(int)
             results_df_list.append(result_df)
         return results_df_list
 
