@@ -4,8 +4,8 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.mock_sequence_tokenizer im
 
 
 class MockFillingMaskModel:
-    def __init__(self, sequence: str, score: float):
-        self.result = {"sequence": sequence, "score": score}
+    def __init__(self, sequence: str, score: float, rank: int):
+        self.result = {"sequence": sequence, "score": score, "rank": rank}
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir):

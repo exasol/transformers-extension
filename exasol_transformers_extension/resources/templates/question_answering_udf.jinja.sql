@@ -15,7 +15,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_QUESTION_ANSWERING_UDF"(
     context_text VARCHAR(2000000),
     top_k INTEGER,
     answer VARCHAR(2000000),
-    score DOUBLE ) AS
+    score DOUBLE,
+    rank INTEGER ) AS
 
 {{ script_content }}
 

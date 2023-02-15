@@ -11,6 +11,7 @@ TBD
 
  - #11: Converted DownloadUDF to SET UDF 
  - #58: Added setup to upload models from local filesystem
+ - #47: Added rank column to model results returning top-k predictions
   
 
     

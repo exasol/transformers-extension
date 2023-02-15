@@ -92,7 +92,24 @@ def test_question_answering_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['answer', 'score']
-    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
-           and list(result_df.columns) == columns[1:] + new_columns \
-           and result_df['score'].dtypes == 'float'
+    new_columns = ['answer', 'score', 'rank']
+
+    # assertions
+    is_score_typed_as_float = result_df['score'].dtypes == 'float'
+    is_rank_typed_as_int = result_df['rank'].dtypes == 'int'
+    has_valid_shape =  \
+        result_df.shape == (n_rows * top_k, len(columns)+len(new_columns)-1)
+    has_valid_column_number = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    is_rank_correct = \
+        all([result_df[row*top_k: top_k + row*top_k]
+            .sort_values(by='score', ascending=False)['rank']
+            .is_monotonic for row in range(n_rows)])
+
+    assert all((
+        is_score_typed_as_float,
+        is_rank_typed_as_int,
+        has_valid_shape,
+        has_valid_column_number,
+        is_rank_correct
+    ))

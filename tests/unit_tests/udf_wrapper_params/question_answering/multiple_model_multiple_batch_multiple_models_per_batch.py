@@ -42,14 +42,14 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                    "question", "context", top_k)] * data_size + \
                  [(None, "bfs_conn4", "sub_dir4", "model4",
                    "question", "context", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question",
-                    "context", top_k, "answer 1", 0.1)] * data_size  * top_k+ \
-                  [("bfs_conn2", "sub_dir2", "model2", "question",
-                    "context", top_k, "answer 2", 0.2)] * data_size * top_k + \
-                  [("bfs_conn3", "sub_dir3", "model3", "question",
-                    "context", top_k, "answer 3", 0.3)] * data_size * top_k + \
-                  [("bfs_conn4", "sub_dir4", "model4", "question",
-                    "context", top_k, "answer 4", 0.4)] * data_size * top_k
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
+                    top_k, "answer 1", 0.1, 1)] * data_size * top_k+ \
+                  [("bfs_conn2", "sub_dir2", "model2", "question", "context",
+                    top_k, "answer 2", 0.2, 1)] * data_size * top_k + \
+                  [("bfs_conn3", "sub_dir3", "model3", "question", "context",
+                    top_k, "answer 3", 0.3, 1)] * data_size * top_k + \
+                  [("bfs_conn4", "sub_dir4", "model4", "question", "context",
+                    top_k, "answer 4", 0.4, 1)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -65,13 +65,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
 
     mock_factory = MockQuestionAnsweringFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockQuestionAnsweringModel(answer="answer 1", score=0.1),
+            MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
-            MockQuestionAnsweringModel(answer="answer 2", score=0.2),
+            MockQuestionAnsweringModel(answer="answer 2", score=0.2, rank=1),
         PurePosixPath(cache_dir3, "sub_dir3", "model3"):
-            MockQuestionAnsweringModel(answer="answer 3", score=0.3),
+            MockQuestionAnsweringModel(answer="answer 3", score=0.3, rank=1),
         PurePosixPath(cache_dir4, "sub_dir4", "model4"):
-            MockQuestionAnsweringModel(answer="answer 4", score=0.4),
+            MockQuestionAnsweringModel(answer="answer 4", score=0.4, rank=1),
     })
 
     mock_pipeline = MockPipeline

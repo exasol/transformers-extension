@@ -34,6 +34,8 @@ def test_filling_mask_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    added_columns = 3  # new columns
+    removed_columns = 1  # device_id col
     n_rows_result = n_rows * top_k
-    n_cols_result = len(input_data[0]) + 1  # + 2 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
