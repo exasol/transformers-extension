@@ -1,6 +1,7 @@
+import os
 import click
 from pathlib import Path
-from exasol_transformers_extension.deployment import utils
+from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.language_container_deployer import \
     LanguageContainerDeployer
 
@@ -11,7 +12,9 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 @click.option('--bucketfs-port', type=int, required=True)
 @click.option('--bucketfs_use-https', type=bool, default=False)
 @click.option('--bucketfs-user', type=str, required=True, default="w")
-@click.option('--bucketfs-password', type=str)
+@click.option('--bucketfs-password', prompt='bucketFS password', hide_input=True,
+              default=lambda: os.environ.get(
+                  utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--bucket', type=str, required=True)
 @click.option('--path-in-bucket', type=str, required=True, default=None)
 @click.option('--container-file',
@@ -19,7 +22,9 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 @click.option('--version', type=str, default=None)
 @click.option('--dsn', type=str, required=True)
 @click.option('--db-user', type=str, required=True)
-@click.option('--db-pass', type=str)
+@click.option('--db-pass', prompt='db password', hide_input=True,
+              default=lambda: os.environ.get(
+                  utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
 def language_container_deployer_main(
         bucketfs_name: str,
@@ -50,16 +55,9 @@ def language_container_deployer_main(
             container_file=Path(container_file),
             dsn=dsn,
             db_user=db_user,
-            db_password=db_password,
+            db_password=db_pass,
             language_alias=language_alias
         )
-
-    bucketfs_password = utils.get_password(
-        bucketfs_password, bucketfs_user,
-        utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, "BucketFS Password")
-    db_password = utils.get_password(
-        db_pass, db_user,
-        utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, "DB Password")
 
     if container_file:
         call_runner()

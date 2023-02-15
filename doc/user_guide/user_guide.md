@@ -178,15 +178,21 @@ There are two ways to install the language container: (1) using a python script 
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
-    --user <DB_USER> \
-    --pass <DB_PASSWORD> \
+    --db-user <DB_USER> \
+    --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
     --language-alias <LANGUAGE_ALIAS>
 ```
 
 ## Model Downloader UDF
-Before you can use pre-trained models, the models must be downloaded and cached in the
-BucketFS. For this, you can use the `TE_MODEL_DOWNLOADER_UDF` script as follows
+Before you can use pre-trained models, the models must be stored in the 
+BucketFS. We provide two different ways to load transformers models 
+into BucketFS:
+
+### 1. Model Downloader UDF
+Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model 
+from the huggingface hub and upload it to bucketfs.
+
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
     model_name,
@@ -202,6 +208,27 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 
 Note that the extension currently only supports the `PyTorch` framework. 
 Please make sure that the selected models are in the `Pytorch` model library section.
+
+
+### 2. Upload Model Script
+You can invoke the python script as below which allows to load the transformer 
+models from the local filesystem into BucketFS:
+
+  ```buildoutcfg
+  python -m exasol_transformers_extension.upload_model
+      --bucketfs-name <BUCKETFS_NAME> \
+      --bucketfs-host <BUCKETFS_HOST> \
+      --bucketfs-port <BUCKETFS_PORT> \
+      --bucketfs-user <BUCKETFS_USER> \
+      --bucketfs-password <BUCKETFS_PASSWORD> \
+      --bucket <BUCKETFS_NAME> \
+      --path-in-bucket <PATH_IN_BUCKET> \
+      --model-name <MODEL_NAME> \
+      --subd-dir <SUB_DIRECTORY> \
+      --model-path <MODEL_PATH> \
+      --tokenizer-path <TOKENIZER_PATH>     
+  ```
+
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 

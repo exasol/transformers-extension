@@ -21,16 +21,6 @@ N_SLC_PARTS = 2
 GH_RELEASE_URL = "https://github.com/exasol/transformers-extension/releases/download"
 
 
-def get_password(pwd: str, user: str, env_var: str, descr: str) -> str:
-    if pwd is None:
-        if env_var in os.environ:
-            logger.debug(f"Use password from environment variable {env_var}")
-            pwd = os.environ[env_var]
-        else:
-            pwd = getpass(f"{descr} for User {user}")
-    return pwd
-
-
 def load_and_render_statement(template_name, **kwargs) -> str:
     env = Environment(
         loader=PackageLoader(constants.BASE_DIR, constants.TEMPLATES_DIR),

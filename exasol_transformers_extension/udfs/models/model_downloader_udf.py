@@ -28,8 +28,9 @@ class ModelDownloader:
 
         # create bucketfs location
         bfs_conn_obj = self.exa.get_connection(bfs_conn)
-        bucketfs_location = bucketfs_operations.create_bucketfs_location(
-            bfs_conn_obj)
+        bucketfs_location = \
+            bucketfs_operations.create_bucketfs_location_from_conn_object(
+                bfs_conn_obj)
 
         # download base model and tokenizer into the model path
         for downloader in \

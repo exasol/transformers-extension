@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Iterator, List, Any, Optional
+from typing import Iterator, List, Any
 import torch
 import pandas as pd
 from exasol_transformers_extension.deployment import constants
@@ -102,8 +102,9 @@ class BaseModelUDF(ABC):
         :param bucketfs_conn_name: Name of the bucketFS connection
         :param sub_dir: Directory where the model is cached
         """
-        bucketfs_location = bucketfs_operations.create_bucketfs_location(
-            self.exa.get_connection(bucketfs_conn_name))
+        bucketfs_location = \
+            bucketfs_operations.create_bucketfs_location_from_conn_object(
+                self.exa.get_connection(bucketfs_conn_name))
 
         model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(

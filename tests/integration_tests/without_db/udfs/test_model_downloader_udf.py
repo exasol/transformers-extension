@@ -66,7 +66,7 @@ class TestEnvironmentSetup:
         self.model_path = bucketfs_operations.get_model_path(
             self.sub_dir, self.base_model)
         self.bucketfs_connection = Connection(
-            address=url_localfs,
+            address=f"{url_localfs}/bucket{id}",
             user=None,
             password=None
         )
@@ -103,6 +103,6 @@ def test_model_downloader_udf_implementation():
         env1_bucketfs_files = env1.list_files_in_bucketfs()
         env2_bucketfs_files = env2.list_files_in_bucketfs()
         assert ctx.get_emitted()[0][0] == str(env1.model_path) \
-               and ctx.get_emitted()[0][0] == str(env1.model_path) \
+               and ctx.get_emitted()[1][0] == str(env2.model_path) \
                and env1_bucketfs_files \
                and env2_bucketfs_files

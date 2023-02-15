@@ -2,6 +2,7 @@ import pytest
 import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
+from tests.utils import postprocessing
 from tests.utils.parameters import model_params
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
@@ -17,7 +18,7 @@ def download_model(model_name: str, tmpdir_name: Path) -> None:
 
 @contextmanager
 def upload_model(bucketfs_location: AbstractBucketFSLocation,
-                 model_name: str, model_dir: Path) -> str:
+                 model_name: str, model_dir: Path) -> Path:
 
     model_path = bucketfs_operations.get_model_path(
         model_params.sub_dir, model_name)
@@ -69,7 +70,7 @@ def upload_model_to_bucketfs(
         try:
             yield model_path
         finally:
-            _cleanup_buckets(bucketfs_location, model_path)
+            postprocessing.cleanup_buckets(bucketfs_location, str(model_path))
 
 
 @pytest.fixture(scope="session")
@@ -88,13 +89,3 @@ def upload_seq2seq_model_to_bucketfs(
     with upload_model_to_bucketfs(
             model_params.seq2seq_model, tmpdir, bucketfs_location) as path:
         yield path
-
-
-def _cleanup_buckets(bucketfs_location: AbstractBucketFSLocation, path: str):
-    bucketfs_files = bucketfs_location.list_files_in_bucketfs(str(path))
-    for file_ in bucketfs_files:
-        try:
-            bucketfs_location.delete_file_in_bucketfs(
-                str(PurePosixPath(path, file_)))
-        except Exception as exc:
-            print(f"Error while deleting downloaded files, {str(exc)}")
