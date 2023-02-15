@@ -48,16 +48,16 @@ class MultipleTopkMultipleSizeSingleModelNameSingleBatch:
                    "context", top_k4_for_datasize2)] * data_size2
 
     output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
-                    top_k1_for_datasize1, "answer 1", 0.1)
+                    top_k1_for_datasize1, "answer 1", 0.1, 1)
                    ] * data_size1 * top_k1_for_datasize1 + \
                   [("bfs_conn1", "sub_dir1", "model2", "question", "context",
-                    top_k2_for_datasize1, "answer 2", 0.2)
+                    top_k2_for_datasize1, "answer 2", 0.2, 1)
                    ] * data_size1 * top_k2_for_datasize1 + \
                   [("bfs_conn1", "sub_dir1", "model3", "question", "context",
-                    top_k3_for_datasize2, "answer 3", 0.3)
+                    top_k3_for_datasize2, "answer 3", 0.3, 1)
                    ] * data_size2 * top_k3_for_datasize2 + \
                   [("bfs_conn1", "sub_dir1", "model4", "question", "context",
-                    top_k4_for_datasize2, "answer 4", 0.4)
+                    top_k4_for_datasize2, "answer 4", 0.4, 1)
                    ] * data_size2 * top_k4_for_datasize2
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -67,13 +67,13 @@ class MultipleTopkMultipleSizeSingleModelNameSingleBatch:
 
     mock_factory = MockQuestionAnsweringFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockQuestionAnsweringModel(answer="answer 1", score=0.1),
+            MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1),
         PurePosixPath(base_cache_dir1, "sub_dir1", "model2"):
-            MockQuestionAnsweringModel(answer="answer 2", score=0.2),
+            MockQuestionAnsweringModel(answer="answer 2", score=0.2, rank=1),
         PurePosixPath(base_cache_dir1, "sub_dir1", "model3"):
-            MockQuestionAnsweringModel(answer="answer 3", score=0.3),
+            MockQuestionAnsweringModel(answer="answer 3", score=0.3, rank=1),
         PurePosixPath(base_cache_dir1, "sub_dir1", "model4"):
-            MockQuestionAnsweringModel(answer="answer 4", score=0.4),
+            MockQuestionAnsweringModel(answer="answer 4", score=0.4, rank=1),
     })
 
     mock_pipeline = MockPipeline

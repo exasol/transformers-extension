@@ -5,8 +5,8 @@ from tests.unit_tests.udf_wrapper_params.question_answering.\
 
 
 class MockQuestionAnsweringModel:
-    def __init__(self, answer: str, score: float):
-        self.result = {"answer": answer, "score": score}
+    def __init__(self, answer: str, score: float, rank: int):
+        self.result = {"answer": answer, "score": score, "rank": rank}
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir):
