@@ -10,7 +10,7 @@ from tests.utils.parameters import bucketfs_params, model_params
 @pytest.fixture(scope='function')
 def download_sample_models(tmp_path):
     for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-       downloader.from_pretrained(model_params.base_model, cache_dir=tmp_path)
+        downloader.from_pretrained(model_params.base_model, cache_dir=tmp_path)
 
     yield tmp_path
 
