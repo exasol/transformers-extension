@@ -50,6 +50,15 @@ The extension provides two types of UDFs:
   ```buildoutcfg
     http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
   ```
+  - A valid token is required to download private models from the Huggingface hub. 
+  To avoid exposing such sensitive information, you can use Exasol Connection 
+  objects. As seen in the example below, a token can be specified in the 
+  password part of the Exasol connection object:
+  ```sql
+  CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
+      TO ''
+      IDENTIFIED BY '<PRIVATE_MODEL_TOKEN>'
+  ```
   - For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
   
 ## Setup
@@ -184,7 +193,7 @@ python -m exasol_transformers_extension.deploy scripts
     --language-alias <LANGUAGE_ALIAS>
 ```
 
-## Model Downloader UDF
+## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
 BucketFS. We provide two different ways to load transformers models 
 into BucketFS:
@@ -197,20 +206,25 @@ from the huggingface hub and upload it to bucketfs.
 SELECT TE_MODEL_DOWNLOADER_UDF(
     model_name,
     sub_dir,
-    bucketfs_conn
+    bucketfs_conn,
+    token_conn,
 )
 ```
 - Parameters:
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
-  - ```bucketfs_conn```: The BucketFS connection name 
+  - ```bucketfs_conn```: The BucketFS connection name.
+  - ```token_conn```: The connection name containing the token required for 
+  private models. You can use empty string ('') for public models. For details 
+  on how to create a connection object with token information, please check 
+  [here](#getting-started).
 
 Note that the extension currently only supports the `PyTorch` framework. 
 Please make sure that the selected models are in the `Pytorch` model library section.
 
 
-### 2. Upload Model Script
+### 2. Model Uploader Script
 You can invoke the python script as below which allows to load the transformer 
 models from the local filesystem into BucketFS:
 

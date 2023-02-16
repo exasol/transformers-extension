@@ -24,7 +24,9 @@ class ModelDownloader:
         bfs_conn = ctx.bfs_conn
         token_conn = ctx.token_conn
 
-        # extract token from connection object if exist
+        # extract token from the connection if token connection name is given.
+        # note that, token is required for private models. It doesn't matter
+        # whether there is a token for public model or even what the token is.
         token = False
         if token_conn:
             token_conn_obj = self.exa.get_connection(token_conn)
