@@ -10,7 +10,7 @@ from tests.utils.parameters import bucketfs_params, model_params
 @pytest.fixture(scope='function')
 def download_sample_models(tmp_path):
     for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-       downloader.from_pretrained(model_params.base_model, cache_dir=tmp_path)
+        downloader.from_pretrained(model_params.tiny_model, cache_dir=tmp_path)
 
     yield tmp_path
 
@@ -19,7 +19,7 @@ def test_model_upload(download_sample_models, bucketfs_location):
     sub_dir = 'sub_dir'
     download_path = download_sample_models
     upload_path = str(bucketfs_operations.get_model_path(
-        sub_dir, model_params.base_model))
+        sub_dir, model_params.tiny_model))
 
     args_list = [
         "--bucketfs-name", bucketfs_params.name,
@@ -30,7 +30,7 @@ def test_model_upload(download_sample_models, bucketfs_location):
         "--bucketfs-password", bucketfs_params.password,
         "--bucket", bucketfs_params.bucket,
         "--path-in-bucket", bucketfs_params.path_in_bucket,
-        "--model-name", model_params.base_model,
+        "--model-name", model_params.tiny_model,
         "--sub-dir", sub_dir,
         "--model-path", str(download_path),
         "--tokenizer-path", str(download_path)

@@ -1,5 +1,5 @@
 import tempfile
-from typing import Dict, List
+from typing import Dict, List, Union
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
@@ -32,7 +32,7 @@ class Context:
 
     @property
     def model_name(self):
-        return self.ctx_data[self.index]['base_model']
+        return self.ctx_data[self.index]['tiny_model']
 
     @property
     def sub_dir(self):
@@ -41,6 +41,10 @@ class Context:
     @property
     def bfs_conn(self):
         return self.ctx_data[self.index]['bucketfs_conn_name']
+
+    @property
+    def token_conn(self):
+        return self.ctx_data[self.index]['token_conn_name']
 
     def next(self):
         self.index += 1
@@ -56,20 +60,27 @@ class Context:
 class TestEnvironmentSetup:
     __test__ = False
 
-    def __init__(self, id: str, url_localfs: str):
+    def __init__(self, id: str, url_localfs: str, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
-        self.base_model = model_params.base_model
-        self.ctx_data = {'base_model': self.base_model,
-                         'sub_dir': self.sub_dir,
-                         'bucketfs_conn_name': self.bucketfs_conn_name}
+        self.tiny_model = model_params.tiny_model
+        self.token_conn_name = token_conn_name
+        self.ctx_data = {
+            'tiny_model': self.tiny_model,
+            'sub_dir': self.sub_dir,
+            'bucketfs_conn_name': self.bucketfs_conn_name,
+            'token_conn_name': self.token_conn_name
+        }
         self.model_path = bucketfs_operations.get_model_path(
-            self.sub_dir, self.base_model)
+            self.sub_dir, self.tiny_model)
         self.bucketfs_connection = Connection(
             address=f"{url_localfs}/bucket{id}",
             user=None,
             password=None
         )
+        self.token_connection = None if not self.token_conn_name \
+            else Connection(address=f"", password="valid")
+
 
     @property
     def bucketfs_location(self):
@@ -87,13 +98,17 @@ def test_model_downloader_udf_implementation():
 
     with tempfile.TemporaryDirectory() as tmpdir_name:
         url_localfs = f"file://{tmpdir_name}/bucket"
-        env1 = TestEnvironmentSetup("1", url_localfs)
-        env2 = TestEnvironmentSetup("2", url_localfs)
+        env1 = TestEnvironmentSetup(
+            "1", url_localfs, token_conn_name='')
+        env2 = TestEnvironmentSetup(
+            "2", url_localfs, token_conn_name='token_conn_name')
 
         ctx = Context([env1.ctx_data, env2.ctx_data])
         exa = ExaEnvironment({
             env1.bucketfs_conn_name: env1.bucketfs_connection,
-            env2.bucketfs_conn_name: env2.bucketfs_connection})
+            env2.bucketfs_conn_name: env2.bucketfs_connection,
+            env2.token_conn_name: env2.token_connection
+        })
 
         # run udf implementation
         model_downloader = ModelDownloader(exa)

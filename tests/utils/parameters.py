@@ -33,6 +33,7 @@ class BucketFSParams:
 class ModelParams:
     base_model: str
     seq2seq_model: str
+    tiny_model: str
     text_data: str
     sub_dir: str
 
@@ -56,5 +57,6 @@ bucketfs_params = BucketFSParams(
 model_params = ModelParams(
     base_model='bert-base-uncased',
     seq2seq_model="t5-small",
+    tiny_model="prajjwal1/bert-tiny",
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
