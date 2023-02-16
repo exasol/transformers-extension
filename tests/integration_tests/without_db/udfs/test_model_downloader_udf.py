@@ -32,7 +32,7 @@ class Context:
 
     @property
     def model_name(self):
-        return self.ctx_data[self.index]['base_model']
+        return self.ctx_data[self.index]['tiny_model']
 
     @property
     def sub_dir(self):
@@ -63,16 +63,16 @@ class TestEnvironmentSetup:
     def __init__(self, id: str, url_localfs: str, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
-        self.base_model = model_params.base_model
+        self.tiny_model = model_params.tiny_model
         self.token_conn_name = token_conn_name
         self.ctx_data = {
-            'base_model': self.base_model,
+            'tiny_model': self.tiny_model,
             'sub_dir': self.sub_dir,
             'bucketfs_conn_name': self.bucketfs_conn_name,
             'token_conn_name': self.token_conn_name
         }
         self.model_path = bucketfs_operations.get_model_path(
-            self.sub_dir, self.base_model)
+            self.sub_dir, self.tiny_model)
         self.bucketfs_connection = Connection(
             address=f"{url_localfs}/bucket{id}",
             user=None,
