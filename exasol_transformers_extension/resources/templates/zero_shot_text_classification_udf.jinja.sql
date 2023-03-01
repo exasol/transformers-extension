@@ -13,7 +13,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_ZERO_SHOT_TEXT_CLASSIFICAT
     test_data VARCHAR(2000000),
     candidate_labels VARCHAR(2000000),
     label VARCHAR(2000000),
-    score DOUBLE ) AS
+    score DOUBLE,
+    rank INTEGER ) AS
 
 {{ script_content }}
 
