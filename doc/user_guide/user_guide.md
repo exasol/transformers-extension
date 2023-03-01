@@ -14,6 +14,7 @@ The extension provides two types of UDFs:
    5. Text Generation
    6. Token Classification
    7. Text Translation
+   8. Zero-Shot Text Classification
 
 
 ## Table of Contents
@@ -29,6 +30,7 @@ The extension provides two types of UDFs:
   5. [Text Generation UDF](#text-generation-udf)
   6. [Token Classification UDF](#token-classification-udf)
   7. [Text Translation UDF](#text-translation-udf)
+  8. [Zero-Shot Text Classification](#zero-shot-text-classification-udf)
 
 
 
@@ -333,15 +335,15 @@ SELECT TE_QUESTION_ANSWERING_UDF(
   - ```top_k```: The number of answers to return. Note that, `k` number of answers are not guaranteed. If there are not enough options 
 in the context, it might return less than `top_k` answers (see the [top_k parameter of QuestoinAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk)).
 
-The inference results are presented with predicted _ANSWER_ and confidence 
- _SCORE_ columns, combined with the inputs used when calling this UDF.
+The inference results are presented with predicted _ANSWER_, confidence 
+ _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
 If `top_k` > 1, each input row is repeated for each answer. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE |
-| ------------- | ------- | ---------- |------------|-----------| ----- |----------| ----- |
-| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  |
-| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  |
-| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK |
+| ------------- | ------- | ---------- |------------|-----------| ----- |----------| ----- |------|
+| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    |
+| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    |
+| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   |
 
 
 ### Masked Language Modelling UDF
@@ -370,15 +372,15 @@ SELECT TE_FILLING_MASK_UDF(
   - ```top_k```: The number of predictions to return.
 
 
-The inference results are presented with _FILLED_TEXT_ and confidence 
- _SCORE_ columns, combined with the inputs used when calling this UDF.
+The inference results are presented with _FILLED_TEXT_, confidence 
+ _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
 If `top_k` > 1, each input row is repeated for each prediction. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE |
-| ------------- | ------- | ---------- |---------------| ----- |---------------| ----- |
-| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |
-| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |
-| ...           | ...     | ...        | ...           | ...   | ...           | ...   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK |
+| ------------- | ------- | ---------- |---------------| ----- |---------------| ----- |------|
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  |
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  |
+| ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... |
 
 
 ### Text Generation UDF
@@ -490,3 +492,40 @@ combined with the inputs used when calling this UDF. For example:
 | ------------- | ------- | ---------- |-----------|-----------------|-----------------|------------| ---------------- |
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              |
+
+
+### Zero-Shot Text Classification UDF
+This UDF simply provide  the task of predicting a class that wasn't seen by the 
+model during training. The UDF takes candidate labels as a comma-separated 
+string, and generate probability scores prediction for each label.
+
+```sql
+SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
+    device_id,
+    bucketfs_conn,
+    sub_dir,
+    model_name,
+    text_data,
+    candidate_labels
+)
+```
+
+- Parameters:
+  - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
+  you can provide NULL for this parameter.
+  - ```bucketfs_conn```: The BucketFS connection name. 
+  - ```sub_dir```: The directory where the model is stored in the BucketFS.
+  - ```model_name```: The name of the model to use for prediction. You can find the 
+  details of the models in [huggingface models page](https://huggingface.co/models).
+  - ```text_data```: The text to be classified.
+  - ```candidate labels```: Labels where the given text is classified. Labels 
+  should be comma-separated, e.g., `label1,label2,label3`.
+  
+The inference results are presented with predicted _LABEL_, _SCORE_ and _RANK_ 
+columns, combined with the inputs used when calling this UDF. For example:
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK |
+| ------------- | ------- | ---------- |-----------|------------------|--------|-------|------|
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    |
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    |
+| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   |   
