@@ -34,11 +34,11 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", "label1")] * data_size + \
-                 [(None, "bfs_conn1", "sub_dir2", "model2",
+                 [(None, "bfs_conn1", "sub_dir2", "model1",
                    "text2", "label2")] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
                     "label1", "label1", 0.1, 1)] * data_size + \
-                  [("bfs_conn1", "sub_dir2", "model2", "text2",
+                  [("bfs_conn1", "sub_dir2", "model1", "text2",
                     "label2", "label2", 0.2, 1)] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -49,7 +49,7 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
     mock_factory = MockZeroShotFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockZeroShotModel([{"labels": "label1", "scores": 0.1}]),
-        PurePosixPath(base_cache_dir1, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
             MockZeroShotModel([{"labels": "label2", "scores": 0.2}]),
     })
 
