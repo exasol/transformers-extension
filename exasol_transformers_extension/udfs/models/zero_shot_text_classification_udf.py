@@ -32,10 +32,10 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
             sort_cell_values(model_df, "candidate_labels")
         unique_params = dataframe_operations.\
             get_unique_values(model_df_with_sorted_labels, ['candidate_labels'])
-        for top_k in unique_params:
-            current_top_k = top_k[0]
+        for candidate_label in unique_params:
+            current_label = candidate_label[0]
             param_based_model_df = model_df[
-                model_df['candidate_labels'] == current_top_k]
+                model_df['candidate_labels'] == current_label]
 
             yield param_based_model_df
 
