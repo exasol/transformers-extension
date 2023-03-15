@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "exasol-transformers-extension"
-version = "0.2.0"
+version = "0.4.0"
 description = "An Exasol extension to use state-of-the-art pretrained machine learning models via the transformers api."
 
 authors = [
@@ -26,6 +26,7 @@ importlib-resources = "^5.4.0"
 click = "^8.0.4"
 pyexasol = "^0.17.0"
 exasol-bucketfs = "^0.6.0"
+typeguard = "^2.11.1"
 
 
 [tool.poetry.dev-dependencies]
