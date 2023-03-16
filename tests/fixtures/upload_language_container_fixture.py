@@ -23,7 +23,9 @@ def upload_language_container(pyexasol_connection, language_container) -> str:
             container_file,
             "exasol_transformers_extension_container.tar.gz")
 
-    # remove image and build output
+    # Remove image and build output to reduce the disk usage in CI.
+    # We currently, use Github Actions as the CI and its disk is limited to 14 GB.
+    # TODO: This code can be removed if we moved to a CI with larger disks.
     rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
     subprocess.run(rm_docker_image, shell=True)
 
