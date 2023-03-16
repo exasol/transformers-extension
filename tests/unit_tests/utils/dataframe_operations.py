@@ -62,3 +62,18 @@ def test_get_unique_values(
         sample_df, columns)
 
     assert expected == unique_values
+
+
+@pytest.mark.parametrize("description, seperator, dataframe, expected", [
+    ("sort_empty_dataframe", ",", pd.DataFrame({"col": []}), []),
+    ("sort_single_value", ",", pd.DataFrame({"col": ["A"]}), ["A"]),
+    ("sort_column_values", ",", pd.DataFrame({"col": ["C,B,A"]}), ['A,B,C']),
+    ("different_separator", ";", pd.DataFrame({"col": ["C;B;A"]}), ['A,B,C'])
+])
+def test_sorting_cell_values(
+        description: str, seperator: str,
+        dataframe: pd.DataFrame, expected: List[str]):
+
+    dataframe = dataframe_operations.sort_cell_values(
+        dataframe, 'col', seperator)
+    assert list(dataframe['col'].values) == expected

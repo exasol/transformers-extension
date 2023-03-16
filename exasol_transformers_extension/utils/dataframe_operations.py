@@ -22,3 +22,19 @@ def get_unique_values(
     return unique_df.values.tolist()
 
 
+def sort_cell_values(
+        df: pd.DataFrame, column: str, sep: str = ",") -> pd.DataFrame:
+    """
+    Sort separated values in each cell
+
+    :param df: Dataframe containing the data to be processed.
+    :param column: Column containing the cell values to be listed.
+    :param sep: Separator of values in cell
+    """
+
+    df[column] = df[column].apply(
+        lambda cell: ','.join(sorted(cell.split(sep))))
+
+    return df
+
+

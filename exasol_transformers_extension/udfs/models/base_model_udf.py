@@ -56,6 +56,7 @@ class BaseModelUDF(ABC):
                 self.extract_unique_model_dataframes_from_batch(batch_df):
             for param_based_model_df in \
                     self.extract_unique_param_based_dataframes(model_df):
+                # TODO: move setings here in extract_unique_model_dataframes_from_batch
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
 

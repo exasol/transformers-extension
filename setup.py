@@ -21,11 +21,12 @@ install_requires = \
  'pandas>=1.4.2,<2.0.0',
  'pyexasol>=0.17.0,<0.18.0',
  'torch==1.11.0',
- 'transformers[torch]==4.21.3']
+ 'transformers[torch]==4.21.3',
+ 'typeguard>=2.11.1,<3.0.0']
 
 setup_kwargs = {
     'name': 'exasol-transformers-extension',
-    'version': '0.2.0',
+    'version': '0.4.0',
     'description': 'An Exasol extension to use state-of-the-art pretrained machine learning models via the transformers api.',
     'long_description': '# Exasol Transformers Extension\n\nAn Exasol extension to use state-of-the-art pretrained machine learning models \nvia the [transformers api](https://github.com/huggingface/transformers).\n\n\n## Table of Contents\n\n### Information for Users\n\n* [User Guide](doc/user_guide/user_guide.md)\n* [Changelog](doc/changes/changelog.md)\n* [License](LICENSE)\n\n### Information for Contributors\n\n* [Design](doc/design.md)\n* [Dependencies](doc/dependencies.md)\n\n',
     'author': 'Umit Buyuksahin',

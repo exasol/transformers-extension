@@ -1,3 +1,5 @@
+import subprocess
+
 import pytest
 from pathlib import Path
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
@@ -20,6 +22,12 @@ def upload_language_container(pyexasol_connection, language_container) -> str:
         container_bucketfs_location.upload_fileobj_to_bucketfs(
             container_file,
             "exasol_transformers_extension_container.tar.gz")
+
+    # Remove image and build output to reduce the disk usage in CI.
+    # We currently, use Github Actions as the CI and its disk is limited to 14 GB.
+    # TODO: This code can be removed if we moved to a CI with larger disks.
+    rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
+    subprocess.run(rm_docker_image, shell=True)
 
     result = pyexasol_connection.execute(
         f"""SELECT "SYSTEM_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
