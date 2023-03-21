@@ -54,25 +54,25 @@ class BaseModelUDF(ABC):
         result_df_list = []
         for model_df in \
                 self.extract_unique_model_dataframes_from_batch(batch_df):
+            self.check_cache(model_df)
             for param_based_model_df in \
                     self.extract_unique_param_based_dataframes(model_df):
-                # TODO: move setings here in extract_unique_model_dataframes_from_batch
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
 
+    @staticmethod
     def extract_unique_model_dataframes_from_batch(
-            self, batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+            batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
-        and sub_dir from the dataframe. If the extracted model is not cached,
-        it is loaded into the cache before performing the prediction.
+        and sub_dir from the dataframe.
 
         :param batch_df: A batch of dataframe retrieved from context
 
-        :return: Unique model dataframes having same model_name,
+        :return: Unique model dataframe having same model_name,
         bucketfs_connection, and sub_dir
         """
 
@@ -84,14 +84,26 @@ class BaseModelUDF(ABC):
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
-            current_model_key = (bucketfs_conn, sub_dir, model_name)
-            if self.last_loaded_model_key != current_model_key:
-                self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
-                self.clear_device_memory()
-                self.load_models(model_name)
-                self.last_loaded_model_key = current_model_key
-
             yield model_df
+
+    def check_cache(self, model_df: pd.DataFrame) -> None:
+        """
+        If the model for the given dataframe is not cached, it is loaded into
+        the cache before performing the prediction.
+
+        :param model_df: Unique model dataframe having same model_name,
+        bucketfs_connection, and sub_dir
+        """
+        model_name = model_df["model_name"].iloc[0]
+        bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
+        sub_dir = model_df["sub_dir"].iloc[0]
+
+        current_model_key = (bucketfs_conn, sub_dir, model_name)
+        if self.last_loaded_model_key != current_model_key:
+            self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
+            self.clear_device_memory()
+            self.load_models(model_name)
+            self.last_loaded_model_key = current_model_key
 
     def set_cache_dir(
             self, model_name: str, bucketfs_conn_name: str,
