@@ -54,11 +54,24 @@ class BaseModelUDF(ABC):
         result_df_list = []
         for model_df in \
                 self.extract_unique_model_dataframes_from_batch(batch_df):
-            self.check_cache(model_df)
-            for param_based_model_df in \
-                    self.extract_unique_param_based_dataframes(model_df):
-                result_df = self.get_prediction(param_based_model_df)
-                result_df_list.append(result_df)
+            try:
+                self.check_cache(model_df)
+            except Exception as exc:
+                pass
+                # result_with_error_df = self.get_result_with_error(
+                #     model_df, exc)
+                # result_df_list.append(result_with_error_df)
+            else:
+                for param_based_model_df in \
+                        self.extract_unique_param_based_dataframes(model_df):
+                    try:
+                        result_df = self.get_prediction(param_based_model_df)
+                        result_df_list.append(result_df)
+                    except Exception as exc:
+                        pass
+                        # result_with_error_df = self.get_result_with_error(
+                        #     param_based_model_df, exc)
+                        # result_df_list.append(result_with_error_df)
 
         result_df = pd.concat(result_df_list)
         return result_df
@@ -168,6 +181,7 @@ class BaseModelUDF(ABC):
         pred_df_list = self.create_dataframes_from_predictions(predictions)
         pred_df = self.append_predictions_to_input_dataframe(
             model_df, pred_df_list)
+        pred_df['error_message'] = None
         return pred_df
 
     @abstractmethod

@@ -14,7 +14,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_FILLING_MASK_UDF"(
     top_k INTEGER,
     filled_text VARCHAR(2000000),
     score DOUBLE,
-    rank INTEGER ) AS
+    rank INTEGER,
+    error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}
 

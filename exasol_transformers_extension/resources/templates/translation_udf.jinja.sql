@@ -16,7 +16,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TRANSLATION_UDF"(
     source_language VARCHAR(2000000),
     target_language VARCHAR(2000000),
     max_length INTEGER,
-    translation_text VARCHAR(2000000)) AS
+    translation_text VARCHAR(2000000),
+    error_message VARCHAR(2000000)) AS
 
 {{ script_content }}
 
