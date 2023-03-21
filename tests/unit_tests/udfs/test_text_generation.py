@@ -62,7 +62,8 @@ def create_mock_metadata(udf_wrapper):
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("max_length", int, "INTEGER"),
             Column("return_full_text", bool, "BOOLEAN"),
-            Column("generated_text", str, "VARCHAR(2000000)")
+            Column("generated_text", str, "VARCHAR(2000000)"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta

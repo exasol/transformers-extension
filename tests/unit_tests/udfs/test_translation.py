@@ -62,7 +62,8 @@ def create_mock_metadata(udf_wrapper):
             Column("source_language", str, "VARCHAR(2000000)"),
             Column("target_language", str, "VARCHAR(2000000)"),
             Column("max_length", int, "INTEGER"),
-            Column("translation_text", str, "VARCHAR(2000000)")
+            Column("translation_text", str, "VARCHAR(2000000)"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta

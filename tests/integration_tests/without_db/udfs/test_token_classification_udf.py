@@ -93,9 +93,19 @@ def test_token_classification_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['start_pos', 'end_pos', 'word', 'entity', 'score']
-    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
-           and list(result_df.columns) == columns[1:] + new_columns
+    new_columns = \
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
+
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    has_valid_column_number = \
+        list(result_df.columns) == columns[1:] + new_columns
+    assert all((
+        is_error_message_none,
+        has_valid_shape,
+        has_valid_column_number
+    ))
 
 
 @pytest.mark.parametrize(
@@ -141,8 +151,20 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['start_pos', 'end_pos', 'word', 'entity', 'score']
-    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
-           and list(result_df.columns) == columns[1:] + new_columns \
-           and set(result_df['aggregation_strategy'].unique()) == {
-               "none", "simple", "max", "average"}
+    new_columns = \
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
+
+
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    has_valid_column_number = \
+        list(result_df.columns) == columns[1:] + new_columns
+    has_valid_agg_strategies = set(result_df['aggregation_strategy'].unique()) \
+                               == {"none", "simple", "max", "average"}
+    assert all((
+        is_error_message_none,
+        has_valid_shape,
+        has_valid_column_number,
+        has_valid_agg_strategies
+    ))

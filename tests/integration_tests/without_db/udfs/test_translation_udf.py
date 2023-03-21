@@ -101,7 +101,17 @@ def test_translation_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['translation_text']
-    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
-           and list(result_df.columns) == columns[1:] + new_columns
+    new_columns = ['translation_text', 'error_message']
+
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    has_valid_column_number = \
+        list(result_df.columns) == columns[1:] + new_columns
+
+    assert all((
+        is_error_message_none,
+        has_valid_shape,
+        has_valid_column_number
+    ))
 

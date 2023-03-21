@@ -85,11 +85,12 @@ def test_filling_mask_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['filled_text', 'score', 'rank']
+    new_columns = ['filled_text', 'score', 'rank', 'error_message']
 
     # assertions
     is_score_typed_as_float = result_df['score'].dtypes == 'float'
     is_rank_typed_as_int = result_df['rank'].dtypes == 'int'
+    is_error_message_none = not any(result_df['error_message'])
     has_valid_shape =  \
         result_df.shape == (n_rows * top_k, len(columns)+len(new_columns)-1)
     has_valid_column_number = \
@@ -102,6 +103,7 @@ def test_filling_mask_udf(
     assert all((
         is_score_typed_as_float,
         is_rank_typed_as_int,
+        is_error_message_none,
         has_valid_shape,
         has_valid_column_number,
         is_rank_correct

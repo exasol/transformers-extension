@@ -65,15 +65,15 @@ def test_sequence_classification_text_pair_udf(
         model_params.base_model,
         model_params.text_data + str(i),
         model_params.text_data + str(i * i)) for i in range(n_rows)]
-    sample_df = pd.DataFrame(
-        data=sample_data,
-        columns=[
-            'device_id',
-            'bucketfs_conn',
-            'sub_dir',
-            'model_name',
-            'first_text',
-            'second_text'])
+
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'first_text',
+        'second_text']
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
@@ -83,8 +83,19 @@ def test_sequence_classification_text_pair_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
+    new_columns = ['label', 'score', 'error_message']
+
     grouped_by_inputs = result_df.groupby('first_text')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
     n_labels_per_input_expected = [2] * n_rows
-    assert n_unique_labels_per_input == n_labels_per_input_expected \
-           and result_df.shape == (n_rows*2, 7)
+
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape == (n_rows * 2, len(columns) + len(new_columns) - 1)
+    has_valid_label_number = \
+        n_unique_labels_per_input == n_labels_per_input_expected
+    assert all((
+        is_error_message_none,
+        has_valid_shape,
+        has_valid_label_number
+    ))

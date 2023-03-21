@@ -35,7 +35,7 @@ class SingleModelSingleBatchComplete:
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", "label1")] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    "label1", "label1", 0.1, 1)] * data_size
+                    "label1", "label1", 0.1, 1, None)] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

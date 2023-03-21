@@ -39,9 +39,9 @@ class MultipleTopkSingleModelNameMultipleBatch:
                  [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k2)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k1,
-                    "text valid 1", 0.1, 1)] * data_size * top_k1 + \
+                    "text valid 1", 0.1, 1, None)] * data_size * top_k1 + \
                   [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k2,
-                    "text valid 1", 0.1, 1)] * data_size * top_k2
+                    "text valid 1", 0.1, 1, None)] * data_size * top_k2
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

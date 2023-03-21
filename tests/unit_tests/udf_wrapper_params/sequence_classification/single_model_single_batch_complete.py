@@ -78,21 +78,21 @@ class SingleModelSingleBatchComplete:
                          "My text 1", "My text 2")] * data_size
 
     outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
-                            "My test text", "label1", 0.21),
+                            "My test text", "label1", 0.21, None),
                            ("bfs_conn1", "sub_dir1", "model1",
-                            "My test text", "label2", 0.24),
+                            "My test text", "label2", 0.24, None),
                            ("bfs_conn1", "sub_dir1", "model1",
-                            "My test text", "label3", 0.26),
+                            "My test text", "label3", 0.26, None),
                            ("bfs_conn1", "sub_dir1", "model1",
-                            "My test text", "label4", 0.29)]
+                            "My test text", "label4", 0.29, None)]
     outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1",
-                          "My text 1", "My text 2", "label1", 0.21),
+                          "My text 1", "My text 2", "label1", 0.21, None),
                          ("bfs_conn1", "sub_dir1", "model1",
-                          "My text 1", "My text 2", "label2", 0.24),
+                          "My text 1", "My text 2", "label2", 0.24, None),
                          ("bfs_conn1", "sub_dir1", "model1",
-                          "My text 1", "My text 2", "label3", 0.26),
+                          "My text 1", "My text 2", "label3", 0.26, None),
                          ("bfs_conn1", "sub_dir1", "model1",
-                          "My text 1", "My text 2", "label4", 0.29)]
+                          "My text 1", "My text 2", "label4", 0.29, None)]
 
     udf_wrapper_single_text = udf_wrapper_single_text
     udf_wrapper_text_pair = udf_wrapper_text_pair

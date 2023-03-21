@@ -33,6 +33,8 @@ def test_sequence_classification_text_pair_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    added_columns = 3  # label,score,error_message
+    removed_columns = 1  # device_id
     n_rows_result = n_rows * n_labels
-    n_cols_result = len(input_data[0]) + 1  # + 2 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result

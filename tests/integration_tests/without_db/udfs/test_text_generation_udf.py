@@ -88,6 +88,19 @@ def test_text_generation_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    assert result_df.shape == (n_rows, 7) \
-           and list(result_df.columns) == columns[1:] + ['generated_text'] \
-           and result_df["generated_text"].str.contains(text_data).all()
+    new_columns = ['generated_text', 'error_message']
+
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_generated_text = \
+        result_df["generated_text"].str.contains(text_data).all()
+    has_valid_shape = \
+        result_df.shape == (n_rows, len(columns)+len(new_columns)-1)
+    has_valid_column_number = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+
+    assert all((
+        is_error_message_none,
+        has_valid_generated_text,
+        has_valid_shape,
+        has_valid_column_number
+    ))

@@ -53,6 +53,7 @@ def create_mock_metadata(udf_wrapper):
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta
@@ -71,7 +72,7 @@ def create_mock_metadata(udf_wrapper):
     MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 ])
 def test_sequence_classification_single_text(params):
 

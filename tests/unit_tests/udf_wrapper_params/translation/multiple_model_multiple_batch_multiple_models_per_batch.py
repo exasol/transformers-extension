@@ -44,16 +44,16 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                  [(None, "bfs_conn4", "sub_dir4", "model4", "text 4",
                    src_lang, target_lang, max_length)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    target_lang,  max_length, "text 1 übersetzt" * max_length)
+                    target_lang,  max_length, "text 1 übersetzt" * max_length, None)
                    ] * data_size + \
                   [("bfs_conn2", "sub_dir2", "model2", "text 2", src_lang,
-                    target_lang,  max_length, "text 2 übersetzt" * max_length)
+                    target_lang,  max_length, "text 2 übersetzt" * max_length, None)
                    ] * data_size + \
                   [("bfs_conn3", "sub_dir3", "model3", "text 3", src_lang,
-                    target_lang,  max_length, "text 3 übersetzt" * max_length)
+                    target_lang,  max_length, "text 3 übersetzt" * max_length, None)
                    ] * data_size + \
                   [("bfs_conn4", "sub_dir4", "model4", "text 4", src_lang,
-                    target_lang,  max_length, "text 4 übersetzt" * max_length)
+                    target_lang,  max_length, "text 4 übersetzt" * max_length, None)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

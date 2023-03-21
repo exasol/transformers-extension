@@ -34,5 +34,7 @@ def test_token_classification_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
-    n_cols_result = len(input_data[0]) + 4  # + 5 new cols -1 device_id col
+    added_columns = 6  # start_pos,end_pos,word,entity,score,error_message
+    removed_columns = 1  # device_id
+    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) >= n_rows and len(result[0]) == n_cols_result

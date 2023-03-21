@@ -40,10 +40,10 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
                  [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
                    max_length, not_return_full_text)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", max_length,
-                    return_full_text, "text 1 generated" * max_length)
+                    return_full_text, "text 1 generated" * max_length, None)
                    ] * data_size + \
                   [("bfs_conn1", "sub_dir1", "model1", "text 1", max_length,
-                    not_return_full_text, "text 1 generated" * (max_length-1))
+                    not_return_full_text, "text 1 generated" * (max_length-1), None)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

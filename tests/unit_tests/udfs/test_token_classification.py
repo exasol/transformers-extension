@@ -88,7 +88,8 @@ def create_mock_metadata(udf_wrapper):
             Column("end_pos", int, "INTEGER"),
             Column("word", str, "VARCHAR(2000000)"),
             Column("entity", str, "VARCHAR(2000000)"),
-            Column("score", float, "DOUBLE")
+            Column("score", float, "DOUBLE"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta

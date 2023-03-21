@@ -61,7 +61,8 @@ def create_mock_metadata(udf_wrapper):
             Column("top_k", int, "INTEGER"),
             Column("filled_text", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
-            Column("rank", int, "INTEGER")
+            Column("rank", int, "INTEGER"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta

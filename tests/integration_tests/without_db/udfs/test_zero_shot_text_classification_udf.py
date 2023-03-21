@@ -67,15 +67,14 @@ def test_sequence_classification_single_text_udf(
         model_params.text_data + str(i),
         candidate_labels + str(i)
     ) for i in range(n_rows)]
-    sample_df = pd.DataFrame(
-        data=sample_data,
-        columns=[
-            'device_id',
-            'bucketfs_conn',
-            'sub_dir',
-            'model_name',
-            'text_data',
-            'candidate_labels'])
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'candidate_labels']
+    sample_df = pd.DataFrame( data=sample_data, columns=columns)
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
@@ -85,14 +84,17 @@ def test_sequence_classification_single_text_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
+    new_columns = ['label', 'score', 'rank', 'error_message']
 
     # assertions
     n_labels = len(candidate_labels.split(","))
     grouped_by_inputs = result_df.groupby('text_data')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
 
+    is_error_message_none = not any(result_df['error_message'])
     has_valid_shape = \
-        result_df.shape == (sum(n_unique_labels_per_input), 8)
+        result_df.shape == (sum(n_unique_labels_per_input),
+                            len(columns)+len(new_columns)-1)
     has_valid_label_number =  \
         n_unique_labels_per_input == [n_labels] * n_rows
     is_rank_correct = \
@@ -101,6 +103,7 @@ def test_sequence_classification_single_text_udf(
             .is_monotonic for row in range(n_rows)])
 
     assert all((
+        is_error_message_none,
         has_valid_shape,
         has_valid_label_number,
         is_rank_correct
