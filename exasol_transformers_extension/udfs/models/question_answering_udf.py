@@ -16,6 +16,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, 'question-answering')
         self._desired_fields_in_prediction = ["answer", "score"]
+        self.new_columns = ["answer", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:

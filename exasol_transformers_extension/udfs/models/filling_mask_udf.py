@@ -17,6 +17,7 @@ class FillingMaskUDF(BaseModelUDF):
                          tokenizer, task_name='fill-mask')
         self._mask_token = "<mask>"
         self._desired_fields_in_prediction = ["sequence", "score"]
+        self.new_columns = ["filled_text", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:

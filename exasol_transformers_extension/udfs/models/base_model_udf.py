@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
 import torch
+import traceback
 import pandas as pd
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
@@ -27,6 +28,7 @@ class BaseModelUDF(ABC):
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
+        self.new_columns = []
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -57,24 +59,42 @@ class BaseModelUDF(ABC):
             try:
                 self.check_cache(model_df)
             except Exception as exc:
-                pass
-                # result_with_error_df = self.get_result_with_error(
-                #     model_df, exc)
-                # result_df_list.append(result_with_error_df)
+                stack_trace = traceback.format_exc()
+                result_with_error_df = self.get_result_with_error(
+                    model_df, stack_trace)
+                result_df_list.append(result_with_error_df)
             else:
-                for param_based_model_df in \
-                        self.extract_unique_param_based_dataframes(model_df):
-                    try:
-                        result_df = self.get_prediction(param_based_model_df)
-                        result_df_list.append(result_df)
-                    except Exception as exc:
-                        pass
-                        # result_with_error_df = self.get_result_with_error(
-                        #     param_based_model_df, exc)
-                        # result_df_list.append(result_with_error_df)
+                current_results_df_list = \
+                    self.get_prediction_from_unique_param_based_dataframes(model_df)
+                result_df_list.extend(current_results_df_list)
 
         result_df = pd.concat(result_df_list)
         return result_df
+
+    def get_prediction_from_unique_param_based_dataframes(self, model_df) \
+            -> List[pd.DataFrame]:
+        """
+        Performs separate predictions for data with the same parameters
+        in the same model dataframe.
+
+        :param model_df: Dataframe containing data that has the same model
+        but can have different parameters.
+
+        :return: List of prediction results
+        """
+        result_df_list = []
+        for param_based_model_df in \
+                self.extract_unique_param_based_dataframes(model_df):
+            try:
+                result_df = self.get_prediction(param_based_model_df)
+                result_df_list.append(result_df)
+            except Exception as exc:
+                stack_trace = traceback.format_exc()
+                result_with_error_df = self.get_result_with_error(
+                    param_based_model_df, stack_trace)
+                result_df_list.append(result_with_error_df)
+
+        return result_df_list
 
     @staticmethod
     def extract_unique_model_dataframes_from_batch(
@@ -140,9 +160,8 @@ class BaseModelUDF(ABC):
         """
         Delete models and free device memory
         """
-
-        del self.last_loaded_model
-        del self.last_loaded_tokenizer
+        self.last_loaded_model = None
+        self.last_loaded_tokenizer = None
         torch.cuda.empty_cache()
 
     def load_models(self, model_name: str) -> None:
@@ -184,6 +203,20 @@ class BaseModelUDF(ABC):
         pred_df['error_message'] = None
         return pred_df
 
+    def get_result_with_error(self, model_df: pd.DataFrame, stack_trace: str) \
+            -> pd.DataFrame:
+        """
+        Add the stack trace to the dataframe that received an error
+        during prediction.
+
+        :param model_df: The dataframe that received an error during prediction
+        :param stack_trace: String of the stack traceback
+        """
+        for col in self.new_columns:
+            model_df[col] = None
+        model_df["error_message"] = stack_trace
+        return model_df
+
     @abstractmethod
     def create_dataframes_from_predictions(self, predictions: List[Any]) \
             -> List[pd.DataFrame]:
@@ -204,3 +237,4 @@ class BaseModelUDF(ABC):
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
         pass
+
