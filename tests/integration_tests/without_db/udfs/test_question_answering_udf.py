@@ -115,3 +115,75 @@ def test_question_answering_udf(
         has_valid_column_number,
         is_rank_correct
     ))
+
+
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows, top_k", [
+        ("on CPU with batch input, single answer", None, 3, 1),
+        ("on CPU with batch input, multiple answers", None, 3, 2),
+        ("on CPU with single input, single answer", None, 1, 1),
+        ("on CPU with single input, multiple answers", None, 1, 2),
+        ("on GPU with batch input, single answer", 0, 3, 1),
+        ("on GPU with batch input, multiple answers", 0, 3, 2),
+        ("on GPU with single input, single answer", 0, 1, 1),
+        ("on GPU with single input, multiple answers", 0, 1, 2)
+    ])
+def test_question_answering_udf_on_error_handling(
+        description, device_id, n_rows,
+        top_k, upload_base_model_to_local_bucketfs):
+
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
+
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+
+    batch_size = 2
+    question = "Where is the Exasol?"
+    sample_data = [(
+        None,
+        bucketfs_conn_name,
+        model_params.sub_dir,
+        "not existing model",
+        question,
+        model_params.text_data,
+        top_k
+    ) for _ in range(n_rows)]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'question',
+        'context_text',
+        'top_k']
+
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+    ctx = Context(input_df=sample_df)
+    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = QuestionAnsweringUDF(
+        exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = ['answer', 'score', 'rank', 'error_message']
+
+    # assertions
+    are_new_columns_none = all(
+        all(result_df[col].isnull()) for col in new_columns[:-1])
+    has_valid_error_message = all(
+        'Traceback' in row for row in result_df['error_message'])
+    has_valid_shape =  \
+        result_df.shape == (n_rows, len(columns)+len(new_columns)-1)
+    has_valid_column_number = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+
+    assert all((
+        are_new_columns_none,
+        has_valid_error_message,
+        has_valid_shape,
+        has_valid_column_number,
+    ))
