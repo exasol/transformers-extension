@@ -46,6 +46,9 @@ class MockPipeline:
         self.framework = framework
 
     def __call__(self, sequences: List[str], **kwargs):
+        if "error" in sequences[0]["text"]:
+            raise Exception("Error while performing prediction.")
+
         result = []
         for label_score in self.model.label_scores:
             result.append({"label": label_score.label,

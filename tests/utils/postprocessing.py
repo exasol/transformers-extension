@@ -17,9 +17,14 @@ def get_rounded_result(result: List[Group], round_: int = 2) -> List[tuple]:
 
     rounded_result = result[0].rows
     for i in range(len(rounded_result)):
-        rounded_result[i] = rounded_result[i][:ix_score] + \
-                            (round(rounded_result[i][ix_score], round_),) + \
-                            (rounded_result[i][ix_error_message], )
+        row_result = ()
+        row_result = rounded_result[i][:ix_score]
+        if rounded_result[i][ix_score]:
+            row_result += (round(rounded_result[i][ix_score], round_),)
+        else:
+            row_result += (rounded_result[i][ix_score],)
+        row_result += (rounded_result[i][ix_error_message], )
+        rounded_result[i] = row_result
 
     return rounded_result
 
