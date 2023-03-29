@@ -3,6 +3,7 @@ from typing import Iterator, List, Any
 import torch
 import traceback
 import pandas as pd
+import numpy as np
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
@@ -69,7 +70,7 @@ class BaseModelUDF(ABC):
                 result_df_list.extend(current_results_df_list)
 
         result_df = pd.concat(result_df_list)
-        return result_df
+        return result_df.replace(np.nan, None)
 
     def get_prediction_from_unique_param_based_dataframes(self, model_df) \
             -> List[pd.DataFrame]:
