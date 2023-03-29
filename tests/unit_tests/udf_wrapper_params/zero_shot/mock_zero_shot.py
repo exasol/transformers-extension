@@ -40,6 +40,9 @@ class MockPipeline:
 
     def __call__(self, text_data: List[str], labels: List[str]) -> \
             List[List[Dict[str, Union[str, float]]]]:
+        if "error" in text_data[0]:
+            raise Exception("Error while performing prediction.")
+
         input_size = len(text_data)
         return [self.model.result] * input_size
 
