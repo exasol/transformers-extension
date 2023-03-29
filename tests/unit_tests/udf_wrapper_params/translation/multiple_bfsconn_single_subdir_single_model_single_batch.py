@@ -40,10 +40,10 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
                  [(None, "bfs_conn2", "sub_dir1", "model1", "text 2",
                    src_lang, target_lang, max_length)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    target_lang,  max_length, "text 1 übersetzt" * max_length)
+                    target_lang,  max_length, "text 1 übersetzt" * max_length, None)
                    ] * data_size + \
                   [("bfs_conn2", "sub_dir1", "model1", "text 2", src_lang,
-                    target_lang, max_length, "text 2 übersetzt" * max_length)
+                    target_lang, max_length, "text 2 übersetzt" * max_length, None)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

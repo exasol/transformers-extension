@@ -47,6 +47,8 @@ class MockPipeline:
 
     def __call__(self, text_data: List[str], aggregation_strategy: str) -> \
             List[Dict[str, Union[str, float]]]:
+        if "error" in text_data[0]:
+            raise Exception("Error while performing prediction.")
 
         result_list = self._get_result_list(aggregation_strategy)
         return [result_list] * len(text_data) \

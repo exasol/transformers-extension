@@ -45,6 +45,9 @@ class MockPipeline:
         }
 
     def __call__(self, text_data: List[str], **kwargs) -> List[Dict[str, str]]:
+        if "error" in text_data[0]:
+            raise Exception("Error while performing prediction.")
+
         max_len = kwargs["max_length"]
         results = []
         for text in text_data:

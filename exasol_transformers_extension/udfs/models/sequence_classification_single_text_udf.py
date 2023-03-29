@@ -14,6 +14,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='text-classification')
+        self.new_columns = ["label", "score", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:

@@ -35,7 +35,7 @@ def test_sequence_classification_single_text_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
-    added_columns = 3  # label,score,rank
+    added_columns = 4  # label,score,rank,error_message
     removed_columns = 1  # device_id
     n_rows_result = n_rows * n_labels
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)

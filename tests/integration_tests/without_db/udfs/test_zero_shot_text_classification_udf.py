@@ -67,15 +67,14 @@ def test_sequence_classification_single_text_udf(
         model_params.text_data + str(i),
         candidate_labels + str(i)
     ) for i in range(n_rows)]
-    sample_df = pd.DataFrame(
-        data=sample_data,
-        columns=[
-            'device_id',
-            'bucketfs_conn',
-            'sub_dir',
-            'model_name',
-            'text_data',
-            'candidate_labels'])
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'candidate_labels']
+    sample_df = pd.DataFrame( data=sample_data, columns=columns)
 
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
@@ -85,14 +84,17 @@ def test_sequence_classification_single_text_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
+    new_columns = ['label', 'score', 'rank', 'error_message']
 
     # assertions
     n_labels = len(candidate_labels.split(","))
     grouped_by_inputs = result_df.groupby('text_data')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
 
+    is_error_message_none = not any(result_df['error_message'])
     has_valid_shape = \
-        result_df.shape == (sum(n_unique_labels_per_input), 8)
+        result_df.shape == (sum(n_unique_labels_per_input),
+                            len(columns)+len(new_columns)-1)
     has_valid_label_number =  \
         n_unique_labels_per_input == [n_labels] * n_rows
     is_rank_correct = \
@@ -101,7 +103,73 @@ def test_sequence_classification_single_text_udf(
             .is_monotonic for row in range(n_rows)])
 
     assert all((
+        is_error_message_none,
         has_valid_shape,
         has_valid_label_number,
         is_rank_correct
     ))
+
+
+@pytest.mark.parametrize(
+    "description, device_id", [
+        ("on CPU", None),
+        ("on GPU", 0)
+    ])
+def test_sequence_classification_single_text_udf_on_error_handling(
+        description, device_id, upload_base_model_to_local_bucketfs):
+
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
+
+    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+
+    n_rows = 3
+    batch_size = 2
+    candidate_labels = "Database,Analytics,Germany,Food,Party"
+    sample_data = [(
+        None,
+        bucketfs_conn_name,
+        model_params.sub_dir,
+        "not existing model",
+        model_params.text_data + str(i),
+        candidate_labels + str(i)
+    ) for i in range(n_rows)]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'candidate_labels']
+    sample_df = pd.DataFrame( data=sample_data, columns=columns)
+
+    ctx = Context(input_df=sample_df)
+    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = ZeroShotTextClassificationUDF(
+        exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = ['label', 'score', 'rank', 'error_message']
+
+    # assertions
+    print(result_df.shape)
+    are_new_columns_none = all(
+        all(result_df[col].isnull()) for col in new_columns[:-1])
+    has_valid_error_message = all(
+        'Traceback' in row for row in result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape == (n_rows, len(columns) + len(new_columns) - 1)
+    has_valid_column_number = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    assert all((
+        are_new_columns_none,
+        has_valid_error_message,
+        has_valid_shape,
+        has_valid_column_number,
+    ))
+

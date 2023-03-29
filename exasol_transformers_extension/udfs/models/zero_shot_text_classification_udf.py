@@ -16,6 +16,7 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='zero-shot-classification')
         self._desired_fields_in_prediction = ["labels", "scores"]
+        self.new_columns = ["label", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:

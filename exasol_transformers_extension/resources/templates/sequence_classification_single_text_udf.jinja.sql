@@ -11,7 +11,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_SEQUENCE_CLASSIFICATION_SI
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
     label VARCHAR(2000000),
-    score DOUBLE ) AS
+    score DOUBLE,
+    error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}
 

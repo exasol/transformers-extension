@@ -18,6 +18,8 @@ class TokenClassificationUDF(BaseModelUDF):
         self._default_aggregation_strategy = 'simple'
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
+        self.new_columns = [
+            "start_pos", "end_pos", "word", "entity", "score", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:

@@ -40,9 +40,11 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
                  [(None, "bfs_conn2", "sub_dir1", "model1",
                    "text1", agg_strategy)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
-                    0, 6, "text1", "label1", 0.1)] * n_entities * data_size + \
+                    0, 6, "text1", "label1", 0.1, None)
+                   ] * n_entities * data_size + \
                   [("bfs_conn2", "sub_dir1", "model1", "text1", agg_strategy,
-                    0, 6, "text1", "label2", 0.2)] * n_entities * data_size
+                    0, 6, "text1", "label2", 0.2, None)
+                   ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

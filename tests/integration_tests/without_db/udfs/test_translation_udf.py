@@ -75,7 +75,7 @@ def test_translation_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        "t5-small",
+        model_params.seq2seq_model,
         model_params.text_data,
         src_lang,
         target_lang,
@@ -101,7 +101,95 @@ def test_translation_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['translation_text']
-    assert result_df.shape[1] == len(columns) + len(new_columns) - 1 \
-           and list(result_df.columns) == columns[1:] + new_columns
+    new_columns = ['translation_text', 'error_message']
 
+    is_error_message_none = not any(result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    has_valid_column_number = \
+        list(result_df.columns) == columns[1:] + new_columns
+
+    assert all((
+        is_error_message_none,
+        has_valid_shape,
+        has_valid_column_number
+    ))
+
+
+@pytest.mark.parametrize(
+    "description,  device_id, languages", [
+        ("on CPU with single input", None, [
+            ("English", "French")]),
+        ("on CPU with batch input, single-pair language", None, [
+            ("English", "French")] * 3),
+        ("on CPU with batch input, multi language", None, [
+            ("English", "French"), ("English", "German"),
+            ("English", "Romanian")]),
+        ("on GPU with single input", 0, [
+            ("English", "French")]),
+        ("on GPU with batch input, single-pair language", 0, [
+            ("English", "French")] * 3),
+        ("on GPU with batch input, multi language", 0, [
+            ("English", "French"), ("English", "German"),
+            ("English", "Romanian")])
+    ])
+def test_translation_udf_on_error_handling(
+        description, device_id, languages,
+        upload_seq2seq_model_to_local_bucketfs):
+
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
+
+    bucketfs_base_path = upload_seq2seq_model_to_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+
+    batch_size = 2
+    sample_data = [(
+        None,
+        bucketfs_conn_name,
+        model_params.sub_dir,
+        "not existing model",
+        model_params.text_data,
+        src_lang,
+        target_lang,
+        50
+    ) for src_lang, target_lang in languages]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'source_language',
+        'target_language',
+        'max_length'
+    ]
+
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+    ctx = Context(input_df=sample_df)
+    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = TranslationUDF(
+        exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = ['translation_text', 'error_message']
+
+    # assertions
+    are_new_columns_none = all(
+        all(result_df[col].isnull()) for col in new_columns[:-1])
+    has_valid_error_message = all(
+        'Traceback' in row for row in result_df['error_message'])
+    has_valid_shape = \
+        result_df.shape == (len(languages), len(columns) + len(new_columns) - 1)
+    has_valid_column_number = \
+        result_df.shape[1] == len(columns) + len(new_columns) - 1
+    assert all((
+        are_new_columns_none,
+        has_valid_error_message,
+        has_valid_shape,
+        has_valid_column_number,
+    ))

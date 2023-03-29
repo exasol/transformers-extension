@@ -5,6 +5,10 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
+from tests.unit_tests.udf_wrapper_params.sequence_classification.error_not_cached_single_model_multiple_batch import \
+    ErrorNotCachedSingleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.sequence_classification.error_on_prediction_single_model_multiple_batch import \
+    ErrorOnPredictionSingleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.sequence_classification.multiple_bfsconn_single_subdir_single_model_single_batch import \
@@ -53,6 +57,7 @@ def create_mock_metadata(udf_wrapper):
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta
@@ -72,6 +77,8 @@ def create_mock_metadata(udf_wrapper):
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorOnPredictionSingleModelMultipleBatch
 ])
 def test_sequence_classification_single_text(params):
 
@@ -84,4 +91,14 @@ def test_sequence_classification_single_text(params):
 
     result = executor.run([Group(params.inputs_single_text)], exa)
     rounded_actual_result = postprocessing.get_rounded_result(result)
-    assert rounded_actual_result == params.outputs_single_text
+
+    ix_error_message = -1
+    ix_score = -2
+    ix_input_cols = -4
+    assert all(
+        row == output
+        if row[ix_score]
+        else output[ix_error_message] in row[ix_error_message]
+        and row[:ix_input_cols] == output[:ix_input_cols]
+        for row, output in zip(rounded_actual_result, params.outputs_single_text)
+    )

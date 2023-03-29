@@ -38,7 +38,9 @@ def test_text_generation_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    added_columns = 2  # generated_text,error_message
+    removed_columns = 1  # device_id
     n_rows_result = n_rows
-    n_cols_result = len(input_data[0])   # + 1 new cols -1 device_id col
+    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 

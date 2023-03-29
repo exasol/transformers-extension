@@ -15,6 +15,7 @@ class MockFillingMaskModel:
         self.device = device
         return self
 
+
 class MockFillingMaskFactory:
     def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
@@ -29,7 +30,7 @@ class MockPipeline:
                  task_type: str,
                  model: MockFillingMaskModel,
                  tokenizer: MockSequenceTokenizer,
-                 device : str,
+                 device: str,
                  framework: str):
         self.task_type = task_type
         self.model = model
@@ -39,6 +40,9 @@ class MockPipeline:
 
     def __call__(self, text_data: List[str], top_k: int) -> \
             List[Dict[str, Union[str, float]]]:
+        if "error" in text_data[0]:
+            raise Exception("Error while performing prediction.")
+
         input_size = len(text_data)
         single_result = [self.model.result] * top_k
         return [single_result] * input_size if input_size > 1 else single_result

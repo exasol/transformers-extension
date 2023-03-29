@@ -42,6 +42,8 @@ class MockPipeline:
 
     def __call__(self, text_data: List[str], **kwargs) -> \
             List[Dict[str, Union[str, float]]]:
+        if "error" in text_data[0]:
+            raise Exception("Error while performing prediction.")
 
         len_generated_text = kwargs["max_length"] \
             if kwargs["return_full_text"] else kwargs["max_length"] - 1

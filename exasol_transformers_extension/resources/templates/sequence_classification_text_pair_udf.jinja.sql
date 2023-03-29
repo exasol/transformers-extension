@@ -13,7 +13,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_SEQUENCE_CLASSIFICATION_TE
     first_text VARCHAR(2000000),
     second_text VARCHAR(2000000),
     label VARCHAR(2000000),
-    score DOUBLE ) AS
+    score DOUBLE,
+    error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}
 

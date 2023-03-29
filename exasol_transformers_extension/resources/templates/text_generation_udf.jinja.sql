@@ -14,8 +14,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TEXT_GENERATION_UDF"(
     text_data VARCHAR(2000000),
     max_length INTEGER,
     return_full_text BOOLEAN,
-    generated_text VARCHAR(2000000)
-    ) AS
+    generated_text VARCHAR(2000000),
+    error_message VARCHAR(2000000)) AS
 
 {{ script_content }}
 

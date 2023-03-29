@@ -40,6 +40,9 @@ class MockPipeline:
 
     def __call__(self, question: List[str], context: List[str], top_k: int) -> \
             Union[ResultDict, List[ResultDict],  List[List[ResultDict]]]:
+        if "error" in context[0]:
+            raise Exception("Error while performing prediction.")
+
         input_size = len(question)
         if input_size == 1 and top_k == 1:
             return self.model.result

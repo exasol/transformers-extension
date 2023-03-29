@@ -48,16 +48,16 @@ class MultipleTopkMultipleSizeSingleModelNameSingleBatch:
                    "context", top_k4_for_datasize2)] * data_size2
 
     output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
-                    top_k1_for_datasize1, "answer 1", 0.1, 1)
+                    top_k1_for_datasize1, "answer 1", 0.1, 1, None)
                    ] * data_size1 * top_k1_for_datasize1 + \
                   [("bfs_conn1", "sub_dir1", "model2", "question", "context",
-                    top_k2_for_datasize1, "answer 2", 0.2, 1)
+                    top_k2_for_datasize1, "answer 2", 0.2, 1, None)
                    ] * data_size1 * top_k2_for_datasize1 + \
                   [("bfs_conn1", "sub_dir1", "model3", "question", "context",
-                    top_k3_for_datasize2, "answer 3", 0.3, 1)
+                    top_k3_for_datasize2, "answer 3", 0.3, 1, None)
                    ] * data_size2 * top_k3_for_datasize2 + \
                   [("bfs_conn1", "sub_dir1", "model4", "question", "context",
-                    top_k4_for_datasize2, "answer 4", 0.4, 1)
+                    top_k4_for_datasize2, "answer 4", 0.4, 1, None)
                    ] * data_size2 * top_k4_for_datasize2
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

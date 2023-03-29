@@ -16,7 +16,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TOKEN_CLASSIFICATION_UDF"(
     end_pos INTEGER,
     word VARCHAR(2000000),
     entity VARCHAR(2000000),
-    score DOUBLE ) AS
+    score DOUBLE,
+    error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}
 

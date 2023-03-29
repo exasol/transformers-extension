@@ -1,7 +1,9 @@
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
 import torch
+import traceback
 import pandas as pd
+import numpy as np
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
@@ -27,6 +29,7 @@ class BaseModelUDF(ABC):
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
         self.last_created_pipeline = None
+        self.new_columns = []
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -54,25 +57,56 @@ class BaseModelUDF(ABC):
         result_df_list = []
         for model_df in \
                 self.extract_unique_model_dataframes_from_batch(batch_df):
-            for param_based_model_df in \
-                    self.extract_unique_param_based_dataframes(model_df):
-                # TODO: move setings here in extract_unique_model_dataframes_from_batch
-                result_df = self.get_prediction(param_based_model_df)
-                result_df_list.append(result_df)
+            try:
+                self.check_cache(model_df)
+            except Exception as exc:
+                stack_trace = traceback.format_exc()
+                result_with_error_df = self.get_result_with_error(
+                    model_df, stack_trace)
+                result_df_list.append(result_with_error_df)
+            else:
+                current_results_df_list = \
+                    self.get_prediction_from_unique_param_based_dataframes(model_df)
+                result_df_list.extend(current_results_df_list)
 
         result_df = pd.concat(result_df_list)
-        return result_df
+        return result_df.replace(np.nan, None)
 
+    def get_prediction_from_unique_param_based_dataframes(self, model_df) \
+            -> List[pd.DataFrame]:
+        """
+        Performs separate predictions for data with the same parameters
+        in the same model dataframe.
+
+        :param model_df: Dataframe containing data that has the same model
+        but can have different parameters.
+
+        :return: List of prediction results
+        """
+        result_df_list = []
+        for param_based_model_df in \
+                self.extract_unique_param_based_dataframes(model_df):
+            try:
+                result_df = self.get_prediction(param_based_model_df)
+                result_df_list.append(result_df)
+            except Exception as exc:
+                stack_trace = traceback.format_exc()
+                result_with_error_df = self.get_result_with_error(
+                    param_based_model_df, stack_trace)
+                result_df_list.append(result_with_error_df)
+
+        return result_df_list
+
+    @staticmethod
     def extract_unique_model_dataframes_from_batch(
-            self, batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+            batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
-        and sub_dir from the dataframe. If the extracted model is not cached,
-        it is loaded into the cache before performing the prediction.
+        and sub_dir from the dataframe.
 
         :param batch_df: A batch of dataframe retrieved from context
 
-        :return: Unique model dataframes having same model_name,
+        :return: Unique model dataframe having same model_name,
         bucketfs_connection, and sub_dir
         """
 
@@ -84,14 +118,26 @@ class BaseModelUDF(ABC):
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
-            current_model_key = (bucketfs_conn, sub_dir, model_name)
-            if self.last_loaded_model_key != current_model_key:
-                self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
-                self.clear_device_memory()
-                self.load_models(model_name)
-                self.last_loaded_model_key = current_model_key
-
             yield model_df
+
+    def check_cache(self, model_df: pd.DataFrame) -> None:
+        """
+        If the model for the given dataframe is not cached, it is loaded into
+        the cache before performing the prediction.
+
+        :param model_df: Unique model dataframe having same model_name,
+        bucketfs_connection, and sub_dir
+        """
+        model_name = model_df["model_name"].iloc[0]
+        bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
+        sub_dir = model_df["sub_dir"].iloc[0]
+
+        current_model_key = (bucketfs_conn, sub_dir, model_name)
+        if self.last_loaded_model_key != current_model_key:
+            self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
+            self.clear_device_memory()
+            self.load_models(model_name)
+            self.last_loaded_model_key = current_model_key
 
     def set_cache_dir(
             self, model_name: str, bucketfs_conn_name: str,
@@ -115,9 +161,8 @@ class BaseModelUDF(ABC):
         """
         Delete models and free device memory
         """
-
-        del self.last_loaded_model
-        del self.last_loaded_tokenizer
+        self.last_loaded_model = None
+        self.last_loaded_tokenizer = None
         torch.cuda.empty_cache()
 
     def load_models(self, model_name: str) -> None:
@@ -156,7 +201,22 @@ class BaseModelUDF(ABC):
         pred_df_list = self.create_dataframes_from_predictions(predictions)
         pred_df = self.append_predictions_to_input_dataframe(
             model_df, pred_df_list)
+        pred_df['error_message'] = None
         return pred_df
+
+    def get_result_with_error(self, model_df: pd.DataFrame, stack_trace: str) \
+            -> pd.DataFrame:
+        """
+        Add the stack trace to the dataframe that received an error
+        during prediction.
+
+        :param model_df: The dataframe that received an error during prediction
+        :param stack_trace: String of the stack traceback
+        """
+        for col in self.new_columns:
+            model_df[col] = None
+        model_df["error_message"] = stack_trace
+        return model_df
 
     @abstractmethod
     def create_dataframes_from_predictions(self, predictions: List[Any]) \
@@ -178,3 +238,4 @@ class BaseModelUDF(ABC):
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
         pass
+

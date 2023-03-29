@@ -4,6 +4,15 @@ from exasol_udf_mock_python.group import Group
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+
+from tests.unit_tests.udf_wrapper_params.filling_mask.error_not_cached_multiple_model_multiple_batch import \
+    ErrorNotCachedMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.error_not_cached_single_model_multiple_batch import \
+    ErrorNotCachedSingleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.error_on_prediction_multiple_model_multiple_batch import \
+    ErrorOnPredictionMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.error_on_prediction_single_model_multiple_batch import \
+    ErrorOnPredictionSingleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_single_batch import \
@@ -61,7 +70,8 @@ def create_mock_metadata(udf_wrapper):
             Column("top_k", int, "INTEGER"),
             Column("filled_text", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
-            Column("rank", int, "INTEGER")
+            Column("rank", int, "INTEGER"),
+            Column("error_message", str, "VARCHAR(2000000)")
         ],
     )
     return meta
@@ -84,7 +94,11 @@ def create_mock_metadata(udf_wrapper):
     MultipleTopkSingleModelNameMultipleBatch,
     MultipleTopkSingleModelNameSingleBatch,
     SingleTopkMultipleModelNameSingleBatch,
-    SingleTopkMultipleModelNameMultipleBatch
+    SingleTopkMultipleModelNameMultipleBatch,
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorNotCachedMultipleModelMultipleBatch,
+    ErrorOnPredictionSingleModelMultipleBatch,
+    ErrorOnPredictionMultipleModelMultipleBatch
 ])
 def test_filling_mask(params):
     executor = UDFMockExecutor()
@@ -95,4 +109,14 @@ def test_filling_mask(params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
-    assert result[0].rows == params.output_data
+
+    ix_error_message = -1
+    ix_rank = -2
+    ix_input_cols = -5
+    assert all(
+        row == output
+        if row[ix_rank]
+        else output[ix_error_message] in row[ix_error_message]
+        and row[:ix_input_cols] == output[:ix_input_cols]
+        for row, output in zip(result[0].rows, params.output_data)
+    )

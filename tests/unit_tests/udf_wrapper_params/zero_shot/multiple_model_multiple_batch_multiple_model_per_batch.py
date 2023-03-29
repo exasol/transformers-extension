@@ -41,13 +41,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                  [(None, "bfs_conn4", "sub_dir4", "model4",
                    "text4", "label4")] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    "label1", "label1", 0.1, 1)] * data_size + \
+                    "label1", "label1", 0.1, 1, None)] * data_size + \
                   [("bfs_conn2", "sub_dir2", "model2", "text2",
-                    "label2", "label2", 0.2, 1)] * data_size + \
+                    "label2", "label2", 0.2, 1, None)] * data_size + \
                   [("bfs_conn3", "sub_dir3", "model3", "text3",
-                    "label3", "label3", 0.3, 1)] * data_size + \
+                    "label3", "label3", 0.3, 1, None)] * data_size + \
                   [("bfs_conn4", "sub_dir4", "model4", "text4",
-                    "label4", "label4", 0.4, 1)] * data_size
+                    "label4", "label4", 0.4, 1, None)] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")

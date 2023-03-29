@@ -16,6 +16,7 @@ class TranslationUDF(BaseModelUDF):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_name='translation')
         self._translation_prefix = "translate {src_lang} to {target_lang}: "
+        self.new_columns = ["translation_text", "error_message"]
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
