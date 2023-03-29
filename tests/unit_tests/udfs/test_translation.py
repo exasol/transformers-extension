@@ -5,6 +5,14 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
+from tests.unit_tests.udf_wrapper_params.translation.error_not_cached_multiple_model_multiple_batch import \
+    ErrorNotCachedMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.translation.error_not_cached_single_model_multiple_batch import \
+    ErrorNotCachedSingleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.translation.error_on_prediction_multiple_model_multiple_batch import \
+    ErrorOnPredictionMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.translation.error_on_prediction_single_model_multiple_batch import \
+    ErrorOnPredictionSingleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
     MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.multiple_bfsconn_single_subdir_single_model_single_batch import \
@@ -86,7 +94,11 @@ def create_mock_metadata(udf_wrapper):
     MultipleMaxLengthSingleModelNameSingleBatch,
     MultipleMaxLengthSingleModelNameMultipleBatch,
     MultipleLanguageSingleModelNameSingleBatch,
-    MultipleLanguageSingleModelNameMultipleBatch
+    MultipleLanguageSingleModelNameMultipleBatch,
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorNotCachedMultipleModelMultipleBatch,
+    ErrorOnPredictionMultipleModelMultipleBatch,
+    ErrorOnPredictionSingleModelMultipleBatch
 ])
 def test_text_generation(params):
     executor = UDFMockExecutor()
@@ -97,4 +109,14 @@ def test_text_generation(params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
-    assert result[0].rows == params.output_data
+
+    ix_error_message = -1
+    ix_translation = -2
+    ix_input_cols = -7
+    assert all(
+        row == output
+        if row[ix_translation]
+        else output[ix_error_message] in row[ix_error_message]
+        and row[:ix_input_cols] == output[:ix_input_cols]
+        for row, output in zip(result[0].rows, params.output_data)
+    )
