@@ -35,10 +35,10 @@ class ErrorNotCachedSingleModelMultipleBatch:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "non_existing_model",
                    "text", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
-                    None, None, None, None, None, "Traceback")
+    output_data = [("bfs_conn1", "sub_dir1", "non_existing_model", "text",
+                    agg_strategy, None, None, None, None, None, "Traceback")
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -47,7 +47,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
     mock_factory = MockTokenClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "non_existing_model"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,

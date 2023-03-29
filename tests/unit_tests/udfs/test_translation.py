@@ -100,7 +100,7 @@ def create_mock_metadata(udf_wrapper):
     ErrorOnPredictionMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch
 ])
-def test_text_generation(params):
+def test_translation(params):
     executor = UDFMockExecutor()
     meta = create_mock_metadata(params.udf_wrapper)
 

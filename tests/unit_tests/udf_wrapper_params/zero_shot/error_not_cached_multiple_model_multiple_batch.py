@@ -34,11 +34,11 @@ class ErrorNotCachedMultipleModelMultipleBatch:
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", "label1")] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir2", "non_existing_model",
                    "text2", "label2")] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
                     "label1", "label1", 0.1, 1, None)] * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2", "text2",
+                  [("bfs_conn2", "sub_dir2", "non_existing_model", "text2",
                     "label2", None, None, None, "Traceback")] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -51,7 +51,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     mock_factory = MockZeroShotFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockZeroShotModel([{"labels": "label1", "scores": 0.1}]),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "non_existing_model"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockZeroShotModel([{"labels": "label2", "scores": 0.2}])
     })
 

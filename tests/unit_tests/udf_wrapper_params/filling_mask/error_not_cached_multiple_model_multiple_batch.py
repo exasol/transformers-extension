@@ -36,12 +36,13 @@ class ErrorNotCachedMultipleModelMultipleBatch:
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir2", "non_existing_model",
                    "text <mask> 2", top_k)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 1", 0.1, 1, None)] * data_size * top_k + \
-                  [("bfs_conn2", "sub_dir2", "model2", "text <mask> 2", top_k,
-                    None, None, None, "Traceback")] * data_size * top_k
+                  [("bfs_conn2", "sub_dir2", "non_existing_model",
+                    "text <mask> 2", top_k, None, None, None, "Traceback")
+                   ] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -53,7 +54,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     mock_factory = MockFillingMaskFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "non_existing_model"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1)
     })
 

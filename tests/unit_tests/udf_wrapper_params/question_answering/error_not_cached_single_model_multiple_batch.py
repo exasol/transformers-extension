@@ -34,10 +34,11 @@ class ErrorNotCachedSingleModelMultipleBatch:
     data_size = 5
     top_k = 2
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "non_existing_model",
                    "question", "context", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
-                    top_k, None, None, None, "Traceback")] * data_size * top_k
+    output_data = [("bfs_conn1", "sub_dir1", "non_existing_model", "question",
+                    "context", top_k, None, None, None, "Traceback")
+                   ] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -45,7 +46,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
     mock_factory = MockQuestionAnsweringFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "non_existing_model"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1)
     })
 

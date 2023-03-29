@@ -37,13 +37,13 @@ class ErrorNotCachedMultipleModelMultipleBatch:
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", agg_strategy)] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir2", "non_existing_model",
                    "text2", agg_strategy)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
                     0, 6, "text1", "label1", 0.1, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2", "text2", agg_strategy,
-                    None, None, None, None, None, "Traceback")
+                  [("bfs_conn2", "sub_dir2", "non_existing_model", "text2",
+                    agg_strategy, None, None, None, None, None, "Traceback")
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -61,7 +61,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
                 scores=[0.1] * n_entities),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "non_existing_model"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,

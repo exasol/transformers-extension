@@ -35,10 +35,11 @@ class ErrorNotCachedSingleModelMultipleBatch:
     target_lang = "German"
     max_length = 10
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, target_lang, max_length)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    target_lang,  max_length, None, "Traceback")
+    input_data = [(None, "bfs_conn1", "sub_dir1", "non_existing_model",
+                   "text 1", src_lang, target_lang, max_length)
+                  ] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "non_existing_model", "text 1",
+                    src_lang, target_lang,  max_length, None, "Traceback")
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -47,7 +48,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
 
     mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "non_existing_model"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTranslationModel(text_data="text 1")
     })
 
