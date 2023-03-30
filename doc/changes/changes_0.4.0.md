@@ -1,15 +1,15 @@
 # Transformers Extension 0.4.0, released 2023-03-31
 
-Code name: Added Zero-Shot Model and error handling structure
+Code name: Added Zero-Shot model and error handling structure
 
 
 ## Summary
 
-This release introduce a new UDF script for Zero-Shot text classification. 
+This release introduces a new UDF script for Zero-Shot text classification. 
 Moreover, this version enables users to use custom models located in local 
-filesystem and private repos. In addition, this release includes error 
+filesystem or private repositories. In addition, this release includes an error 
 handling mechanism to handle errors that may occur during model loading or 
-prediction stages.
+one of the prediction stages.
 
 ### Features
 

@@ -274,8 +274,8 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 The inference results are presented with predicted _LABEL_ and confidence 
  _SCORE_ columns, combined with the inputs used when calling 
 this UDF. In case of any error during model loading or prediction, these new 
-columns are set to `null`, and you can see the stacktrace of the error in the 
-_ERROR_MESSAGE_ column. For example:
+columns are set to `null` and column _ERROR_MESSAGE_ is set 
+to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
 | ------------- | ------- | ---------- | --------- |---------| ----- |----------------|
@@ -309,8 +309,8 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 The inference results are presented with predicted _LABEL_ and confidence 
  _SCORE_ columns, combined with the inputs used when calling this UDF. 
 In case of any error during model loading or prediction, these new 
-columns are set to `null`, and you can see the stacktrace of the error in the 
-_ERROR_MESSAGE_ column.
+columns are set to `null` and column _ERROR_MESSAGE_ is set 
+to the stacktrace of the error. 
 
 
 ### Question Answering UDF
@@ -343,8 +343,8 @@ in the context, it might return less than `top_k` answers (see the [top_k parame
 The inference results are presented with predicted _ANSWER_, confidence 
  _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
 If `top_k` > 1, each input row is repeated for each answer. In case of any error 
-during model loading or prediction, these new columns are set to `null`, and 
-you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
+during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set 
+to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- | ------- | ---------- |------------|-----------| ----- |----------| ----- |------| ------------- |
@@ -382,8 +382,8 @@ SELECT TE_FILLING_MASK_UDF(
 The inference results are presented with _FILLED_TEXT_, confidence 
  _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
 If `top_k` > 1, each input row is repeated for each prediction. In case of any 
-error during model loading or prediction, these new columns are set to `null`, 
-and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
+error during model loading or prediction, these new columns are set to `null` 
+and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- | ------- | ---------- |---------------| ----- |---------------| ----- |------|---------------|
