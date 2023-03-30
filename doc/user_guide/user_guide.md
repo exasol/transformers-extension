@@ -273,12 +273,14 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 
 The inference results are presented with predicted _LABEL_ and confidence 
  _SCORE_ columns, combined with the inputs used when calling 
-this UDF. For example:
+this UDF. In case of any error during model loading or prediction, these new 
+columns are set to `null`, and you can see the stacktrace of the error in the 
+_ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE |
-| ------------- | ------- | ---------- | --------- |---------| ----- |
-| conn_name     | dir/    | model_name | text      | label_1 | 0.75  |
-| ...           | ...     | ...        | ...       | ...     | ...   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
+| ------------- | ------- | ---------- | --------- |---------| ----- |----------------|
+| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None           |          
+| ...           | ...     | ...        | ...       | ...     | ...   | ...            |
 
 
 ### Sequence Classification for Text Pair UDF
@@ -305,7 +307,10 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   - ```second_text```: The second input text
 
 The inference results are presented with predicted _LABEL_ and confidence 
- _SCORE_ columns, combined with the inputs used when calling this UDF.
+ _SCORE_ columns, combined with the inputs used when calling this UDF. 
+In case of any error during model loading or prediction, these new 
+columns are set to `null`, and you can see the stacktrace of the error in the 
+_ERROR_MESSAGE_ column.
 
 
 ### Question Answering UDF
@@ -337,13 +342,15 @@ in the context, it might return less than `top_k` answers (see the [top_k parame
 
 The inference results are presented with predicted _ANSWER_, confidence 
  _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
-If `top_k` > 1, each input row is repeated for each answer. For example:
+If `top_k` > 1, each input row is repeated for each answer. In case of any error 
+during model loading or prediction, these new columns are set to `null`, and 
+you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK |
-| ------------- | ------- | ---------- |------------|-----------| ----- |----------| ----- |------|
-| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    |
-| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    |
-| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- | ------- | ---------- |------------|-----------| ----- |----------| ----- |------| ------------- |
+| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
 
 
 ### Masked Language Modelling UDF
@@ -374,13 +381,15 @@ SELECT TE_FILLING_MASK_UDF(
 
 The inference results are presented with _FILLED_TEXT_, confidence 
  _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
-If `top_k` > 1, each input row is repeated for each prediction. For example:
+If `top_k` > 1, each input row is repeated for each prediction. In case of any 
+error during model loading or prediction, these new columns are set to `null`, 
+and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK |
-| ------------- | ------- | ---------- |---------------| ----- |---------------| ----- |------|
-| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  |
-| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  |
-| ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- | ------- | ---------- |---------------| ----- |---------------| ----- |------|---------------|
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  | None          |
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
+| ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
 
 ### Text Generation UDF
@@ -411,7 +420,9 @@ SELECT TE_TEXT_GENERATION_UDF(
   - ```return_full_text```:  If set to False only added text is returned, otherwise the full text is returned.
 
 The inference results are presented with _GENERATED_TEXT_ column, 
-combined with the inputs used when calling this UDF.
+combined with the inputs used when calling this UDF. In case of any error during 
+model loading or prediction, these new columns are set to `null`, and you can 
+see the stacktrace of the error in the _ERROR_MESSAGE_ column.
 
 
 ### Token Classification UDF
@@ -446,12 +457,14 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 The inference results are presented with _START_POS_ indicating the index of the starting character of the token, 
 _END_POS_ indicating the index of the ending character of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
 confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
-For example:
+In case of any error during model loading or prediction, these new 
+columns are set to `null`, and you can see the stacktrace of the error in the 
+_ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE |
-| ------------- | ------- | ---------- |-----------|----------------------|-----------|---------|------|--------|-------|
-| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  |
-| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+| ------------- | ------- | ---------- |-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
+| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
 
 
@@ -486,12 +499,14 @@ SELECT TE_TRANSLATION_UDF(
   - ```max_length```: The maximum total length of the translated text. 
 
 The inference results are presented with _TRANSLATION_TEXT_ column, 
-combined with the inputs used when calling this UDF. For example:
+combined with the inputs used when calling this UDF. In case of any error during
+model loading or prediction, these new columns are set to `null`, and you can 
+see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT |
-| ------------- | ------- | ---------- |-----------|-----------------|-----------------|------------| ---------------- |
-| conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          |
-| ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
+| ------------- | ------- | ---------- |-----------|-----------------|-----------------|------------| ---------------- |---------------|
+| conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
+| ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
 
 ### Zero-Shot Text Classification UDF
@@ -522,10 +537,12 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
   should be comma-separated, e.g., `label1,label2,label3`.
   
 The inference results are presented with predicted _LABEL_, _SCORE_ and _RANK_ 
-columns, combined with the inputs used when calling this UDF. For example:
+columns, combined with the inputs used when calling this UDF. In case of any 
+error during model loading or prediction, these new  columns are set to `null`, 
+and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK |
-| ------------- | ------- | ---------- |-----------|------------------|--------|-------|------|
-| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    |
-| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    |
-| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   |   
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
+| ------------- | ------- | ---------- |-----------|------------------|--------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |  
