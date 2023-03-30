@@ -458,8 +458,8 @@ The inference results are presented with _START_POS_ indicating the index of the
 _END_POS_ indicating the index of the ending character of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
 confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
 In case of any error during model loading or prediction, these new 
-columns are set to `null`, and you can see the stacktrace of the error in the 
-_ERROR_MESSAGE_ column. For example:
+columns are set to `null`, and column _ERROR_MESSAGE_ is set 
+to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
 | ------------- | ------- | ---------- |-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
@@ -500,8 +500,8 @@ SELECT TE_TRANSLATION_UDF(
 
 The inference results are presented with _TRANSLATION_TEXT_ column, 
 combined with the inputs used when calling this UDF. In case of any error during
-model loading or prediction, these new columns are set to `null`, and you can 
-see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
+model loading or prediction, these new columns are set to `null`, and 
+column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
 | ------------- | ------- | ---------- |-----------|-----------------|-----------------|------------| ---------------- |---------------|
@@ -539,7 +539,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 The inference results are presented with predicted _LABEL_, _SCORE_ and _RANK_ 
 columns, combined with the inputs used when calling this UDF. In case of any 
 error during model loading or prediction, these new  columns are set to `null`, 
-and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column. For example:
+and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
 | ------------- | ------- | ---------- |-----------|------------------|--------|-------|------|---------------|
