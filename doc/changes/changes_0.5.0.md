@@ -9,7 +9,7 @@ TBD
 
 ### Features
 
- n/a
+ - #88: Added custom matcher functions for unit tests
 
 ### Bug Fixes
 
