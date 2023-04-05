@@ -47,6 +47,7 @@ from tests.unit_tests.udf_wrapper_params.question_answering.single_model_single_
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.question_answering.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
+from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 
 
 def create_mock_metadata(udf_wrapper):
@@ -111,15 +112,14 @@ def test_question_answering(params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
+    result_output = Output(result[0].rows)
+    expected_output = Output(params.output_data)
 
-    ix_error_message = -1
-    ix_rank = -2
-    ix_input_cols = -6
-    assert all(
-        row == output
-        if row[ix_rank]
-        else output[ix_error_message] in row[ix_error_message]
-        and row[:ix_input_cols] == output[:ix_input_cols]
-        for row, output in zip(result[0].rows, params.output_data)
-    )
+    indexes_map = {
+        'error_message_col_index': -1,
+        'prediction_col_index': -2,
+        'end_of_input_col_index': 6
+    }
+
+    assert OutputMatcher(result_output, indexes_map) == expected_output
 
