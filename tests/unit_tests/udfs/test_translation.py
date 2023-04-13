@@ -113,10 +113,5 @@ def test_translation(params):
     result_output = Output(result[0].rows)
     expected_output = Output(params.output_data)
 
-    indexes_map = {
-        'error_message_col_index': -1,
-        'prediction_col_index': -2,
-        'end_of_input_col_index': 7
-    }
-
-    assert OutputMatcher(result_output, indexes_map) == expected_output
+    n_input_columns = len(meta.input_columns) - 1
+    assert OutputMatcher(result_output, n_input_columns) == expected_output

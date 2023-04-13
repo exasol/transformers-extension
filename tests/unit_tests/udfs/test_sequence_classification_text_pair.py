@@ -97,16 +97,5 @@ def test_sequence_classification_text_pair(params):
     result_output = Output(rounded_actual_result)
     expected_output = Output(params.outputs_text_pair)
 
-    indexes_map = {
-        'error_message_col_index': -1,
-        'prediction_col_index': -2,
-        'end_of_input_col_index': 5
-    }
-
-    assert OutputMatcher(result_output, indexes_map) == expected_output
-
-
-
-
-
-
+    n_input_columns = len(meta.input_columns) - 1
+    assert OutputMatcher(result_output, n_input_columns) == expected_output
