@@ -35,6 +35,7 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_si
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_single_batch_incomplete import \
     SingleModelSingleBatchIncomplete
+from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils import postprocessing
 
 
@@ -93,19 +94,8 @@ def test_sequence_classification_text_pair(params):
 
     result = executor.run([Group(params.inputs_pair_text)], exa)
     rounded_actual_result = postprocessing.get_rounded_result(result)
+    result_output = Output(rounded_actual_result)
+    expected_output = Output(params.outputs_text_pair)
 
-    ix_error_message = -1
-    ix_score = -2
-    ix_input_cols = -5
-    assert all(
-        row == output
-        if row[ix_score]
-        else output[ix_error_message] in row[ix_error_message]
-        and row[:ix_input_cols] == output[:ix_input_cols]
-        for row, output in zip(rounded_actual_result, params.outputs_text_pair)
-    )
-
-
-
-
-
+    n_input_columns = len(meta.input_columns) - 1
+    assert OutputMatcher(result_output, n_input_columns) == expected_output

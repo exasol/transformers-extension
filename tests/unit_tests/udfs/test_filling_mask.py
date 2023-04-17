@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.group import Group
@@ -47,6 +49,8 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model
     SingleTopkMultipleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import \
     SingleTopkMultipleModelNameSingleBatch
+from tests.unit_tests.udfs.output_matcher import  OutputMatcher, \
+    Output
 
 
 def create_mock_metadata(udf_wrapper):
@@ -109,14 +113,8 @@ def test_filling_mask(params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
+    result_output = Output(result[0].rows)
+    expected_output = Output(params.output_data)
 
-    ix_error_message = -1
-    ix_rank = -2
-    ix_input_cols = -5
-    assert all(
-        row == output
-        if row[ix_rank]
-        else output[ix_error_message] in row[ix_error_message]
-        and row[:ix_input_cols] == output[:ix_input_cols]
-        for row, output in zip(result[0].rows, params.output_data)
-    )
+    n_input_columns = len(meta.input_columns) - 1
+    assert OutputMatcher(result_output, n_input_columns) == expected_output
