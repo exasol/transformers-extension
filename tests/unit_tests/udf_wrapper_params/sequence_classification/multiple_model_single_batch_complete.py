@@ -50,9 +50,10 @@ def udf_wrapper_text_pair():
 
 class MultipleModelSingleBatchComplete:
     """
-    None, None, "sub_dir
+    multiple model, single batch, last batch complete
     """
-
+    expected_single_text_model_counter = 2
+    expected_text_pair_model_counter = 2
     batch_size = 4
     data_size = 2
 

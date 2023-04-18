@@ -52,6 +52,8 @@ class SingleModelSingleBatchComplete:
     """
     single model, single batch, batch complete
     """
+    expected_single_text_model_counter = 1
+    expected_text_pair_model_counter = 1
     batch_size = 1
     data_size = 1
 

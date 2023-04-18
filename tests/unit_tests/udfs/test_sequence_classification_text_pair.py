@@ -96,6 +96,13 @@ def test_sequence_classification_text_pair(params):
     rounded_actual_result = postprocessing.get_rounded_result(result)
     result_output = Output(rounded_actual_result)
     expected_output = Output(params.outputs_text_pair)
-
+    expected_model_counter = params.expected_text_pair_model_counter
     n_input_columns = len(meta.input_columns) - 1
-    assert OutputMatcher(result_output, n_input_columns) == expected_output
+
+    try:
+        assert (
+            OutputMatcher(result_output, n_input_columns) == expected_output,
+            params.mock_pipeline.counter == expected_model_counter)
+    finally:
+        print(f"{params.__qualname__} : {params.mock_pipeline.counter}")
+        params.mock_pipeline.counter = 0
