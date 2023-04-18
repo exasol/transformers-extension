@@ -25,6 +25,7 @@ class MockQuestionAnsweringFactory:
 
 class MockPipeline:
     ResultDict = NewType("ResultDict", Dict[str, Union[str, float]])
+    counter = 0
 
     def __init__(self,
                  task_type: str,
@@ -37,6 +38,7 @@ class MockPipeline:
         self.tokenizer = tokenizer
         self.device = device
         self.framework = framework
+        MockPipeline.counter += 1
 
     def __call__(self, question: List[str], context: List[str], top_k: int) -> \
             Union[ResultDict, List[ResultDict],  List[List[ResultDict]]]:

@@ -30,6 +30,7 @@ class MultipleModelMultipleBatchComplete:
     """
     multiple model, multiple batch, last batch complete
     """
+    expected_model_counter = 2
     batch_size = 2
     data_size = 2
     top_k = 2

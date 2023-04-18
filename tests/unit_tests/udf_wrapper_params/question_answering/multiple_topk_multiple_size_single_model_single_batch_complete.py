@@ -30,6 +30,7 @@ class MultipleTopkMultipleSizeSingleModelNameSingleBatch:
     """
     multiple topk, multiple size, single model, single batch
     """
+    expected_model_counter = 4
     batch_size = 6
     data_size1 = 1
     data_size2 = 2
