@@ -28,6 +28,8 @@ class MockTextGenerationFactory:
 
 
 class MockPipeline:
+    counter = 0
+
     def __init__(self,
                  task_type: str,
                  model: MockTextGenerationModel,
@@ -39,6 +41,7 @@ class MockPipeline:
         self.tokenizer = tokenizer
         self.device = device
         self.framework = framework
+        MockPipeline.counter += 1
 
     def __call__(self, text_data: List[str], **kwargs) -> \
             List[Dict[str, Union[str, float]]]:

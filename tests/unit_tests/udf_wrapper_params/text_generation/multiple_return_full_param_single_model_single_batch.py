@@ -29,6 +29,7 @@ class MultipleReturnFullParamSingleModelNameSingleBatch:
     """
     multiple return_full_text, single model, single batch
     """
+    expected_model_counter = 1
     batch_size = 4
     data_size = 2
     max_length = 10
