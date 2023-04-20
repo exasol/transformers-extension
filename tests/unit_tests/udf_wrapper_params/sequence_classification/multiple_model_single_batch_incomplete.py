@@ -52,7 +52,8 @@ class MultipleModelSingleBatchIncomplete:
     """
     multiple model, single batch, last batch incomplete
     """
-
+    expected_single_text_model_counter = 2
+    expected_text_pair_model_counter = 2
     batch_size = 9
     data_size = 2
 

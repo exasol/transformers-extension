@@ -29,6 +29,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     """
     multiple model, multiple batch, multiple models per batch
     """
+    expected_model_counter = 4
     batch_size = 2
     data_size = 1
 

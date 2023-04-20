@@ -115,6 +115,11 @@ def test_filling_mask(params):
     result = executor.run([Group(params.input_data)], exa)
     result_output = Output(result[0].rows)
     expected_output = Output(params.output_data)
-
     n_input_columns = len(meta.input_columns) - 1
-    assert OutputMatcher(result_output, n_input_columns) == expected_output
+
+    try:
+        assert (
+            OutputMatcher(result_output, n_input_columns) == expected_output,
+            params.mock_pipeline.counter == params.expected_model_counter)
+    finally:
+        params.mock_pipeline.counter = 0

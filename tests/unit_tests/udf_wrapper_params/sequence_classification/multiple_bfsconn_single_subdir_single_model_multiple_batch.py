@@ -52,6 +52,8 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
     """
     multiple bucketfs connection, single subdir, single model, multiple batch
     """
+    expected_single_text_model_counter = 2
+    expected_text_pair_model_counter = 2
     batch_size = 2
     data_size = 2
 

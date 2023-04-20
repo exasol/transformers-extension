@@ -52,6 +52,8 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     """
     error on prediction, single model, multiple batch,
     """
+    expected_single_text_model_counter = 0
+    expected_text_pair_model_counter = 0
     batch_size = 2
     data_size = 5
 

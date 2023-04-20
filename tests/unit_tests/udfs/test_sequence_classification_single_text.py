@@ -94,6 +94,12 @@ def test_sequence_classification_single_text(params):
     rounded_actual_result = postprocessing.get_rounded_result(result)
     result_output = Output(rounded_actual_result)
     expected_output = Output(params.outputs_single_text)
-
+    expected_model_counter = params.expected_single_text_model_counter
     n_input_columns = len(meta.input_columns) - 1
-    assert OutputMatcher(result_output, n_input_columns) == expected_output
+
+    try:
+        assert (
+            OutputMatcher(result_output, n_input_columns) == expected_output,
+            params.mock_pipeline.counter == expected_model_counter)
+    finally:
+        params.mock_pipeline.counter = 0

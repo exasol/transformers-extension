@@ -32,6 +32,7 @@ class MockSequenceClassificationFactory:
 
 
 class MockPipeline:
+    counter = 0
 
     def __init__(self,
                  task_type: str,
@@ -44,6 +45,7 @@ class MockPipeline:
         self.tokenizer = tokenizer
         self.device = device
         self.framework = framework
+        MockPipeline.counter += 1
 
     def __call__(self, sequences: List[str], **kwargs):
         if "error" in sequences[0] or \

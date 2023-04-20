@@ -33,6 +33,8 @@ class MockTokenClassificationFactory:
 
 
 class MockPipeline:
+    counter = 0
+
     def __init__(self,
                  task_type: str,
                  model: MockTokenClassificationModel,
@@ -44,6 +46,7 @@ class MockPipeline:
         self.tokenizer = tokenizer
         self.device = device
         self.framework = framework
+        MockPipeline.counter += 1
 
     def __call__(self, text_data: List[str], aggregation_strategy: str) -> \
             List[Dict[str, Union[str, float]]]:

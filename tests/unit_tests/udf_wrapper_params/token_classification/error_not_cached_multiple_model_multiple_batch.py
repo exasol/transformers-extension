@@ -30,6 +30,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     """
     not cached error, multiple model, multiple batch
     """
+    expected_model_counter = 0
     batch_size = 3
     data_size = 2
     n_entities = 3

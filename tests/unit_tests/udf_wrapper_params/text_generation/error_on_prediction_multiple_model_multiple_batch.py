@@ -29,7 +29,7 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     """
     not cached error, multiple model, multiple batch
     """
-
+    expected_model_counter = 2
     batch_size = 3
     data_size = 2
     max_length = 10

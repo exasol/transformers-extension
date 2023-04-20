@@ -30,6 +30,7 @@ class MultipleModelSingleBatchIncomplete:
     """
     multiple model, single batch, last batch incomplete
     """
+    expected_model_counter = 2
     batch_size = 5
     data_size = 2
     top_k = 2
