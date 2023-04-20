@@ -29,6 +29,7 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
     """
     multiple max_length, single model, single batch
     """
+    expected_model_counter = 1
     batch_size = 4
     data_size = 2
     max_length1 = 10

@@ -28,6 +28,8 @@ class MockTranslationFactory:
 
 
 class MockPipeline:
+    counter = 0
+
     def __init__(self,
                  task_type: str,
                  model: MockTranslationModel,
@@ -43,6 +45,7 @@ class MockPipeline:
             "German:": "übersetzt",
             "French:": "traduit"
         }
+        MockPipeline.counter += 1
 
     def __call__(self, text_data: List[str], **kwargs) -> List[Dict[str, str]]:
         if "error" in text_data[0]:

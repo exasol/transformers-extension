@@ -29,6 +29,7 @@ class SingleModelMultipleBatchComplete:
     """
     single model, multiple batch, last batch complete
     """
+    expected_model_counter = 1
     batch_size = 2
     data_size = 4
     src_lang = "English"
