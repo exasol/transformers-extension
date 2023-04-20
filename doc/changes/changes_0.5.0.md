@@ -14,6 +14,10 @@ TBD
 ### Bug Fixes
 
  - #89: Fixed the content of error code config file 
+
+### Refactorings
+
+ - #24: Added model counters to unit tests of prediction UDFs
   
 
     
