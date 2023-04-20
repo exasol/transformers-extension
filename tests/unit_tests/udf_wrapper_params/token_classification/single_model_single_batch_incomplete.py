@@ -30,6 +30,7 @@ class SingleModelSingleBatchIncomplete:
     """
     single model, single batch, batch incomplete
     """
+    expected_model_counter = 1
     batch_size = 2
     data_size = 1
     n_entities = 3

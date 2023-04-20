@@ -30,6 +30,7 @@ class MultipleStrategySingleModelNameMultipleBatch:
     """
     multiple strategy, single model, single batch
     """
+    expected_model_counter = 1
     batch_size = 2
     data_size = 2
     agg_strategy_null = None
