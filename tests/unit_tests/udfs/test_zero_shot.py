@@ -113,5 +113,4 @@ def test_zero_shot(params):
             OutputMatcher(result_output, n_input_columns) == expected_output,
             params.mock_pipeline.counter == params.expected_model_counter)
     finally:
-        print(f"{params.__qualname__} : {params.mock_pipeline.counter}")
         params.mock_pipeline.counter = 0
