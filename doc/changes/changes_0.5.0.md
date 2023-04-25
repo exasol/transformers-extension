@@ -18,6 +18,10 @@ TBD
 ### Refactorings
 
  - #24: Added model counters to unit tests of prediction UDFs
+
+### Documentation
+
+ - #93: Added the Developer Guide
   
 
     
