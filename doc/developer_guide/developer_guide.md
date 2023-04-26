@@ -62,12 +62,12 @@ Before implementing the UDF logic (examined in item 4 in this section), the
 `run` function responsible for calling the newly created UDF script should be 
 defined in `exasol_transformers_extension/udfs/callers/`
 
-### 3. UDF Template-Caller matching 
+### 3. UDF Template-Caller Matching 
 The added UDF template and defined UDF caller should be added to the dictionary
 in the `exasol_transformers_extension/deployment/constants.py` script. Thus, 
 we are able to be aware of which template belongs to which script during deployment.
 
-### 4. Implement Task Logic in UDF script
+### 4. Implement Task Logic in UDF Script
 The UDF class, in which we implement the logic of the desired task, must be 
 defined under the `exasol_transformers_extension/udfs/models/` directory. This 
 class should extend the _BaseModelUDF_ class. Moreover, new output columns 
@@ -100,9 +100,19 @@ prediction, such that each input rows has a row for each prediction results.
 ## Tests
 
 #### 1. Unit Tests
-UDF Mock, for different parameters different scenarios are defined as udf_wrappers and tests are paramaterized with these scenarios
+- Unit tests use the [udf-mock-python](https://github.com/exasol/udf-mock-python) 
+library that tests UDFs locally without a database. 
+- Different scenarios with  different UDF inputs and different model parameters are defined under 
+`tests/unit_tests/udf_wrapper_params/` directory. 
+- These different scenarios are 
+parameterized in UDF tests.
 
 #### 2. Integration Tests
-without db, functionality , with db end-to end test.
+These tests are grouped into two groups and there are separate tests for each 
+UDF script in each group:
+- `without db` tests the UDF class and functionality that includes the UDF logic.
+- `with_db` performs end-to-end test by running the UDF query statements in the database. 
+
+- without db, functionality , with db end-to end test.
 
 
