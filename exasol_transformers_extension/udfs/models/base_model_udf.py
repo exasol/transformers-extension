@@ -12,8 +12,8 @@ from exasol_transformers_extension.utils import device_management, \
 class BaseModelUDF(ABC):
     """
     This base class should be extended by each UDF class containing model logic.
-    This class contains common operations for all prediction UDFs.
-    For example:
+    This class contains common operations for all prediction UDFs. The following
+    methods should be implemented specifically for each UDF class:
         - accesses data part-by-part based on predefined batch size
         - manages the script cache
         - reads the corresponding model from BucketFS into cache
