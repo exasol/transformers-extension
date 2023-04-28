@@ -9,6 +9,7 @@ via the [transformers api](https://github.com/huggingface/transformers).
 ### Information for Users
 
 * [User Guide](doc/user_guide/user_guide.md)
+* [Developer Guide](doc/developer_guide/developer_guide.md)
 * [Changelog](doc/changes/changelog.md)
 * [License](LICENSE)
 
