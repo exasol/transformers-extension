@@ -24,7 +24,9 @@ jobs:
           tool-cache: true
           large-packages: false
 
-      - uses: ./action.yml
+      - uses: ./.github/workflows/action.yml
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Build Poetry
         run: poetry build
       - name: Install project whl
