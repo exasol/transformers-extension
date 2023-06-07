@@ -24,14 +24,10 @@ jobs:
           tool-cache: true
           large-packages: false
 
-      - uses: actions/setup-python@v3
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/prepare_poetry_env
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: abatilo/actions-poetry@v2.1.4
-        with:
-          poetry-version: 1.2.2
-      - name: Install Poetry
-        run: poetry install
       - name: Build Poetry
         run: poetry build
       - name: Install project whl

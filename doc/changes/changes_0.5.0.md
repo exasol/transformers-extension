@@ -18,6 +18,7 @@ TBD
 ### Refactorings
 
  - #24: Added model counters to unit tests of prediction UDFs
+ - #95: Removed setup.py
 
 ### Documentation
 
