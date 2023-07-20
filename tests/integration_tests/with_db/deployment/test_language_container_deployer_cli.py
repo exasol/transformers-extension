@@ -8,6 +8,7 @@ from tests.utils.parameters import bucketfs_params, db_params
 from tests.utils.revert_language_settings import revert_language_settings
 from tests.utils.db_queries import DBQueries
 from pathlib import Path
+import ssl
 
 
 @revert_language_settings
@@ -43,7 +44,12 @@ def _call_deploy_language_container_deployer_cli(
     db_conn_test = pyexasol.connect(
         dsn=db_params.address(),
         user=db_params.user,
-        password=db_params.password)
+        password=db_params.password,
+        encryption=True,
+        websocket_sslopt={
+            "cert_reqs": ssl.CERT_NONE,
+        }
+    )
     db_conn_test.execute(f"OPEN SCHEMA {schema}")
     db_conn_test.execute(textwrap.dedent(f"""
     CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
@@ -109,7 +115,3 @@ def test_language_container_deployer_cli_with_missing_container_option(
             version=None,
             language_settings=language_settings
         )
-
-
-
-

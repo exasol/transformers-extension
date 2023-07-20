@@ -4,6 +4,7 @@ import pytest
 from exasol_transformers_extension.deployment.language_container_deployer import \
     logger
 from tests.utils.parameters import db_params
+import ssl
 
 
 def revert_language_settings(func):
@@ -19,11 +20,15 @@ def revert_language_settings(func):
             db_conn_revert = pyexasol.connect(
                 dsn=db_params.address(),
                 user=db_params.user,
-                password=db_params.password)
+                password=db_params.password,
+                encryption=True,
+                websocket_sslopt={
+                    "cert_reqs": ssl.CERT_NONE,
+                }
+            )
             db_conn_revert.execute(f"ALTER SYSTEM SET SCRIPT_LANGUAGES="
                                    f"'{language_settings[0][0]}';")
             db_conn_revert.execute(f"ALTER SESSION SET SCRIPT_LANGUAGES="
                                    f"'{language_settings[0][1]}';")
 
     return wrapper
-
