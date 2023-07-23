@@ -136,3 +136,7 @@ doc/_build
 
 # Language container
 .build_output
+
+# Vagrant
+
+.vagrant
