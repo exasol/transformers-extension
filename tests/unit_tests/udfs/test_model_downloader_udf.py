@@ -15,6 +15,7 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils.model_downloader import ModelDownloaderFactory, ModelDownloader, \
     ModelFactoryProtocol
+from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
 
@@ -119,9 +120,7 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
             call(mock_base_model_factory),
             call(mock_tokenizer_factory)
         ]
-        # TODO: a set would be better here, but call seems to be not hashable,
-        # we need a matcher which can compare these
-    assert mock_cast(mock_bucketfs_factory.create_bucketfs_location).mock_calls == [
+    assert mock_cast(mock_bucketfs_factory.create_bucketfs_location).mock_calls == AnyOrder([
         call(url=f'file:///test{i}', user=None, pwd=None)
         for i in range(count)
-    ]
+    ])
