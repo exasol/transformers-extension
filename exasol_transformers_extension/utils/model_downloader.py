@@ -1,10 +1,10 @@
-import tempfile
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
-from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
+from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 
 
 @runtime_checkable
@@ -19,20 +19,23 @@ class ModelDownloader:
                  bucketfs_location: BucketFSLocation,
                  model_name: str,
                  model_path: Path,
-                 token: str):
+                 token: str,
+                 temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
+                 bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory()):
         self._token = token
-        self._model_path = model_path
         self._model_name = model_name
-        self._bucketfs_location = bucketfs_location
+        self._temporary_directory_factory = temporary_directory_factory
+        self._bucketfs_model_uploader = bucketfs_model_uploader_factory.create(
+            model_path=model_path,
+            bucketfs_location=bucketfs_location)
 
-    def download_model(self, model: ModelFactoryProtocol):
-        with tempfile.TemporaryDirectory() as tmpdir_name:
+    def download_model(self, model_factory: ModelFactoryProtocol):
+        with self._temporary_directory_factory.create() as tmpdir_name:
             # download model into tmp folder
-            model.from_pretrained(self._model_name, cache_dir=tmpdir_name, use_auth_token=self._token)
+            model_factory.from_pretrained(self._model_name, cache_dir=tmpdir_name, use_auth_token=self._token)
 
             # upload the downloaded model files into bucketfs
-            bucketfs_operations.upload_model_files_to_bucketfs(
-                tmpdir_name, self._model_path, self._bucketfs_location)
+            self._bucketfs_model_uploader.upload_directory(tmpdir_name)
 
 
 class ModelDownloaderFactory:
