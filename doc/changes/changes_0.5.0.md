@@ -13,7 +13,8 @@ TBD
 
 ### Bug Fixes
 
- - #89: Fixed the content of error code config file 
+ - #89: Fixed the content of error code config file
+ - #100: Enabled encryption for all pyexasol connection to be compatible with Exasol 8
 
 ### Refactorings
 
