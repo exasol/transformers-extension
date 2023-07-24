@@ -1,9 +1,11 @@
 import tempfile
-from typing import Dict, List, Union
+from typing import Dict, List
+
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
-from exasol_transformers_extension.utils import bucketfs_operations
+
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
-    ModelDownloader
+    ModelDownloaderUDF
+from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 
@@ -111,7 +113,7 @@ def test_model_downloader_udf_implementation():
         })
 
         # run udf implementation
-        model_downloader = ModelDownloader(exa)
+        model_downloader = ModelDownloaderUDF(exa)
         model_downloader.run(ctx)
 
         # assertions

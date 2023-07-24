@@ -1,7 +1,7 @@
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
-    ModelDownloader
+    ModelDownloaderUDF
 
-udf = ModelDownloader(exa)
+udf = ModelDownloaderUDF(exa)
 
 
 def run(ctx):

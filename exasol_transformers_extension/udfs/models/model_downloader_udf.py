@@ -1,14 +1,23 @@
-import tempfile
 import transformers
+from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+
 from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.model_downloader import ModelDownloaderFactory, \
+    ModelFactoryProtocol
 
 
-class ModelDownloader:
-    def __init__(self, exa, base_model_downloader=transformers.AutoModel,
-                 tokenizer_downloader=transformers.AutoTokenizer):
-        self.exa = exa
-        self.base_model_downloader = base_model_downloader
-        self.tokenizer_downloader = tokenizer_downloader
+class ModelDownloaderUDF:
+    def __init__(self,
+                 exa,
+                 base_model_factory: ModelFactoryProtocol = transformers.AutoModel,
+                 tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
+                 model_downloader_factory: ModelDownloaderFactory = ModelDownloaderFactory(),
+                 bucketfs_factory: BucketFSFactory = BucketFSFactory()):
+        self._exa = exa
+        self._base_model_factory = base_model_factory
+        self._tokenizer_factory = tokenizer_factory
+        self._model_downloader_factory = model_downloader_factory
+        self._bucketfs_factory = bucketfs_factory
 
     def run(self, ctx) -> None:
         while True:
@@ -29,32 +38,28 @@ class ModelDownloader:
         # whether there is a token for public model or even what the token is.
         token = False
         if token_conn:
-            token_conn_obj = self.exa.get_connection(token_conn)
+            token_conn_obj = self._exa.get_connection(token_conn)
             token = token_conn_obj.password
 
         # set model path in buckets
         model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
 
         # create bucketfs location
-        bfs_conn_obj = self.exa.get_connection(bfs_conn)
-        bucketfs_location = \
-            bucketfs_operations.create_bucketfs_location_from_conn_object(
-                bfs_conn_obj)
+        bfs_conn_obj = self._exa.get_connection(bfs_conn)
+        bucketfs_location = self._bucketfs_factory.create_bucketfs_location(
+            url=bfs_conn_obj.address,
+            user=bfs_conn_obj.user,
+            pwd=bfs_conn_obj.password
+        )
 
         # download base model and tokenizer into the model path
-        for downloader in \
-                [self.base_model_downloader, self.tokenizer_downloader]:
-            with tempfile.TemporaryDirectory() as tmpdir_name:
-                # download model into tmp folder
-                downloader.from_pretrained(
-                    model_name, cache_dir=tmpdir_name, use_auth_token=token)
-
-                # upload the downloaded model files into bucketfs
-                bucketfs_operations.upload_model_files_to_bucketfs(
-                    tmpdir_name, model_path, bucketfs_location)
+        downloader = self._model_downloader_factory.create(
+            bucketfs_location=bucketfs_location,
+            model_name=model_name,
+            model_path=model_path,
+            token=token
+        )
+        for model in [self._base_model_factory, self._tokenizer_factory]:
+            downloader.download_model(model)
 
         return str(model_path)
-
-
-
-
