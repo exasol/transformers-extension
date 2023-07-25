@@ -123,10 +123,11 @@ class BaseModelUDF(ABC):
 
         unique_values = dataframe_operations.get_unique_values(
             batch_df, constants.ORDERED_COLUMNS, sort=True)
-        for model_name, bucketfs_conn, sub_dir in unique_values:
+        for model_name, bucketfs_conn, token_conn, sub_dir in unique_values:
             model_df = batch_df[
                 (batch_df['model_name'] == model_name) &
                 (batch_df['bucketfs_conn'] == bucketfs_conn) &
+                (batch_df['token_conn'] == token_conn) &
                 (batch_df['sub_dir'] == sub_dir)]
 
             yield model_df
@@ -142,12 +143,13 @@ class BaseModelUDF(ABC):
         model_name = model_df["model_name"].iloc[0]
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
+        token_conn = model_df["token_conn"].iloc[0]
 
         current_model_key = (bucketfs_conn, sub_dir, model_name)
         if self.last_loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.clear_device_memory()
-            self.load_models(model_name)
+            self.load_models(model_name, token_conn)
             self.last_loaded_model_key = current_model_key
 
     def set_cache_dir(
@@ -176,7 +178,7 @@ class BaseModelUDF(ABC):
         self.last_loaded_tokenizer = None
         torch.cuda.empty_cache()
 
-    def load_models(self, model_name: str) -> None:
+    def load_models(self, model_name: str, token_conn_name: str) -> None:
         """
         Load model and tokenizer model from the cached location in bucketfs.
         If the desired model is not cached, this method will attempt to
@@ -186,10 +188,15 @@ class BaseModelUDF(ABC):
 
         :param model_name: The model name to be loaded
         """
+        token = False
+        if token_conn_name:
+            token_conn_obj = self.exa.get_connection(token_conn_name)
+            token = token_conn_obj.password
+
         self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir)
+            model_name, cache_dir=self.cache_dir, use_auth_token=token)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
-            model_name, cache_dir=self.cache_dir)
+            model_name, cache_dir=self.cache_dir, use_auth_token=token)
         self.last_created_pipeline = self.pipeline(
             self.task_name,
             model=self.last_loaded_model,
@@ -249,4 +256,3 @@ class BaseModelUDF(ABC):
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
         pass
-
