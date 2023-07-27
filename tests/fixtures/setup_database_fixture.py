@@ -31,8 +31,7 @@ def _deploy_scripts(itde: TestConfig) -> None:
 def _create_bucketfs_connection(itde: TestConfig) -> None:
     parsed_url = urlparse(itde.bucketfs.url)
     host = parsed_url.netloc.split(":")[0]
-    port = parsed_url.netloc.split(":")[1]
-    address = f"{parsed_url.scheme}://{host}:{port}/{bucketfs_params.bucket}/" \
+    address = f"{parsed_url.scheme}://{host}:{bucketfs_params.real_port}/{bucketfs_params.bucket}/" \
               f"{bucketfs_params.path_in_bucket};{bucketfs_params.name}"
     query = f"CREATE OR REPLACE  CONNECTION {bucketfs_connection_name} " \
             f"TO '{address}' " \
