@@ -1,9 +1,12 @@
-import pytest
 from typing import Tuple
+from urllib.parse import urlparse
+
+import pytest
+from pytest_itde.config import TestConfig
+
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.utils.parameters import db_params, bucketfs_params
-
+from tests.utils.parameters import bucketfs_params
 
 bucketfs_connection_name = "TEST_TE_BFS_CONNECTION"
 schema_name = "TEST_INTEGRATION"
@@ -15,27 +18,32 @@ def _create_schema(db_conn) -> None:
     db_conn.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name};")
 
 
-def _deploy_scripts() -> None:
+def _deploy_scripts(itde: TestConfig) -> None:
     ScriptsDeployer.run(
-        dsn=db_params.address(),
-        user=db_params.user,
-        password=db_params.password,
+        dsn=f"{itde.db.host}:{itde.db.port}",
+        user=itde.db.username,
+        password=itde.db.password,
         schema=schema_name,
         language_alias=language_alias
     )
 
 
-def _create_bucketfs_connection(db_conn) -> None:
+def _create_bucketfs_connection(itde: TestConfig) -> None:
+    parsed_url = urlparse(itde.bucketfs.url)
+    host = parsed_url.netloc.split(":")[0]
+    port = parsed_url.netloc.split(":")[1]
+    address = f"{parsed_url.scheme}://{host}:{port}/{bucketfs_params.bucket}/" \
+              f"{bucketfs_params.path_in_bucket};{bucketfs_params.name}"
     query = f"CREATE OR REPLACE  CONNECTION {bucketfs_connection_name} " \
-            f"TO '{bucketfs_params.address(bucketfs_params.real_port)}' " \
-            f"USER '{bucketfs_params.user}' " \
-            f"IDENTIFIED BY '{bucketfs_params.password}'"
-    db_conn.execute(query)
+            f"TO '{address}' " \
+            f"USER '{itde.bucketfs.username}' " \
+            f"IDENTIFIED BY '{itde.bucketfs.password}'"
+    itde.ctrl_connection.execute(query)
 
 
 @pytest.fixture(scope="module")
-def setup_database(pyexasol_connection) -> Tuple[str, str]:
-    _create_schema(pyexasol_connection)
-    _deploy_scripts()
-    _create_bucketfs_connection(pyexasol_connection)
+def setup_database(itde: TestConfig) -> Tuple[str, str]:
+    _create_schema(itde.ctrl_connection)
+    _deploy_scripts(itde)
+    _create_bucketfs_connection(itde)
     return bucketfs_connection_name, schema_name

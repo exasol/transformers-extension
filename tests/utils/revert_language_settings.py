@@ -1,9 +1,9 @@
 import pyexasol
 import pytest
+from pytest_itde.config import TestConfig
 
 from exasol_transformers_extension.deployment.language_container_deployer import \
     logger
-from tests.utils.parameters import db_params
 import ssl
 
 
@@ -17,10 +17,11 @@ def revert_language_settings(func):
         finally:
             logger.debug("Revert language settings")
             language_settings = kwargs['language_settings']
+            itde:TestConfig = kwargs['itde']
             db_conn_revert = pyexasol.connect(
-                dsn=db_params.address(),
-                user=db_params.user,
-                password=db_params.password,
+                dsn=f"{itde.db.host}:{itde.db.port}",
+                user=itde.db.username,
+                password=itde.db.password,
                 encryption=True,
                 websocket_sslopt={
                     "cert_reqs": ssl.CERT_NONE,

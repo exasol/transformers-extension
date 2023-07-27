@@ -1,0 +1,24 @@
+name: 'Run tests'
+description: 'This composite action runs the tests'
+runs:
+  using: "composite"
+  steps:
+    - name: Build Poetry
+      run: poetry build
+      shell: bash
+
+    - name: Install project whl
+      run: pip install dist/*.whl
+      shell: bash
+
+    - name: Run Python unit tests
+      run: poetry run nox -s unit_tests
+      shell: bash
+
+    - name: Start test environment
+      run: poetry run nox -s start_database
+      shell: bash
+
+    - name: Run Python integration tests
+      run: poetry run nox -s integration_tests
+      shell: bash

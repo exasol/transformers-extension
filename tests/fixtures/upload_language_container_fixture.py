@@ -3,18 +3,19 @@ import subprocess
 import pytest
 from pathlib import Path
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+from pytest_itde.config import TestConfig
+
 from tests.utils.parameters import bucketfs_params
 
 
 @pytest.fixture(scope="session")
-def upload_language_container(pyexasol_connection, language_container) -> str:
+def upload_language_container(itde: TestConfig, language_container) -> str:
     bucket_fs_factory = BucketFSFactory()
     container_bucketfs_location = \
         bucket_fs_factory.create_bucketfs_location(
-            url=bucketfs_params.address(),
-            user=bucketfs_params.user,
-            pwd=bucketfs_params.password,
-            base_path=None)
+            url=f"{itde.bucketfs.url}/{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};{bucketfs_params.name}",
+            user=itde.bucketfs.username,
+            pwd=itde.bucketfs.password)
     container_path = Path(language_container["container_path"])
     alter_session = language_container["alter_session"]
     language_alias = alter_session.split("=")[0]
@@ -29,15 +30,15 @@ def upload_language_container(pyexasol_connection, language_container) -> str:
     rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
     subprocess.run(rm_docker_image, shell=True)
 
-    result = pyexasol_connection.execute(
+    result = itde.ctrl_connection.execute(
         f"""SELECT "SYSTEM_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
         PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()
     original_alter_system = result[0][0]
-    pyexasol_connection.execute(
+    itde.ctrl_connection.execute(
         f"ALTER SESSION SET SCRIPT_LANGUAGES='{alter_session}'")
-    pyexasol_connection.execute(
+    itde.ctrl_connection.execute(
         f"ALTER SYSTEM SET SCRIPT_LANGUAGES='{alter_session}'")
 
     yield language_alias
-    pyexasol_connection.execute(
+    itde.ctrl_connection.execute(
         f"ALTER SYSTEM SET SCRIPT_LANGUAGES='{original_alter_system}'")

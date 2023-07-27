@@ -1,5 +1,7 @@
 import textwrap
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+from pytest_itde.config import TestConfig
+
 from exasol_transformers_extension.deployment.language_container_deployer \
     import LanguageContainerDeployer
 from tests.utils.parameters import bucketfs_params
@@ -10,9 +12,9 @@ from pathlib import Path
 
 @revert_language_settings
 def _call_deploy_language_container_deployer(
-        language_alias, schema, db_conn, container_path, language_settings):
-    db_conn.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
-    db_conn.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
+        language_alias, schema, itde: TestConfig, container_path, language_settings):
+    itde.ctrl_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
+    itde.ctrl_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
 
     # call language container deployer
     bucket_fs_factory = BucketFSFactory()
@@ -24,11 +26,11 @@ def _call_deploy_language_container_deployer(
         pwd=f"{bucketfs_params.password}",
         base_path=None)
     language_container_deployer = LanguageContainerDeployer(
-        db_conn, language_alias, bucketfs_location, container_path)
+        itde.ctrl_connection, language_alias, bucketfs_location, container_path)
     language_container_deployer.deploy_container()
 
     # create a sample UDF using the new language alias
-    db_conn.execute(textwrap.dedent(f"""
+    itde.ctrl_connection.execute(textwrap.dedent(f"""
     CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
     RETURNS BOOLEAN AS
 
@@ -37,23 +39,21 @@ def _call_deploy_language_container_deployer(
 
     /
     """))
-    result = db_conn.execute('SELECT "TEST_UDF"()').fetchall()
+    result = itde.ctrl_connection.execute('SELECT "TEST_UDF"()').fetchall()
     return result
 
 
 def test_language_container_deployer(
-        request, pyexasol_connection, language_container):
+        request, itde, language_container):
     schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(pyexasol_connection)
+    language_settings = DBQueries.get_language_settings(itde.ctrl_connection)
 
     result = _call_deploy_language_container_deployer(
         language_alias="PYTHON3_TE",
         schema=schema_name,
-        db_conn=pyexasol_connection,
+        itde=itde,
         container_path=Path(language_container["container_path"]),
         language_settings=language_settings
     )
 
     assert result[0][0]
-
-
