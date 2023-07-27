@@ -19,11 +19,11 @@ def _call_deploy_language_container_deployer(
     # call language container deployer
     bucket_fs_factory = BucketFSFactory()
     bucketfs_location = bucket_fs_factory.create_bucketfs_location(
-        url=f"http://{bucketfs_params.host}:{bucketfs_params.port}/"
+        url=f"{itde.bucketfs.url}/"
             f"{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};"
             f"{bucketfs_params.name}",
-        user=f"{bucketfs_params.user}",
-        pwd=f"{bucketfs_params.password}",
+        user=f"{itde.bucketfs.username}",
+        pwd=f"{itde.bucketfs.password}",
         base_path=None)
     language_container_deployer = LanguageContainerDeployer(
         itde.ctrl_connection, language_alias, bucketfs_location, container_path)
