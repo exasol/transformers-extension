@@ -1,8 +1,10 @@
 import pyexasol
 import pytest
-from pytest_itde.config import TestConfig
+from pytest_itde import config
 
 
-@pytest.fixture(scope="session")
-def pyexasol_connection(itde: TestConfig) -> pyexasol.ExaConnection:
-    return itde.ctrl_connection
+@pytest.fixture
+def pyexasol_connection(connection_factory, exasol_config: config.Exasol) -> pyexasol.ExaConnection:
+    connection = connection_factory(exasol_config)
+    yield connection
+    connection.close()

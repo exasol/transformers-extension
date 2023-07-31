@@ -1,21 +1,24 @@
 from click.testing import CliRunner
+from pyexasol import ExaConnection
+from pytest_itde import config
 
 from exasol_transformers_extension import deploy
 from tests.utils.db_queries import DBQueries
 
 
-def test_scripts_deployer_cli(upload_language_container,
-                              itde,
+def test_scripts_deployer_cli(upload_language_container: str,
+                              pyexasol_connection: ExaConnection,
+                              exasol_config: config.Exasol,
                               request):
     schema_name = request.node.name
-    itde.ctrl_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
+    pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
     language_alias = "PYTHON3_TE"
     args_list = [
         "scripts",
-        "--dsn", f"{itde.db.host}:{itde.db.port}",
-        "--db-user", itde.db.username,
-        "--db-pass", itde.db.password,
+        "--dsn", f"{exasol_config.host}:{exasol_config.port}",
+        "--db-user", exasol_config.username,
+        "--db-pass", exasol_config.password,
         "--schema", schema_name,
         "--language-alias", language_alias
     ]
@@ -23,4 +26,4 @@ def test_scripts_deployer_cli(upload_language_container,
     result = runner.invoke(deploy.main, args_list)
     assert result.exit_code == 0
     assert DBQueries.check_all_scripts_deployed(
-        itde.ctrl_connection, schema_name)
+        pyexasol_connection, schema_name)

@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import pyexasol
 import pytest
 from click.testing import CliRunner
+from pyexasol import ExaConnection
 from pytest_itde.config import TestConfig
 
 from exasol_transformers_extension import deploy
@@ -16,14 +17,10 @@ from tests.utils.revert_language_settings import revert_language_settings
 
 @revert_language_settings
 def _call_deploy_language_container_deployer_cli(
-        language_alias,
-        schema,
-        itde: TestConfig,
-        container_path,
-        version,
-        language_settings):
-    itde.ctrl_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
-    itde.ctrl_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
+        language_alias: str, schema: str, pyexasol_connection: ExaConnection,
+        itde: TestConfig, version, container_path, language_settings):
+    pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
+    pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
     dsn = f"{itde.db.host}:{itde.db.port}"
 
     parsed_url = urlparse(itde.bucketfs.url)
@@ -76,14 +73,16 @@ def _call_deploy_language_container_deployer_cli(
 def test_language_container_deployer_cli_with_container_file(
         request,
         itde,
-        language_container):
+        language_container,
+        pyexasol_connection: ExaConnection):
     schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(itde.ctrl_connection)
+    language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     result = _call_deploy_language_container_deployer_cli(
         language_alias="PYTHON3_TE",
         schema=schema_name,
         itde=itde,
+        pyexasol_connection=pyexasol_connection,
         container_path=Path(language_container["container_path"]),
         version=None,
         language_settings=language_settings
@@ -96,14 +95,15 @@ def test_language_container_deployer_cli_with_container_file(
                          "'container/language_container'' does not exist in "
                          "bucket 'default' of bucketfs 'bfsdefault'.")
 def test_language_container_deployer_cli_by_downloading_container(
-        request, itde):
+        request, itde, pyexasol_connection: ExaConnection):
     schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(itde.ctrl_connection)
+    language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     result = _call_deploy_language_container_deployer_cli(
         language_alias="PYTHON3_TE",
         schema=schema_name,
         itde=itde,
+        pyexasol_connection=pyexasol_connection,
         container_path=None,
         version="0.2.0",
         language_settings=language_settings
@@ -113,15 +113,16 @@ def test_language_container_deployer_cli_by_downloading_container(
 
 
 def test_language_container_deployer_cli_with_missing_container_option(
-        request, itde):
+        request, itde, pyexasol_connection):
     schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(itde.ctrl_connection)
+    language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
     with pytest.raises(Exception) as exc_info:
         _call_deploy_language_container_deployer_cli(
             language_alias="PYTHON3_TE",
             schema=schema_name,
-            db_conn=itde.ctrl_connection,
+            itde=itde,
+            pyexasol_connection=pyexasol_connection,
             container_path=None,
             version=None,
             language_settings=language_settings
