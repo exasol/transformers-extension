@@ -41,7 +41,6 @@ def language_container_deployer_main(
         db_user: str,
         db_pass: str,
         language_alias: str):
-
     def call_runner():
         LanguageContainerDeployer.run(
             bucketfs_name=bucketfs_name,
@@ -58,7 +57,6 @@ def language_container_deployer_main(
             db_password=db_pass,
             language_alias=language_alias
         )
-
     if container_file:
         call_runner()
     elif version:
@@ -66,13 +64,14 @@ def language_container_deployer_main(
             container_file = container
             call_runner()
     else:
-        raise Exception("You should specify either the release version to "
-                        "download container file or the path of the already "
-                        "downloaded container file.")
+        raise ValueError("You should specify either the release version to "
+                         "download container file or the path of the already "
+                         "downloaded container file.")
 
 
 if __name__ == '__main__':
     import logging
+
     logging.basicConfig(
         format='%(asctime)s - %(module)s  - %(message)s',
         level=logging.DEBUG)

@@ -2,9 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_text_generation_script(
-        upload_language_container, setup_database,
-        pyexasol_connection, upload_base_model_to_bucketfs):
-
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics database management"
     n_rows = 100
@@ -43,4 +41,3 @@ def test_text_generation_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
-

@@ -2,9 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_question_answering_script(
-        upload_language_container, setup_database,
-        pyexasol_connection, upload_base_model_to_bucketfs):
-
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     question = "Where is the Exasol?"
     n_rows = 100
@@ -42,4 +40,3 @@ def test_question_answering_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
-

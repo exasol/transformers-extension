@@ -1,27 +1,15 @@
-import pyexasol
-import pytest
+import contextlib
+
 from pyexasol import ExaConnection
-from pytest_itde.config import TestConfig
 
-from exasol_transformers_extension.deployment.language_container_deployer import \
-    logger
-import ssl
+from tests.utils.db_queries import DBQueries
 
 
-def revert_language_settings(func):
-    def wrapper(**kwargs):
-        try:
-            return func(**kwargs)
-        except Exception as exc:
-            logger.debug("Exception occurred while running the test: %s" % exc)
-            raise pytest.fail(exc)
-        finally:
-            logger.debug("Revert language settings")
-            language_settings = kwargs['language_settings']
-            pyexasol_connection: ExaConnection = kwargs['pyexasol_connection']
-            pyexasol_connection.execute(f"ALTER SYSTEM SET SCRIPT_LANGUAGES="
-                                        f"'{language_settings[0][0]}';")
-            pyexasol_connection.execute(f"ALTER SESSION SET SCRIPT_LANGUAGES="
-                                        f"'{language_settings[0][1]}';")
-
-    return wrapper
+@contextlib.contextmanager
+def revert_language_settings(connection: ExaConnection):
+    language_settings = DBQueries.get_language_settings(connection)
+    yield
+    connection.execute(f"ALTER SYSTEM SET SCRIPT_LANGUAGES="
+                           f"'{language_settings[0][0]}';")
+    connection.execute(f"ALTER SESSION SET SCRIPT_LANGUAGES="
+                           f"'{language_settings[0][1]}';")

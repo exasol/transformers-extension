@@ -6,14 +6,13 @@ from exasol_transformers_extension import deploy
 from tests.utils.db_queries import DBQueries
 
 
-def test_scripts_deployer_cli(upload_language_container: str,
+def test_scripts_deployer_cli(language_alias: str,
                               pyexasol_connection: ExaConnection,
                               exasol_config: config.Exasol,
                               request):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
-    language_alias = "PYTHON3_TE"
     args_list = [
         "scripts",
         "--dsn", f"{exasol_config.host}:{exasol_config.port}",

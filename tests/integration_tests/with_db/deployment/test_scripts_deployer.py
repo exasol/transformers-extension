@@ -7,14 +7,13 @@ from tests.utils.db_queries import DBQueries
 
 
 def test_scripts_deployer(
-        upload_language_container: str,
+        language_alias: str,
         pyexasol_connection: ExaConnection,
         exasol_config: config.Exasol,
         request):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
-    language_alias = upload_language_container
     ScriptsDeployer.run(
         dsn=f"{exasol_config.host}:{exasol_config.port}",
         user=exasol_config.username,
@@ -27,7 +26,7 @@ def test_scripts_deployer(
 
 
 def test_scripts_deployer_no_schema_creation_permission(
-        upload_language_container,
+        language_alias: str,
         pyexasol_connection,
         itde,
         request):
@@ -44,7 +43,6 @@ def test_scripts_deployer_no_schema_creation_permission(
                        "EXECUTE ANY SCRIPT", "USE ANY SCHEMA", "CREATE CONNECTION"]:
         pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
-    language_alias = upload_language_container
     ScriptsDeployer.run(
         dsn=f"{itde.db.host}:{itde.db.port}",
         user=limited_user,

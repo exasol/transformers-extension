@@ -2,28 +2,56 @@ import textwrap
 from pathlib import Path
 
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from pyexasol import ExaConnection
 from pytest_itde import config
 
 from exasol_transformers_extension.deployment.language_container_deployer \
     import LanguageContainerDeployer
-from tests.utils.db_queries import DBQueries
 from tests.utils.parameters import bucketfs_params
 from tests.utils.revert_language_settings import revert_language_settings
 
 
-@revert_language_settings
-def _call_deploy_language_container_deployer(
-        language_alias: str,
-        schema: str,
+def test_language_container_deployer(
+        request,
+        export_slc: ExportInfo,
         pyexasol_connection: ExaConnection,
         bucketfs_config: config.BucketFs,
-        container_path,
-        language_settings):
+):
+    test_name: str = request.node.name
+    schema = test_name
+    language_alias = f"PYTHON3_TE_{test_name.upper()}"
+    container_path = Path(export_slc.cache_file)
+    with revert_language_settings(pyexasol_connection):
+        create_schema(pyexasol_connection, schema)
+        call_language_container_deployer(container_path, language_alias, pyexasol_connection)
+        result = create_and_run_test_udf(pyexasol_connection, language_alias)
+        assert result[0][0]
+
+
+def create_schema(pyexasol_connection: ExaConnection, schema: str):
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
 
-    # call language container deployer
+
+def create_and_run_test_udf(pyexasol_connection: ExaConnection, language_alias: str):
+    pyexasol_connection.execute(textwrap.dedent(f"""
+        CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
+        RETURNS BOOLEAN AS
+
+        def run(ctx):
+            return True
+
+        /
+        """))
+    result = pyexasol_connection.execute('SELECT "TEST_UDF"()').fetchall()
+    return result
+
+
+def call_language_container_deployer(container_path: Path,
+                                     language_alias: str,
+                                     pyexasol_connection: ExaConnection,
+                                     bucketfs_config: config.BucketFs):
     bucket_fs_factory = BucketFSFactory()
     bucketfs_location = bucket_fs_factory.create_bucketfs_location(
         url=f"{bucketfs_config.url}/"
@@ -35,36 +63,3 @@ def _call_deploy_language_container_deployer(
     language_container_deployer = LanguageContainerDeployer(
         pyexasol_connection, language_alias, bucketfs_location, container_path)
     language_container_deployer.deploy_container()
-
-    # create a sample UDF using the new language alias
-    pyexasol_connection.execute(textwrap.dedent(f"""
-    CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
-    RETURNS BOOLEAN AS
-
-    def run(ctx):
-        return True
-
-    /
-    """))
-    result = pyexasol_connection.execute('SELECT "TEST_UDF"()').fetchall()
-    return result
-
-
-def test_language_container_deployer(
-        request,
-        pyexasol_connection: ExaConnection,
-        bucketfs_config: config.BucketFs,
-        language_container):
-    schema_name = request.node.name
-    language_settings = DBQueries.get_language_settings(pyexasol_connection)
-
-    result = _call_deploy_language_container_deployer(
-        language_alias="PYTHON3_TE",
-        schema=schema_name,
-        pyexasol_connection=pyexasol_connection,
-        bucketfs_config=bucketfs_config,
-        container_path=Path(language_container["container_path"]),
-        language_settings=language_settings
-    )
-
-    assert result[0][0]
