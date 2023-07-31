@@ -1,8 +1,12 @@
+from pathlib import Path
 from urllib.parse import urlparse
 
 import pytest
 import transformers
 from click.testing import CliRunner
+from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+from pytest_itde.config import TestConfig
+
 from exasol_transformers_extension import upload_model
 from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils import postprocessing
@@ -10,14 +14,14 @@ from tests.utils.parameters import bucketfs_params, model_params
 
 
 @pytest.fixture(scope='function')
-def download_sample_models(tmp_path):
+def download_sample_models(tmp_path) -> Path:
     for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
         downloader.from_pretrained(model_params.tiny_model, cache_dir=tmp_path)
 
     yield tmp_path
 
 
-def test_model_upload(download_sample_models, bucketfs_location, itde):
+def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSLocation, itde: TestConfig):
     sub_dir = 'sub_dir'
     download_path = download_sample_models
     upload_path = str(bucketfs_operations.get_model_path(
