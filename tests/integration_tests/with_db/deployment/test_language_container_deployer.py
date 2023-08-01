@@ -14,8 +14,12 @@ from tests.utils.revert_language_settings import revert_language_settings
 
 @revert_language_settings
 def _call_deploy_language_container_deployer(
-        language_alias: str, schema: str, pyexasol_connection: ExaConnection,
-        bucketfs_config: config.BucketFs, container_path, language_settings):
+        language_alias: str,
+        schema: str,
+        pyexasol_connection: ExaConnection,
+        bucketfs_config: config.BucketFs,
+        container_path,
+        language_settings):
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
 
@@ -47,7 +51,10 @@ def _call_deploy_language_container_deployer(
 
 
 def test_language_container_deployer(
-        request, pyexasol_connection: ExaConnection, bucketfs_config: config.BucketFs, language_container):
+        request,
+        pyexasol_connection: ExaConnection,
+        bucketfs_config: config.BucketFs,
+        language_container):
     schema_name = request.node.name
     language_settings = DBQueries.get_language_settings(pyexasol_connection)
 
