@@ -24,7 +24,10 @@ def test_language_container_deployer(
     container_path = Path(export_slc.cache_file)
     with revert_language_settings(pyexasol_connection):
         create_schema(pyexasol_connection, schema)
-        call_language_container_deployer(container_path, language_alias, pyexasol_connection)
+        call_language_container_deployer(container_path=container_path,
+                                         language_alias=language_alias,
+                                         pyexasol_connection=pyexasol_connection,
+                                         bucketfs_config=bucketfs_config)
         result = create_and_run_test_udf(pyexasol_connection, language_alias)
         assert result[0][0]
 

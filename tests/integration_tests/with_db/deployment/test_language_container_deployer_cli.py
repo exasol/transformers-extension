@@ -1,9 +1,7 @@
-import ssl
 import textwrap
 from typing import Optional
 from urllib.parse import urlparse
 
-import pyexasol
 import pytest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
@@ -12,6 +10,7 @@ from pytest_itde import config
 
 from exasol_transformers_extension import deploy
 from tests.utils.parameters import bucketfs_params
+from tests.utils.revert_language_settings import revert_language_settings
 
 
 def create_and_run_test_udf(language_alias: str,
@@ -85,17 +84,18 @@ def test_language_container_deployer_cli_with_container_file(
     version = None
     create_schema(pyexasol_connection, schema)
     dsn = f"{exasol_config.host}:{exasol_config.port}"
-    result = call_language_definition_deployer_cli(dsn=dsn,
-                                                   container_path=container_path,
-                                                   language_alias=language_alias,
-                                                   version=version,
-                                                   exasol_config=exasol_config,
-                                                   bucketfs_config=bucketfs_config)
-    assert result.exit_code == 0
-    result = create_and_run_test_udf(pyexasol_connection=pyexasol_connection,
-                                     language_alias=language_alias,
-                                     schema=schema)
-    assert result[0][0]
+    with revert_language_settings(pyexasol_connection):
+        result = call_language_definition_deployer_cli(dsn=dsn,
+                                                       container_path=container_path,
+                                                       language_alias=language_alias,
+                                                       version=version,
+                                                       exasol_config=exasol_config,
+                                                       bucketfs_config=bucketfs_config)
+        assert result.exit_code == 0
+        result = create_and_run_test_udf(pyexasol_connection=pyexasol_connection,
+                                         language_alias=language_alias,
+                                         schema=schema)
+        assert result[0][0]
 
 
 @pytest.mark.skip(reason="It causes this error:  error:  BucketFS: root path "
@@ -114,19 +114,20 @@ def test_language_container_deployer_cli_by_downloading_container(
     version = "0.2.0"
     create_schema(pyexasol_connection, schema)
     dsn = f"{exasol_config.host}:{exasol_config.port}"
-    result = call_language_definition_deployer_cli(
-        dsn=dsn,
-        container_path=container_path,
-        language_alias=language_alias,
-        version=version,
-        bucketfs_config=bucketfs_config,
-        exasol_config=exasol_config
-    )
-    assert result.exit_code == 0
-    result = create_and_run_test_udf(pyexasol_connection=pyexasol_connection,
-                                     language_alias=language_alias,
-                                     schema=schema)
-    assert result[0][0]
+    with revert_language_settings(pyexasol_connection):
+        result = call_language_definition_deployer_cli(
+            dsn=dsn,
+            container_path=container_path,
+            language_alias=language_alias,
+            version=version,
+            bucketfs_config=bucketfs_config,
+            exasol_config=exasol_config
+        )
+        assert result.exit_code == 0
+        result = create_and_run_test_udf(pyexasol_connection=pyexasol_connection,
+                                         language_alias=language_alias,
+                                         schema=schema)
+        assert result[0][0]
 
 
 def test_language_container_deployer_cli_with_missing_container_option(
@@ -138,18 +139,18 @@ def test_language_container_deployer_cli_with_missing_container_option(
     test_name: str = request.node.name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
     dsn = f"{exasol_config.host}:{exasol_config.port}"
-    result = call_language_definition_deployer_cli(
-        dsn=dsn,
-        container_path=container_path,
-        language_alias=language_alias,
-        version=version,
-        bucketfs_config=bucketfs_config,
-        exasol_config=exasol_config
-    )
-    assert result.exit_code == 0
-    expected_exception_message = "You should specify either the release version to " \
-                                 "download container file or the path of the already " \
-                                 "downloaded container file."
-    assert result.exit_code != 0 \
-           and result.exception.args[0] == expected_exception_message \
-           and type(result.exception) == ValueError
+    with revert_language_settings(pyexasol_connection):
+        result = call_language_definition_deployer_cli(
+            dsn=dsn,
+            container_path=None,
+            language_alias=language_alias,
+            version=None,
+            bucketfs_config=bucketfs_config,
+            exasol_config=exasol_config
+        )
+        expected_exception_message = "You should specify either the release version to " \
+                                     "download container file or the path of the already " \
+                                     "downloaded container file."
+        assert result.exit_code == 1 \
+               and result.exception.args[0] == expected_exception_message \
+               and type(result.exception) == ValueError
