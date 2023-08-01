@@ -1,19 +1,24 @@
+from pyexasol import ExaConnection
+from pytest_itde import config
+
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.db_queries import DBQueries
-from tests.utils.parameters import db_params
 
 
-def test_scripts_deployer(upload_language_container,
-                          pyexasol_connection, request):
+def test_scripts_deployer(
+        upload_language_container: str,
+        pyexasol_connection: ExaConnection,
+        exasol_config: config.Exasol,
+        request):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
     language_alias = upload_language_container
     ScriptsDeployer.run(
-        dsn=db_params.address(),
-        user=db_params.user,
-        password=db_params.password,
+        dsn=f"{exasol_config.host}:{exasol_config.port}",
+        user=exasol_config.username,
+        password=exasol_config.password,
         schema=schema_name,
         language_alias=language_alias
     )
@@ -21,8 +26,11 @@ def test_scripts_deployer(upload_language_container,
         pyexasol_connection, schema_name)
 
 
-def test_scripts_deployer_no_schema_creation_permission(upload_language_container,
-                                                        pyexasol_connection, request):
+def test_scripts_deployer_no_schema_creation_permission(
+        upload_language_container,
+        pyexasol_connection,
+        itde,
+        request):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")
@@ -38,7 +46,7 @@ def test_scripts_deployer_no_schema_creation_permission(upload_language_containe
 
     language_alias = upload_language_container
     ScriptsDeployer.run(
-        dsn=db_params.address(),
+        dsn=f"{itde.db.host}:{itde.db.port}",
         user=limited_user,
         password=limited_user_password,
         schema=schema_name,

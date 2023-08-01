@@ -31,13 +31,6 @@ jobs:
         uses: ./.github/actions/prepare_poetry_env
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Build Poetry
-        run: poetry build
-      - name: Install project whl
-        run: pip install dist/*.whl
 
-      - name: Start test environment
-        run: bash ./scripts/start_integration_test_environment.sh
-
-      - name: Run Python tests
-        run: poetry run pytest tests
+      - name: Run tests
+        uses: ./.github/actions/run_tests
