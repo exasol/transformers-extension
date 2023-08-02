@@ -71,7 +71,7 @@ def call_language_definition_deployer_cli(dsn: str,
 
 def create_schema(pyexasol_connection: ExaConnection, schema: str):
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE;")
-    pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
+    pyexasol_connection.execute(f"CREATE SCHEMA {schema};")
 
 
 def test_language_container_deployer_cli_with_container_file(
