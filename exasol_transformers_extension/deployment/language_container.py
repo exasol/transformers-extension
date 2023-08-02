@@ -70,11 +70,17 @@ def upload(
 
 def prepare_flavor(flavor_path: Path):
     flavor_base_path = flavor_path / "flavor_base"
+    add_requirements_to_flavor(flavor_base_path)
     add_wheel_to_flavor(flavor_base_path)
 
 
-def add_wheel_to_flavor(flavor_base_path):
+def find_project_directory():
     project_directory = find_file_or_folder_backwards("pyproject.toml").parent
+    return project_directory
+
+
+def add_wheel_to_flavor(flavor_base_path):
+    project_directory = find_project_directory()
     subprocess.call(["poetry", "build"], cwd=project_directory)
     dist_path = project_directory / "dist"
     wheels = list(dist_path.glob("*.whl"))
@@ -85,3 +91,10 @@ def add_wheel_to_flavor(flavor_base_path):
     wheel_target = flavor_base_path / "release" / "dist"
     wheel_target.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(wheel, wheel_target / wheel.name)
+
+
+def add_requirements_to_flavor(flavor_base_path: Path):
+    project_directory = find_project_directory()
+    requirements = subprocess.check_output(["poetry", "export"], cwd=project_directory)
+    requirements_file = flavor_base_path / "dependencies" / "requirements.txt"
+    requirements_file.write_bytes(requirements)
