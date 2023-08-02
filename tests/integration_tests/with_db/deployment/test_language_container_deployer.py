@@ -1,6 +1,7 @@
 import textwrap
 from pathlib import Path
 
+from _pytest.fixtures import FixtureRequest
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from pyexasol import ExaConnection
@@ -13,7 +14,7 @@ from tests.utils.revert_language_settings import revert_language_settings
 
 
 def test_language_container_deployer(
-        request,
+        request: FixtureRequest,
         export_slc: ExportInfo,
         pyexasol_connection: ExaConnection,
         bucketfs_config: config.BucketFs,

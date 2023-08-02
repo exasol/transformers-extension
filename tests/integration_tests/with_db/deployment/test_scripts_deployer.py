@@ -1,3 +1,4 @@
+from _pytest.fixtures import FixtureRequest
 from pyexasol import ExaConnection
 from pytest_itde import config
 
@@ -10,7 +11,7 @@ def test_scripts_deployer(
         language_alias: str,
         pyexasol_connection: ExaConnection,
         exasol_config: config.Exasol,
-        request):
+        request: FixtureRequest):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
@@ -28,8 +29,8 @@ def test_scripts_deployer(
 def test_scripts_deployer_no_schema_creation_permission(
         language_alias: str,
         pyexasol_connection,
-        itde,
-        request):
+        exasol_config: config.Exasol,
+        request: FixtureRequest):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")
@@ -44,7 +45,7 @@ def test_scripts_deployer_no_schema_creation_permission(
         pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
     ScriptsDeployer.run(
-        dsn=f"{itde.db.host}:{itde.db.port}",
+        dsn=f"{exasol_config.host}:{exasol_config.port}",
         user=limited_user,
         password=limited_user_password,
         schema=schema_name,

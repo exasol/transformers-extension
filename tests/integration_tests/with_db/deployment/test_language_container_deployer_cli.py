@@ -3,6 +3,7 @@ from typing import Optional, Callable
 from urllib.parse import urlparse
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from pyexasol import ExaConnection
@@ -74,7 +75,7 @@ def create_schema(pyexasol_connection: ExaConnection, schema: str):
 
 
 def test_language_container_deployer_cli_with_container_file(
-        request,
+        request: FixtureRequest,
         export_slc: ExportInfo,
         pyexasol_connection: ExaConnection,
         connection_factory: Callable[[config.Exasol], ExaConnection],
@@ -107,7 +108,7 @@ def test_language_container_deployer_cli_with_container_file(
                          "'container/language_container'' does not exist in "
                          "bucket 'default' of bucketfs 'bfsdefault'.")
 def test_language_container_deployer_cli_by_downloading_container(
-        request,
+        request: FixtureRequest,
         pyexasol_connection: ExaConnection,
         connection_factory: Callable[[config.Exasol], ExaConnection],
         exasol_config: config.Exasol,
@@ -138,7 +139,7 @@ def test_language_container_deployer_cli_by_downloading_container(
 
 
 def test_language_container_deployer_cli_with_missing_container_option(
-        request,
+        request: FixtureRequest,
         pyexasol_connection: ExaConnection,
         exasol_config: config.Exasol,
         bucketfs_config: config.BucketFs
