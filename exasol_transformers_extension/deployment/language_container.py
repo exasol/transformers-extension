@@ -1,5 +1,3 @@
-import contextlib
-import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -21,7 +19,7 @@ def find_file_or_folder_backwards(name: str) -> Path:
     if result_path is not None and result_path.exists():
         return result_path
     else:
-        raise RuntimeError(f"Could not find {name}")
+        raise RuntimeError(f"Could not find {name} when searching backwars from {Path(__file__).parent}")
 
 
 CONTAINER_NAME = "exasol_transformers_extension_container"
@@ -80,6 +78,9 @@ def add_wheel_to_flavor(flavor_base_path):
     subprocess.call(["poetry", "build"], cwd=project_directory)
     dist_path = project_directory / "dist"
     wheels = list(dist_path.glob("*.whl"))
+    if len(wheels) != 1:
+        raise RuntimeError(f"Did not find exactly one wheel file in dist directory {dist_path}. "
+                           f"Found the following wheels {wheels}")
     wheel = wheels[0]
     wheel_target = flavor_base_path / "release" / "dist"
     wheel_target.mkdir(parents=True, exist_ok=True)
