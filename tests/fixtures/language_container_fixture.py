@@ -48,7 +48,7 @@ def upload_slc(itde: TestConfig, flavor_path: Path, export_slc: ExportInfo) -> P
 
 
 @pytest.fixture(scope="session")
-def language_alias(itde: TestConfig, flavor_path: Path, upload_slc: Path):
+def language_alias(itde: TestConfig, flavor_path: Path, upload_slc: Path) -> str:
     with set_language_alias(flavor_path, itde, upload_slc) as language_alias:
         yield language_alias
 
