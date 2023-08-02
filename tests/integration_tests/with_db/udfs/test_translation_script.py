@@ -2,9 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_translation_script(
-        upload_language_container, setup_database,
-        pyexasol_connection, upload_seq2seq_model_to_bucketfs):
-
+        setup_database, pyexasol_connection, upload_seq2seq_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 100
     src_lang = "English"
@@ -45,4 +43,3 @@ def test_translation_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
-

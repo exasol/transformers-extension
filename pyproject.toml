@@ -26,6 +26,7 @@ click = "^8.0.4"
 pyexasol = "^0.25.0"
 exasol-bucketfs = "^0.6.0"
 typeguard = "^2.11.1"
+tenacity = "^8.2.2"
 
 
 [tool.poetry.dev-dependencies]

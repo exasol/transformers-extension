@@ -1,4 +1,5 @@
 from pathlib import PurePosixPath, Path
+
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 from exasol_bucketfs_utils_python.bucket_config import BucketConfig
@@ -7,6 +8,7 @@ from exasol_bucketfs_utils_python.bucketfs_connection_config import \
     BucketFSConnectionConfig
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+from tenacity import retry, wait_fixed, stop_after_attempt
 
 
 def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> BucketFSLocation:
@@ -36,11 +38,16 @@ def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> None:
     for tmp_file_path in Path(tmpdir_name).iterdir():
-        with open(tmp_file_path, mode='rb') as file:
-            bucketfs_path = PurePosixPath(
-                model_path, tmp_file_path.relative_to(tmpdir_name))
-            bucketfs_location.upload_fileobj_to_bucketfs(
-                file, str(bucketfs_path))
+        upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name)
+
+
+@retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
+def upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name):
+    with open(tmp_file_path, mode='rb') as file:
+        bucketfs_path = PurePosixPath(
+            model_path, tmp_file_path.relative_to(tmpdir_name))
+        bucketfs_location.upload_fileobj_to_bucketfs(
+            file, str(bucketfs_path))
 
 
 def get_local_bucketfs_path(

@@ -2,9 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_filling_mask_script(
-        upload_language_container, setup_database,
-        pyexasol_connection, upload_base_model_to_bucketfs):
-
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics <mask> management software company."
     n_rows = 100

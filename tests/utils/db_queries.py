@@ -1,3 +1,4 @@
+import dataclasses
 from typing import List
 
 deployed_script_list = [
@@ -10,6 +11,12 @@ deployed_script_list = [
     "TE_TRANSLATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF"
 ]
+
+
+@dataclasses.dataclass
+class ExaParameter:
+    system_value: str
+    session_value: str
 
 
 class DBQueries:
@@ -31,9 +38,13 @@ class DBQueries:
         return all(script in all_scripts for script in deployed_script_list)
 
     @staticmethod
-    def get_language_settings(db_conn) -> List:
+    def get_language_settings(db_conn) -> ExaParameter:
         query = f"""
             SELECT "SYSTEM_VALUE", "SESSION_VALUE" 
             FROM SYS.EXA_PARAMETERS 
             WHERE PARAMETER_NAME='SCRIPT_LANGUAGES'"""
-        return db_conn.execute(query).fetchall()
+        result = db_conn.execute(query).fetchall()
+        if len(result) != 1:
+            raise RuntimeError(f"Got not exactly one row for the SCRIPT_LANGUAGES parameter. Got {result}")
+        exa_parameter = ExaParameter(system_value=result[0][0], session_value=result[0][1])
+        return exa_parameter

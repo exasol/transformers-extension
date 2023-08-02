@@ -1,3 +1,4 @@
+from _pytest.fixtures import FixtureRequest
 from pyexasol import ExaConnection
 from pytest_itde import config
 
@@ -7,14 +8,13 @@ from tests.utils.db_queries import DBQueries
 
 
 def test_scripts_deployer(
-        upload_language_container: str,
+        language_alias: str,
         pyexasol_connection: ExaConnection,
         exasol_config: config.Exasol,
-        request):
+        request: FixtureRequest):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
-    language_alias = upload_language_container
     ScriptsDeployer.run(
         dsn=f"{exasol_config.host}:{exasol_config.port}",
         user=exasol_config.username,
@@ -27,10 +27,10 @@ def test_scripts_deployer(
 
 
 def test_scripts_deployer_no_schema_creation_permission(
-        upload_language_container,
+        language_alias: str,
         pyexasol_connection,
-        itde,
-        request):
+        exasol_config: config.Exasol,
+        request: FixtureRequest):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")
@@ -44,9 +44,8 @@ def test_scripts_deployer_no_schema_creation_permission(
                        "EXECUTE ANY SCRIPT", "USE ANY SCHEMA", "CREATE CONNECTION"]:
         pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
-    language_alias = upload_language_container
     ScriptsDeployer.run(
-        dsn=f"{itde.db.host}:{itde.db.port}",
+        dsn=f"{exasol_config.host}:{exasol_config.port}",
         user=limited_user,
         password=limited_user_password,
         schema=schema_name,

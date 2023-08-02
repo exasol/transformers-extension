@@ -1,5 +1,33 @@
+
+import sys
+from pathlib import Path
+
+sys.path += [str(Path().parent.absolute())]
+
 import nox
 
+from exasol_transformers_extension.deployment.language_container import (
+    build_language_container,
+    export,
+    find_flavor_path,
+    prepare_flavor
+)
+
+ROOT_PATH = Path(__file__).parent
+
+
+@nox.session(python=False)
+def build_slc(session: nox.Session):
+    flavor_path = find_flavor_path()
+    prepare_flavor(flavor_path)
+    build_language_container(flavor_path)
+
+
+@nox.session(python=False)
+def export_slc(session: nox.Session):
+    flavor_path = find_flavor_path()
+    prepare_flavor(flavor_path)
+    export(Path("export"))
 
 @nox.session(python=False)
 def unit_tests(session):

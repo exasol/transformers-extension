@@ -2,9 +2,7 @@ from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_text_pair_script(
-        upload_language_container, setup_database,
-        pyexasol_connection, upload_base_model_to_bucketfs):
-
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     n_labels = 2
     n_rows = 100

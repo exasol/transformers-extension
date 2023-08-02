@@ -11,7 +11,6 @@ from tests.utils.parameters import bucketfs_params
 
 bucketfs_connection_name = "TEST_TE_BFS_CONNECTION"
 schema_name = "TEST_INTEGRATION"
-language_alias = "PYTHON3_TE"
 
 
 def _create_schema(pyexasol_connection: ExaConnection) -> None:
@@ -19,7 +18,7 @@ def _create_schema(pyexasol_connection: ExaConnection) -> None:
     pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name};")
 
 
-def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
+def _deploy_scripts(pyexasol_connection: ExaConnection, language_alias: str) -> None:
     scripts_deployer = ScriptsDeployer(schema=schema_name,
                                        language_alias=language_alias,
                                        pyexasol_conn=pyexasol_connection)
@@ -41,8 +40,9 @@ def _create_bucketfs_connection(bucketfs_config: config.BucketFs,
 
 @pytest.fixture(scope="module")
 def setup_database(bucketfs_config: config.BucketFs,
-                   pyexasol_connection: ExaConnection) -> Tuple[str, str]:
+                   pyexasol_connection: ExaConnection,
+                   language_alias: str) -> Tuple[str, str]:
     _create_schema(pyexasol_connection)
-    _deploy_scripts(pyexasol_connection)
+    _deploy_scripts(pyexasol_connection, language_alias)
     _create_bucketfs_connection(bucketfs_config, pyexasol_connection)
     return bucketfs_connection_name, schema_name

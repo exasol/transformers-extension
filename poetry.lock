@@ -1668,7 +1668,7 @@ files = [
 name = "tenacity"
 version = "8.2.2"
 description = "Retry code until it succeeds"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -1981,4 +1981,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "bfcf5e22cbcc636dafbc624b847eb17bba1140594c767655115c8ca0950adc4b"
+content-hash = "4f4fae55368f454abc2618b2813f4b1f48bb7b5679b125b06f9bda17d29ab52e"
