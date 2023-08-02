@@ -74,8 +74,8 @@ def set_language_alias(flavor_path: Path, itde: TestConfig, container_file_path:
 def cleanup_images():
     if "GITHUB_ACTIONS" in os.environ:
         # Remove image and build output to reduce the disk usage in CI.
-        # We currently, use Github Actions as the CI and its disk is limited to 14 GB.
-        # TODO: This code can be removed if we moved to a CI with larger disks.
+        # We currently use Github Actions as the CI and its disk is limited to 14 GB.
+        # TODO: This code can be removed when we move to a CI with larger disks.
         rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
         subprocess.run(rm_docker_image, shell=True)
 
