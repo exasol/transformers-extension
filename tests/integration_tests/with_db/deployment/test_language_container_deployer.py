@@ -29,8 +29,7 @@ def test_language_container_deployer(
                                          language_alias=language_alias,
                                          pyexasol_connection=pyexasol_connection,
                                          bucketfs_config=bucketfs_config)
-        result = create_and_run_test_udf(pyexasol_connection, language_alias)
-        assert result[0][0]
+        assert_udf_running(pyexasol_connection, language_alias)
 
 
 def create_schema(pyexasol_connection: ExaConnection, schema: str):
@@ -38,7 +37,7 @@ def create_schema(pyexasol_connection: ExaConnection, schema: str):
     pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema};")
 
 
-def create_and_run_test_udf(pyexasol_connection: ExaConnection, language_alias: str):
+def assert_udf_running(pyexasol_connection: ExaConnection, language_alias: str):
     pyexasol_connection.execute(textwrap.dedent(f"""
         CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
         RETURNS BOOLEAN AS
@@ -49,7 +48,7 @@ def create_and_run_test_udf(pyexasol_connection: ExaConnection, language_alias: 
         /
         """))
     result = pyexasol_connection.execute('SELECT "TEST_UDF"()').fetchall()
-    return result
+    assert result[0][0] == True
 
 
 def call_language_container_deployer(container_path: Path,

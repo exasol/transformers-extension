@@ -14,10 +14,10 @@ from tests.utils.parameters import bucketfs_params
 from tests.utils.revert_language_settings import revert_language_settings
 
 
-def create_and_run_test_udf(language_alias: str,
-                            schema: str,
-                            connection_factory: Callable[[config.Exasol], ExaConnection],
-                            exasol_config: config.Exasol):
+def assert_udf_running(language_alias: str,
+                       schema: str,
+                       connection_factory: Callable[[config.Exasol], ExaConnection],
+                       exasol_config: config.Exasol):
     # We need a new connection to get the new system value for the SCRIPT_LANGUAGES parameter
     with connection_factory(exasol_config) as pyexasol_connection:
         pyexasol_connection.execute(f"OPEN SCHEMA {schema}")
@@ -31,7 +31,7 @@ def create_and_run_test_udf(language_alias: str,
         /
         """))
         result = pyexasol_connection.execute('SELECT "TEST_UDF"()').fetchall()
-    return result
+        assert result[0][0] == True
 
 
 def call_language_definition_deployer_cli(dsn: str,
@@ -97,11 +97,10 @@ def test_language_container_deployer_cli_with_container_file(
                                                        exasol_config=exasol_config,
                                                        bucketfs_config=bucketfs_config)
         assert result.exit_code == 0 and result.exception == None and result.stdout == ""
-        result = create_and_run_test_udf(connection_factory=connection_factory,
-                                         exasol_config=exasol_config,
-                                         language_alias=language_alias,
-                                         schema=schema)
-        assert result[0][0]
+        assert_udf_running(connection_factory=connection_factory,
+                           exasol_config=exasol_config,
+                           language_alias=language_alias,
+                           schema=schema)
 
 
 @pytest.mark.skip(reason="It causes this error:  error:  BucketFS: root path "
@@ -130,12 +129,11 @@ def test_language_container_deployer_cli_by_downloading_container(
             bucketfs_config=bucketfs_config,
             exasol_config=exasol_config
         )
-        assert result.exit_code == 0
-        result = create_and_run_test_udf(connection_factory=connection_factory,
-                                         exasol_config=exasol_config,
-                                         language_alias=language_alias,
-                                         schema=schema)
-        assert result[0][0]
+        assert result.exit_code == 0 and result.exception == None and result.stdout == ""
+        assert_udf_running(connection_factory=connection_factory,
+                           exasol_config=exasol_config,
+                           language_alias=language_alias,
+                           schema=schema)
 
 
 def test_language_container_deployer_cli_with_missing_container_option(
