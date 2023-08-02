@@ -41,10 +41,8 @@ def assert_udf_running(pyexasol_connection: ExaConnection, language_alias: str):
     pyexasol_connection.execute(textwrap.dedent(f"""
         CREATE OR REPLACE {language_alias} SCALAR SCRIPT "TEST_UDF"()
         RETURNS BOOLEAN AS
-
         def run(ctx):
             return True
-
         /
         """))
     result = pyexasol_connection.execute('SELECT "TEST_UDF"()').fetchall()
