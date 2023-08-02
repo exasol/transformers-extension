@@ -80,7 +80,7 @@ def add_wheel_to_flavor(flavor_base_path):
     wheels = list(dist_path.glob("*.whl"))
     if len(wheels) != 1:
         raise RuntimeError(f"Did not find exactly one wheel file in dist directory {dist_path}. "
-                           f"Found the following wheels {wheels}")
+                           f"Found the following wheels: {wheels}")
     wheel = wheels[0]
     wheel_target = flavor_base_path / "release" / "dist"
     wheel_target.mkdir(parents=True, exist_ok=True)
