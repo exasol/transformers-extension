@@ -1,3 +1,5 @@
+import contextlib
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -74,8 +76,9 @@ def prepare_flavor(flavor_path: Path):
 
 
 def add_wheel_to_flavor(flavor_base_path):
-    dist_path = find_file_or_folder_backwards("dist")
-    subprocess.call(["poetry", "build"])
+    project_directory = find_file_or_folder_backwards("pyproject.toml").parent
+    subprocess.call(["poetry", "build"], cwd=project_directory)
+    dist_path = project_directory / "dist"
     wheels = list(dist_path.glob("*.whl"))
     wheel = wheels[0]
     wheel_target = flavor_base_path / "release" / "dist"
