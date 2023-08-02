@@ -24,15 +24,15 @@ def test_model_downloader_udf_script(
 
     bucketfs_files = []
     try:
-        query = (
-            f"SELECT TE_MODEL_DOWNLOADER_UDF("
-            f"t.model_name, "
-            f"t.sub_dir, "
-            f"t.bucketfs_conn_name, "
-            f"t.token_conn_name"
-            f") FROM (VALUES {str(tuple(input_data))} AS "
-            f"t(model_name, sub_dir, bucketfs_conn_name, token_conn_name));"
-        )
+        query = f"""
+            SELECT TE_MODEL_DOWNLOADER_UDF(
+            t.model_name,
+            t.sub_dir,
+            t.bucketfs_conn_name,
+            t.token_conn_name
+            ) FROM (VALUES {str(tuple(input_data))} AS
+            t(model_name, sub_dir, bucketfs_conn_name, token_conn_name));
+            """
 
         # execute downloader UDF
         result = pyexasol_connection.execute(query).fetchall()
