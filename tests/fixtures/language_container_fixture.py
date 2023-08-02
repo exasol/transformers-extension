@@ -54,7 +54,7 @@ def language_alias(itde: TestConfig, flavor_path: Path, upload_slc: Path):
 
 
 @contextlib.contextmanager
-def set_language_alias(flavor_path: Path, itde: TestConfig, container_file_path: Path):
+def set_language_alias(flavor_path: Path, itde: TestConfig, container_file_path: Path) -> str:
     release_name = container_file_path.with_suffix('').with_suffix('').name
     language_definition = LanguageDefinition(
         flavor_path=str(flavor_path),
