@@ -19,7 +19,7 @@ def find_file_or_folder_backwards(name: str) -> Path:
     if result_path is not None and result_path.exists():
         return result_path
     else:
-        raise RuntimeError(f"Could not find {name} when searching backwars from {Path(__file__).parent}")
+        raise RuntimeError(f"Could not find {name} when searching backwards from {Path(__file__).parent}")
 
 
 CONTAINER_NAME = "exasol_transformers_extension_container"
