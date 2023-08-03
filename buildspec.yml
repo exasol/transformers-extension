@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  shell: bash
+  secrets-manager:
+    AZ_ACCOUNT_TEST_SUPPORT: "evoml-tests:AZ_ACCOUNT_TEST_SUPPORT"
+    AZ_CONTAINER_TEST_SUPPORT: "evoml-tests:AZ_CONTAINER_TEST_SUPPORT"
+    AZ_SAS_TOKEN_TEST_SUPPORT: "evoml-tests:AZ_SAS_TOKEN_TEST_SUPPORT"
+    DOCKER_USER: "ScriptLanguagesDockerHub:DockerUser"
+    DOCKER_PASSWORD: "ScriptLanguagesDockerHub:DockerPassword"
+    TARGET_DOCKER_PASSWORD: "ScriptLanguagesDockerHub:DockerPassword"
+    SOURCE_DOCKER_PASSWORD: "ScriptLanguagesDockerHub:DockerPassword"
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - curl -sSL https://install.python-poetry.org | python3 -
+      - export PATH=$PATH:$HOME/.local/bin
+      - poetry env use $(command -v "python3.8")
+      - poetry --version
+      - poetry install
+      - poetry build
+      - pip install dist/*.whl
+  build:
+    commands:
+      - poetry run nox -s unit_tests
+      - poetry run nox -s start_database
+      - poetry run nox -s integration_tests
