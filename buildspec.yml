@@ -20,4 +20,3 @@ phases:
       - poetry run nox -s unit_tests
       - poetry run nox -s start_database
       - poetry run nox -s integration_tests
-
