@@ -3,8 +3,8 @@ version: 0.2
 env:
   shell: bash
   secrets-manager:
-    DOCKER_USER: "ScriptLanguagesDockerHub:DockerUser"
-    DOCKER_PASSWORD: "ScriptLanguagesDockerHub:DockerPassword"
+    DOCKER_USER: "Dockerhub:User"
+    DOCKER_PASSWORD: "Dockerhub:AccessToken"
 
 phases:
   install:
