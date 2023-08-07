@@ -2,6 +2,9 @@ version: 0.2
 
 env:
   shell: bash
+  secrets-manager:
+    DOCKER_USER: "Dockerhub:User"
+    DOCKER_PASSWORD: "Dockerhub:AccessToken"
 
 phases:
   install:
@@ -15,6 +18,9 @@ phases:
       - poetry install
       - poetry build
       - pip install dist/*.whl
+  pre_build:
+    commands:
+      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
   build:
     commands:
       - poetry run nox -s unit_tests
