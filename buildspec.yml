@@ -18,6 +18,5 @@ phases:
   build:
     commands:
       - poetry run nox -s unit_tests
-      - service docker start
       - poetry run nox -s start_database
       - poetry run nox -s integration_tests
