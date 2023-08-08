@@ -1,4 +1,4 @@
-name: Build and test project
+name: Build project and run unit test
 
 on: [ push ]
 
@@ -32,5 +32,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run tests
-        uses: ./.github/actions/run_tests
+      - name: Run unit tests
+        uses: ./.github/actions/run_unit_tests
