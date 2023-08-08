@@ -110,7 +110,8 @@ UDF script in each group:
 - `without db` tests the UDF class and functionality that includes the UDF logic.
 - `with_db` performs end-to-end test by running the UDF query statements in the database. 
 
-The automatic run of the Integration tests on GitHub push are moved into AWS for this repository.
+The automatic run of the Integration tests on GitHub push are moved into AWS for this repository. They are 
+only run if you add `[CodeBuild]` to the commit message.
 Currently, the CodeBuild project is managed manually and is triggered with a webhook on branch push.
 For this our aws-ci user is added to this Repository. The webhook can be configured in the AWS CodeBuild 
 project directly.
