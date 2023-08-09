@@ -1,74 +1,28 @@
-from tempfile import TemporaryDirectory
+from pathlib import PosixPath
+from typing import Union, Any, Tuple, List
+from unittest.mock import create_autospec, MagicMock, call, Mock
 
 import pytest
-from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
-    LocalFSMockBucketFSLocation
+from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.group import Group
+from exasol_udf_mock_python.mock_context import MockContext
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
-from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
-from exasol_transformers_extension.utils import bucketfs_operations
-from tests.utils.parameters import model_params
+
+from exasol_transformers_extension.udfs.models.model_downloader_udf import \
+    ModelDownloaderUDF
+from exasol_transformers_extension.utils.model_downloader import ModelDownloaderFactory, ModelDownloader, \
+    ModelFactoryProtocol
+from tests.utils.matchers import AnyOrder
+from tests.utils.mock_cast import mock_cast
 
 
-BFS_CONN_NAME = "test_bfs_conn_name"
-MODEL_FILE_DATA_MAP = {
-    "model_file1.txt": "Sample data in model_file1.txt",
-    "model_file2.txt": "Sample data in model_file1.txt"}
-TOKENIZER_FILE_DATA_MAP = {
-    "tokenizer_file1.txt": "Sample data in tokenizer_file1.txt",
-    "tokenizer_file2.txt": "Sample data in tokenizer_file1.txt"}
+def create_mock_metadata() -> MockMetaData:
+    def udf_wrapper():
+        pass
 
-
-def udf_wrapper():
-    import os
-    from typing import Union
-    from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.models.model_downloader_udf import \
-        ModelDownloader
-
-    def check_token(token: Union[bool, str]) -> None:
-        """
-        token should be False or a valid token string.
-        """
-        if not ((isinstance(token, bool) and not token)
-                or (isinstance(token, str) and token != 'invalid')):
-            raise ValueError(f"Not a valid token {token}")
-
-    class MockModelDownloader:
-        model_file_data_map = {
-            "model_file1.txt": "Sample data in model_file1.txt",
-            "model_file2.txt": "Sample data in model_file1.txt"}
-
-        @classmethod
-        def from_pretrained(cls, model_name, cache_dir, use_auth_token=False):
-            check_token(use_auth_token)
-            for file_name, content in cls.model_file_data_map.items():
-                with open(os.path.join(cache_dir, file_name), 'w') as file:
-                    file.write(content)
-
-    class MockTokenizerDownloader:
-        tokenizer_file_data_map = {
-            "tokenizer_file1.txt": "Sample data in tokenizer_file1.txt",
-            "tokenizer_file2.txt": "Sample data in tokenizer_file1.txt"}
-
-        @classmethod
-        def from_pretrained(cls, model_name, cache_dir, use_auth_token=False):
-            check_token(use_auth_token)
-            for file_name, content in cls.tokenizer_file_data_map.items():
-                with open(os.path.join(cache_dir, file_name), 'w') as file:
-                    file.write(content)
-
-    udf = ModelDownloader(exa, base_model_downloader=MockModelDownloader,
-                          tokenizer_downloader=MockTokenizerDownloader)
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
-
-
-def create_mock_metadata():
     meta = MockMetaData(
         script_code_wrapper_function=udf_wrapper,
         input_type="SET",
@@ -86,55 +40,87 @@ def create_mock_metadata():
     return meta
 
 
-@pytest.mark.parametrize("description, token_conn_name ,token_conn_obj", [
-    ('without token', '', None),
-    ('with token', 'conn_name', Connection(address="", password="valid")),
+def create_mock_udf_context(input_data: List[Tuple[Any, ...]], mock_meta: MockMetaData):
+    mock_ctx = MockContext(
+        input_groups=iter([Group(input_data)]),
+        metadata=mock_meta,
+    )
+    mock_ctx._next_group()
+    return mock_ctx
+
+
+def create_mock_exa_environment(
+        bfs_conn_name: List[str],
+        bucketfs_connections: List[Connection],
+        mock_meta: MockMetaData,
+        token_conn_name: str,
+        token_conn_obj: Connection):
+    connections_dict = {k: v for k, v in zip(bfs_conn_name, bucketfs_connections)}
+    connections_dict[token_conn_name] = token_conn_obj
+    mock_exa = MockExaEnvironment(
+        metadata=mock_meta,
+        connections=connections_dict
+    )
+    return mock_exa
+
+
+@pytest.mark.parametrize("count", list(range(1, 10)))
+@pytest.mark.parametrize("description, token_conn_name ,token_conn_obj, expected_token", [
+    ('without token', '', None, False),
+    ('with token', 'conn_name', Connection(address="", password="valid"), "valid"),
 ])
-def test_model_downloader(description, token_conn_name, token_conn_obj):
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata()
-
-    with TemporaryDirectory() as path:
-        bucketfs_location_read = LocalFSMockBucketFSLocation(path)
-
-        bucketfs_connection = Connection(address=f"file://{path}")
-        exa = MockExaEnvironment(
-            metadata=meta,
-            connections={
-                BFS_CONN_NAME + "0": bucketfs_connection,
-                BFS_CONN_NAME + "1": bucketfs_connection,
-                token_conn_name: token_conn_obj
-            }
+def test_model_downloader(description, count, token_conn_name, token_conn_obj, expected_token):
+    mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
+    mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
+    mock_model_downloader_factory: Union[ModelDownloaderFactory, MagicMock] = create_autospec(ModelDownloaderFactory)
+    mock_model_downloaders: List[Union[ModelDownloader, MagicMock]] = [create_autospec(ModelDownloader)
+                                                                       for i in range(count)]
+    mock_cast(mock_model_downloader_factory.create).side_effect = mock_model_downloaders
+    mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
+    mock_bucketfs_locations = [Mock() for i in range(count)]
+    mock_cast(mock_bucketfs_factory.create_bucketfs_location).side_effect = mock_bucketfs_locations
+    base_model_names = [f"base_model_name_{i}" for i in range(count)]
+    sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
+    bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
+    bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
+    input_data = [
+        (
+            base_model_names[i],
+            sub_directory_names[i],
+            bfs_conn_name[i],
+            token_conn_name
         )
-        input_data = [
-            (
-                model_params.base_model + "0",
-                model_params.sub_dir + "0",
-                BFS_CONN_NAME + "0",
-                token_conn_name
-            ),
-            (
-                model_params.base_model + "1",
-                model_params.sub_dir + "1",
-                BFS_CONN_NAME + "1",
-                token_conn_name
-            ),
-        ]
+        for i in range(count)
+    ]
+    mock_meta = create_mock_metadata()
+    mock_exa = create_mock_exa_environment(
+        bfs_conn_name,
+        bucketfs_connections,
+        mock_meta,
+        token_conn_name,
+        token_conn_obj)
+    mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
-        result = executor.run([Group(input_data)], exa)
-        for i, result_row in enumerate(result[0]):
-            relative_model_path = bucketfs_operations.get_model_path(
-                model_params.sub_dir + str(i), model_params.base_model + str(i))
-            assert result_row[0] == str(relative_model_path) \
-                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
-                str(relative_model_path.joinpath("model_file1.txt"))) \
-                   == MODEL_FILE_DATA_MAP["model_file1.txt"] \
-                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
-                str(relative_model_path.joinpath("model_file2.txt"))) \
-                   == MODEL_FILE_DATA_MAP["model_file2.txt"] \
-                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
-                str(relative_model_path.joinpath("tokenizer_file1.txt"))) \
-                   == TOKENIZER_FILE_DATA_MAP["tokenizer_file1.txt"] \
-                   and bucketfs_location_read.read_file_from_bucketfs_to_string(
-                str(relative_model_path.joinpath("tokenizer_file2.txt"))) \
-                   == TOKENIZER_FILE_DATA_MAP["tokenizer_file2.txt"]
+    udf = ModelDownloaderUDF(exa=mock_exa,
+                             base_model_factory=mock_base_model_factory,
+                             tokenizer_factory=mock_tokenizer_factory,
+                             model_downloader_factory=mock_model_downloader_factory,
+                             bucketfs_factory=mock_bucketfs_factory)
+    udf.run(mock_ctx)
+
+    assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
+        call(bucketfs_location=mock_bucketfs_locations[i],
+             model_name=base_model_names[i],
+             model_path=PosixPath(f'{sub_directory_names[i]}/{base_model_names[i]}'),
+             token=expected_token)
+        for i in range(count)
+    ]
+    for i in range(count):
+        assert mock_cast(mock_model_downloaders[i].download_model).mock_calls == [
+            call(mock_base_model_factory),
+            call(mock_tokenizer_factory)
+        ]
+    assert mock_cast(mock_bucketfs_factory.create_bucketfs_location).mock_calls == AnyOrder([
+        call(url=f'file:///test{i}', user=None, pwd=None)
+        for i in range(count)
+    ])
