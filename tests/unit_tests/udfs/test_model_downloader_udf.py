@@ -45,7 +45,7 @@ def create_mock_udf_context(input_data: List[Tuple[Any, ...]], mock_meta: MockMe
         input_groups=iter([Group(input_data)]),
         metadata=mock_meta,
     )
-    mock_ctx._next_group()  # TODO Create a refactoring issue in udf mock, such that we can use it without udfwrapper
+    mock_ctx._next_group()
     return mock_ctx
 
 
