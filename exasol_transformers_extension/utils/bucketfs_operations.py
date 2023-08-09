@@ -37,17 +37,25 @@ def create_bucketfs_location(
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> None:
-    for tmp_file_path in Path(tmpdir_name).iterdir():
-        upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name)
+    for path in Path(tmpdir_name).rglob("*"):
+        relative_path = path.relative_to(tmpdir_name)
+        if path.is_file():
+            upload_file(bucketfs_location, model_path, path, relative_path)
+        elif path.is_dir():
+            upload_not_empty_for_directory(bucketfs_location, model_path, relative_path)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name):
-    with open(tmp_file_path, mode='rb') as file:
-        bucketfs_path = PurePosixPath(
-            model_path, tmp_file_path.relative_to(tmpdir_name))
-        bucketfs_location.upload_fileobj_to_bucketfs(
-            file, str(bucketfs_path))
+def upload_file(bucketfs_location: AbstractBucketFSLocation, model_path: Path, path: Path, relative_path: Path):
+    with open(path, mode='rb') as file:
+        bucketfs_path = PurePosixPath(model_path, relative_path)
+        bucketfs_location.upload_fileobj_to_bucketfs(file, str(bucketfs_path))
+
+
+@retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
+def upload_not_empty_for_directory(bucketfs_location: AbstractBucketFSLocation, model_path: Path, relative_path: Path):
+    bucketfs_path = PurePosixPath(model_path, relative_path, ".not_empty")
+    bucketfs_location.upload_string_to_bucketfs(str(bucketfs_path), "")
 
 
 def get_local_bucketfs_path(
