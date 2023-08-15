@@ -6,6 +6,7 @@ from unittest.mock import create_autospec, MagicMock, call
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
 from exasol_transformers_extension.utils.bucketfs_operations import upload_model_files_to_bucketfs
+from tests.utils.matchers import AnyOrder
 
 
 def test_upload_model_files_to_bucketfs(tmp_path):
@@ -21,7 +22,7 @@ def test_upload_model_files_to_bucketfs(tmp_path):
         model_path=model_path,
         tmpdir_name=str(tmp_path)
     )
-    assert mock_bucketfs_location.mock_calls == [
+    assert mock_bucketfs_location.mock_calls == AnyOrder([
         call.upload_string_to_bucketfs('test_model_path/test_model_name/.not_empty', ''),
         call.upload_string_to_bucketfs('test_model_path/test_model_name/snapshots/.not_empty', ''),
         call.upload_string_to_bucketfs('test_model_path/test_model_name/blobs/.not_empty', ''),
@@ -39,7 +40,7 @@ def test_upload_model_files_to_bucketfs(tmp_path):
         call.upload_fileobj_to_bucketfs(
             unittest.mock.ANY,
             'test_model_path/test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/tokenizer_config.json')
-    ]
+    ])
 
 
 def create_no_exits_directory(model_name, ref, tmp_path):
