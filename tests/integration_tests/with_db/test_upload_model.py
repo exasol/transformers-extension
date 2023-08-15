@@ -1,4 +1,5 @@
-from pathlib import Path
+from collections import deque
+from pathlib import Path, PosixPath
 from urllib.parse import urlparse
 
 import pytest
@@ -19,6 +20,17 @@ def download_sample_models(tmp_path) -> Path:
         downloader.from_pretrained(model_params.tiny_model, cache_dir=tmp_path)
 
     yield tmp_path
+
+
+def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
+    if path.is_dir():
+        path = path / "not_empty"
+    if ".no_exist" in path.parts:
+        parts = list(path.parts)
+        parts[path.parts.index(".no_exist")] = "no_exist"
+        path = PosixPath(*parts)
+    path = path.relative_to(download_path)
+    return PosixPath(path)
 
 
 def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSLocation, itde: TestConfig):
@@ -49,10 +61,8 @@ def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSL
         result = runner.invoke(upload_model.main, args_list)
         assert result.exit_code == 0
 
-        downloaded_files = set(
-            i.name for i in download_path.iterdir() if i.is_file())
-        uploaded_files = set(
-            i for i in bucketfs_location.list_files_in_bucketfs(upload_path))
+        downloaded_files = set(adapt_file_to_upload(i, download_path) for i in download_path.rglob("*"))
+        uploaded_files = set(PosixPath(i) for i in bucketfs_location.list_files_in_bucketfs(upload_path))
         assert uploaded_files == downloaded_files
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, upload_path)
