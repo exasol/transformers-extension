@@ -7,10 +7,6 @@ runs:
       run: poetry build
       shell: bash
 
-    - name: Install project whl
-      run: pip install dist/*.whl
-      shell: bash
-
     - name: Run Python unit tests
       run: poetry run nox -s unit_tests
       shell: bash

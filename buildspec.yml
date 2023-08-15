@@ -17,7 +17,6 @@ phases:
       - poetry --version
       - poetry install
       - poetry build
-      - pip install dist/*.whl
   pre_build:
     commands:
       - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
