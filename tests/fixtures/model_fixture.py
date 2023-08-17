@@ -70,7 +70,7 @@ def upload_model_to_bucketfs(
         try:
             yield model_path
         finally:
-            postprocessing.cleanup_buckets(bucketfs_location, str(model_path))
+            postprocessing.cleanup_buckets(bucketfs_location, str(model_path.parent))
 
 
 @pytest.fixture(scope="session")

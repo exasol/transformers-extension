@@ -36,8 +36,8 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
 def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSLocation, itde: TestConfig):
     sub_dir = 'sub_dir'
     download_path = download_sample_models
-    upload_path = str(bucketfs_operations.get_model_path(
-        sub_dir, model_params.tiny_model))
+    upload_path = bucketfs_operations.get_model_path(
+        sub_dir, model_params.tiny_model)
     parsed_url = urlparse(itde.bucketfs.url)
     host = parsed_url.netloc.split(":")[0]
     port = parsed_url.netloc.split(":")[1]
@@ -60,9 +60,7 @@ def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSL
         runner = CliRunner()
         result = runner.invoke(upload_model.main, args_list)
         assert result.exit_code == 0
-
-        downloaded_files = set(adapt_file_to_upload(i, download_path) for i in download_path.rglob("*"))
-        uploaded_files = set(PosixPath(i) for i in bucketfs_location.list_files_in_bucketfs(upload_path))
-        assert uploaded_files == downloaded_files
+        assert str(upload_path.with_suffix(".tar.gz")) in bucketfs_location.list_files_in_bucketfs(".")
     finally:
-        postprocessing.cleanup_buckets(bucketfs_location, upload_path)
+        pass
+        postprocessing.cleanup_buckets(bucketfs_location, sub_dir)

@@ -1,4 +1,8 @@
+import subprocess
+import tarfile
+import tempfile
 from pathlib import PurePosixPath, Path
+from typing import BinaryIO
 
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
@@ -37,25 +41,21 @@ def create_bucketfs_location(
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> None:
-    for path in Path(tmpdir_name).rglob("*"):
-        relative_path = path.relative_to(tmpdir_name)
-        if path.is_file():
-            upload_file(bucketfs_location, model_path, path, relative_path)
-        elif path.is_dir():
-            upload_not_empty_for_directory(bucketfs_location, model_path, relative_path)
+    with tempfile.TemporaryFile() as fileobj:
+        create_tar_of_directory(Path(tmpdir_name), fileobj)
+        upload_file(bucketfs_location, fileobj, model_path)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_file(bucketfs_location: AbstractBucketFSLocation, model_path: Path, path: Path, relative_path: Path):
-    with open(path, mode='rb') as file:
-        bucketfs_path = PurePosixPath(model_path, relative_path)
-        bucketfs_location.upload_fileobj_to_bucketfs(file, str(bucketfs_path))
+def upload_file(bucketfs_location: AbstractBucketFSLocation, fileobj: BinaryIO, model_path: Path):
+    fileobj.seek(0)
+    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(model_path.with_suffix(".tar.gz")))
 
 
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_not_empty_for_directory(bucketfs_location: AbstractBucketFSLocation, model_path: Path, relative_path: Path):
-    bucketfs_path = PurePosixPath(model_path, relative_path, ".not_empty")
-    bucketfs_location.upload_string_to_bucketfs(str(bucketfs_path), "")
+def create_tar_of_directory(path: Path, fileobj: BinaryIO):
+    with tarfile.open(name="test.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
+        for subpath in path.glob("*"):
+            tar.add(name=subpath, arcname=subpath.name)
 
 
 def get_local_bucketfs_path(
