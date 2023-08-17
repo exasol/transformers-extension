@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
@@ -28,14 +29,24 @@ class ModelDownloader:
         self._bucketfs_model_uploader = bucketfs_model_uploader_factory.create(
             model_path=model_path,
             bucketfs_location=bucketfs_location)
+        self._tmpdir_name = temporary_directory_factory.create().__enter__()
+
+    def __enter__(self):
+        return self
+
+    def __del__(self):
+        del self._tmpdir_name
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._tmpdir_name.__exit__(exc_type, exc_val, exc_tb)
 
     def download_model(self, model_factory: ModelFactoryProtocol):
-        with self._temporary_directory_factory.create() as tmpdir_name:
-            # download model into tmp folder
-            model_factory.from_pretrained(self._model_name, cache_dir=tmpdir_name, use_auth_token=self._token)
+        # download model into tmp folder
+        model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name, use_auth_token=self._token)
 
-            # upload the downloaded model files into bucketfs
-            self._bucketfs_model_uploader.upload_directory(tmpdir_name)
+    def upload_model(self):
+        # upload the downloaded model files into bucketfs
+        self._bucketfs_model_uploader.upload_directory(self._tmpdir_name)
 
 
 class ModelDownloaderFactory:

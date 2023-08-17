@@ -53,13 +53,14 @@ class ModelDownloaderUDF:
         )
 
         # download base model and tokenizer into the model path
-        downloader = self._model_downloader_factory.create(
-            bucketfs_location=bucketfs_location,
-            model_name=model_name,
-            model_path=model_path,
-            token=token
-        )
-        for model in [self._base_model_factory, self._tokenizer_factory]:
-            downloader.download_model(model)
+        with self._model_downloader_factory.create(
+                bucketfs_location=bucketfs_location,
+                model_name=model_name,
+                model_path=model_path,
+                token=token
+        ) as downloader:
+            for model in [self._base_model_factory, self._tokenizer_factory]:
+                downloader.download_model(model)
+            downloader.upload_model()
 
         return str(model_path)

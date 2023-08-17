@@ -75,6 +75,8 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
     mock_model_downloader_factory: Union[ModelDownloaderFactory, MagicMock] = create_autospec(ModelDownloaderFactory)
     mock_model_downloaders: List[Union[ModelDownloader, MagicMock]] = [create_autospec(ModelDownloader)
                                                                        for i in range(count)]
+    for i in range(count):
+        mock_cast(mock_model_downloaders[i].__enter__).side_effect = [mock_model_downloaders[i]]
     mock_cast(mock_model_downloader_factory.create).side_effect = mock_model_downloaders
     mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
     mock_bucketfs_locations = [Mock() for i in range(count)]
