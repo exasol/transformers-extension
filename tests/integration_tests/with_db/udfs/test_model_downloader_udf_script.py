@@ -1,5 +1,6 @@
 from pathlib import Path
 from exasol_transformers_extension.utils import bucketfs_operations
+from tests.utils import postprocessing
 from tests.utils.parameters import model_params
 
 SUB_DIR = "test_downloader_udf_sub_dir{id}"
@@ -44,10 +45,6 @@ def test_model_downloader_udf_script(
         assert all(i[0] == str(j) for i, j in zip(result, model_paths)) and \
                all(bucketfs_files)
     finally:
-        # revert, delete downloaded model files
-        for i, file_ in enumerate(bucketfs_files):
-            try:
-                bucketfs_location.delete_file_in_bucketfs(
-                    str(Path(model_paths[i], file_)))
-            except Exception as exc:
-                print(f"Error while deleting downloaded files, {str(exc)}")
+        for i in range(n_rows):
+            sub_dir = SUB_DIR.format(id=i)
+            postprocessing.cleanup_buckets(bucketfs_location, sub_dir)

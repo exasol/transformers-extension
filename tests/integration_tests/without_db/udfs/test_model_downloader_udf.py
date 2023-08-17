@@ -93,7 +93,7 @@ class TestEnvironmentSetup:
 
     def list_files_in_bucketfs(self):
         return self.bucketfs_location.list_files_in_bucketfs(
-            str(self.model_path))
+            str(self.sub_dir))
 
 
 def test_model_downloader_udf_implementation():
