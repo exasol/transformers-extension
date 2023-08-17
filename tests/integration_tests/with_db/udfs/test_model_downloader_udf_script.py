@@ -1,4 +1,3 @@
-from pathlib import Path
 from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -10,10 +9,12 @@ def test_model_downloader_udf_script(
         setup_database, pyexasol_connection, bucketfs_location):
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 2
+    sub_dirs = []
     model_paths = []
     input_data = []
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
+        sub_dirs.append(sub_dir)
         model_paths.append(bucketfs_operations.get_model_path(
             sub_dir, model_params.tiny_model))
         input_data.append((
@@ -41,10 +42,12 @@ def test_model_downloader_udf_script(
         # assertions
         for i in range(n_rows):
             bucketfs_files.append(
-                bucketfs_location.list_files_in_bucketfs(str(model_paths[i])))
-        assert all(i[0] == str(j) for i, j in zip(result, model_paths)) and \
-               all(bucketfs_files)
+                bucketfs_location.list_files_in_bucketfs(str(sub_dirs[i])))
+
+        assert result == [(str(model_path), str(model_path.with_suffix(".tar.gz")))
+                          for index, model_path in enumerate(model_paths)] \
+               and bucketfs_files == [[str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
+                                      for index, model_path in enumerate(model_paths)]
     finally:
-        for i in range(n_rows):
-            sub_dir = SUB_DIR.format(id=i)
+        for sub_dir in sub_dirs:
             postprocessing.cleanup_buckets(bucketfs_location, sub_dir)

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import transformers
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 
@@ -22,11 +24,11 @@ class ModelDownloaderUDF:
     def run(self, ctx) -> None:
         while True:
             model_path = self._download_model(ctx)
-            ctx.emit(model_path)
+            ctx.emit(*model_path)
             if not ctx.next():
                 break
 
-    def _download_model(self, ctx) -> str:
+    def _download_model(self, ctx) -> Tuple[str, str]:
         # parameters
         model_name = ctx.model_name
         sub_dir = ctx.sub_dir
@@ -61,6 +63,6 @@ class ModelDownloaderUDF:
         ) as downloader:
             for model in [self._base_model_factory, self._tokenizer_factory]:
                 downloader.download_model(model)
-            downloader.upload_model()
+            model_tar_file_path = downloader.upload_model()
 
-        return str(model_path)
+        return str(model_path), str(model_tar_file_path)

@@ -34,7 +34,8 @@ def create_mock_metadata() -> MockMetaData:
         ],
         output_type="EMITS",
         output_columns=[
-            Column("outputs", str, "VARCHAR(2000000)")
+            Column("model_path_in_udfs", str, "VARCHAR(2000000)"),
+            Column("model_path_of_tar_file_in_bucketfs", str, "VARCHAR(2000000)")
         ]
     )
     return meta

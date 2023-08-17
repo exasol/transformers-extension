@@ -40,16 +40,18 @@ def create_bucketfs_location(
 
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
-        bucketfs_location: AbstractBucketFSLocation) -> None:
+        bucketfs_location: AbstractBucketFSLocation) -> Path:
     with tempfile.TemporaryFile() as fileobj:
         create_tar_of_directory(Path(tmpdir_name), fileobj)
-        upload_file(bucketfs_location, fileobj, model_path)
+        return upload_file(bucketfs_location, fileobj, model_path)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_file(bucketfs_location: AbstractBucketFSLocation, fileobj: BinaryIO, model_path: Path):
+def upload_file(bucketfs_location: AbstractBucketFSLocation, fileobj: BinaryIO, model_path: Path) -> Path:
     fileobj.seek(0)
-    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(model_path.with_suffix(".tar.gz")))
+    model_tar_file = model_path.with_suffix(".tar.gz")
+    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(model_tar_file))
+    return model_tar_file
 
 
 def create_tar_of_directory(path: Path, fileobj: BinaryIO):

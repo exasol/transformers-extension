@@ -23,18 +23,20 @@ def get_rounded_result(result: List[Group], round_: int = 2) -> List[tuple]:
             row_result += (round(rounded_result[i][ix_score], round_),)
         else:
             row_result += (rounded_result[i][ix_score],)
-        row_result += (rounded_result[i][ix_error_message], )
+        row_result += (rounded_result[i][ix_error_message],)
         rounded_result[i] = row_result
 
     return rounded_result
 
 
 def cleanup_buckets(bucketfs_location: AbstractBucketFSLocation, path: str):
-    bucketfs_files = bucketfs_location.list_files_in_bucketfs(path)
-    for file_ in bucketfs_files:
-        try:
-            bucketfs_location.delete_file_in_bucketfs(
-                str(PurePosixPath(path, file_)))
-        except Exception as exc:
-            print(f"Error while deleting downloaded files, {str(exc)}")
-
+    try:
+        bucketfs_files = bucketfs_location.list_files_in_bucketfs(path)
+        for file_ in bucketfs_files:
+            try:
+                bucketfs_location.delete_file_in_bucketfs(
+                    str(PurePosixPath(path, file_)))
+            except Exception as exc:
+                print(f"Error while deleting downloaded files, {str(exc)}")
+    except:
+        pass
