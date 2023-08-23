@@ -34,7 +34,7 @@ def test_upload_model_files_to_bucketfs(test_content):
     ]
 
 
-def create_no_exits_directory(model_name, ref, tmp_path):
+def create_no_exist_directory(model_name, ref, tmp_path):
     no_exist = ".no_exist"
     no_exist_path = model_name / no_exist / ref
     (tmp_path / no_exist_path).mkdir(parents=True)
