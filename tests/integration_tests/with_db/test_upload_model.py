@@ -62,5 +62,4 @@ def test_model_upload(download_sample_models: Path, bucketfs_location: BucketFSL
         assert result.exit_code == 0
         assert str(upload_path.with_suffix(".tar.gz")) in bucketfs_location.list_files_in_bucketfs(".")
     finally:
-        pass
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
