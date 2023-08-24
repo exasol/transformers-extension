@@ -4,10 +4,11 @@ from unittest.mock import create_autospec, MagicMock, call
 
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
-from exasol_transformers_extension.utils.model_downloader import ModelDownloader, ModelFactoryProtocol
-from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploader, \
     BucketFSModelUploaderFactory
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol, \
+    HuggingFaceHubBucketFSModelTransfer
+from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 from tests.utils.mock_cast import mock_cast
 
 
@@ -26,7 +27,7 @@ class TestSetup:
         self.token = "token"
         self.model_name = "test_model_name"
         self.model_path = Path("test_model_path")
-        self.downloader = ModelDownloader(
+        self.downloader = HuggingFaceHubBucketFSModelTransfer(
             bucketfs_location=self.bucketfs_location_mock,
             model_path=self.model_path,
             model_name=self.model_name,
@@ -54,7 +55,7 @@ def test_init():
 
 def test_download():
     test_setup = TestSetup()
-    test_setup.downloader.download_model(model_factory=test_setup.model_factory_mock)
+    test_setup.downloader.download_from_huggingface_hub(model_factory=test_setup.model_factory_mock)
     cache_dir = test_setup.temporary_directory_factory_mock.create().__enter__()
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(test_setup.model_name, cache_dir=cache_dir,
@@ -63,8 +64,8 @@ def test_download():
 
 def test_upload():
     test_setup = TestSetup()
-    test_setup.downloader.download_model(model_factory=test_setup.model_factory_mock)
+    test_setup.downloader.download_from_huggingface_hub(model_factory=test_setup.model_factory_mock)
     test_setup.reset_mocks()
-    test_setup.downloader.upload_model()
+    test_setup.downloader.upload_to_bucketfs()
     cache_dir = test_setup.temporary_directory_factory_mock.create().__enter__()
     assert mock_cast(test_setup.bucketfs_model_uploader_mock.upload_directory).mock_calls == [call(cache_dir)]

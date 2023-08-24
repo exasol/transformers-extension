@@ -14,7 +14,7 @@ class ModelFactoryProtocol(Protocol):
         pass
 
 
-class ModelDownloader:
+class HuggingFaceHubBucketFSModelTransfer:
 
     def __init__(self,
                  bucketfs_location: BucketFSLocation,
@@ -41,23 +41,27 @@ class ModelDownloader:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._tmpdir.__exit__(exc_type, exc_val, exc_tb)
 
-    def download_model(self, model_factory: ModelFactoryProtocol):
-        # download model into tmp folder
+    def download_from_huggingface_hub(self, model_factory: ModelFactoryProtocol):
+        """
+        Download a model from HuggingFace Hub into a temporary directory
+        """
         model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name, use_auth_token=self._token)
 
-    def upload_model(self) -> Path:
-        # upload the downloaded model files into bucketfs
+    def upload_to_bucketfs(self) -> Path:
+        """
+        Upload the downloaded models into the BucketFS
+        """
         return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name)
 
 
-class ModelDownloaderFactory:
+class HuggingFaceHubBucketFSModelTransferFactory:
 
     def create(self,
                bucketfs_location: BucketFSLocation,
                model_name: str,
                model_path: Path,
-               token: str) -> ModelDownloader:
-        return ModelDownloader(bucketfs_location=bucketfs_location,
-                               model_name=model_name,
-                               model_path=model_path,
-                               token=token)
+               token: str) -> HuggingFaceHubBucketFSModelTransfer:
+        return HuggingFaceHubBucketFSModelTransfer(bucketfs_location=bucketfs_location,
+                                                   model_name=model_name,
+                                                   model_path=model_path,
+                                                   token=token)

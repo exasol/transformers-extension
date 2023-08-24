@@ -4,8 +4,8 @@ import transformers
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.model_downloader import ModelDownloaderFactory, \
-    ModelFactoryProtocol
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol, \
+    HuggingFaceHubBucketFSModelTransferFactory
 
 
 class ModelDownloaderUDF:
@@ -13,12 +13,13 @@ class ModelDownloaderUDF:
                  exa,
                  base_model_factory: ModelFactoryProtocol = transformers.AutoModel,
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
-                 model_downloader_factory: ModelDownloaderFactory = ModelDownloaderFactory(),
+                 huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferFactory =
+                 HuggingFaceHubBucketFSModelTransferFactory(),
                  bucketfs_factory: BucketFSFactory = BucketFSFactory()):
         self._exa = exa
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._model_downloader_factory = model_downloader_factory
+        self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer
         self._bucketfs_factory = bucketfs_factory
 
     def run(self, ctx) -> None:
@@ -55,14 +56,14 @@ class ModelDownloaderUDF:
         )
 
         # download base model and tokenizer into the model path
-        with self._model_downloader_factory.create(
+        with self._huggingface_hub_bucketfs_model_transfer.create(
                 bucketfs_location=bucketfs_location,
                 model_name=model_name,
                 model_path=model_path,
                 token=token
         ) as downloader:
             for model in [self._base_model_factory, self._tokenizer_factory]:
-                downloader.download_model(model)
-            model_tar_file_path = downloader.upload_model()
+                downloader.download_from_huggingface_hub(model)
+            model_tar_file_path = downloader.upload_to_bucketfs()
 
         return str(model_path), str(model_tar_file_path)
