@@ -50,4 +50,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Test pip install
-        uses: ./.github/actions/pip_install
+        uses: ./.github/actions/test_pip_install
