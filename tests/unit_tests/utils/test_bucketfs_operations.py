@@ -15,7 +15,7 @@ from exasol_transformers_extension.utils.bucketfs_operations import upload_model
 def test_content(tmp_path):
     ref = "6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837"
     model_name = Path("test_model_name")
-    create_no_exits_directory(model_name, ref, tmp_path)
+    create_no_exist_directory(model_name, ref, tmp_path)
     create_blobs_directory(model_name, tmp_path)
     create_snapshot_directory(model_name, ref, tmp_path)
     return tmp_path
