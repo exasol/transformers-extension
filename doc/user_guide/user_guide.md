@@ -78,7 +78,7 @@ transformers_extension.whl
 #### Install The Python Wheel Package
 - Install the packaged transformers-extension project as follows:
 ```shell
-pip install transformers_extension.whl
+pip install transformers_extension.whl --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### The Pre-built Language Container
