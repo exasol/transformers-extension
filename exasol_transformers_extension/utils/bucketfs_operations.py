@@ -43,19 +43,21 @@ def upload_model_files_to_bucketfs(
         bucketfs_location: AbstractBucketFSLocation) -> Path:
     with tempfile.TemporaryFile() as fileobj:
         create_tar_of_directory(Path(tmpdir_name), fileobj)
-        return upload_file(bucketfs_location, fileobj, model_path)
+        model_tar_file = model_path.with_suffix(".tar.gz")
+        return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_tar_file)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_file(bucketfs_location: AbstractBucketFSLocation, fileobj: BinaryIO, model_path: Path) -> Path:
+def upload_file_to_bucketfs_with_retry(bucketfs_location: AbstractBucketFSLocation,
+                                       fileobj: BinaryIO,
+                                       file_path: Path) -> Path:
     fileobj.seek(0)
-    model_tar_file = model_path.with_suffix(".tar.gz")
-    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(model_tar_file))
-    return model_tar_file
+    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(file_path))
+    return file_path
 
 
 def create_tar_of_directory(path: Path, fileobj: BinaryIO):
-    with tarfile.open(name="test.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
+    with tarfile.open(name="model.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
         for subpath in path.glob("*"):
             tar.add(name=subpath, arcname=subpath.name)
 
