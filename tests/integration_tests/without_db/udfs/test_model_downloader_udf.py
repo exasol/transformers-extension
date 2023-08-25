@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 from typing import Dict, List
 
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
@@ -83,7 +84,6 @@ class TestEnvironmentSetup:
         self.token_connection = None if not self.token_conn_name \
             else Connection(address=f"", password="valid")
 
-
     @property
     def bucketfs_location(self):
         return BucketFSFactory().create_bucketfs_location(
@@ -93,11 +93,10 @@ class TestEnvironmentSetup:
 
     def list_files_in_bucketfs(self):
         return self.bucketfs_location.list_files_in_bucketfs(
-            str(self.model_path))
+            str(self.sub_dir))
 
 
 def test_model_downloader_udf_implementation():
-
     with tempfile.TemporaryDirectory() as tmpdir_name:
         url_localfs = f"file://{tmpdir_name}/bucket"
         env1 = TestEnvironmentSetup(
@@ -119,7 +118,7 @@ def test_model_downloader_udf_implementation():
         # assertions
         env1_bucketfs_files = env1.list_files_in_bucketfs()
         env2_bucketfs_files = env2.list_files_in_bucketfs()
-        assert ctx.get_emitted()[0][0] == str(env1.model_path) \
-               and ctx.get_emitted()[1][0] == str(env2.model_path) \
-               and env1_bucketfs_files \
-               and env2_bucketfs_files
+        assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz"))) \
+               and ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz"))) \
+               and str(Path(ctx.get_emitted()[0][1]).relative_to(env1.sub_dir)) in env1_bucketfs_files \
+               and str(Path(ctx.get_emitted()[1][1]).relative_to(env2.sub_dir)) in env2_bucketfs_files

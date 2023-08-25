@@ -1,0 +1,13 @@
+name: 'Test pip install'
+description: 'This composite action runs pip install'
+runs:
+  using: "composite"
+  steps:
+    - name: Build Poetry
+      run: poetry build
+      shell: bash
+
+    - name: Test pip install
+      run: pip install dist/*.whl --extra-index-url https://download.pytorch.org/whl/cpu
+      shell: bash
+      

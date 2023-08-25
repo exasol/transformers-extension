@@ -21,7 +21,7 @@ The latest version of the Python package of this extension can be downloaded
 from the Releases in GitHub Repository (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
 Please download the built archive `transformers_extension.whl` and install it as follows:
 ```bash
-pip install dist/transformers_extension.whl
+pip install dist/transformers_extension.whl --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### 3. Run All Tests

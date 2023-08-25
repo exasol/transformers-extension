@@ -77,7 +77,7 @@ transformers_extension.whl
 #### Install The Python Wheel Package
 - Install the packaged transformers-extension project as follows:
 ```shell
-pip install transformers_extension.whl
+pip install transformers_extension.whl --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### The Pre-built Language Container
@@ -241,10 +241,10 @@ models from the local filesystem into BucketFS:
       --path-in-bucket <PATH_IN_BUCKET> \
       --model-name <MODEL_NAME> \
       --subd-dir <SUB_DIRECTORY> \
-      --model-path <MODEL_PATH> \
-      --tokenizer-path <TOKENIZER_PATH>     
+      --local-model-path <MODEL_PATH>     
   ```
 
+*Note*: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 

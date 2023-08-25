@@ -34,3 +34,21 @@ jobs:
 
       - name: Run unit tests
         uses: ./.github/actions/run_unit_tests
+        
+  test_pip_install:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/prepare_poetry_env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Test pip install
+        uses: ./.github/actions/test_pip_install

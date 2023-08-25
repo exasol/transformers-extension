@@ -1,4 +1,8 @@
+import subprocess
+import tarfile
+import tempfile
 from pathlib import PurePosixPath, Path
+from typing import BinaryIO
 
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
@@ -36,18 +40,26 @@ def create_bucketfs_location(
 
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
-        bucketfs_location: AbstractBucketFSLocation) -> None:
-    for tmp_file_path in Path(tmpdir_name).iterdir():
-        upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name)
+        bucketfs_location: AbstractBucketFSLocation) -> Path:
+    with tempfile.TemporaryFile() as fileobj:
+        create_tar_of_directory(Path(tmpdir_name), fileobj)
+        model_tar_file = model_path.with_suffix(".tar.gz")
+        return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_tar_file)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_model_file(bucketfs_location, model_path, tmp_file_path, tmpdir_name):
-    with open(tmp_file_path, mode='rb') as file:
-        bucketfs_path = PurePosixPath(
-            model_path, tmp_file_path.relative_to(tmpdir_name))
-        bucketfs_location.upload_fileobj_to_bucketfs(
-            file, str(bucketfs_path))
+def upload_file_to_bucketfs_with_retry(bucketfs_location: AbstractBucketFSLocation,
+                                       fileobj: BinaryIO,
+                                       file_path: Path) -> Path:
+    fileobj.seek(0)
+    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(file_path))
+    return file_path
+
+
+def create_tar_of_directory(path: Path, fileobj: BinaryIO):
+    with tarfile.open(name="model.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
+        for subpath in path.glob("*"):
+            tar.add(name=subpath, arcname=subpath.name)
 
 
 def get_local_bucketfs_path(

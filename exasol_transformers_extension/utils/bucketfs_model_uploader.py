@@ -11,8 +11,8 @@ class BucketFSModelUploader:
         self._model_path = model_path
         self._bucketfs_location = bucketfs_location
 
-    def upload_directory(self, directory: Path):
-        bucketfs_operations.upload_model_files_to_bucketfs(
+    def upload_directory(self, directory: Path) -> Path:
+        return bucketfs_operations.upload_model_files_to_bucketfs(
             str(directory), self._model_path, self._bucketfs_location)
 
 
