@@ -5,7 +5,6 @@ The Transformers Extension provides a Python library with UDFs that allow the
 use of pre-trained NLP models provided by the [Transformers API](https://huggingface.co/docs/transformers/index).
 
 The extension provides two types of UDFs:
-The extension provides two types of UDFs:
  - DownloaderUDF :  It is responsible to download the specified pre-defined model into the Exasol BucketFS.
  - Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and perform prediction. These supported tasks:
    1. Sequence Classification for Single Text 
