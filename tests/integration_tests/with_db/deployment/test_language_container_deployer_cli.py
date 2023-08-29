@@ -157,3 +157,4 @@ def test_language_container_deployer_cli_with_missing_container_option(
         assert result.exit_code == 1 \
                and result.exception.args[0] == expected_exception_message \
                and type(result.exception) == ValueError
+
