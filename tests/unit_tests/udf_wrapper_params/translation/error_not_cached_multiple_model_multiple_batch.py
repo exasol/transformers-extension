@@ -36,14 +36,14 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     target_lang = "German"
     max_length = 10
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
                    src_lang, target_lang, max_length)] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "non_existing_model", "text 2",
+                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "non_existing_model", "text 2",
                    src_lang, target_lang, max_length)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", src_lang,
                     target_lang,  max_length, "text 1 übersetzt" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn2", "sub_dir2", "non_existing_model", "text 2",
+                  [("bfs_conn2", "token_conn1", "sub_dir2", "non_existing_model", "text 2",
                     src_lang, target_lang,  max_length, None, "Traceback")
                    ] * data_size
 
@@ -52,8 +52,9 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")}
-
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+        "token_conn1": Connection(address='', password="token")
+    }
     mock_factory = MockTranslationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTranslationModel(text_data="text 1"),

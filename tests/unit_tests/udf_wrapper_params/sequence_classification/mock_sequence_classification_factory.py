@@ -16,7 +16,7 @@ class MockSequenceClassificationModel:
         self.label_scores = label_scores
 
     @classmethod
-    def from_pretrained(cls, model_name, cache_dir):
+    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
         return cls
 
 

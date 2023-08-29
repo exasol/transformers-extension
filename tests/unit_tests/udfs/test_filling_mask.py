@@ -60,6 +60,7 @@ def create_mock_metadata(udf_wrapper):
         input_columns=[
             Column("device_id", int, "INTEGER"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
@@ -68,6 +69,7 @@ def create_mock_metadata(udf_wrapper):
         output_type="EMITS",
         output_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
@@ -119,7 +121,8 @@ def test_filling_mask(params):
 
     try:
         assert (
-            OutputMatcher(result_output, n_input_columns) == expected_output,
-            params.mock_pipeline.counter == params.expected_model_counter)
+                OutputMatcher(result_output, n_input_columns) == expected_output
+                and params.mock_pipeline.counter == params.expected_model_counter
+        )
     finally:
         params.mock_pipeline.counter = 0

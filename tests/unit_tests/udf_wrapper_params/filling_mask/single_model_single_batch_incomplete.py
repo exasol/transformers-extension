@@ -10,7 +10,7 @@ def udf_wrapper():
         FillingMaskUDF
     from tests.unit_tests.udf_wrapper_params.filling_mask.mock_sequence_tokenizer \
         import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.filling_mask.\
+    from tests.unit_tests.udf_wrapper_params.filling_mask. \
         single_model_single_batch_incomplete import \
         SingleModelSingleBatchIncomplete as params
 
@@ -34,15 +34,17 @@ class SingleModelSingleBatchIncomplete:
     data_size = 1
     top_k = 3
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 1", 0.1, 1, None)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token")
+    }
 
     mock_factory = MockFillingMaskFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
@@ -51,4 +53,3 @@ class SingleModelSingleBatchIncomplete:
 
     mock_pipeline = MockPipeline
     udf_wrapper = udf_wrapper
-

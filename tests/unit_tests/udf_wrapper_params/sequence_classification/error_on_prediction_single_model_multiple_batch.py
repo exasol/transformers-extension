@@ -67,34 +67,36 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token")
+    }
 
     mock_factory = MockSequenceClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 
-    inputs_single_text = [(None, "bfs_conn1", "sub_dir1", "model1",
+    inputs_single_text = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                            "error on pred")] * data_size
-    inputs_pair_text = [(None, "bfs_conn1", "sub_dir1", "model1",
+    inputs_pair_text = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                          "error on pred", "My text 2")] * data_size
 
-    outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
+    outputs_single_text = [("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "error on pred", None, None, "Traceback"),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "error on pred", None, None, "Traceback"),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "error on pred", None, None, "Traceback"),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "error on pred", None, None, "Traceback")
                            ] * data_size
-    outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1", "error on pred",
+    outputs_text_pair = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "error on pred",
                           "My text 2", None, None, "Traceback"),
-                         ("bfs_conn1", "sub_dir1", "model1", "error on pred",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "error on pred",
                           "My text 2", None, None, "Traceback"),
-                         ("bfs_conn1", "sub_dir1", "model1", "error on pred",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "error on pred",
                           "My text 2", None, None, "Traceback"),
-                         ("bfs_conn1", "sub_dir1", "model1", "error on pred",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "error on pred",
                           "My text 2", None, None, "Traceback")
                          ] * data_size
 

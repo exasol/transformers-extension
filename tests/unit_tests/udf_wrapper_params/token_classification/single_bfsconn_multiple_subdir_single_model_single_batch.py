@@ -36,21 +36,23 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                    "text1", agg_strategy)] * data_size + \
-                 [(None, "bfs_conn1", "sub_dir2", "model1",
+                 [(None, "bfs_conn1", "token_conn1", "sub_dir2", "model1",
                    "text1", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1", agg_strategy,
                     0, 6, "text1", "label1", 0.1, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn1", "sub_dir2", "model1", "text1", agg_strategy,
+                  [("bfs_conn1", "token_conn1", "sub_dir2", "model1", "text1", agg_strategy,
                     0, 6, "text1", "label2", 0.2, None)
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token")
+    }
 
     mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

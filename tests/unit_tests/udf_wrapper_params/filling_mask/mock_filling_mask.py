@@ -8,7 +8,7 @@ class MockFillingMaskModel:
         self.result = {"sequence": sequence, "score": score, "rank": rank}
 
     @classmethod
-    def from_pretrained(cls, model_name, cache_dir):
+    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
         return cls
 
     def to(self, device):
@@ -20,7 +20,7 @@ class MockFillingMaskFactory:
     def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
+    def from_pretrained(self, model_name, cache_dir, use_auth_token):
         # the cache_dir path already has model_name
         return self.mock_models[cache_dir]
 
