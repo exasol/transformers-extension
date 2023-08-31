@@ -39,7 +39,8 @@ def call_language_definition_deployer_cli(dsn: str,
                                           language_alias: str,
                                           version: Optional[str],
                                           exasol_config: config.Exasol,
-                                          bucketfs_config: config.BucketFs):
+                                          bucketfs_config: config.BucketFs,
+                                          use_ssl: bool = False):
     parsed_url = urlparse(bucketfs_config.url)
     args_list = [
         "language-container",
@@ -54,7 +55,8 @@ def call_language_definition_deployer_cli(dsn: str,
         "--dsn", dsn,
         "--db-user", exasol_config.username,
         "--db-pass", exasol_config.password,
-        "--language-alias", language_alias
+        "--language-alias", language_alias,
+        "--use_ssl_cert", use_ssl
     ]
     if version is not None:
         args_list += [
@@ -158,3 +160,38 @@ def test_language_container_deployer_cli_with_missing_container_option(
                and result.exception.args[0] == expected_exception_message \
                and type(result.exception) == ValueError
 
+def assert_encryption_used():
+
+    pass
+
+
+def test_language_container_deployer_cli_with_use_SSL(
+        request: FixtureRequest,
+        export_slc: ExportInfo,
+        pyexasol_connection: ExaConnection,
+        connection_factory: Callable[[config.Exasol], ExaConnection],
+        exasol_config: config.Exasol,
+        bucketfs_config: config.BucketFs
+):
+    use_ssl = True
+    test_name: str = request.node.name
+    schema = test_name
+    language_alias = f"PYTHON3_TE_{test_name.upper()}"
+    #container_path = export_slc.cache_file
+    version = None
+    create_schema(pyexasol_connection, schema)
+    dsn = f"{exasol_config.host}:{exasol_config.port}"
+    with revert_language_settings(pyexasol_connection):
+        result = call_language_definition_deployer_cli(dsn=dsn,
+                                                       container_path=None,
+                                                       language_alias=language_alias,
+                                                       version=version,
+                                                       exasol_config=exasol_config,
+                                                       bucketfs_config=bucketfs_config,
+                                                       use_ssl=use_ssl)
+        assert result.exit_code == 0 and result.exception == None and result.stdout == ""
+        assert_udf_running(connection_factory=connection_factory,
+                           exasol_config=exasol_config,
+                           language_alias=language_alias,
+                           schema=schema)
+        assert_encryption_used()

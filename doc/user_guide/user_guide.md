@@ -101,10 +101,12 @@ deployment script below with the desired version. (see GitHub Releases
       --bucketfs-port <BUCKETFS_PORT> \
       --bucketfs-user <BUCKETFS_USER> \
       --bucketfs-password <BUCKETFS_PASSWORD> \
+      --bucketfs_use-https <USE_HTTPS_BOOL> \
       --bucket <BUCKETFS_NAME> \
       --path-in-bucket <PATH_IN_BUCKET> \
       --language-alias <LANGUAGE_ALIAS> \ 
-      --version <RELEASE_VERSION>       
+      --version <RELEASE_VERSION> \
+      --use_ssl_cert <USE_SSL_BOOL>
   ```
 
 #### Customized Installation
@@ -192,7 +194,8 @@ python -m exasol_transformers_extension.deploy scripts
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
-    --language-alias <LANGUAGE_ALIAS>
+    --language-alias <LANGUAGE_ALIAS> \
+    --use_ssl_cert <USE_SSL_BOOL>
 ```
 
 ## Store Models in BucketFS

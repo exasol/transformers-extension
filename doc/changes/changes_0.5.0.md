@@ -10,6 +10,7 @@ TBD
 ### Features
 
  - #88: Added custom matcher functions for unit tests
+ - #103: Added option to toggle use of TLS encryption for Database connection
 
 ### Bug Fixes
 

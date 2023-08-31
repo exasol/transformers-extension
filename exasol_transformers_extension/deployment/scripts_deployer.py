@@ -47,16 +47,20 @@ class ScriptsDeployer:
 
     @classmethod
     def run(cls, dsn: str, user: str, password: str,
-            schema: str, language_alias: str):
+            schema: str, language_alias: str, use_ssl_cert: bool = True):
 
+        websocket_sslopt = {}
+        if use_ssl_cert:
+            websocket_sslopt = {
+                "cert_reqs": ssl.CERT_NONE,
+            }
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
             user=user,
             password=password,
-            encryption=True,
-            websocket_sslopt={
-                "cert_reqs": ssl.CERT_NONE,
-            }
+            encryption=use_ssl_cert,
+            websocket_sslopt=websocket_sslopt
         )
+
         scripts_deployer = cls(language_alias, schema, pyexasol_conn)
         scripts_deployer.deploy_scripts()

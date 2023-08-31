@@ -13,15 +13,17 @@ from exasol_transformers_extension.deployment.scripts_deployer import \
                   utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--schema', type=str, required=True)
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
+@click.option('--use_ssl_cert', type=bool, default=True)
 def scripts_deployer_main(
-        dsn: str, db_user: str, db_pass: str, schema: str, language_alias: str):
+        dsn: str, db_user: str, db_pass: str, schema: str, language_alias: str, use_ssl_cert: bool):
 
     ScriptsDeployer.run(
         dsn=dsn,
         user=db_user,
         password=db_pass,
         schema=schema,
-        language_alias=language_alias
+        language_alias=language_alias,
+        use_ssl_cert=use_ssl_cert
     )
 
 

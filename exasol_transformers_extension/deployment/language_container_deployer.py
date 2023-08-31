@@ -91,16 +91,19 @@ class LanguageContainerDeployer:
     def run(cls, bucketfs_name: str, bucketfs_host: str, bucketfs_port: int,
             bucketfs_use_https: bool, bucketfs_user: str, container_file: Path,
             bucketfs_password: str, bucket: str, path_in_bucket: str,
-            dsn: str, db_user: str, db_password: str, language_alias: str):
+            dsn: str, db_user: str, db_password: str, language_alias: str, use_ssl_cert: bool):
 
+        websocket_sslopt = {}
+        if use_ssl_cert:
+            websocket_sslopt = {
+                "cert_reqs": ssl.CERT_NONE,
+            }
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
             user=db_user,
             password=db_password,
-            encryption=True,
-            websocket_sslopt={
-                "cert_reqs": ssl.CERT_NONE,
-            }
+            encryption=use_ssl_cert,
+            websocket_sslopt=websocket_sslopt
         )
 
         bucketfs_location = create_bucketfs_location(

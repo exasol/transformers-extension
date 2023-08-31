@@ -26,6 +26,7 @@ from exasol_transformers_extension.deployment.language_container_deployer import
               default=lambda: os.environ.get(
                   utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
+@click.option('--use_ssl_cert', type=bool, default=True)
 def language_container_deployer_main(
         bucketfs_name: str,
         bucketfs_host: str,
@@ -40,7 +41,8 @@ def language_container_deployer_main(
         dsn: str,
         db_user: str,
         db_pass: str,
-        language_alias: str):
+        language_alias: str,
+        use_ssl_cert: bool):
     def call_runner():
         LanguageContainerDeployer.run(
             bucketfs_name=bucketfs_name,
@@ -55,7 +57,8 @@ def language_container_deployer_main(
             dsn=dsn,
             db_user=db_user,
             db_password=db_pass,
-            language_alias=language_alias
+            language_alias=language_alias,
+            use_ssl_cert=use_ssl_cert
         )
     if container_file:
         call_runner()
