@@ -6,7 +6,7 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from pyexasol import ExaConnection, ExaRequestError
+from pyexasol import ExaConnection, ExaConnectionFailedError
 from pytest_itde import config
 
 from exasol_transformers_extension import deploy
@@ -158,7 +158,7 @@ def test_language_container_deployer_cli_with_missing_container_option(
                                      "downloaded container file."
         assert result.exit_code == 1 \
                and result.exception.args[0] == expected_exception_message \
-               and type(result.exception) == ValueError
+               and type(result.exception) == ExaConnectionFailedError
 
 
 def test_language_container_deployer_cli_with_check_cert(
@@ -189,4 +189,4 @@ def test_language_container_deployer_cli_with_check_cert(
                                                        use_ssl_cert_validation=use_ssl_cert_validation)
         assert result.exit_code == 1 \
                and result.exception.args[0] == expected_exception_message \
-               and type(result.exception) == ExaRequestError
+               and type(result.exception) == ExaConnectionFailedError

@@ -1,5 +1,5 @@
 from click.testing import CliRunner
-from pyexasol import ExaConnection, ExaRequestError
+from pyexasol import ExaConnection, ExaConnectionFailedError
 from pytest_itde import config
 
 from exasol_transformers_extension import deploy
@@ -51,4 +51,4 @@ def test_scripts_deployer_cli_with_encryption_verfiy(language_alias: str,
     result = runner.invoke(deploy.main, args_list)
     assert result.exit_code == 1 \
            and result.exception.args[0] == expected_exception_message \
-           and type(result.exception) == ExaRequestError
+           and type(result.exception) == ExaConnectionFailedError
