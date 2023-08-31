@@ -5,6 +5,8 @@ import pandas as pd
 from typing import Dict
 from exasol_transformers_extension.udfs.models.translation_udf import \
     TranslationUDF
+from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher, ShapeMatcher, NoErrorMessageMatcher, \
+    NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 
@@ -61,7 +63,6 @@ class Context:
 def test_translation_udf(
         description, device_id, languages,
         upload_seq2seq_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -103,17 +104,11 @@ def test_translation_udf(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['translation_text', 'error_message']
 
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    has_valid_column_number = \
-        list(result_df.columns) == columns[1:] + new_columns
-
-    assert all((
-        is_error_message_none,
-        has_valid_shape,
-        has_valid_column_number
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
+            and result == NoErrorMessageMatcher()
+    )
 
 
 @pytest.mark.parametrize(
@@ -136,7 +131,6 @@ def test_translation_udf(
 def test_translation_udf_on_error_handling(
         description, device_id, languages,
         upload_seq2seq_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -178,18 +172,9 @@ def test_translation_udf_on_error_handling(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['translation_text', 'error_message']
 
-    # assertions
-    are_new_columns_none = all(
-        all(result_df[col].isnull()) for col in new_columns[:-1])
-    has_valid_error_message = all(
-        'Traceback' in row for row in result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape == (len(languages), len(columns) + len(new_columns) - 1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    assert all((
-        are_new_columns_none,
-        has_valid_error_message,
-        has_valid_shape,
-        has_valid_column_number,
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
+            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+            and result == ErrorMessageMatcher()
+    )
