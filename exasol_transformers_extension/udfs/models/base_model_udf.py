@@ -124,11 +124,17 @@ class BaseModelUDF(ABC):
         unique_values = dataframe_operations.get_unique_values(
             batch_df, constants.ORDERED_COLUMNS, sort=True)
         for model_name, bucketfs_conn, token_conn, sub_dir in unique_values:
+            selections = (
+                    (batch_df['model_name'] == model_name) &
+                    (batch_df['bucketfs_conn'] == bucketfs_conn) &
+                    (batch_df['sub_dir'] == sub_dir)
+            )
+            if token_conn is None:
+                selections = selections & pd.isnull(batch_df['token_conn'])
+            else:
+                selections = selections & (batch_df['token_conn'] == token_conn)
             model_df = batch_df[
-                (batch_df['model_name'] == model_name) &
-                (batch_df['bucketfs_conn'] == bucketfs_conn) &
-                (batch_df['token_conn'] == token_conn) &
-                (batch_df['sub_dir'] == sub_dir)]
+                selections]
 
             yield model_df
 
