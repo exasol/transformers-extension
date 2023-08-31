@@ -92,7 +92,7 @@ class LanguageContainerDeployer:
             bucketfs_use_https: bool, bucketfs_user: str, container_file: Path,
             bucketfs_password: str, bucket: str, path_in_bucket: str,
             dsn: str, db_user: str, db_password: str, language_alias: str,
-            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
+            ssl_cert_path: str = None, use_ssl_cert_validation: bool = True):
 
         websocket_sslopt = {
             "cert_reqs": ssl.CERT_REQUIRED,

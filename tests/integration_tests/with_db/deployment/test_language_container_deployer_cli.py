@@ -170,7 +170,8 @@ def test_language_container_deployer_cli_with_check_cert(
         bucketfs_config: config.BucketFs
 ):
     use_ssl_cert_validation = True
-    expected_exception_message = 'Connection exception - Client connection must be encrypted.'
+    expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
+                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
     test_name: str = request.node.name
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
@@ -180,7 +181,7 @@ def test_language_container_deployer_cli_with_check_cert(
     dsn = f"{exasol_config.host}:{exasol_config.port}"
     with revert_language_settings(pyexasol_connection):
         result = call_language_definition_deployer_cli(dsn=dsn,
-                                                       container_path=None,
+                                                       container_path=container_path,
                                                        language_alias=language_alias,
                                                        version=version,
                                                        exasol_config=exasol_config,

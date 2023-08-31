@@ -19,7 +19,8 @@ def test_scripts_deployer_cli(language_alias: str,
         "--db-user", exasol_config.username,
         "--db-pass", exasol_config.password,
         "--schema", schema_name,
-        "--language-alias", language_alias
+        "--language-alias", language_alias,
+        "--use_ssl_cert_validation", False
     ]
     runner = CliRunner()
     result = runner.invoke(deploy.main, args_list)
@@ -44,7 +45,8 @@ def test_scripts_deployer_cli_with_encryption_verfiy(language_alias: str,
         "--language-alias", language_alias,
         "--use_ssl_cert_validation", True
     ]
-    expected_exception_message = 'Connection exception - Client connection must be encrypted.'
+    expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
+                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
     runner = CliRunner()
     result = runner.invoke(deploy.main, args_list)
     assert result.exit_code == 1 \
