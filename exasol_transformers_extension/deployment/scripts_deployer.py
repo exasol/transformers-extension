@@ -47,18 +47,22 @@ class ScriptsDeployer:
 
     @classmethod
     def run(cls, dsn: str, user: str, password: str,
-            schema: str, language_alias: str, use_ssl_cert: bool = True):
+            schema: str, language_alias: str,
+            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
+        websocket_sslopt = {
+            "cert_reqs": ssl.CERT_REQUIRED,
+        }
+        if not use_ssl_cert_validation:
+            websocket_sslopt["cert_reqs"] = ssl.CERT_NONE
 
-        websocket_sslopt = {}
-        if use_ssl_cert:
-            websocket_sslopt = {
-                "cert_reqs": ssl.CERT_NONE,
-            }
+        if ssl_cert_path is not None:
+            websocket_sslopt["ca_certs"] = ssl_cert_path
+
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
             user=user,
             password=password,
-            encryption=use_ssl_cert,
+            encryption=True,
             websocket_sslopt=websocket_sslopt
         )
 

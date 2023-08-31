@@ -6,7 +6,7 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from pyexasol import ExaConnection
+from pyexasol import ExaConnection, ExaRequestError
 from pytest_itde import config
 
 from exasol_transformers_extension import deploy
@@ -40,7 +40,7 @@ def call_language_definition_deployer_cli(dsn: str,
                                           version: Optional[str],
                                           exasol_config: config.Exasol,
                                           bucketfs_config: config.BucketFs,
-                                          use_ssl: bool = False):
+                                          use_ssl_cert_validation: bool = False):
     parsed_url = urlparse(bucketfs_config.url)
     args_list = [
         "language-container",
@@ -56,7 +56,7 @@ def call_language_definition_deployer_cli(dsn: str,
         "--db-user", exasol_config.username,
         "--db-pass", exasol_config.password,
         "--language-alias", language_alias,
-        "--use_ssl_cert", use_ssl
+        "--use_ssl_cert_validation", use_ssl_cert_validation
     ]
     if version is not None:
         args_list += [
@@ -160,12 +160,8 @@ def test_language_container_deployer_cli_with_missing_container_option(
                and result.exception.args[0] == expected_exception_message \
                and type(result.exception) == ValueError
 
-def assert_encryption_used():
 
-    pass
-
-
-def test_language_container_deployer_cli_with_use_SSL(
+def test_language_container_deployer_cli_with_check_cert(
         request: FixtureRequest,
         export_slc: ExportInfo,
         pyexasol_connection: ExaConnection,
@@ -173,11 +169,12 @@ def test_language_container_deployer_cli_with_use_SSL(
         exasol_config: config.Exasol,
         bucketfs_config: config.BucketFs
 ):
-    use_ssl = True
+    use_ssl_cert_validation = True
+    expected_exception_message = 'Connection exception - Client connection must be encrypted.'
     test_name: str = request.node.name
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
-    #container_path = export_slc.cache_file
+    container_path = export_slc.cache_file
     version = None
     create_schema(pyexasol_connection, schema)
     dsn = f"{exasol_config.host}:{exasol_config.port}"
@@ -188,10 +185,7 @@ def test_language_container_deployer_cli_with_use_SSL(
                                                        version=version,
                                                        exasol_config=exasol_config,
                                                        bucketfs_config=bucketfs_config,
-                                                       use_ssl=use_ssl)
-        assert result.exit_code == 0 and result.exception == None and result.stdout == ""
-        assert_udf_running(connection_factory=connection_factory,
-                           exasol_config=exasol_config,
-                           language_alias=language_alias,
-                           schema=schema)
-        assert_encryption_used()
+                                                       use_ssl_cert_validation=use_ssl_cert_validation)
+        assert result.exit_code == 1 \
+               and result.exception.args[0] == expected_exception_message \
+               and type(result.exception) == ExaRequestError

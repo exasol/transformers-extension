@@ -91,18 +91,23 @@ class LanguageContainerDeployer:
     def run(cls, bucketfs_name: str, bucketfs_host: str, bucketfs_port: int,
             bucketfs_use_https: bool, bucketfs_user: str, container_file: Path,
             bucketfs_password: str, bucket: str, path_in_bucket: str,
-            dsn: str, db_user: str, db_password: str, language_alias: str, use_ssl_cert: bool):
+            dsn: str, db_user: str, db_password: str, language_alias: str,
+            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
 
-        websocket_sslopt = {}
-        if use_ssl_cert:
-            websocket_sslopt = {
-                "cert_reqs": ssl.CERT_NONE,
-            }
+        websocket_sslopt = {
+            "cert_reqs": ssl.CERT_REQUIRED,
+        }
+        if not use_ssl_cert_validation:
+            websocket_sslopt["cert_reqs"] = ssl.CERT_NONE
+
+        if ssl_cert_path is not None:
+            websocket_sslopt["ca_certs"] = ssl_cert_path
+
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
             user=db_user,
             password=db_password,
-            encryption=use_ssl_cert,
+            encryption=True,
             websocket_sslopt=websocket_sslopt
         )
 

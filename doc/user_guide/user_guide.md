@@ -106,8 +106,12 @@ deployment script below with the desired version. (see GitHub Releases
       --path-in-bucket <PATH_IN_BUCKET> \
       --language-alias <LANGUAGE_ALIAS> \ 
       --version <RELEASE_VERSION> \
-      --use_ssl_cert <USE_SSL_BOOL>
+      --ssl_cert_path <SSL_CERT_PATH> \
+      --use_ssl_cert_validation <USE_CERT_VALIDATION_BOOL>
   ```
+
+The ssl_cert_path is optional if your cert is in an atypical path. The use_ssl_cert_validation is True by default. 
+Use caution if you want to turn this of as it potentially lowers security of you Exasol Database.
 
 #### Customized Installation
 In this installation, you can install the desired or customized language 
@@ -195,7 +199,6 @@ python -m exasol_transformers_extension.deploy scripts
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
     --language-alias <LANGUAGE_ALIAS> \
-    --use_ssl_cert <USE_SSL_BOOL>
 ```
 
 ## Store Models in BucketFS
