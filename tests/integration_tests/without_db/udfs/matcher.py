@@ -70,7 +70,7 @@ class RankMonotonicMatcher:
 
 class ColumnsMatcher:
 
-    def __init__(self, columns: List[str], new_columns: List[str], ):
+    def __init__(self, columns: List[str], new_columns: List[str]):
         self._new_columns = new_columns
         self._columns = columns
         self._expected_columns = self._columns + self._new_columns
