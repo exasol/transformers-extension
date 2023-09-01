@@ -1,11 +1,15 @@
-import torch
-import pytest
-import pandas as pd
 from typing import Dict
-from tests.utils.parameters import model_params
+
+import pandas as pd
+import pytest
+import torch
 from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.text_generation_udf import \
     TextGenerationUDF
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
+    ErrorMessageMatcher, ScoreMatcher, ColumnsMatcher, NoErrorMessageMatcher
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:
@@ -49,7 +53,6 @@ class Context:
     ])
 def test_text_generation_udf(
         description, device_id, n_rows, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -90,20 +93,13 @@ def test_text_generation_udf(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['generated_text', 'error_message']
 
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_generated_text = \
-        result_df["generated_text"].str.contains(text_data).all()
-    has_valid_shape = \
-        result_df.shape == (n_rows, len(columns)+len(new_columns)-1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-
-    assert all((
-        is_error_message_none,
-        has_valid_generated_text,
-        has_valid_shape,
-        has_valid_column_number
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+            and result_df["generated_text"].str.contains(text_data).all()
+    )
 
 
 @pytest.mark.parametrize(
@@ -115,7 +111,6 @@ def test_text_generation_udf(
     ])
 def test_text_generation_udf_on_error_handlig(
         description, device_id, n_rows, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -156,20 +151,9 @@ def test_text_generation_udf_on_error_handlig(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['generated_text', 'error_message']
 
-    # assertions
-    are_new_columns_none = all(
-        all(result_df[col].isnull()) for col in new_columns[:-1])
-    has_valid_error_message = all(
-        'Traceback' in row for row in result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape == (n_rows, len(columns) + len(new_columns) - 1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-
-    assert all((
-        are_new_columns_none,
-        has_valid_error_message,
-        has_valid_shape,
-        has_valid_column_number,
-    ))
-
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+            and result == ErrorMessageMatcher()
+    )

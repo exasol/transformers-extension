@@ -2,6 +2,9 @@ import torch
 import pytest
 import pandas as pd
 from typing import Dict
+
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
+    ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
@@ -58,7 +61,6 @@ class Context:
 def test_token_classification_udf(
         description, device_id, n_rows, agg,
         upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -73,7 +75,7 @@ def test_token_classification_udf(
         bucketfs_conn_name,
         model_params.sub_dir,
         model_params.base_model,
-        model_params.text_data * (i+1),
+        model_params.text_data * (i + 1),
         agg
     ) for i in range(n_rows)]
     columns = [
@@ -96,16 +98,11 @@ def test_token_classification_udf(
     new_columns = \
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
 
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    has_valid_column_number = \
-        list(result_df.columns) == columns[1:] + new_columns
-    assert all((
-        is_error_message_none,
-        has_valid_shape,
-        has_valid_column_number
-    ))
+    result = Result(result_df)
+    assert (
+            result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+    )
 
 
 @pytest.mark.parametrize(
@@ -115,7 +112,6 @@ def test_token_classification_udf(
     ])
 def test_token_classification_udf_with_multiple_aggregation_strategies(
         description, device_id, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -154,21 +150,12 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     new_columns = \
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
 
-
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    has_valid_column_number = \
-        list(result_df.columns) == columns[1:] + new_columns
-    has_valid_agg_strategies = set(result_df['aggregation_strategy'].unique()) \
-                               == {"none", "simple", "max", "average"}
-    assert all((
-        is_error_message_none,
-        has_valid_shape,
-        has_valid_column_number,
-        has_valid_agg_strategies
-    ))
-
+    result = Result(result_df)
+    assert (
+            result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+            and set(result_df['aggregation_strategy'].unique()) == {"none", "simple", "max", "average"}
+    )
 
 
 @pytest.mark.parametrize(
@@ -189,7 +176,6 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
 def test_token_classification_udf_on_error_handling(
         description, device_id, n_rows, agg,
         upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -202,14 +188,16 @@ def test_token_classification_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
+        None,
         model_params.sub_dir,
         "not existing model",
-        model_params.text_data * (i+1),
+        model_params.text_data * (i + 1),
         agg
     ) for i in range(n_rows)]
     columns = [
         'device_id',
         'bucketfs_conn',
+        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -227,18 +215,10 @@ def test_token_classification_udf_on_error_handling(
     new_columns = \
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
 
-    # assertions
-    are_new_columns_none = all(
-        all(result_df[col].isnull()) for col in new_columns[:-1])
-    has_valid_error_message = all(
-        'Traceback' in row for row in result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape == (n_rows, len(columns) + len(new_columns) - 1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    assert all((
-        are_new_columns_none,
-        has_valid_error_message,
-        has_valid_shape,
-        has_valid_column_number,
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+            and result == ErrorMessageMatcher()
+    )

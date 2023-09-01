@@ -5,6 +5,8 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import \
     SequenceClassificationSingleTextUDF
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, ColumnsMatcher, NoErrorMessageMatcher, \
+    NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
 
 
@@ -47,7 +49,6 @@ class Context:
     ])
 def test_sequence_classification_single_text_udf(
         description, device_id, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -86,18 +87,15 @@ def test_sequence_classification_single_text_udf(
 
     grouped_by_inputs = result_df.groupby('text_data')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
-    n_labels_per_input_expected = [2] * n_rows
-
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape == (n_rows*2, len(columns)+len(new_columns)-1)
-    has_valid_label_number = \
-        n_unique_labels_per_input == n_labels_per_input_expected
-    assert all((
-        is_error_message_none,
-        has_valid_shape,
-        has_valid_label_number
-    ))
+    n_labels = 2
+    n_labels_per_input_expected = [n_labels] * n_rows
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows, results_per_row=n_labels)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+            and n_unique_labels_per_input == n_labels_per_input_expected
+    )
 
 
 @pytest.mark.parametrize(
@@ -107,7 +105,6 @@ def test_sequence_classification_single_text_udf(
     ])
 def test_sequence_classification_single_text_udf_on_error_handling(
         description, device_id, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -144,19 +141,10 @@ def test_sequence_classification_single_text_udf_on_error_handling(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['label', 'score', 'error_message']
 
-    # assertions
-    are_new_columns_none = all(
-        all(result_df[col].isnull()) for col in new_columns[:-1])
-    has_valid_error_message = all(
-        'Traceback' in row for row in result_df['error_message'])
-    has_valid_shape = \
-        result_df.shape == (n_rows, len(columns)+len(new_columns)-1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-
-    assert all((
-        are_new_columns_none,
-        has_valid_error_message,
-        has_valid_shape,
-        has_valid_column_number,
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == ErrorMessageMatcher()
+    )
