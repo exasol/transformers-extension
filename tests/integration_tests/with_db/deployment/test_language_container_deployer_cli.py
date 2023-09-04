@@ -173,7 +173,7 @@ def test_language_container_deployer_cli_with_check_cert(
 ):
     use_ssl_cert_validation = True
     expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
-                                 'failed: self-signed certificate in certificate chain (_ssl.c:1131)'
+                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
     test_name: str = request.node.name
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"

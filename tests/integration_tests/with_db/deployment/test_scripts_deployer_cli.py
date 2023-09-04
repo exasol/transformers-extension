@@ -50,7 +50,7 @@ def test_scripts_deployer_cli_with_encryption_verify(language_alias: str,
         "--use_ssl_cert_validation", True
     ]
     expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
-                                 'failed: self-signed certificate in certificate chain (_ssl.c:1131)'
+                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
     runner = CliRunner()
     result = runner.invoke(deploy.main, args_list)
     assert result.exit_code == 1 \
