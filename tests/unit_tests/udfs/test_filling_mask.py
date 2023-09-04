@@ -51,6 +51,8 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model
     SingleTopkMultipleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import \
     SingleTopkMultipleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.filling_mask.token_conn_and_no_token_mixed_single_batch_complete import \
+    TokenConnAndNoTokenMixedSingleBatchComplete
 from tests.unit_tests.udfs.output_matcher import OutputMatcher, \
     Output
 
@@ -101,13 +103,14 @@ def create_mock_metadata(udf_wrapper):
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
     MultipleTopkSingleModelNameMultipleBatch,
     MultipleTopkSingleModelNameSingleBatch,
-    MultipleTokenConnSingleBatchComplete,
     SingleTopkMultipleModelNameSingleBatch,
     SingleTopkMultipleModelNameMultipleBatch,
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch,
-    ErrorOnPredictionMultipleModelMultipleBatch
+    ErrorOnPredictionMultipleModelMultipleBatch,
+    MultipleTokenConnSingleBatchComplete,
+    TokenConnAndNoTokenMixedSingleBatchComplete
 ])
 def test_filling_mask(params):
     executor = UDFMockExecutor()
