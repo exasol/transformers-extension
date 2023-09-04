@@ -9,6 +9,7 @@ from pytest_itde import config
 
 from exasol_transformers_extension import upload_model
 from exasol_transformers_extension.utils import bucketfs_operations
+from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
 
@@ -63,23 +64,28 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
 
         bucketfs_conn_name, schema_name = setup_database
         text_data = "Exasol is an analytics <mask> management software company."
-        input_data = (
-            '',
-            bucketfs_conn_name,
-            sub_dir,
-            model_name,
-            text_data,
-            1)
+        input_data = [
+            (
+                '',
+                bucketfs_conn_name,
+                None,
+                sub_dir,
+                model_name,
+                text_data,
+                1
+            )
+        ]
 
         query = f"SELECT TE_FILLING_MASK_UDF(" \
                 f"t.device_id, " \
                 f"t.bucketfs_conn_name, " \
+                f"t.token_conn_name, " \
                 f"t.sub_dir, " \
                 f"t.model_name, " \
                 f"t.text_data," \
                 f"t.top_k" \
-                f") FROM (VALUES {str(input_data)} " \
-                f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
+                f") FROM (VALUES {python_rows_to_sql(input_data)} " \
+                f"AS t(device_id, bucketfs_conn_name, token_conn_name, sub_dir, " \
                 f"model_name, text_data, top_k));"
 
         # execute sequence classification UDF
