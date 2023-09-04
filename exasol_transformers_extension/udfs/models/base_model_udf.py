@@ -151,7 +151,7 @@ class BaseModelUDF(ABC):
         sub_dir = model_df["sub_dir"].iloc[0]
         token_conn = model_df["token_conn"].iloc[0]
 
-        current_model_key = (bucketfs_conn, sub_dir, model_name)
+        current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
         if self.last_loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.clear_device_memory()

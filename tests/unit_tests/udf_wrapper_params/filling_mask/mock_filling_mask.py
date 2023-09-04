@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional, Tuple
 from tests.unit_tests.udf_wrapper_params.filling_mask.mock_sequence_tokenizer import MockSequenceTokenizer
 
 
@@ -7,22 +7,18 @@ class MockFillingMaskModel:
     def __init__(self, sequence: str, score: float, rank: int):
         self.result = {"sequence": sequence, "score": score, "rank": rank}
 
-    @classmethod
-    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
-        return cls
-
     def to(self, device):
         self.device = device
         return self
 
 
 class MockFillingMaskFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
+    def __init__(self, mock_models: Dict[Tuple[PurePosixPath, str], MockFillingMaskModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_name, cache_dir, use_auth_token):
         # the cache_dir path already has model_name
-        return self.mock_models[cache_dir]
+        return self.mock_models[(cache_dir, use_auth_token)]
 
 
 class MockPipeline:
@@ -30,7 +26,7 @@ class MockPipeline:
 
     def __init__(self,
                  task_type: str,
-                 model: MockFillingMaskModel,
+                 model: "MockFillingMaskModel",
                  tokenizer: MockSequenceTokenizer,
                  device: str,
                  framework: str):
@@ -49,4 +45,3 @@ class MockPipeline:
         input_size = len(text_data)
         single_result = [self.model.result] * top_k
         return [single_result] * input_size if input_size > 1 else single_result
-

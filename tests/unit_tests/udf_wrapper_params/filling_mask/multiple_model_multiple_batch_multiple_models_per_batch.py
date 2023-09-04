@@ -61,16 +61,16 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
         "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
-        "token_conn1": Connection(address='', password="token")
+        "token_conn1": Connection(address='', password="token1")
     }
     mock_factory = MockFillingMaskFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        (PurePosixPath(base_cache_dir1, "sub_dir1", "model1"), "token1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        (PurePosixPath(base_cache_dir2, "sub_dir2", "model2"), "token1"):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1),
-        PurePosixPath(base_cache_dir3, "sub_dir3", "model3"):
+        (PurePosixPath(base_cache_dir3, "sub_dir3", "model3"), "token1"):
             MockFillingMaskModel(sequence="text valid 3", score=0.3, rank=1),
-        PurePosixPath(base_cache_dir4, "sub_dir4", "model4"):
+        (PurePosixPath(base_cache_dir4, "sub_dir4", "model4"), "token1"):
             MockFillingMaskModel(sequence="text valid 4", score=0.4, rank=1)
     })
 
