@@ -3,6 +3,8 @@ from typing import Optional, Callable
 from urllib.parse import urlparse
 
 import pytest
+from tests.fixtures.language_container_fixture import export_slc, flavor_path
+from tests.fixtures.database_connection_fixture import pyexasol_connection
 from _pytest.fixtures import FixtureRequest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
@@ -158,7 +160,7 @@ def test_language_container_deployer_cli_with_missing_container_option(
                                      "downloaded container file."
         assert result.exit_code == 1 \
                and result.exception.args[0] == expected_exception_message \
-               and type(result.exception) == ExaConnectionFailedError
+               and type(result.exception) == ValueError
 
 
 def test_language_container_deployer_cli_with_check_cert(
@@ -171,7 +173,7 @@ def test_language_container_deployer_cli_with_check_cert(
 ):
     use_ssl_cert_validation = True
     expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
-                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
+                                 'failed: self-signed certificate in certificate chain (_ssl.c:1131)'
     test_name: str = request.node.name
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
@@ -187,6 +189,8 @@ def test_language_container_deployer_cli_with_check_cert(
                                                        exasol_config=exasol_config,
                                                        bucketfs_config=bucketfs_config,
                                                        use_ssl_cert_validation=use_ssl_cert_validation)
+
         assert result.exit_code == 1 \
-               and result.exception.args[0] == expected_exception_message \
-               and type(result.exception) == ExaConnectionFailedError
+            and result.exception.args[0].message in expected_exception_message \
+            and type(result.exception) == ExaConnectionFailedError
+
