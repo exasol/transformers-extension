@@ -201,8 +201,3 @@ def test_language_container_deployer_cli_with_check_cert(
         assert result.exit_code == 1 \
             and result.exception.args[0].message in expected_exception_message \
             and type(result.exception) == ExaConnectionFailedError
-
-E           AssertionError: assert (1 == 1 and 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)' in
-                                               'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1131)')
-E            +  where 1 = <Result ExaConnection'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)')>.exit_code
-E            +  and   'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)' = ExaConnectionFailedError(ExaConnectionFailedError(...), 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)').message
