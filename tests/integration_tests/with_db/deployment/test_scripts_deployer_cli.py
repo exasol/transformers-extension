@@ -24,7 +24,7 @@ def test_scripts_deployer_cli(language_alias: str,
         "--db-pass", exasol_config.password,
         "--schema", schema_name,
         "--language-alias", language_alias,
-        "--use_ssl_cert_validation", False
+        "--no-use-ssl-cert-validation"
     ]
     runner = CliRunner()
     result = runner.invoke(deploy.main, args_list)
@@ -47,7 +47,7 @@ def test_scripts_deployer_cli_with_encryption_verify(language_alias: str,
         "--db-pass", exasol_config.password,
         "--schema", schema_name,
         "--language-alias", language_alias,
-        "--use_ssl_cert_validation", True
+        "--use-ssl-cert-validation"
     ]
     expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
                                  'failed: self signed certificate in certificate chain (_ssl.c:1131)'

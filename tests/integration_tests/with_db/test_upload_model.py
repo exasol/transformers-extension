@@ -45,7 +45,7 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
         "--bucketfs-name", bucketfs_params.name,
         "--bucketfs-host", host,
         "--bucketfs-port", port,
-        "--bucketfs_use-https", False,
+        "--bucketfs-use-https", False,
         "--bucketfs-user", bucketfs_config.username,
         "--bucketfs-password", bucketfs_config.password,
         "--bucket", bucketfs_params.bucket,

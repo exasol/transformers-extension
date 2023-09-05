@@ -5,7 +5,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import ssl
 
 class ScriptsDeployer:
     def __init__(self, language_alias: str, schema: str,
@@ -49,14 +48,7 @@ class ScriptsDeployer:
     def run(cls, dsn: str, user: str, password: str,
             schema: str, language_alias: str,
             ssl_cert_path: str, use_ssl_cert_validation: bool = True):
-        websocket_sslopt = {
-            "cert_reqs": ssl.CERT_REQUIRED,
-        }
-        if not use_ssl_cert_validation:
-            websocket_sslopt["cert_reqs"] = ssl.CERT_NONE
-
-        if ssl_cert_path is not None:
-            websocket_sslopt["ca_certs"] = ssl_cert_path
+        websocket_sslopt = utils.set_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
 
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,

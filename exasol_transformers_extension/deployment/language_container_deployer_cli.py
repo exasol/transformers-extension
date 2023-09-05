@@ -10,7 +10,7 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 @click.option('--bucketfs-name', type=str, required=True)
 @click.option('--bucketfs-host', type=str, required=True)
 @click.option('--bucketfs-port', type=int, required=True)
-@click.option('--bucketfs_use-https', type=bool, default=False)
+@click.option('--bucketfs-use-https', type=bool, default=False)
 @click.option('--bucketfs-user', type=str, required=True, default="w")
 @click.option('--bucketfs-password', prompt='bucketFS password', hide_input=True,
               default=lambda: os.environ.get(
@@ -26,8 +26,8 @@ from exasol_transformers_extension.deployment.language_container_deployer import
               default=lambda: os.environ.get(
                   utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
-@click.option('--ssl_cert_path', type=str, default="")
-@click.option('--use_ssl_cert_validation', type=bool, default=True)
+@click.option('--ssl-cert-path', type=str, default="")
+@click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 def language_container_deployer_main(
         bucketfs_name: str,
         bucketfs_host: str,

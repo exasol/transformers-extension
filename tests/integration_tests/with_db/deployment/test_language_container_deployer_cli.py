@@ -49,7 +49,7 @@ def call_language_definition_deployer_cli(dsn: str,
         "--bucketfs-name", bucketfs_params.name,
         "--bucketfs-host", parsed_url.hostname,
         "--bucketfs-port", parsed_url.port,
-        "--bucketfs_use-https", False,
+        "--bucketfs-use-https", False,
         "--bucketfs-user", bucketfs_config.username,
         "--bucketfs-password", bucketfs_config.password,
         "--bucket", bucketfs_params.bucket,
@@ -58,8 +58,16 @@ def call_language_definition_deployer_cli(dsn: str,
         "--db-user", exasol_config.username,
         "--db-pass", exasol_config.password,
         "--language-alias", language_alias,
-        "--use_ssl_cert_validation", use_ssl_cert_validation
+        "--no-use-ssl-cert-validation"
     ]
+    if use_ssl_cert_validation:
+        args_list += [
+            "--use-ssl-cert-validation"
+        ]
+    else:
+        args_list += [
+            "--no-use-ssl-cert-validation"
+        ]
     if version is not None:
         args_list += [
             "--version", version,
@@ -194,3 +202,7 @@ def test_language_container_deployer_cli_with_check_cert(
             and result.exception.args[0].message in expected_exception_message \
             and type(result.exception) == ExaConnectionFailedError
 
+E           AssertionError: assert (1 == 1 and 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)' in
+                                               'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1131)')
+E            +  where 1 = <Result ExaConnection'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)')>.exit_code
+E            +  and   'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)' = ExaConnectionFailedError(ExaConnectionFailedError(...), 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1131)').message

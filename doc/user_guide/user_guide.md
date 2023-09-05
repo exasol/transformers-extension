@@ -101,17 +101,19 @@ deployment script below with the desired version. (see GitHub Releases
       --bucketfs-port <BUCKETFS_PORT> \
       --bucketfs-user <BUCKETFS_USER> \
       --bucketfs-password <BUCKETFS_PASSWORD> \
-      --bucketfs_use-https <USE_HTTPS_BOOL> \
+      --bucketfs-use-https <USE_HTTPS_BOOL> \
       --bucket <BUCKETFS_NAME> \
       --path-in-bucket <PATH_IN_BUCKET> \
       --language-alias <LANGUAGE_ALIAS> \ 
       --version <RELEASE_VERSION> \
-      --ssl_cert_path <SSL_CERT_PATH> \
-      --use_ssl_cert_validation <USE_CERT_VALIDATION_BOOL>
+      --ssl-cert-path <ssl-cert-path> \
+      --use-ssl-cert-validation \
+      --no-use-ssl-cert-valiation
   ```
-
-The ssl_cert_path is optional if your cert is in an atypical path. The use_ssl_cert_validation is True by default. 
-Use caution if you want to turn this of as it potentially lowers security of you Exasol Database.
+The `--ssl-cert-path` is optional if your cert is in an atypical path. The option `--use-ssl-cert-validation` 
+is the default, you can disable it with `--no-use-ssl-cert-validation`.
+Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
+Database connection.
 
 #### Customized Installation
 In this installation, you can install the desired or customized language 
@@ -198,7 +200,7 @@ python -m exasol_transformers_extension.deploy scripts
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
-    --language-alias <LANGUAGE_ALIAS> \
+    --language-alias <LANGUAGE_ALIAS>
 ```
 
 ## Store Models in BucketFS
