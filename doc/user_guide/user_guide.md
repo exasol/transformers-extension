@@ -110,8 +110,8 @@ deployment script below with the desired version. (see GitHub Releases
       --use-ssl-cert-validation \
       --no-use-ssl-cert-valiation
   ```
-The `--ssl-cert-path` is optional if your cert is in an atypical path. The option `--use-ssl-cert-validation` 
-is the default, you can disable it with `--no-use-ssl-cert-validation`.
+The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
+The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
 Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
 Database connection.
 

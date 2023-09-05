@@ -5,7 +5,7 @@ from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 import logging
 from exasol_transformers_extension.utils.bucketfs_operations import \
     create_bucketfs_location
-from exasol_transformers_extension.deployment.deployment_utils import set_websocket_ssl_options
+from exasol_transformers_extension.deployment.deployment_utils import get_websocket_ssl_options
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class LanguageContainerDeployer:
             dsn: str, db_user: str, db_password: str, language_alias: str,
             ssl_cert_path: str = None, use_ssl_cert_validation: bool = True):
 
-        websocket_sslopt = set_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
+        websocket_sslopt = get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
 
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,

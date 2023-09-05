@@ -52,7 +52,7 @@ def _concatenate_slc_parts(tmp_dir):
     return slc_final_path
 
 
-def set_websocket_ssl_options(use_ssl_cert_validation: bool, ssl_cert_path: str):
+def get_websocket_ssl_options(use_ssl_cert_validation: bool, ssl_cert_path: str):
     websocket_sslopt = {
         "cert_reqs": ssl.CERT_REQUIRED,
     }

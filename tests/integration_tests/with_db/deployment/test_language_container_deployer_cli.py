@@ -57,8 +57,7 @@ def call_language_definition_deployer_cli(dsn: str,
         "--dsn", dsn,
         "--db-user", exasol_config.username,
         "--db-pass", exasol_config.password,
-        "--language-alias", language_alias,
-        "--no-use-ssl-cert-validation"
+        "--language-alias", language_alias
     ]
     if use_ssl_cert_validation:
         args_list += [
