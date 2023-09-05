@@ -2,6 +2,9 @@ import torch
 import pytest
 import pandas as pd
 from typing import Dict
+
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
+    ErrorMessageMatcher, ScoreMatcher, RankDTypeMatcher, NoErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.question_answering_udf import \
@@ -54,7 +57,6 @@ class Context:
 def test_question_answering_udf(
         description, device_id, n_rows,
         top_k, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -94,27 +96,15 @@ def test_question_answering_udf(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['answer', 'score', 'rank', 'error_message']
 
-    # assertions
-    is_score_typed_as_float = result_df['score'].dtypes == 'float'
-    is_rank_typed_as_int = result_df['rank'].dtypes == 'int'
-    is_error_message_none = not any(result_df['error_message'])
-    has_valid_shape =  \
-        result_df.shape == (n_rows * top_k, len(columns)+len(new_columns)-1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-    is_rank_correct = \
-        all([result_df[row*top_k: top_k + row*top_k]
-            .sort_values(by='score', ascending=False)['rank']
-            .is_monotonic for row in range(n_rows)])
-
-    assert all((
-        is_score_typed_as_float,
-        is_rank_typed_as_int,
-        is_error_message_none,
-        has_valid_shape,
-        has_valid_column_number,
-        is_rank_correct
-    ))
+    result = Result(result_df)
+    assert (
+            result == ScoreMatcher()
+            and result == RankDTypeMatcher()
+            and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=top_k)
+            and result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows, results_per_row=top_k)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+    )
 
 
 @pytest.mark.parametrize(
@@ -131,7 +121,6 @@ def test_question_answering_udf(
 def test_question_answering_udf_on_error_handling(
         description, device_id, n_rows,
         top_k, upload_base_model_to_local_bucketfs):
-
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
@@ -171,19 +160,10 @@ def test_question_answering_udf_on_error_handling(
     result_df = ctx.get_emitted()[0][0]
     new_columns = ['answer', 'score', 'rank', 'error_message']
 
-    # assertions
-    are_new_columns_none = all(
-        all(result_df[col].isnull()) for col in new_columns[:-1])
-    has_valid_error_message = all(
-        'Traceback' in row for row in result_df['error_message'])
-    has_valid_shape =  \
-        result_df.shape == (n_rows, len(columns)+len(new_columns)-1)
-    has_valid_column_number = \
-        result_df.shape[1] == len(columns) + len(new_columns) - 1
-
-    assert all((
-        are_new_columns_none,
-        has_valid_error_message,
-        has_valid_shape,
-        has_valid_column_number,
-    ))
+    result = Result(result_df)
+    assert (
+            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+            and result == ErrorMessageMatcher()
+    )
