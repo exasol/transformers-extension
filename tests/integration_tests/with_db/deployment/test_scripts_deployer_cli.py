@@ -56,3 +56,4 @@ def test_scripts_deployer_cli_with_encryption_verify(language_alias: str,
     assert result.exit_code == 1 \
            and result.exception.args[0].message in expected_exception_message \
            and type(result.exception) == ExaConnectionFailedError
+
