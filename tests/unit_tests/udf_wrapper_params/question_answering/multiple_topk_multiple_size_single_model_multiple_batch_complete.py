@@ -39,32 +39,34 @@ class MultipleTopkMultipleSizeSingleModelNameMultipleBatch:
     top_k3_for_datasize2 = 1
     top_k4_for_datasize2 = 2
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "question",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "question",
                    "context", top_k1_for_datasize1)] * data_size1 + \
-                 [(None, "bfs_conn1", "sub_dir1", "model2", "question",
+                 [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model2", "question",
                    "context", top_k2_for_datasize1)] * data_size1 + \
-                 [(None, "bfs_conn1", "sub_dir1", "model3", "question",
+                 [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model3", "question",
                    "context", top_k3_for_datasize2)] * data_size2 + \
-                 [(None, "bfs_conn1", "sub_dir1", "model4", "question",
+                 [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model4", "question",
                    "context", top_k4_for_datasize2)] * data_size2
 
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "question", "context",
                     top_k1_for_datasize1, "answer 1", 0.1, 1, None)
                    ] * data_size1 * top_k1_for_datasize1 + \
-                  [("bfs_conn1", "sub_dir1", "model2", "question", "context",
+                  [("bfs_conn1", "token_conn1", "sub_dir1", "model2", "question", "context",
                     top_k2_for_datasize1, "answer 2", 0.2, 1, None)
                    ] * data_size1 * top_k2_for_datasize1 + \
-                  [("bfs_conn1", "sub_dir1", "model3", "question", "context",
+                  [("bfs_conn1", "token_conn1", "sub_dir1", "model3", "question", "context",
                     top_k3_for_datasize2, "answer 3", 0.3, 1, None)
                    ] * data_size2 * top_k3_for_datasize2 + \
-                  [("bfs_conn1", "sub_dir1", "model4", "question", "context",
+                  [("bfs_conn1", "token_conn1", "sub_dir1", "model4", "question", "context",
                     top_k4_for_datasize2, "answer 4", 0.4, 1, None)
                    ] * data_size2 * top_k4_for_datasize2
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token")
+    }
 
     mock_factory = MockQuestionAnsweringFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

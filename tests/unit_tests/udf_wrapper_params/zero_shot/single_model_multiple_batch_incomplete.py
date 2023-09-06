@@ -33,15 +33,17 @@ class SingleModelMultipleBatchIncomplete:
     batch_size = 2
     data_size = 5
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                    "text1", "label1")] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1",
                     "label1", "label1", 0.1, 1, None)] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token")
+    }
 
     mock_factory = MockZeroShotFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

@@ -87,33 +87,33 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 
-    inputs_single_text = [(None, "bfs_conn1", "sub_dir1",
+    inputs_single_text = [(None, "bfs_conn1", "token_conn1", "sub_dir1",
                            "model1", "My test text")] * data_size + \
-                         [(None, "bfs_conn2", "sub_dir2",
+                         [(None, "bfs_conn2", "token_conn1", "sub_dir2",
                            "model2", "My test text")] * data_size + \
-                         [(None, "bfs_conn3", "sub_dir3",
+                         [(None, "bfs_conn3", "token_conn1", "sub_dir3",
                            "model3", "My test text")] * data_size + \
-                         [(None, "bfs_conn4", "sub_dir4",
+                         [(None, "bfs_conn4", "token_conn1", "sub_dir4",
                            "model4", "My test text")] * data_size
-    inputs_pair_text = [(None, "bfs_conn1", "sub_dir1", "model1",
+    inputs_pair_text = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                          "My text 1", "My text 2")] * data_size + \
-                       [(None, "bfs_conn2", "sub_dir2", "model2",
+                       [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2",
                          "My text 1", "My text 2")] * data_size + \
-                       [(None, "bfs_conn3", "sub_dir3", "model3",
+                       [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3",
                          "My text 1", "My text 2")] * data_size + \
-                       [(None, "bfs_conn4", "sub_dir4", "model4",
+                       [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4",
                          "My text 1", "My text 2")] * data_size
 
-    outputs_single_text = [("bfs_conn1", "sub_dir1", "model1",
+    outputs_single_text = [("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "My test text", "label1", 0.21, None),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "My test text", "label2", 0.24, None),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "My test text", "label3", 0.26, None),
-                           ("bfs_conn1", "sub_dir1", "model1",
+                           ("bfs_conn1", "token_conn1", "sub_dir1", "model1",
                             "My test text", "label4", 0.29, None)
                            ] * data_size + \
-                          [("bfs_conn2", "sub_dir2", "model2",
+                          [("bfs_conn2", "token_conn1", "sub_dir2", "model2",
                             "My test text", "label1", 0.21, None),
                            ("bfs_conn2", "sub_dir2", "model2",
                             "My test text", "label2", 0.24, None),
@@ -122,7 +122,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                            ("bfs_conn2", "sub_dir2", "model2",
                             "My test text", "label4", 0.29, None)
                            ] * data_size + \
-                          [("bfs_conn3", "sub_dir3", "model3",
+                          [("bfs_conn3", "token_conn1", "sub_dir3", "model3",
                             "My test text", "label1", 0.21, None),
                            ("bfs_conn3", "sub_dir3", "model3",
                             "My test text", "label2", 0.24, None),
@@ -131,24 +131,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                            ("bfs_conn3", "sub_dir3", "model3",
                             "My test text", "label4", 0.29, None)
                            ] * data_size + \
-                          [("bfs_conn4", "sub_dir4", "model4",
+                          [("bfs_conn4", "token_conn1", "sub_dir4", "model4",
                             "My test text", "label1", 0.21, None),
-                           ("bfs_conn4", "sub_dir4", "model4",
+                           ("bfs_conn4", "token_conn1", "sub_dir4", "model4",
                             "My test text", "label2", 0.24, None),
-                           ("bfs_conn4", "sub_dir4", "model4",
+                           ("bfs_conn4", "token_conn1", "sub_dir4", "model4",
                             "My test text", "label3", 0.26, None),
-                           ("bfs_conn4", "sub_dir4", "model4",
+                           ("bfs_conn4", "token_conn1", "sub_dir4", "model4",
                             "My test text", "label4", 0.29, None)] * data_size
 
-    outputs_text_pair = [("bfs_conn1", "sub_dir1", "model1", "My text 1",
+    outputs_text_pair = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label1", 0.21, None),
-                         ("bfs_conn1", "sub_dir1", "model1", "My text 1",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label2", 0.24, None),
-                         ("bfs_conn1", "sub_dir1", "model1", "My text 1",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label3", 0.26, None),
-                         ("bfs_conn1", "sub_dir1", "model1", "My text 1",
+                         ("bfs_conn1", "token_conn1", "sub_dir1", "model1", "My text 1",
                           "My text 2", "label4", 0.29, None)] * data_size + \
-                        [("bfs_conn2", "sub_dir2", "model2", "My text 1",
+                        [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "My text 1",
                           "My text 2", "label1", 0.21, None),
                          ("bfs_conn2", "sub_dir2", "model2", "My text 1",
                           "My text 2", "label2", 0.24, None),
@@ -156,7 +156,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                           "My text 2", "label3", 0.26, None),
                          ("bfs_conn2", "sub_dir2", "model2", "My text 1",
                           "My text 2", "label4", 0.29, None)] * data_size + \
-                        [("bfs_conn3", "sub_dir3", "model3", "My text 1",
+                        [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "My text 1",
                           "My text 2", "label1", 0.21, None),
                          ("bfs_conn3", "sub_dir3", "model3", "My text 1",
                           "My text 2", "label2", 0.24, None),
@@ -164,13 +164,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                           "My text 2", "label3", 0.26, None),
                          ("bfs_conn3", "sub_dir3", "model3", "My text 1",
                           "My text 2", "label4", 0.29, None)] * data_size + \
-                        [("bfs_conn4", "sub_dir4", "model4", "My text 1",
+                        [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "My text 1",
                           "My text 2", "label1", 0.21, None),
-                         ("bfs_conn4", "sub_dir4", "model4", "My text 1",
+                         ("bfs_conn4", "token_conn1", "sub_dir4", "model4", "My text 1",
                           "My text 2", "label2", 0.24, None),
-                         ("bfs_conn4", "sub_dir4", "model4", "My text 1",
+                         ("bfs_conn4", "token_conn1", "sub_dir4", "model4", "My text 1",
                           "My text 2", "label3", 0.26, None),
-                         ("bfs_conn4", "sub_dir4", "model4", "My text 1",
+                         ("bfs_conn4", "token_conn1", "sub_dir4", "model4", "My text 1",
                           "My text 2", "label4", 0.29, None)] * data_size
 
     udf_wrapper_single_text = udf_wrapper_single_text
