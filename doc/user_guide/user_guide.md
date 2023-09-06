@@ -101,11 +101,19 @@ deployment script below with the desired version. (see GitHub Releases
       --bucketfs-port <BUCKETFS_PORT> \
       --bucketfs-user <BUCKETFS_USER> \
       --bucketfs-password <BUCKETFS_PASSWORD> \
+      --bucketfs-use-https <USE_HTTPS_BOOL> \
       --bucket <BUCKETFS_NAME> \
       --path-in-bucket <PATH_IN_BUCKET> \
       --language-alias <LANGUAGE_ALIAS> \ 
-      --version <RELEASE_VERSION>       
+      --version <RELEASE_VERSION> \
+      --ssl-cert-path <ssl-cert-path> \
+      --use-ssl-cert-validation \
+      --no-use-ssl-cert-valiation
   ```
+The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
+The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
+Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
+Database connection.
 
 #### Customized Installation
 In this installation, you can install the desired or customized language 

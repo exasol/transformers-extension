@@ -20,7 +20,9 @@ def test_scripts_deployer(
         user=exasol_config.username,
         password=exasol_config.password,
         schema=schema_name,
-        language_alias=language_alias
+        language_alias=language_alias,
+        ssl_cert_path="",
+        use_ssl_cert_validation=False
     )
     assert DBQueries.check_all_scripts_deployed(
         pyexasol_connection, schema_name)
@@ -49,7 +51,9 @@ def test_scripts_deployer_no_schema_creation_permission(
         user=limited_user,
         password=limited_user_password,
         schema=schema_name,
-        language_alias=language_alias
+        language_alias=language_alias,
+        ssl_cert_path="",
+        use_ssl_cert_validation=False
     )
     assert DBQueries.check_all_scripts_deployed(
         pyexasol_connection, schema_name)

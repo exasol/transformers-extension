@@ -4,6 +4,7 @@ import logging
 import requests
 import tempfile
 import subprocess
+import ssl
 from pathlib import Path
 from getpass import getpass
 from contextlib import contextmanager
@@ -49,6 +50,18 @@ def _concatenate_slc_parts(tmp_dir):
                    stderr=subprocess.STDOUT,
                    shell=True)
     return slc_final_path
+
+
+def get_websocket_ssl_options(use_ssl_cert_validation: bool, ssl_cert_path: str):
+    websocket_sslopt = {
+        "cert_reqs": ssl.CERT_REQUIRED,
+    }
+    if not use_ssl_cert_validation:
+        websocket_sslopt["cert_reqs"] = ssl.CERT_NONE
+
+    if ssl_cert_path is not None:
+        websocket_sslopt["ca_certs"] = ssl_cert_path
+    return websocket_sslopt
 
 
 @contextmanager

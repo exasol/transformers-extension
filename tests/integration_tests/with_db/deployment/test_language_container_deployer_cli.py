@@ -3,10 +3,12 @@ from typing import Optional, Callable
 from urllib.parse import urlparse
 
 import pytest
+from tests.fixtures.language_container_fixture import export_slc, flavor_path
+from tests.fixtures.database_connection_fixture import pyexasol_connection
 from _pytest.fixtures import FixtureRequest
 from click.testing import CliRunner
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from pyexasol import ExaConnection
+from pyexasol import ExaConnection, ExaConnectionFailedError
 from pytest_itde import config
 
 from exasol_transformers_extension import deploy
@@ -39,14 +41,15 @@ def call_language_definition_deployer_cli(dsn: str,
                                           language_alias: str,
                                           version: Optional[str],
                                           exasol_config: config.Exasol,
-                                          bucketfs_config: config.BucketFs):
+                                          bucketfs_config: config.BucketFs,
+                                          use_ssl_cert_validation: bool = False):
     parsed_url = urlparse(bucketfs_config.url)
     args_list = [
         "language-container",
         "--bucketfs-name", bucketfs_params.name,
         "--bucketfs-host", parsed_url.hostname,
         "--bucketfs-port", parsed_url.port,
-        "--bucketfs_use-https", False,
+        "--bucketfs-use-https", False,
         "--bucketfs-user", bucketfs_config.username,
         "--bucketfs-password", bucketfs_config.password,
         "--bucket", bucketfs_params.bucket,
@@ -56,6 +59,14 @@ def call_language_definition_deployer_cli(dsn: str,
         "--db-pass", exasol_config.password,
         "--language-alias", language_alias
     ]
+    if use_ssl_cert_validation:
+        args_list += [
+            "--use-ssl-cert-validation"
+        ]
+    else:
+        args_list += [
+            "--no-use-ssl-cert-validation"
+        ]
     if version is not None:
         args_list += [
             "--version", version,
@@ -157,4 +168,36 @@ def test_language_container_deployer_cli_with_missing_container_option(
         assert result.exit_code == 1 \
                and result.exception.args[0] == expected_exception_message \
                and type(result.exception) == ValueError
+
+
+def test_language_container_deployer_cli_with_check_cert(
+        request: FixtureRequest,
+        export_slc: ExportInfo,
+        pyexasol_connection: ExaConnection,
+        connection_factory: Callable[[config.Exasol], ExaConnection],
+        exasol_config: config.Exasol,
+        bucketfs_config: config.BucketFs
+):
+    use_ssl_cert_validation = True
+    expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
+                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
+    test_name: str = request.node.name
+    schema = test_name
+    language_alias = f"PYTHON3_TE_{test_name.upper()}"
+    container_path = export_slc.cache_file
+    version = None
+    create_schema(pyexasol_connection, schema)
+    dsn = f"{exasol_config.host}:{exasol_config.port}"
+    with revert_language_settings(pyexasol_connection):
+        result = call_language_definition_deployer_cli(dsn=dsn,
+                                                       container_path=container_path,
+                                                       language_alias=language_alias,
+                                                       version=version,
+                                                       exasol_config=exasol_config,
+                                                       bucketfs_config=bucketfs_config,
+                                                       use_ssl_cert_validation=use_ssl_cert_validation)
+
+        assert result.exit_code == 1 \
+            and result.exception.args[0].message in expected_exception_message \
+            and type(result.exception) == ExaConnectionFailedError
 

@@ -5,7 +5,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import ssl
 
 class ScriptsDeployer:
     def __init__(self, language_alias: str, schema: str,
@@ -47,16 +46,17 @@ class ScriptsDeployer:
 
     @classmethod
     def run(cls, dsn: str, user: str, password: str,
-            schema: str, language_alias: str):
+            schema: str, language_alias: str,
+            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
+        websocket_sslopt = utils.get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
 
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
             user=user,
             password=password,
             encryption=True,
-            websocket_sslopt={
-                "cert_reqs": ssl.CERT_NONE,
-            }
+            websocket_sslopt=websocket_sslopt
         )
+
         scripts_deployer = cls(language_alias, schema, pyexasol_conn)
         scripts_deployer.deploy_scripts()

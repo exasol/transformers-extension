@@ -14,7 +14,7 @@ from exasol_transformers_extension.deployment import deployment_utils as utils
 @click.option('--bucketfs-name', type=str, required=True)
 @click.option('--bucketfs-host', type=str, required=True)
 @click.option('--bucketfs-port', type=int, required=True)
-@click.option('--bucketfs_use-https', type=bool, default=False)
+@click.option('--bucketfs-use-https', type=bool, default=False)
 @click.option('--bucketfs-user', type=str, required=True, default="w")
 @click.option('--bucketfs-password', prompt='bucketFS password', hide_input=True,
               default=lambda: os.environ.get(

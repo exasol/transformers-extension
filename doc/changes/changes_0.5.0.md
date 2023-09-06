@@ -10,6 +10,7 @@ TBD
 ### Features
 
  - #88: Added custom matcher functions for unit tests
+ - #103: Added option to toggle use of TLS certificate validation for Database connection
  - #42: Update transformers to 4.31 and adapt the model uploader
 
 ### Bug Fixes
