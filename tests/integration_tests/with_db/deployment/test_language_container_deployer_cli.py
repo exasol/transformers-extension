@@ -200,3 +200,4 @@ def test_language_container_deployer_cli_with_check_cert(
         assert result.exit_code == 1 \
             and result.exception.args[0].message in expected_exception_message \
             and type(result.exception) == ExaConnectionFailedError
+
