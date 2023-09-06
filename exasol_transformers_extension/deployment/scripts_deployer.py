@@ -48,7 +48,7 @@ class ScriptsDeployer:
     def run(cls, dsn: str, user: str, password: str,
             schema: str, language_alias: str,
             ssl_cert_path: str, use_ssl_cert_validation: bool = True):
-        websocket_sslopt = utils.set_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
+        websocket_sslopt = utils.get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
 
         pyexasol_conn = pyexasol.connect(
             dsn=dsn,
