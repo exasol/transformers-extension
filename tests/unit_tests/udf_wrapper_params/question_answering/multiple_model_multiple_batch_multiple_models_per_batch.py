@@ -35,21 +35,21 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     data_size = 1
     top_k = 2
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                    "question", "context", top_k)] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2",
                    "question", "context", top_k)] * data_size + \
-                 [(None, "bfs_conn3", "sub_dir3", "model3",
+                 [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3",
                    "question", "context", top_k)] * data_size + \
-                 [(None, "bfs_conn4", "sub_dir4", "model4",
+                 [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4",
                    "question", "context", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "question", "context",
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "question", "context",
                     top_k, "answer 1", 0.1, 1, None)] * data_size * top_k+ \
-                  [("bfs_conn2", "sub_dir2", "model2", "question", "context",
+                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "question", "context",
                     top_k, "answer 2", 0.2, 1, None)] * data_size * top_k + \
-                  [("bfs_conn3", "sub_dir3", "model3", "question", "context",
+                  [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "question", "context",
                     top_k, "answer 3", 0.3, 1, None)] * data_size * top_k + \
-                  [("bfs_conn4", "sub_dir4", "model4", "question", "context",
+                  [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "question", "context",
                     top_k, "answer 4", 0.4, 1, None)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

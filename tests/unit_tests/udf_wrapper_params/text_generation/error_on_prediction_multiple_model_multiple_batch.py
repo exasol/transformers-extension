@@ -35,14 +35,14 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     max_length = 10
     return_full_text = True
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
                    max_length, return_full_text)] * data_size + \
-                 [(None, "bfs_conn2", "sub_dir2", "model2", "error on pred",
+                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2", "error on pred",
                    max_length, return_full_text)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", max_length,
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", max_length,
                     return_full_text, "text 1 generated" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn2", "sub_dir2", "model2", "error on pred",
+                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "error on pred",
                     max_length, return_full_text, None, "Traceback")
                    ] * data_size
 
@@ -51,8 +51,9 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")}
-
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+        "token_conn1": Connection(address='', password="token")
+    }
     mock_factory = MockTextGenerationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
             MockTextGenerationModel(text_data="text 1"),

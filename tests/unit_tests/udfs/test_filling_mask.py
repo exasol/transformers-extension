@@ -29,6 +29,8 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batc
     MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batch_incomplete import \
     MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_token_conn_single_batch_complete import \
+    MultipleTokenConnSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_multiple_batch import \
     MultipleTopkSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_single_batch import \
@@ -49,7 +51,9 @@ from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model
     SingleTopkMultipleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import \
     SingleTopkMultipleModelNameSingleBatch
-from tests.unit_tests.udfs.output_matcher import  OutputMatcher, \
+from tests.unit_tests.udf_wrapper_params.filling_mask.token_conn_and_no_token_mixed_single_batch_complete import \
+    TokenConnAndNoTokenMixedSingleBatchComplete
+from tests.unit_tests.udfs.output_matcher import OutputMatcher, \
     Output
 
 
@@ -60,6 +64,7 @@ def create_mock_metadata(udf_wrapper):
         input_columns=[
             Column("device_id", int, "INTEGER"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
@@ -68,6 +73,7 @@ def create_mock_metadata(udf_wrapper):
         output_type="EMITS",
         output_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
@@ -102,7 +108,9 @@ def create_mock_metadata(udf_wrapper):
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch,
-    ErrorOnPredictionMultipleModelMultipleBatch
+    ErrorOnPredictionMultipleModelMultipleBatch,
+    MultipleTokenConnSingleBatchComplete,
+    TokenConnAndNoTokenMixedSingleBatchComplete
 ])
 def test_filling_mask(params):
     executor = UDFMockExecutor()
@@ -119,7 +127,8 @@ def test_filling_mask(params):
 
     try:
         assert (
-            OutputMatcher(result_output, n_input_columns) == expected_output,
-            params.mock_pipeline.counter == params.expected_model_counter)
+                OutputMatcher(result_output, n_input_columns) == expected_output
+                and params.mock_pipeline.counter == params.expected_model_counter
+        )
     finally:
         params.mock_pipeline.counter = 0

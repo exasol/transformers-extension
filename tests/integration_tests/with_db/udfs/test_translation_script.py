@@ -1,3 +1,4 @@
+from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
 
@@ -13,6 +14,7 @@ def test_translation_script(
         input_data.append((
             '',
             bucketfs_conn_name,
+            None,
             str(model_params.sub_dir),
             model_params.seq2seq_model,
             model_params.text_data,
@@ -24,14 +26,15 @@ def test_translation_script(
     query = f"SELECT TE_TRANSLATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
+            f"t.token_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.text_data, " \
             f"t.source_language, " \
             f"t.target_language, " \
             f"t.max_length" \
-            f") FROM (VALUES {str(tuple(input_data))} " \
-            f"AS t(device_id, bucketfs_conn_name, sub_dir, model_name, " \
+            f") FROM (VALUES {python_rows_to_sql(input_data)} " \
+            f"AS t(device_id, bucketfs_conn_name, token_conn_name, sub_dir, model_name, " \
             f"text_data, source_language, target_language, max_length));"
 
     # execute sequence classification UDF

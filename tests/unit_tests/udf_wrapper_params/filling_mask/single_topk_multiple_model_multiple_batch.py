@@ -10,7 +10,7 @@ def udf_wrapper():
         FillingMaskUDF
     from tests.unit_tests.udf_wrapper_params.filling_mask.mock_sequence_tokenizer \
         import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.filling_mask.\
+    from tests.unit_tests.udf_wrapper_params.filling_mask. \
         single_topk_multiple_model_multiple_batch import \
         SingleTopkMultipleModelNameMultipleBatch as params
 
@@ -34,27 +34,28 @@ class SingleTopkMultipleModelNameMultipleBatch:
     data_size = 2
     top_k = 3
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size + \
-                 [(None, "bfs_conn1", "sub_dir1", "model2",
+                 [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model2",
                    "text <mask> 2", top_k)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 1", 0.1, 1, None)] * data_size * top_k + \
-                  [("bfs_conn1", "sub_dir1", "model2", "text <mask> 2", top_k,
+                  [("bfs_conn1", "token_conn1", "sub_dir1", "model2", "text <mask> 2", top_k,
                     "text valid 2", 0.2, 1, None)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")}
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "token_conn1": Connection(address='', password="token1")
+    }
 
     mock_factory = MockFillingMaskFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        (PurePosixPath(base_cache_dir1, "sub_dir1", "model1"), "token1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model2"):
+        (PurePosixPath(base_cache_dir1, "sub_dir1", "model2"), "token1"):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1)
     })
 
     mock_pipeline = MockPipeline
     udf_wrapper = udf_wrapper
-
