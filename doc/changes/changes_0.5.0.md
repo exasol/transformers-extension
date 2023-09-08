@@ -1,11 +1,13 @@
-# Transformers Extension 0.5.0, released YYYY-MM-DD
+# Transformers Extension 0.5.0, released 2023-09-08
 
-Code name: TBD
+Code name: Support for transformer 4.31
 
 
 ## Summary
 
-TBD
+This release makes the extension compatible with transformers to 4.31 and its new model cache format. 
+Furthermore, it makes the deployment scripts compatible with Exasol v8 by enabling encryption 
+and allows the user to configure the TLS verification.
 
 ### Features
 
@@ -33,6 +35,7 @@ TBD
 ### Documentation
 
  - #93: Added the Developer Guide
+ - #126: Add documentation for token for private models in prediction UDFs
   
 
     
