@@ -5,7 +5,7 @@ Code name: Support for transformer 4.31
 
 ## Summary
 
-This release makes the extension compatible with transformers to 4.31 and its new model cache format. 
+This release makes the extension compatible with Huggingface transformers v.4.31.0 and their new model cache format. 
 Furthermore, it makes the deployment scripts compatible with Exasol v8 by enabling encryption 
 and allows the user to configure the TLS verification.
 
