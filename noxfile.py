@@ -1,4 +1,3 @@
-
 import sys
 from pathlib import Path
 
@@ -14,6 +13,7 @@ from exasol_transformers_extension.deployment.language_container import (
 )
 
 ROOT_PATH = Path(__file__).parent
+EXPORT_PATH = ROOT_PATH / "export"
 
 
 @nox.session(python=False)
@@ -27,7 +27,8 @@ def build_slc(session: nox.Session):
 def export_slc(session: nox.Session):
     flavor_path = find_flavor_path()
     prepare_flavor(flavor_path)
-    export(Path("export"))
+    export(flavor_path, EXPORT_PATH)
+
 
 @nox.session(python=False)
 def unit_tests(session):
