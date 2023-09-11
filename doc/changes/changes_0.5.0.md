@@ -1,4 +1,4 @@
-# Transformers Extension 0.5.0, released 2023-09-08
+# Transformers Extension 0.5.0, released 2023-09-11
 
 Code name: Support for transformer 4.31
 
@@ -20,6 +20,7 @@ and allows the user to configure the TLS verification.
  - #89: Fixed the content of error code config file
  - #100: Enabled encryption for all pyexasol connection to be compatible with Exasol 8
  - #84: Reactivated test after move to AWS
+ - #128: Fix release workflow and remove splitting the SLC
 
 ### Refactorings
 

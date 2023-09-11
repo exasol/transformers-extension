@@ -122,14 +122,8 @@ language container file released in GitHub Releases section.
 
 
 ##### Download Language Container
-   - The language container is split into parts and then uploaded to GitHub Release section.
-   - These parts are named with the `language_container_part_` prefix. 
-   - Please download all parts of the language container from the Releases section. 
+   - Please download the language container archive (*.tar.gz) from the Releases section. 
 (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
-- Before installing the language container, these parts must be combined using the following command::
-```shell
-ls -v language_container_part_* | xargs cat > language_container.tar.gz
-```
 
 ##### Install Language Container
 There are two ways to install the language container: (1) using a python script and (2) manual installation. See the next paragraphs for details.
