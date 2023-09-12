@@ -1,4 +1,4 @@
-# Transformers Extension 0.5.0, released 2023-09-11
+# Transformers Extension 0.5.0, released 2023-09-12
 
 Code name: Support for transformer 4.31
 
