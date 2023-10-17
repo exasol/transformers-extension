@@ -83,7 +83,7 @@ pip install transformers_extension.whl --extra-index-url https://download.pytorc
 ### The Pre-built Language Container
 
 This extension requires the installation of the language container for this 
-extension to run. It can be installed in two ways:Quick and Customized 
+extension to run. It can be installed in two ways: Quick and Customized 
 installations
 
 #### Quick Installation
@@ -147,7 +147,7 @@ There are two ways to install the language container: (1) using a python script 
           --bucket <BUCKETFS_NAME> \
           --path-in-bucket <PATH_IN_BUCKET> \
           --language-alias <LANGUAGE_ALIAS> \ 
-          --container-file <path/to/language_container.tar.gz>       
+          --container-file <path/to/language_container_name.tar.gz>       
       ```
 
   2. *Manual Installation*
