@@ -10,7 +10,7 @@ def get_unique_values(
     Filter given dataframe and return the unique values. Sorts the unique values
     if the sort parameter is set to True
 
-    :param df: Dataframe from which the uniques values are extracted
+    :param df: Dataframe from which the unique values are extracted
     :param columns: List of columns to be filtered and sorted accordingly
     :param sort: Sort the unique values by given columns if True
     """

@@ -125,7 +125,7 @@ def test_language_container_deployer_cli_by_downloading_container(
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
     container_path = None
-    version = "0.2.0"
+    version = "0.5.0"
     create_schema(pyexasol_connection, schema)
     dsn = f"{exasol_config.host}:{exasol_config.port}"
     with revert_language_settings(pyexasol_connection):
@@ -200,4 +200,3 @@ def test_language_container_deployer_cli_with_check_cert(
         assert result.exit_code == 1 \
             and result.exception.args[0].message in expected_exception_message \
             and type(result.exception) == ExaConnectionFailedError
-

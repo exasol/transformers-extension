@@ -48,8 +48,8 @@ class LanguageContainerDeployer:
             f"ALTER {alter_type} SET SCRIPT_LANGUAGES='{new_settings}';"
         return alter_command
 
-    def _update_previous_language_settings(
-            self, alter_type: str, path_in_udf: PurePosixPath) -> str:
+    def _update_previous_language_settings(self, alter_type: str,
+                                           path_in_udf: PurePosixPath) -> str:
         prev_lang_settings = self._get_previous_language_settings(alter_type)
         prev_lang_aliases = prev_lang_settings.split(" ")
         self._check_if_requested_language_alias_already_exists(
