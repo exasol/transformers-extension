@@ -6,11 +6,9 @@ import pytest
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
-from exasol_udf_mock_python.group import Group
-from exasol_udf_mock_python.mock_context import MockContext
-from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol, \
@@ -39,30 +37,6 @@ def create_mock_metadata() -> MockMetaData:
         ]
     )
     return meta
-
-
-def create_mock_udf_context(input_data: List[Tuple[Any, ...]], mock_meta: MockMetaData) -> MockContext:
-    mock_ctx = MockContext(
-        input_groups=iter([Group(input_data)]),
-        metadata=mock_meta,
-    )
-    mock_ctx._next_group()
-    return mock_ctx
-
-
-def create_mock_exa_environment(
-        bfs_conn_name: List[str],
-        bucketfs_connections: List[Connection],
-        mock_meta: MockMetaData,
-        token_conn_name: str,
-        token_conn_obj: Connection) -> MockExaEnvironment:
-    connections_dict = {k: v for k, v in zip(bfs_conn_name, bucketfs_connections)}
-    connections_dict[token_conn_name] = token_conn_obj
-    mock_exa = MockExaEnvironment(
-        metadata=mock_meta,
-        connections=connections_dict
-    )
-    return mock_exa
 
 
 @pytest.mark.parametrize("count", list(range(1, 10)))
@@ -130,7 +104,7 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
         call(url=f'file:///test{i}', user=None, pwd=None)
         for i in range(count)
     ])
-    assert mock_ctx._output_groups[0].rows == [
+    assert mock_ctx.output == [
         (
             f'{sub_directory_names[i]}/{base_model_names[i]}',
             str(mock_model_downloaders[i].upload_to_bucketfs())

@@ -51,7 +51,6 @@ class BaseModelUDF(ABC):
             batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
-
             predictions_df = self.get_predictions_from_batch(batch_df)
             ctx.emit(predictions_df)
 
@@ -66,8 +65,12 @@ class BaseModelUDF(ABC):
         :return: Prediction results of the corresponding batched dataframe
         """
         result_df_list = []
-        for model_df in \
-                self.extract_unique_model_dataframes_from_batch(batch_df):
+
+        unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(self, batch_df)
+        for model_df in unique_model_dataframes:
+            if "error_message" in model_df:
+                result_df_list.append(model_df)
+                continue
             try:
                 self.check_cache(model_df)
             except Exception as exc:
@@ -95,8 +98,7 @@ class BaseModelUDF(ABC):
         :return: List of prediction results
         """
         result_df_list = []
-        for param_based_model_df in \
-                self.extract_unique_param_based_dataframes(model_df):
+        for param_based_model_df in self.extract_unique_param_based_dataframes(model_df):
             try:
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
@@ -105,11 +107,17 @@ class BaseModelUDF(ABC):
                 result_with_error_df = self.get_result_with_error(
                     param_based_model_df, stack_trace)
                 result_df_list.append(result_with_error_df)
-
         return result_df_list
 
     @staticmethod
-    def extract_unique_model_dataframes_from_batch(
+    def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
+        if not (model_name and bucketfs_conn and sub_dir):
+            error_message = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
+                            f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}"
+            raise ValueError(error_message)
+
+    @staticmethod
+    def extract_unique_model_dataframes_from_batch(self,
             batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
@@ -123,12 +131,23 @@ class BaseModelUDF(ABC):
 
         unique_values = dataframe_operations.get_unique_values(
             batch_df, constants.ORDERED_COLUMNS, sort=True)
+
         for model_name, bucketfs_conn, token_conn, sub_dir in unique_values:
+            try:
+                self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
+            except ValueError:
+                stack_trace = traceback.format_exc()
+                result_with_error_df = self.get_result_with_error(
+                    batch_df, stack_trace)
+                yield result_with_error_df
+                return
+
             selections = (
                     (batch_df['model_name'] == model_name) &
                     (batch_df['bucketfs_conn'] == bucketfs_conn) &
                     (batch_df['sub_dir'] == sub_dir)
             )
+
             if token_conn is None:
                 selections = selections & pd.isnull(batch_df['token_conn'])
             else:
