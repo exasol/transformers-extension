@@ -132,7 +132,6 @@ def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bu
 
     udf.run(mock_ctx)
     res = mock_ctx.output
-    print(res)
     error_field = res[0][-1]
     expected_error_start = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
                            f"Found model_name = {model_name},"

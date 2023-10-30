@@ -20,7 +20,6 @@ class DummyImplementationUDF(BaseModelUDF):
 
     def extract_unique_param_based_dataframes(
             self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
-
         yield model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> \
@@ -32,7 +31,6 @@ class DummyImplementationUDF(BaseModelUDF):
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
 
-        # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
         return model_df
