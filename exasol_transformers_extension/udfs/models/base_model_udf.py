@@ -113,7 +113,7 @@ class BaseModelUDF(ABC):
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
         if not (model_name and bucketfs_conn and sub_dir):
             error_message = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
-                            f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}"
+                            f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
             raise ValueError(error_message)
 
     @staticmethod

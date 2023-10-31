@@ -11,6 +11,7 @@ from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, cr
 from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplementationUDF
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol
 from tests.utils.mock_cast import mock_cast
+import re
 
 
 def create_mock_metadata() -> MockMetaData:
@@ -41,8 +42,8 @@ def create_mock_metadata() -> MockMetaData:
     return meta
 
 
-@pytest.mark.parametrize("description, bucketfs_conn_name, bucketfs_conn ,"
-                         "sub_dir, model_name", [
+@pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
+                         "sub_dir", "model_name"], [
     ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      "test_subdir", "test_model")
 ])
@@ -81,9 +82,9 @@ def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucket
     assert res[0][-1] is None and len(res[0]) == len(mock_meta.output_columns)
 
 
-@pytest.mark.parametrize("description, bucketfs_conn_name, bucketfs_conn ,"
-                         "sub_dir, model_name", [
-    ("all null", '', None, None, None),
+@pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
+                         "sub_dir", "model_name"], [
+    ("all null", None, None, None, None),
     ("model name missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      "test_subdir", None),
     ("bucketfs_conn missing", None, None,
@@ -133,8 +134,8 @@ def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bu
     udf.run(mock_ctx)
     res = mock_ctx.output
     error_field = res[0][-1]
-    expected_error_start = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
-                           f"Found model_name = {model_name},"
-    expected_error_end = f" sub_dir = {sub_dir}"
+    pattern = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. Found model_name = " \
+              f"{model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}."
+
+    assert re.search(pattern, error_field)
     assert error_field is not None and len(res[0]) == len(mock_meta.output_columns)
-    assert expected_error_start in error_field and expected_error_end in error_field
