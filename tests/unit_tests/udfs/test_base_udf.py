@@ -14,6 +14,30 @@ from tests.utils.mock_cast import mock_cast
 import re
 
 
+class regex_matcher: #this one feels more correct
+    """Assert that a given string meets some expectations."""
+    def __init__(self, pattern, flags=0):
+        self._regex = re.compile(pattern, flags)
+
+    def is_in(self, actual):
+        return bool(self._regex.search(actual))
+
+    def __repr__(self):
+        return self._regex.pattern
+
+
+class regex_matcher2: #this one looks nicer when used and gives better error messages
+    """Assert that a given string meets some expectations."""
+    def __init__(self, some_sting):
+        self._string = some_sting
+
+    def __contains__(self, pattern):
+        return bool(re.search(pattern, self._string))
+
+    def __repr__(self):
+        return self._string
+
+
 def create_mock_metadata() -> MockMetaData:
     def udf_wrapper():
         pass
@@ -42,12 +66,7 @@ def create_mock_metadata() -> MockMetaData:
     return meta
 
 
-@pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
-                         "sub_dir", "model_name"], [
-    ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", "test_model")
-])
-def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+def test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
@@ -72,12 +91,23 @@ def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucket
         '',
         None)
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
-
     udf = DummyImplementationUDF(exa=mock_exa,
                              base_model=mock_base_model_factory,
                              tokenizer=mock_tokenizer_factory)
     udf.run(mock_ctx)
     res = mock_ctx.output
+    return res, mock_meta
+
+
+
+@pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
+                         "sub_dir", "model_name"], [
+    ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
+     "test_subdir", "test_model")
+])
+def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+
+    res, mock_meta = test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
     # check if no errors
     assert res[0][-1] is None and len(res[0]) == len(mock_meta.output_columns)
 
@@ -95,47 +125,16 @@ def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucket
      "test_subdir", None)
 ])
 def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
-    mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
-    mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
+    res, mock_meta = test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
 
-    mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
-    mock_bucketfs_locations = [Mock()]
-    mock_cast(mock_bucketfs_factory.create_bucketfs_location).side_effect = mock_bucketfs_locations
-
-    input_data = [
-        (
-            1,
-            model_name,
-            sub_dir,
-            bucketfs_conn_name,
-            ''
-        ),
-        (
-            1,
-            model_name,
-            sub_dir,
-            bucketfs_conn_name,
-            ''
-        )
-    ]
-    mock_meta = create_mock_metadata()
-    mock_exa = create_mock_exa_environment(
-        [bucketfs_conn_name],
-        [bucketfs_conn],
-        mock_meta,
-        '',
-        None)
-    mock_ctx = create_mock_udf_context(input_data, mock_meta)
-
-    udf = DummyImplementationUDF(exa=mock_exa,
-                                 base_model=mock_base_model_factory.side_effect,
-                                 tokenizer=mock_tokenizer_factory.side_effect)
-
-    udf.run(mock_ctx)
-    res = mock_ctx.output
     error_field = res[0][-1]
-    pattern = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. Found model_name = " \
-              f"{model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}."
+    expected_error = regex_matcher(f"For each model model_name, bucketfs_conn and sub_dir need to be provided."
+                                   f" Found model_name = {model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}.")
+    assert expected_error.is_in(error_field)
 
-    assert re.search(pattern, error_field)
+    expected_error2 =f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
+                     f"Found model_name = {model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}."
+    error_field_matcher = regex_matcher2(error_field)
+    assert expected_error2 in error_field_matcher
+
     assert error_field is not None and len(res[0]) == len(mock_meta.output_columns)
