@@ -99,7 +99,6 @@ def test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_na
     return res, mock_meta
 
 
-
 @pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
                          "sub_dir", "model_name"], [
     ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
