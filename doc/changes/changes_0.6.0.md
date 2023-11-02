@@ -13,7 +13,8 @@ T.B.D
 
 ### Bug Fixes
 
- -  # 134: Fixed slc download still assuming existence of slc-parts
+ - # 134: Fixed slc download still assuming existence of slc-parts
+ - # 124: Fixed input validation in extract_unique_model_dataframes_from_batch
 
 ### Refactorings
 
