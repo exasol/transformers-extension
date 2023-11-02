@@ -54,7 +54,7 @@ def create_mock_metadata() -> MockMetaData:
     return meta
 
 
-def test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
@@ -94,7 +94,7 @@ def test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_na
 ])
 def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
 
-    res, mock_meta = test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
+    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
     # check if no errors
     assert res[0][-1] is None and len(res[0]) == len(mock_meta.output_columns)
 
@@ -112,7 +112,7 @@ def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucket
      "test_subdir", None)
 ])
 def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
-    res, mock_meta = test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
+    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
 
     error_field = res[0][-1]
     expected_error = regex_matcher(f".*For each model model_name, bucketfs_conn and sub_dir need to be provided."
