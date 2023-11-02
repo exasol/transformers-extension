@@ -14,28 +14,16 @@ from tests.utils.mock_cast import mock_cast
 import re
 
 
-class regex_matcher: #this one feels more correct
+class regex_matcher:
     """Assert that a given string meets some expectations."""
     def __init__(self, pattern, flags=0):
         self._regex = re.compile(pattern, flags)
 
-    def is_in(self, actual):
-        return bool(self._regex.search(actual))
+    def __eq__(self, actual):
+        return bool(self._regex.match(actual))
 
     def __repr__(self):
         return self._regex.pattern
-
-
-class regex_matcher2: #this one looks nicer when used and gives better error messages
-    """Assert that a given string meets some expectations."""
-    def __init__(self, some_sting):
-        self._string = some_sting
-
-    def __contains__(self, pattern):
-        return bool(re.search(pattern, self._string))
-
-    def __repr__(self):
-        return self._string
 
 
 def create_mock_metadata() -> MockMetaData:
@@ -127,13 +115,8 @@ def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bu
     res, mock_meta = test_setup(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
 
     error_field = res[0][-1]
-    expected_error = regex_matcher(f"For each model model_name, bucketfs_conn and sub_dir need to be provided."
-                                   f" Found model_name = {model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}.")
-    assert expected_error.is_in(error_field)
-
-    expected_error2 =f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
-                     f"Found model_name = {model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}."
-    error_field_matcher = regex_matcher2(error_field)
-    assert expected_error2 in error_field_matcher
-
+    expected_error = regex_matcher(f".*For each model model_name, bucketfs_conn and sub_dir need to be provided."
+                                   f" Found model_name = {model_name}, bucketfs_conn = .*, sub_dir = {sub_dir}.",
+                                   flags=re.DOTALL)
+    assert error_field == expected_error
     assert error_field is not None and len(res[0]) == len(mock_meta.output_columns)
