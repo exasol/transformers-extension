@@ -5,9 +5,10 @@ In this developer guide we explain how to build this project and how you can add
 new transformer tasks and tests.
 
 
-## Building the Project
+## Installation
+There are two ways to install the Transformers Extension Package:
 
-### 1. Build the Python Package
+### 1. Build and install the Python Package
 This project needs Python 3.8 or above installed on the development machine. 
 In addition, in order to build Python packages you need to have the [Poetry](https://python-poetry.org/)
 (>= 1.1.11) package manager. Then you can install and build the `transformers-extension` as follows:
@@ -16,21 +17,30 @@ poetry install
 poetry build
 ```
 
-### 2. Install the Project
-The latest version of the Python package of this extension can be downloaded 
-from the Releases in GitHub Repository (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
-Please download the built archive `transformers_extension.whl` and install it as follows:
+### 2. Download and install the pre-build wheel
+Instead of building yourself, the latest version of the Python package of this extension can be downloaded 
+from the Releases in the GitHub Repository (see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
+Please download the built archive 
+`exasol_transformers_extension-<version-number>-py3-none-any.whl`(`transformers_extension.whl` in older versions) 
+and install it as follows:
 ```bash
-pip install dist/transformers_extension.whl --extra-index-url https://download.pytorch.org/whl/cpu
+pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
-### 3. Run All Tests
+
+### Run Tests
 All unit and integration tests can be run within the Poetry environment created 
-for the project as follows:
-```bash
-poetry run pytest tests
-```
+for the project using nox. See [the nox file](../../noxfile.py) for all tasks run by nox. There are three tasks for tests.
 
+Run unit tests:
+```bash
+      poetry run nox -s unit_tests
+```
+Start a test database and run integration tests:
+```bash
+      poetry run nox -s start_database
+      poetry run nox -s integration_tests
+```
 
 ## Add Transformer Tasks
 In the transformers-extension library, the 8 most popular NLP tasks provided by 
@@ -39,7 +49,7 @@ been defined. We created separate UDF scripts for each NLP task. You can find
 these tasks and UDF script usage details in the [User Guide](../user_guide/user_guide.md#prediction-udfs).  
 This section shows you step by step how to add a new NLP task to this library.
 
-### 1. Add UDF Template
+### 1. Add a UDF Template
 The new task's UDF template should be added to the `exasol_transformers_extension/resources/templates/` 
 directory. Please pay attention that the UDF script is uses _"SET UDF"_  and the inputs 
 are received ordered by pre-determined columns. In addition, the first 4 input 
