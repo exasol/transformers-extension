@@ -6,7 +6,8 @@ use of pre-trained NLP models provided by the [Transformers API](https://hugging
 
 The extension provides two types of UDFs:
  - DownloaderUDF :  It is responsible to download the specified pre-defined model into the Exasol BucketFS.
- - Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and perform prediction. These supported tasks:
+ - Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained
+model and perform prediction. These are the supported tasks:
    1. Sequence Classification for Single Text 
    2. Sequence Classification for Text Pair
    3. Question Answering
@@ -67,17 +68,18 @@ The extension provides two types of UDFs:
 ### The Python Package
 #### Download The Python Wheel Package
 - The latest version of the python package of this extension can be 
-downloaded from the Releases in GitHub Repository 
-(see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
+downloaded from the [GitHUb Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
 ```buildoutcfg 
-transformers_extension.whl
+exasol_transformers_extension-<version-number>-py3-none-any.whl
 ```
+If you need to use a version < 0.5.0, the build archive is called `transformers_extension.whl`.
+
 
 #### Install The Python Wheel Package
-- Install the packaged transformers-extension project as follows:
+Install the packaged transformers-extension project as follows:
 ```shell
-pip install transformers_extension.whl --extra-index-url https://download.pytorch.org/whl/cpu
+pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### The Pre-built Language Container
@@ -87,12 +89,12 @@ extension to run. It can be installed in two ways: Quick and Customized
 installations
 
 #### Quick Installation
-The desired language container is downloaded and installed by executing the 
-deployment script below with the desired version. (see GitHub Releases 
-[the latest release](https://github.com/exasol/transformers-extension/releases).
+The language container is downloaded and installed by executing the 
+deployment script below with the desired version. Make sure the version matches with your installed version of the 
+Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
 
   ```buildoutcfg
-  python -m exasol_transformers_extension.deploy language-container
+  python -m exasol_transformers_extension.deploy language-container \
       --dsn <DB_HOST:DB_PORT> \
       --db-user <DB_USER> \
       --db-pass <DB_PASSWORD> \
@@ -107,8 +109,7 @@ deployment script below with the desired version. (see GitHub Releases
       --language-alias <LANGUAGE_ALIAS> \ 
       --version <RELEASE_VERSION> \
       --ssl-cert-path <ssl-cert-path> \
-      --use-ssl-cert-validation \
-      --no-use-ssl-cert-valiation
+      --use-ssl-cert-validation
   ```
 The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
 The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.

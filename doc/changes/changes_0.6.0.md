@@ -22,6 +22,6 @@ T.B.D
 
 ### Documentation
 
- -  n/a
+ -  # 132: Fixed outdated information in documentation
 
   
