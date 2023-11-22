@@ -1,5 +1,6 @@
+from enum import Enum
 import pyexasol
-from typing import List
+from typing import List, Optional
 from pathlib import Path, PurePosixPath
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 import logging
@@ -8,6 +9,15 @@ from exasol_transformers_extension.utils.bucketfs_operations import \
 from exasol_transformers_extension.deployment.deployment_utils import get_websocket_ssl_options
 
 logger = logging.getLogger(__name__)
+
+
+class LanguageRegLevel(Enum):
+    f"""
+    Language alias registration level, i.e.
+    ALTER <LanguageRegLevel> SET SCRIPT_LANGUAGES=...
+    """
+    Session = 'SESSION'
+    System = 'SYSTEM'
 
 
 class LanguageContainerDeployer:
@@ -22,14 +32,18 @@ class LanguageContainerDeployer:
         self._pyexasol_conn = pyexasol_connection
         logger.debug(f"Init {LanguageContainerDeployer.__name__}")
 
-    def deploy_container(self):
-        path_in_udf = self._upload_container()
-        for alter in ["SESSION", "SYSTEM"]:
-            alter_command = self._generate_alter_command(alter, path_in_udf)
-            self._pyexasol_conn.execute(alter_command)
-            logging.debug(alter_command)
+    def deploy_container(self) -> None:
+        """
+        Uploads the SLC and registers it at the SYSTEM level.
+        """
+        path_in_udf = self.upload_container()
+        self.register_container(LanguageRegLevel.System, path_in_udf)
 
-    def _upload_container(self) -> PurePosixPath:
+    def upload_container(self) -> PurePosixPath:
+        """
+        Uploads the SLC.
+        Returns the path where the container is uploaded as it's seen by a UDF.
+        """
         if not self._container_file.is_file():
             raise RuntimeError(f"Container file {self._container_file} "
                                f"is not a file.")
@@ -40,15 +54,37 @@ class LanguageContainerDeployer:
         logging.debug("Container is uploaded to bucketfs")
         return PurePosixPath(path_in_udf)
 
-    def _generate_alter_command(self, alter_type: str,
-                                path_in_udf: PurePosixPath) -> str:
+    def register_container(self, alter_type: LanguageRegLevel = LanguageRegLevel.Session,
+                           path_in_udf: Optional[PurePosixPath] = None) -> None:
+        """
+        Registers the SLC container at the required level.
+
+        alter_type  - Language registration level, defaults to the SESSION.
+        path_in_udf - If known, a path where the container is uploaded as it's seen by a UDF.
+        """
+        alter_command = self.generate_alter_command(alter_type, path_in_udf)
+        self._pyexasol_conn.execute(alter_command)
+        logging.debug(alter_command)
+
+    def generate_alter_command(self, alter_type: LanguageRegLevel,
+                               path_in_udf: Optional[PurePosixPath] = None) -> str:
+        """
+        Generates an SQL command to register the SLC container at the required level. The command will
+        preserve existing registrations of other containers identified by different language aliases.
+        Registration of a container with the same alias, if exists, will be overwritten.
+
+        alter_type  - Registration level - SYSTEM or SESSION.
+        path_in_udf - If known, a path where the container is uploaded as it's seen by a UDF.
+        """
+        if path_in_udf is None:
+            path_in_udf = self._bucketfs_location.generate_bucket_udf_path(self._container_file.name)
         new_settings = \
             self._update_previous_language_settings(alter_type, path_in_udf)
         alter_command = \
-            f"ALTER {alter_type} SET SCRIPT_LANGUAGES='{new_settings}';"
+            f"ALTER {alter_type.value} SET SCRIPT_LANGUAGES='{new_settings}';"
         return alter_command
 
-    def _update_previous_language_settings(self, alter_type: str,
+    def _update_previous_language_settings(self, alter_type: LanguageRegLevel,
                                            path_in_udf: PurePosixPath) -> str:
         prev_lang_settings = self._get_previous_language_settings(alter_type)
         prev_lang_aliases = prev_lang_settings.split(" ")
@@ -81,18 +117,18 @@ class LanguageContainerDeployer:
             logging.warning(f"The requested language alias "
                             f"{self._language_alias} is already in use.")
 
-    def _get_previous_language_settings(self, alter_type: str) -> str:
+    def _get_previous_language_settings(self, alter_type: LanguageRegLevel) -> str:
         result = self._pyexasol_conn.execute(
-            f"""SELECT "{alter_type}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
+            f"""SELECT "{alter_type.value}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
             PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()
         return result[0][0]
 
     @classmethod
-    def run(cls, bucketfs_name: str, bucketfs_host: str, bucketfs_port: int,
+    def create(cls, bucketfs_name: str, bucketfs_host: str, bucketfs_port: int,
             bucketfs_use_https: bool, bucketfs_user: str, container_file: Path,
             bucketfs_password: str, bucket: str, path_in_bucket: str,
             dsn: str, db_user: str, db_password: str, language_alias: str,
-            ssl_cert_path: str = None, use_ssl_cert_validation: bool = True):
+            ssl_cert_path: str = None, use_ssl_cert_validation: bool = True) -> "LanguageContainerDeployer":
 
         websocket_sslopt = get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
 
@@ -108,6 +144,4 @@ class LanguageContainerDeployer:
             bucketfs_name, bucketfs_host, bucketfs_port, bucketfs_use_https,
             bucketfs_user, bucketfs_password, bucket, path_in_bucket)
 
-        language_container_deployer = cls(
-            pyexasol_conn, language_alias, bucketfs_location, container_file)
-        language_container_deployer.deploy_container()
+        return cls(pyexasol_conn, language_alias, bucketfs_location, container_file)

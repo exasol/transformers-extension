@@ -3,7 +3,20 @@ import click
 from pathlib import Path
 from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.language_container_deployer import \
-    LanguageContainerDeployer
+    LanguageContainerDeployer, LanguageRegLevel
+
+
+def run_deployer(deployer, upload_container: bool = True, alter_system: bool = True) -> None:
+    if upload_container and alter_system:
+        deployer.deploy_container()
+    elif upload_container:
+        deployer.upload_container()
+    elif alter_system:
+        deployer.register_container(LanguageRegLevel.System)
+
+    if not alter_system:
+        print('Use the following command to register the SLC at the SESSION level:\n' +
+              deployer.generate_alter_command(LanguageRegLevel.Session))
 
 
 @click.command(name="language-container")
@@ -28,6 +41,8 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
 @click.option('--ssl-cert-path', type=str, default="")
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
+@click.option('--upload-container/--no-upload_container', type=bool, default=True)
+@click.option('--alter-system/--no-alter-system', type=bool, default=True)
 def language_container_deployer_main(
         bucketfs_name: str,
         bucketfs_host: str,
@@ -44,9 +59,12 @@ def language_container_deployer_main(
         db_pass: str,
         language_alias: str,
         ssl_cert_path: str,
-        use_ssl_cert_validation: bool):
+        use_ssl_cert_validation: bool,
+        upload_container: bool,
+        alter_system: bool):
+
     def call_runner():
-        LanguageContainerDeployer.run(
+        deployer = LanguageContainerDeployer.create(
             bucketfs_name=bucketfs_name,
             bucketfs_host=bucketfs_host,
             bucketfs_port=bucketfs_port,
@@ -61,8 +79,9 @@ def language_container_deployer_main(
             db_password=db_pass,
             language_alias=language_alias,
             ssl_cert_path=ssl_cert_path,
-            use_ssl_cert_validation=use_ssl_cert_validation
-        )
+            use_ssl_cert_validation=use_ssl_cert_validation)
+        run_deployer(deployer, upload_container=upload_container, alter_system=alter_system)
+
     if container_file:
         call_runner()
     elif version:
