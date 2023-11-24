@@ -3,20 +3,22 @@ import click
 from pathlib import Path
 from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.language_container_deployer import \
-    LanguageContainerDeployer, LanguageRegLevel
+    LanguageContainerDeployer, LanguageActiveLevel
 
 
-def run_deployer(deployer, upload_container: bool = True, alter_system: bool = True) -> None:
+def run_deployer(deployer, upload_container: bool = True,
+                 alter_system: bool = True,
+                 allow_override: bool = False) -> None:
     if upload_container and alter_system:
-        deployer.deploy_container()
+        deployer.deploy_container(allow_override)
     elif upload_container:
         deployer.upload_container()
     elif alter_system:
-        deployer.register_container(LanguageRegLevel.System)
+        deployer.activate_container(LanguageActiveLevel.System, allow_override)
 
     if not alter_system:
-        print('Use the following command to register the SLC at the SESSION level:\n' +
-              deployer.generate_alter_command(LanguageRegLevel.Session))
+        print('Use the following command to activate the SLC at the SESSION level:\n' +
+              deployer.generate_activation_command(LanguageActiveLevel.Session, True))
 
 
 @click.command(name="language-container")
@@ -43,6 +45,7 @@ def run_deployer(deployer, upload_container: bool = True, alter_system: bool = T
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 @click.option('--upload-container/--no-upload_container', type=bool, default=True)
 @click.option('--alter-system/--no-alter-system', type=bool, default=True)
+@click.option('--allow-override/--disallow-override', type=bool, default=False)
 def language_container_deployer_main(
         bucketfs_name: str,
         bucketfs_host: str,
@@ -61,7 +64,8 @@ def language_container_deployer_main(
         ssl_cert_path: str,
         use_ssl_cert_validation: bool,
         upload_container: bool,
-        alter_system: bool):
+        alter_system: bool,
+        allow_override: bool):
 
     def call_runner():
         deployer = LanguageContainerDeployer.create(
@@ -80,7 +84,8 @@ def language_container_deployer_main(
             language_alias=language_alias,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation)
-        run_deployer(deployer, upload_container=upload_container, alter_system=alter_system)
+        run_deployer(deployer, upload_container=upload_container, alter_system=alter_system,
+                     allow_override=allow_override)
 
     if container_file:
         call_runner()

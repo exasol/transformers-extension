@@ -11,10 +11,10 @@ from exasol_transformers_extension.deployment.deployment_utils import get_websoc
 logger = logging.getLogger(__name__)
 
 
-class LanguageRegLevel(Enum):
+class LanguageActiveLevel(Enum):
     f"""
-    Language alias registration level, i.e.
-    ALTER <LanguageRegLevel> SET SCRIPT_LANGUAGES=...
+    Language activation level, i.e.
+    ALTER <LanguageActiveLevel> SET SCRIPT_LANGUAGES=...
     """
     Session = 'SESSION'
     System = 'SYSTEM'
@@ -32,12 +32,15 @@ class LanguageContainerDeployer:
         self._pyexasol_conn = pyexasol_connection
         logger.debug(f"Init {LanguageContainerDeployer.__name__}")
 
-    def deploy_container(self) -> None:
+    def deploy_container(self, allow_override: bool = False) -> None:
         """
-        Uploads the SLC and registers it at the SYSTEM level.
+        Uploads the SLC and activates it at the SYSTEM level.
+
+        allow_override - If True the activation of a language container with the same alias will be overriden,
+                         otherwise a RuntimeException will be thrown.
         """
         path_in_udf = self.upload_container()
-        self.register_container(LanguageRegLevel.System, path_in_udf)
+        self.activate_container(LanguageActiveLevel.System, allow_override,  path_in_udf)
 
     def upload_container(self) -> PurePosixPath:
         """
@@ -54,42 +57,49 @@ class LanguageContainerDeployer:
         logging.debug("Container is uploaded to bucketfs")
         return PurePosixPath(path_in_udf)
 
-    def register_container(self, alter_type: LanguageRegLevel = LanguageRegLevel.Session,
+    def activate_container(self, alter_type: LanguageActiveLevel = LanguageActiveLevel.Session,
+                           allow_override: bool = False,
                            path_in_udf: Optional[PurePosixPath] = None) -> None:
         """
-        Registers the SLC container at the required level.
+        Activates the SLC container at the required level.
 
-        alter_type  - Language registration level, defaults to the SESSION.
-        path_in_udf - If known, a path where the container is uploaded as it's seen by a UDF.
+        alter_type     - Language activation level, defaults to the SESSION.
+        allow_override - If True the activation of a language container with the same alias will be overriden,
+                         otherwise a RuntimeException will be thrown.
+        path_in_udf    - If known, a path where the container is uploaded as it's seen by a UDF.
         """
-        alter_command = self.generate_alter_command(alter_type, path_in_udf)
+        alter_command = self.generate_activation_command(alter_type, allow_override, path_in_udf)
         self._pyexasol_conn.execute(alter_command)
         logging.debug(alter_command)
 
-    def generate_alter_command(self, alter_type: LanguageRegLevel,
-                               path_in_udf: Optional[PurePosixPath] = None) -> str:
+    def generate_activation_command(self, alter_type: LanguageActiveLevel,
+                                    allow_override: bool = False,
+                                    path_in_udf: Optional[PurePosixPath] = None) -> str:
         """
-        Generates an SQL command to register the SLC container at the required level. The command will
-        preserve existing registrations of other containers identified by different language aliases.
-        Registration of a container with the same alias, if exists, will be overwritten.
+        Generates an SQL command to activate the SLC container at the required level. The command will
+        preserve existing activations of other containers identified by different language aliases.
+        Activation of a container with the same alias, if exists, will be overwritten.
 
-        alter_type  - Registration level - SYSTEM or SESSION.
-        path_in_udf - If known, a path where the container is uploaded as it's seen by a UDF.
+        alter_type     - Activation level - SYSTEM or SESSION.
+        allow_override - If True the activation of a language container with the same alias will be overriden,
+                         otherwise a RuntimeException will be thrown.
+        path_in_udf    - If known, a path where the container is uploaded as it's seen by a UDF.
         """
         if path_in_udf is None:
             path_in_udf = self._bucketfs_location.generate_bucket_udf_path(self._container_file.name)
         new_settings = \
-            self._update_previous_language_settings(alter_type, path_in_udf)
+            self._update_previous_language_settings(alter_type, allow_override, path_in_udf)
         alter_command = \
             f"ALTER {alter_type.value} SET SCRIPT_LANGUAGES='{new_settings}';"
         return alter_command
 
-    def _update_previous_language_settings(self, alter_type: LanguageRegLevel,
+    def _update_previous_language_settings(self, alter_type: LanguageActiveLevel,
+                                           allow_override: bool,
                                            path_in_udf: PurePosixPath) -> str:
         prev_lang_settings = self._get_previous_language_settings(alter_type)
         prev_lang_aliases = prev_lang_settings.split(" ")
         self._check_if_requested_language_alias_already_exists(
-            prev_lang_aliases)
+            allow_override, prev_lang_aliases)
         new_definitions_str = self._generate_new_language_settings(
             path_in_udf, prev_lang_aliases)
         return new_definitions_str
@@ -109,15 +119,19 @@ class LanguageContainerDeployer:
         return new_definitions_str
 
     def _check_if_requested_language_alias_already_exists(
-            self, prev_lang_aliases: List[str]) -> None:
+            self, allow_override: bool,
+            prev_lang_aliases: List[str]) -> None:
         definition_for_requested_alias = [
             alias_definition for alias_definition in prev_lang_aliases
             if alias_definition.startswith(self._language_alias + "=")]
         if not len(definition_for_requested_alias) == 0:
-            logging.warning(f"The requested language alias "
-                            f"{self._language_alias} is already in use.")
+            warning_message = f"The requested language alias {self._language_alias} is already in use."
+            if allow_override:
+                logging.warning(warning_message)
+            else:
+                raise RuntimeError(warning_message)
 
-    def _get_previous_language_settings(self, alter_type: LanguageRegLevel) -> str:
+    def _get_previous_language_settings(self, alter_type: LanguageActiveLevel) -> str:
         result = self._pyexasol_conn.execute(
             f"""SELECT "{alter_type.value}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
             PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()

@@ -4,7 +4,7 @@ import pytest
 from pyexasol import ExaConnection
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from exasol_transformers_extension.deployment.language_container_deployer import (
-    LanguageContainerDeployer, LanguageRegLevel)
+    LanguageContainerDeployer, LanguageActiveLevel)
 from exasol_transformers_extension.deployment.language_container_deployer_cli import run_deployer
 
 
@@ -28,21 +28,21 @@ def container_deployer(mock_pyexasol_conn, mock_bfs_location) -> LanguageContain
 
 def test_language_container_deployer_cli_deploy(container_deployer):
     container_deployer.deploy_container = MagicMock()
-    run_deployer(container_deployer, True, True)
-    container_deployer.deploy_container.assert_called_once()
+    run_deployer(container_deployer, True, True, False)
+    container_deployer.deploy_container.assert_called_once_with(False)
 
 
 def test_language_container_deployer_cli_upload(container_deployer):
     container_deployer.upload_container = MagicMock()
-    container_deployer.register_container = MagicMock()
-    run_deployer(container_deployer, True, False)
+    container_deployer.activate_container = MagicMock()
+    run_deployer(container_deployer, True, False, False)
     container_deployer.upload_container.assert_called_once()
-    container_deployer.register_container.assert_not_called()
+    container_deployer.activate_container.assert_not_called()
 
 
 def test_language_container_deployer_cli_register(container_deployer):
     container_deployer.upload_container = MagicMock()
-    container_deployer.register_container = MagicMock()
-    run_deployer(container_deployer, False, True)
+    container_deployer.activate_container = MagicMock()
+    run_deployer(container_deployer, False, True, True)
     container_deployer.upload_container.assert_not_called()
-    container_deployer.register_container.assert_called_once_with(LanguageRegLevel.System)
+    container_deployer.activate_container.assert_called_once_with(LanguageActiveLevel.System, True)

@@ -2,6 +2,7 @@ import textwrap
 from typing import Callable
 from pathlib import Path
 
+import pytest
 from _pytest.fixtures import FixtureRequest
 from tests.fixtures.language_container_fixture import export_slc, flavor_path
 from tests.fixtures.database_connection_fixture import pyexasol_connection
@@ -11,7 +12,7 @@ from pyexasol import ExaConnection
 from pytest_itde import config
 
 from exasol_transformers_extension.deployment.language_container_deployer \
-    import LanguageContainerDeployer, LanguageRegLevel
+    import LanguageContainerDeployer, LanguageActiveLevel
 from tests.utils.parameters import bucketfs_params
 from tests.utils.revert_language_settings import revert_language_settings
 
@@ -34,7 +35,7 @@ def test_language_container_deployer(
                                              language_alias=language_alias,
                                              pyexasol_connection=pyexasol_connection,
                                              bucketfs_config=bucketfs_config)
-        deployer.deploy_container()
+        deployer.deploy_container(True)
         with connection_factory(exasol_config) as new_connection:
             assert_udf_running(new_connection, language_alias, schema)
 
@@ -63,8 +64,36 @@ def test_language_container_deployer_alter_session(
                                                  language_alias=language_alias,
                                                  pyexasol_connection=new_connection,
                                                  bucketfs_config=bucketfs_config)
-            deployer.register_container(LanguageRegLevel.Session)
+            deployer.activate_container(LanguageActiveLevel.Session, True)
             assert_udf_running(new_connection, language_alias, schema)
+
+
+def test_language_container_deployer_activation_fail(
+        request: FixtureRequest,
+        export_slc: ExportInfo,
+        pyexasol_connection: ExaConnection,
+        connection_factory: Callable[[config.Exasol], ExaConnection],
+        exasol_config: config.Exasol,
+        bucketfs_config: config.BucketFs,
+):
+    test_name: str = request.node.name
+    schema = test_name
+    language_alias = f"PYTHON3_TE_{test_name.upper()}"
+    container_path = Path(export_slc.cache_file)
+    with revert_language_settings(pyexasol_connection):
+        create_schema(pyexasol_connection, schema)
+        deployer = create_container_deployer(container_path=container_path,
+                                             language_alias=language_alias,
+                                             pyexasol_connection=pyexasol_connection,
+                                             bucketfs_config=bucketfs_config)
+        deployer.deploy_container(True)
+        with connection_factory(exasol_config) as new_connection:
+            deployer = create_container_deployer(container_path=container_path,
+                                                 language_alias=language_alias,
+                                                 pyexasol_connection=new_connection,
+                                                 bucketfs_config=bucketfs_config)
+            with pytest.raises(RuntimeError):
+                deployer.activate_container(LanguageActiveLevel.System, False)
 
 
 def create_schema(pyexasol_connection: ExaConnection, schema: str):
