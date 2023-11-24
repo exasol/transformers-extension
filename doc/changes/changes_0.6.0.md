@@ -1,27 +1,25 @@
-# Transformers Extension 0.6.0, released T.B.D
+# Transformers Extension 0.6.0, released 2023-11-24
 
-Code name: T.B.D
+Code name: Cleanup
 
 
 ## Summary
 
-T.B.D
+Bug fixes regarding SLC download ad input validation. On to of that dependency and documentation updates.
 
-### Features
-
- -  n/a
 
 ### Bug Fixes
 
  - # 134: Fixed slc download still assuming existence of slc-parts
  - # 124: Fixed input validation in extract_unique_model_dataframes_from_batch
-
-### Refactorings
-
- -  n/a
+ 
 
 ### Documentation
 
- -  # 132: Fixed outdated information in documentation
+ - # 132: Fixed outdated information in documentation
+
+### Security
+ - # 148: Security updates of dependencies
+ - # 136: Removed configobj
 
   
