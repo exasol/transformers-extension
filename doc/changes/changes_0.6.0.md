@@ -1,4 +1,4 @@
-# Transformers Extension 0.6.0, released 2023-11-24
+# Transformers Extension 0.6.0, released 2023-11-27
 
 Code name: Cleanup
 
