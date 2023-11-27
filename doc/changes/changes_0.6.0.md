@@ -5,7 +5,7 @@ Code name: Cleanup
 
 ## Summary
 
-Bug fixes regarding SLC download ad input validation. On to of that dependency and documentation updates.
+Bug fixes regarding SLC download and input validation. On to of that dependency and documentation updates.
 
 
 ### Bug Fixes
