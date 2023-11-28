@@ -4,7 +4,7 @@ import pytest
 from pyexasol import ExaConnection
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from exasol_transformers_extension.deployment.language_container_deployer import (
-    LanguageContainerDeployer, LanguageActiveLevel)
+    LanguageContainerDeployer, LanguageActivationLevel)
 from exasol_transformers_extension.deployment.language_container_deployer_cli import run_deployer
 
 
@@ -45,4 +45,4 @@ def test_language_container_deployer_cli_register(container_deployer):
     container_deployer.activate_container = MagicMock()
     run_deployer(container_deployer, False, True, True)
     container_deployer.upload_container.assert_not_called()
-    container_deployer.activate_container.assert_called_once_with(LanguageActiveLevel.System, True)
+    container_deployer.activate_container.assert_called_once_with(LanguageActivationLevel.System, True)

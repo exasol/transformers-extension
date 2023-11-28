@@ -109,7 +109,7 @@ Transformers Extension Package. See [the latest release](https://github.com/exas
       --language-alias <LANGUAGE_ALIAS> \ 
       --version <RELEASE_VERSION> \
       --ssl-cert-path <ssl-cert-path> \
-      --use-ssl-cert-validation \
+      --use-ssl-cert-validation
   ```
 The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
 The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
@@ -119,19 +119,22 @@ Database connection.
 By default, the above command will upload and activate the language container at the System level.
 The latter requires you to have the System Privileges, as it will attempt to change DB system settings.
 If such privileges cannot be granted the activation can be skipped by using the `--no-alter-system` option.
-The command will then print the language activation SQL query, which looks like this:
+The command will then print two possible language activation SQL queries, which look like the following:
 ```sql
 ALTER SESSION SET SCRIPT_LANGUAGES=...
+ALTER SYSTEM SET SCRIPT_LANGUAGES=...
 ```
-This query activates the language container at the Session level. It doesn't require System Privileges.
-However, it must be run every time a new session starts.
+These quires represent two alternative ways of activating a language container. The first one activates the
+container at the Session level. It doesn't require System Privileges. However, it must be run every time a
+new session starts. The second one activates the container at the System level. It  needs to be run just once,
+but it does require System Privileges. It may be executed by a database administrator.
 
 It is also possible to activate the language without repeatedly uploading the container. If the container
-has already been uploaded one can use the `--no-upload_container` option to skip this step.
+has already been uploaded one can use the `--no-upload-container` option to skip this step.
 
 By default, overriding language activation is not permitted. If a language with the same alias has already 
 been activated the command will result in an error. To override the activation, you can use the
-`--allow_override` option.
+`--allow-override` option.
 
 #### Customized Installation
 In this installation, you can install the desired or customized language 

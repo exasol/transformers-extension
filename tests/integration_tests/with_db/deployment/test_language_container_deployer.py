@@ -12,7 +12,7 @@ from pyexasol import ExaConnection
 from pytest_itde import config
 
 from exasol_transformers_extension.deployment.language_container_deployer \
-    import LanguageContainerDeployer, LanguageActiveLevel
+    import LanguageContainerDeployer, LanguageActivationLevel
 from tests.utils.parameters import bucketfs_params
 from tests.utils.revert_language_settings import revert_language_settings
 
@@ -64,7 +64,7 @@ def test_language_container_deployer_alter_session(
                                                  language_alias=language_alias,
                                                  pyexasol_connection=new_connection,
                                                  bucketfs_config=bucketfs_config)
-            deployer.activate_container(LanguageActiveLevel.Session, True)
+            deployer.activate_container(LanguageActivationLevel.Session, True)
             assert_udf_running(new_connection, language_alias, schema)
 
 
@@ -93,7 +93,7 @@ def test_language_container_deployer_activation_fail(
                                                  pyexasol_connection=new_connection,
                                                  bucketfs_config=bucketfs_config)
             with pytest.raises(RuntimeError):
-                deployer.activate_container(LanguageActiveLevel.System, False)
+                deployer.activate_container(LanguageActivationLevel.System, False)
 
 
 def create_schema(pyexasol_connection: ExaConnection, schema: str):

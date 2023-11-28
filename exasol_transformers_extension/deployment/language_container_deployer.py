@@ -11,10 +11,10 @@ from exasol_transformers_extension.deployment.deployment_utils import get_websoc
 logger = logging.getLogger(__name__)
 
 
-class LanguageActiveLevel(Enum):
+class LanguageActivationLevel(Enum):
     f"""
     Language activation level, i.e.
-    ALTER <LanguageActiveLevel> SET SCRIPT_LANGUAGES=...
+    ALTER <LanguageActivationLevel> SET SCRIPT_LANGUAGES=...
     """
     Session = 'SESSION'
     System = 'SYSTEM'
@@ -40,7 +40,7 @@ class LanguageContainerDeployer:
                          otherwise a RuntimeException will be thrown.
         """
         path_in_udf = self.upload_container()
-        self.activate_container(LanguageActiveLevel.System, allow_override,  path_in_udf)
+        self.activate_container(LanguageActivationLevel.System, allow_override, path_in_udf)
 
     def upload_container(self) -> PurePosixPath:
         """
@@ -57,7 +57,7 @@ class LanguageContainerDeployer:
         logging.debug("Container is uploaded to bucketfs")
         return PurePosixPath(path_in_udf)
 
-    def activate_container(self, alter_type: LanguageActiveLevel = LanguageActiveLevel.Session,
+    def activate_container(self, alter_type: LanguageActivationLevel = LanguageActivationLevel.Session,
                            allow_override: bool = False,
                            path_in_udf: Optional[PurePosixPath] = None) -> None:
         """
@@ -72,7 +72,7 @@ class LanguageContainerDeployer:
         self._pyexasol_conn.execute(alter_command)
         logging.debug(alter_command)
 
-    def generate_activation_command(self, alter_type: LanguageActiveLevel,
+    def generate_activation_command(self, alter_type: LanguageActivationLevel,
                                     allow_override: bool = False,
                                     path_in_udf: Optional[PurePosixPath] = None) -> str:
         """
@@ -93,7 +93,7 @@ class LanguageContainerDeployer:
             f"ALTER {alter_type.value} SET SCRIPT_LANGUAGES='{new_settings}';"
         return alter_command
 
-    def _update_previous_language_settings(self, alter_type: LanguageActiveLevel,
+    def _update_previous_language_settings(self, alter_type: LanguageActivationLevel,
                                            allow_override: bool,
                                            path_in_udf: PurePosixPath) -> str:
         prev_lang_settings = self._get_previous_language_settings(alter_type)
@@ -131,7 +131,7 @@ class LanguageContainerDeployer:
             else:
                 raise RuntimeError(warning_message)
 
-    def _get_previous_language_settings(self, alter_type: LanguageActiveLevel) -> str:
+    def _get_previous_language_settings(self, alter_type: LanguageActivationLevel) -> str:
         result = self._pyexasol_conn.execute(
             f"""SELECT "{alter_type.value}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
             PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()

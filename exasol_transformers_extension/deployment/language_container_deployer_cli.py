@@ -1,9 +1,10 @@
 import os
 import click
 from pathlib import Path
+from textwrap import dedent
 from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.language_container_deployer import \
-    LanguageContainerDeployer, LanguageActiveLevel
+    LanguageContainerDeployer, LanguageActivationLevel
 
 
 def run_deployer(deployer, upload_container: bool = True,
@@ -14,11 +15,20 @@ def run_deployer(deployer, upload_container: bool = True,
     elif upload_container:
         deployer.upload_container()
     elif alter_system:
-        deployer.activate_container(LanguageActiveLevel.System, allow_override)
+        deployer.activate_container(LanguageActivationLevel.System, allow_override)
 
     if not alter_system:
-        print('Use the following command to activate the SLC at the SESSION level:\n' +
-              deployer.generate_activation_command(LanguageActiveLevel.Session, True))
+        message = dedent(f"""
+        In SQL, you can activate the SLC of the Transformer Extension
+        by using the following statements:
+
+        To activate the SLC only for the current session:
+        {deployer.generate_activation_command(LanguageActivationLevel.Session, True)}
+
+        To activate the SLC on the system:
+        {deployer.generate_activation_command(LanguageActivationLevel.System, True)}
+        """)
+        print(message)
 
 
 @click.command(name="language-container")
