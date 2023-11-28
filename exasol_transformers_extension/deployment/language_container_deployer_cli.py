@@ -19,7 +19,7 @@ def run_deployer(deployer, upload_container: bool = True,
 
     if not alter_system:
         message = dedent(f"""
-        In SQL, you can activate the SLC of the Transformer Extension
+        In SQL, you can activate the SLC of the Transformers Extension
         by using the following statements:
 
         To activate the SLC only for the current session:
