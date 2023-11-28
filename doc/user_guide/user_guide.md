@@ -124,10 +124,13 @@ The command will then print two possible language activation SQL queries, which 
 ALTER SESSION SET SCRIPT_LANGUAGES=...
 ALTER SYSTEM SET SCRIPT_LANGUAGES=...
 ```
-These quires represent two alternative ways of activating a language container. The first one activates the
-container at the Session level. It doesn't require System Privileges. However, it must be run every time a
-new session starts. The second one activates the container at the System level. It  needs to be run just once,
-but it does require System Privileges. It may be executed by a database administrator.
+These queries represent two alternative ways of activating a language container. The first one activates the
+container at the [Session level](https://docs.exasol.com/db/latest/sql/alter_session.htm). It doesn't require 
+System Privileges. However, it must be run every time a new session starts. The second one activates the container
+at the [System level](https://docs.exasol.com/db/latest/sql/alter_system.htm). It  needs to be run just once,
+but it does require System Privileges. It may be executed by a database administrator. Please note, that changes 
+made at the system level only become effective in new sessions, as described
+[here](https://docs.exasol.com/db/latest/sql/alter_system.htm#microcontent1).
 
 It is also possible to activate the language without repeatedly uploading the container. If the container
 has already been uploaded one can use the `--no-upload-container` option to skip this step.
