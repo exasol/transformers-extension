@@ -174,13 +174,11 @@ def test_language_container_deployer_cli_with_check_cert(
         request: FixtureRequest,
         export_slc: ExportInfo,
         pyexasol_connection: ExaConnection,
-        connection_factory: Callable[[config.Exasol], ExaConnection],
         exasol_config: config.Exasol,
         bucketfs_config: config.BucketFs
 ):
     use_ssl_cert_validation = True
-    expected_exception_message = 'Could not connect to Exasol: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify ' \
-                                 'failed: self signed certificate in certificate chain (_ssl.c:1131)'
+    expected_exception_message = '[SSL: CERTIFICATE_VERIFY_FAILED]'
     test_name: str = request.node.name
     schema = test_name
     language_alias = f"PYTHON3_TE_{test_name.upper()}"
@@ -198,5 +196,5 @@ def test_language_container_deployer_cli_with_check_cert(
                                                        use_ssl_cert_validation=use_ssl_cert_validation)
 
         assert result.exit_code == 1 \
-            and result.exception.args[0].message in expected_exception_message \
+            and expected_exception_message in result.exception.args[0].message \
             and type(result.exception) == ExaConnectionFailedError

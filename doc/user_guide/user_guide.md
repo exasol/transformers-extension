@@ -116,6 +116,29 @@ The option `--use-ssl-cert-validation`is the default, you can disable it with `-
 Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
 Database connection.
 
+By default, the above command will upload and activate the language container at the System level.
+The latter requires you to have the System Privileges, as it will attempt to change DB system settings.
+If such privileges cannot be granted the activation can be skipped by using the `--no-alter-system` option.
+The command will then print two possible language activation SQL queries, which look like the following:
+```sql
+ALTER SESSION SET SCRIPT_LANGUAGES=...
+ALTER SYSTEM SET SCRIPT_LANGUAGES=...
+```
+These queries represent two alternative ways of activating a language container. The first one activates the
+container at the [Session level](https://docs.exasol.com/db/latest/sql/alter_session.htm). It doesn't require 
+System Privileges. However, it must be run every time a new session starts. The second one activates the container
+at the [System level](https://docs.exasol.com/db/latest/sql/alter_system.htm). It  needs to be run just once,
+but it does require System Privileges. It may be executed by a database administrator. Please note, that changes 
+made at the system level only become effective in new sessions, as described
+[here](https://docs.exasol.com/db/latest/sql/alter_system.htm#microcontent1).
+
+It is also possible to activate the language without repeatedly uploading the container. If the container
+has already been uploaded one can use the `--no-upload-container` option to skip this step.
+
+By default, overriding language activation is not permitted. If a language with the same alias has already 
+been activated the command will result in an error. To override the activation, you can use the
+`--allow-override` option.
+
 #### Customized Installation
 In this installation, you can install the desired or customized language 
 container. In the following steps,  it is explained how to install the 
@@ -132,8 +155,8 @@ There are two ways to install the language container: (1) using a python script 
   1. *Installation with Python Script*
 
      To install the language container, it is necessary to load the container 
-     into the BucketFS and register it to the database. The following command 
-     provides this setup using the python script provided with this library:
+     into the BucketFS and activate it in the database. The following command 
+     performs this setup using the python script provided with this library:
 
       ```buildoutcfg
       python -m exasol_transformers_extension.deploy language-container
@@ -150,6 +173,9 @@ There are two ways to install the language container: (1) using a python script 
           --language-alias <LANGUAGE_ALIAS> \ 
           --container-file <path/to/language_container_name.tar.gz>       
       ```
+     Please note, that all considerations described in the Quick Installation 
+     section are still applicable.
+
 
   2. *Manual Installation*
 
@@ -171,7 +197,7 @@ There are two ways to install the language container: (1) using a python script 
       ```
 
       The uploaded container should be secondly activated through adjusting 
-      the session parameter `SCRIPT_LANGUAGES`. The activation can be scoped
+      the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
       either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
       The following example query activates the container session-wide:
 
