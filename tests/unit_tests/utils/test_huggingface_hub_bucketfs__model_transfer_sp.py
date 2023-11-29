@@ -83,3 +83,10 @@ def test_download_with_model():
         #todo delete model
 
 
+def test_upload_function_call():
+    test_setup = TestSetup()
+    test_setup.downloader.download_from_huggingface_hub_sp(model_factory=test_setup.model_factory_mock)
+    test_setup.reset_mocks()
+    model_save_path = (test_setup.downloader._local_model_save_path / test_setup.model_name)
+    test_setup.downloader.upload_to_bucketfs()
+    assert mock_cast(test_setup.bucketfs_model_uploader_mock.upload_directory).mock_calls == [call(model_save_path)]

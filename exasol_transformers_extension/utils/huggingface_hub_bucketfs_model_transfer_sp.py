@@ -60,7 +60,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
         """
         Upload the downloaded models into the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name)
+        return self._bucketfs_model_uploader.upload_directory(self._local_model_save_path / self._model_name)
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:
