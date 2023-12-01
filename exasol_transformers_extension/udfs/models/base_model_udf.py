@@ -37,6 +37,7 @@ class BaseModelUDF(ABC):
         self.device = None
         self.cache_dir = None
         self.model_loader = None
+        self.last_created_pipeline = None
         self.new_columns = []
 
     def run(self, ctx):
@@ -183,7 +184,14 @@ class BaseModelUDF(ABC):
         if self.model_loader.last_loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.clear_device_memory()
-            self.model_loader.load_models(model_name, current_model_key, self.cache_dir, self.exa.get_connection(token_conn))
+            if token_conn:
+                token_conn_obj = self.exa.get_connection(token_conn)
+            else:
+                token_conn_obj = None
+            self.last_created_pipeline = self.model_loader.load_models(model_name,
+                                                                       current_model_key,
+                                                                       self.cache_dir,
+                                                                       token_conn_obj)
 
     def set_cache_dir(
             self, model_name: str, bucketfs_conn_name: str,
@@ -203,7 +211,6 @@ class BaseModelUDF(ABC):
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 
-    # todo move this also?
     def clear_device_memory(self):
         """
         Delete models and free device memory

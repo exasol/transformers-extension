@@ -35,6 +35,7 @@ class DummyModelLoader:
             model_name, cache_dir=cache_dir, use_auth_token=token)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=cache_dir, use_auth_token=token)
+        return None
 
 
 class DummyImplementationUDF(BaseModelUDF):

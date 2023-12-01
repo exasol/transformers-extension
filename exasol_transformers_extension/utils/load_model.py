@@ -15,7 +15,6 @@ class LoadModel:
         self.device = device
         self.last_loaded_model = None
         self.last_loaded_tokenizer = None
-        self.last_created_pipeline = None
         self.last_loaded_model_key = None
 
     def load_models(self, model_name: str,
@@ -39,10 +38,11 @@ class LoadModel:
             model_name, cache_dir=cache_dir, use_auth_token=token)
         self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
             model_name, cache_dir=cache_dir, use_auth_token=token)
-        self.last_created_pipeline = self.pipeline(
+        last_created_pipeline = self.pipeline(
             self.task_name,
             model=self.last_loaded_model,
             tokenizer=self.last_loaded_tokenizer,
             device=self.device,
             framework="pt")
         self.last_loaded_model_key = current_model_key
+        return last_created_pipeline
