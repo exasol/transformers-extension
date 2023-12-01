@@ -1,34 +1,8 @@
 import os
 import click
 from pathlib import Path
-from textwrap import dedent
 from exasol_transformers_extension.deployment import deployment_utils as utils
-from exasol_transformers_extension.deployment.language_container_deployer import \
-    LanguageContainerDeployer, LanguageActivationLevel
-
-
-def run_deployer(deployer, upload_container: bool = True,
-                 alter_system: bool = True,
-                 allow_override: bool = False) -> None:
-    if upload_container and alter_system:
-        deployer.deploy_container(allow_override)
-    elif upload_container:
-        deployer.upload_container()
-    elif alter_system:
-        deployer.activate_container(LanguageActivationLevel.System, allow_override)
-
-    if not alter_system:
-        message = dedent(f"""
-        In SQL, you can activate the SLC of the Transformers Extension
-        by using the following statements:
-
-        To activate the SLC only for the current session:
-        {deployer.generate_activation_command(LanguageActivationLevel.Session, True)}
-
-        To activate the SLC on the system:
-        {deployer.generate_activation_command(LanguageActivationLevel.System, True)}
-        """)
-        print(message)
+from exasol_transformers_extension.deployment.te_language_container_deployer import TeLanguageContainerDeployer
 
 
 @click.command(name="language-container")
@@ -52,6 +26,8 @@ def run_deployer(deployer, upload_container: bool = True,
                   utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
 @click.option('--ssl-cert-path', type=str, default="")
+@click.option('--ssl-client-cert-path', type=str, default="")
+@click.option('--ssl-client-private-key', type=str, default="")
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 @click.option('--upload-container/--no-upload_container', type=bool, default=True)
 @click.option('--alter-system/--no-alter-system', type=bool, default=True)
@@ -72,41 +48,40 @@ def language_container_deployer_main(
         db_pass: str,
         language_alias: str,
         ssl_cert_path: str,
+        ssl_client_cert_path: str,
+        ssl_client_private_key: str,
         use_ssl_cert_validation: bool,
         upload_container: bool,
         alter_system: bool,
         allow_override: bool):
 
-    def call_runner():
-        deployer = LanguageContainerDeployer.create(
-            bucketfs_name=bucketfs_name,
-            bucketfs_host=bucketfs_host,
-            bucketfs_port=bucketfs_port,
-            bucketfs_use_https=bucketfs_use_https,
-            bucketfs_user=bucketfs_user,
-            bucketfs_password=bucketfs_password,
-            bucket=bucket,
-            path_in_bucket=path_in_bucket,
-            container_file=Path(container_file),
-            dsn=dsn,
-            db_user=db_user,
-            db_password=db_pass,
-            language_alias=language_alias,
-            ssl_cert_path=ssl_cert_path,
-            use_ssl_cert_validation=use_ssl_cert_validation)
-        run_deployer(deployer, upload_container=upload_container, alter_system=alter_system,
-                     allow_override=allow_override)
+    deployer = TeLanguageContainerDeployer.create(
+        bucketfs_name=bucketfs_name,
+        bucketfs_host=bucketfs_host,
+        bucketfs_port=bucketfs_port,
+        bucketfs_use_https=bucketfs_use_https,
+        bucketfs_user=bucketfs_user,
+        bucketfs_password=bucketfs_password,
+        bucket=bucket,
+        path_in_bucket=path_in_bucket,
+        dsn=dsn,
+        db_user=db_user,
+        db_password=db_pass,
+        language_alias=language_alias,
+        ssl_trusted_ca=ssl_cert_path,
+        ssl_client_certificate=ssl_client_cert_path,
+        ssl_private_key=ssl_client_private_key,
+        use_ssl_cert_validation=use_ssl_cert_validation)
 
-    if container_file:
-        call_runner()
+    if not upload_container:
+        deployer.run(alter_system=alter_system, allow_override=allow_override)
+    elif container_file:
+        deployer.run(container_file=Path(container_file), alter_system=alter_system, allow_override=allow_override)
     elif version:
-        with utils.get_container_file_from_github_release(version) as container:
-            container_file = container
-            call_runner()
+        deployer.download_from_git_and_run(version, alter_system=alter_system, allow_override=allow_override)
     else:
-        raise ValueError("You should specify either the release version to "
-                         "download container file or the path of the already "
-                         "downloaded container file.")
+        raise ValueError("To upload a language container you should specify either its "
+                         "release version or a path of the already downloaded container file.")
 
 
 if __name__ == '__main__':

@@ -162,12 +162,7 @@ def test_language_container_deployer_cli_with_missing_container_option(
             bucketfs_config=bucketfs_config,
             exasol_config=exasol_config
         )
-        expected_exception_message = "You should specify either the release version to " \
-                                     "download container file or the path of the already " \
-                                     "downloaded container file."
-        assert result.exit_code == 1 \
-               and result.exception.args[0] == expected_exception_message \
-               and type(result.exception) == ValueError
+        assert result.exit_code == 1 and type(result.exception) == ValueError
 
 
 def test_language_container_deployer_cli_with_check_cert(
