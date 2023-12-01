@@ -21,7 +21,6 @@ class BaseModelUDF(ABC):
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
     """
-# todo does the token con change? (if yes need to be give at function call not class creation)
     def __init__(self,
                  exa,
                  batch_size,
@@ -43,11 +42,7 @@ class BaseModelUDF(ABC):
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
         self.device = device_management.get_torch_device(device_id)
-        self.model_loader = LoadModel(self.pipeline,
-                                      self.base_model,
-                                      self.tokenizer,
-                                      self.task_name,
-                                      self.device)
+        self.create_model_loader()
         ctx.reset()
 
         while True:
@@ -58,6 +53,17 @@ class BaseModelUDF(ABC):
             ctx.emit(predictions_df)
 
         self.clear_device_memory()
+
+    def create_model_loader(self):
+        """
+        creates the model_loader. In separate function, so it can be replaced for tests since the pipeline
+        creation does not work with dummy data
+        """
+        self.model_loader = LoadModel(self.pipeline,
+                                      self.base_model,
+                                      self.tokenizer,
+                                      self.task_name,
+                                      self.device)
 
     def get_predictions_from_batch(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """

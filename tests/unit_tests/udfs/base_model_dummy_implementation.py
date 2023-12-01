@@ -6,6 +6,37 @@ from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
 
+class DummyModelLoader:
+    """
+    Create a Dummy model loader that does not create a transformers Pipeline,
+     since that fails with test data.
+    """
+    def __init__(self,
+                 base_model,
+                 tokenizer,
+                 task_name,
+                 device
+                 ):
+        self.base_model = base_model
+        self.tokenizer = tokenizer
+        self.task_name = task_name
+        self.device = device
+        self.last_loaded_model = None
+        self.last_loaded_tokenizer = None
+        self.last_created_pipeline = None
+        self.last_loaded_model_key = None
+
+    def load_models(self, model_name: str,
+                    current_model_key,
+                    cache_dir,
+                    token_conn_obj) -> None:
+        token = False
+        self.last_loaded_model = self.base_model.from_pretrained(
+            model_name, cache_dir=cache_dir, use_auth_token=token)
+        self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
+            model_name, cache_dir=cache_dir, use_auth_token=token)
+
+
 class DummyImplementationUDF(BaseModelUDF):
     def __init__(self,
                  exa,
@@ -44,9 +75,9 @@ class DummyImplementationUDF(BaseModelUDF):
             results_df_list.append(result_df)
         return results_df_list
 
-    def load_models(self, model_name: str, token_conn_name: str) -> None:
-        token = False
-        self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir, use_auth_token=token)
-        self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
-            model_name, cache_dir=self.cache_dir, use_auth_token=token)
+    def create_model_loader(self):
+        """ overwrite the model loader creation with dummy model loader creation"""
+        self.model_loader = DummyModelLoader(self.base_model,
+                                             self.tokenizer,
+                                             self.task_name,
+                                             self.device)
