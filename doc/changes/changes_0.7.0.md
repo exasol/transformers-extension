@@ -13,7 +13,7 @@ T.B.D
 
 ### Refactorings
 
-  - #144: Extracted base_udf.load_models into separate class
+  - #144: Extracted base_model_udf.load_models into separate class
  
 
 ### Documentation
@@ -21,3 +21,4 @@ T.B.D
 
 
 ### Security
+  - #144: Updated Cryptography to version 41.0.7

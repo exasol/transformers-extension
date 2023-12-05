@@ -53,12 +53,11 @@ class BaseModelUDF(ABC):
             predictions_df = self.get_predictions_from_batch(batch_df)
             ctx.emit(predictions_df)
 
-        self.clear_device_memory()
+        self.model_loader.clear_device_memory()
 
     def create_model_loader(self):
         """
-        creates the model_loader. In separate function, so it can be replaced for tests since the pipeline
-        creation does not work with dummy data
+        Creates the model_loader.
         """
         self.model_loader = LoadModel(self.pipeline,
                                       self.base_model,
@@ -183,7 +182,7 @@ class BaseModelUDF(ABC):
         current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
         if self.model_loader.last_loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
-            self.clear_device_memory()
+            self.model_loader.clear_device_memory()
             if token_conn:
                 token_conn_obj = self.exa.get_connection(token_conn)
             else:
@@ -211,13 +210,6 @@ class BaseModelUDF(ABC):
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 
-    def clear_device_memory(self):
-        """
-        Delete models and free device memory
-        """
-        self.model_loader.last_loaded_model = None
-        self.model_loader.last_loaded_tokenizer = None
-        torch.cuda.empty_cache()
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

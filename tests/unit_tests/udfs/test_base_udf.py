@@ -79,10 +79,13 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
         mock_meta,
         '',
         None)
+
+    mock_pipeline = lambda task_name, model, tokenizer, device, framework: None
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     udf = DummyImplementationUDF(exa=mock_exa,
                                  base_model=mock_base_model_factory,
-                                 tokenizer=mock_tokenizer_factory)
+                                 tokenizer=mock_tokenizer_factory,
+                                 pipeline=mock_pipeline)
     udf.run(mock_ctx)
     res = mock_ctx.output
     return res, mock_meta

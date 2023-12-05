@@ -1,4 +1,4 @@
-
+import torch
 
 class LoadModel:
     def __init__(self,
@@ -46,3 +46,11 @@ class LoadModel:
             framework="pt")
         self.last_loaded_model_key = current_model_key
         return last_created_pipeline
+
+    def clear_device_memory(self):
+        """
+        Delete models and free device memory
+        """
+        self.last_loaded_model = None
+        self.last_loaded_tokenizer = None
+        torch.cuda.empty_cache()
