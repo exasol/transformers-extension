@@ -6,14 +6,14 @@ from exasol_transformers_extension.deployment.language_container_deployer import
 class TeLanguageContainerDeployer(LanguageContainerDeployer):
 
     SLC_NAME = "exasol_transformers_extension_container_release.tar.gz"
-    GH_RELEASE_URL = "https://github.com/exasol/transformers-extension/releases/download"
+    SLC_URL_FORMATTER = "https://github.com/exasol/transformers-extension/releases/download/{version}/" + SLC_NAME
 
-    def download_from_git_and_run(self, version: str,
-                                  alter_system: bool = True,
-                                  allow_override: bool = False) -> None:
+    def download_from_github_and_run(self, version: str,
+                                     alter_system: bool = True,
+                                     allow_override: bool = False) -> None:
 
-        url = "/".join((self.GH_RELEASE_URL, version, self.SLC_NAME))
-        self.download_and_run(url, self.SLC_NAME, alter_system=alter_system, allow_override=allow_override)
+        self.download_and_run(self.SLC_URL_FORMATTER.format(version=version), self.SLC_NAME,
+                              alter_system=alter_system, allow_override=allow_override)
 
     def run(self, container_file: Optional[Path] = None,
             bucket_file_path: Optional[str] = None,

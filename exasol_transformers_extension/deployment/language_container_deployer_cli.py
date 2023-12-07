@@ -1,8 +1,39 @@
 import os
 import click
+from enum import Enum
 from pathlib import Path
 from exasol_transformers_extension.deployment import deployment_utils as utils
-from exasol_transformers_extension.deployment.te_language_container_deployer import TeLanguageContainerDeployer
+from exasol_transformers_extension.deployment.language_container_deployer import LanguageContainerDeployer
+
+
+class CustomizableParameters(Enum):
+    container_url = 1
+    container_name = 2
+
+
+class _ParameterFormatters:
+    def __init__(self):
+        self._formatters = {}
+
+    def __call__(self, ctx, param, value):
+
+        def update_parameter(parameter_name: str, formatter: str) -> None:
+            param_formatter = ctx.params.get(parameter_name, formatter)
+            if param_formatter:
+                kwargs = {param.name: value}
+                ctx.params[parameter_name] = param_formatter.format(**kwargs)
+
+        if value:
+            for prm_name, prm_formatter in self._formatters.items():
+                update_parameter(prm_name, prm_formatter)
+
+        return value
+
+    def set_formatter(self, custom_parameter: CustomizableParameters, formatter: str) -> None:
+        self._formatters[custom_parameter.name] = formatter
+
+
+slc_parameter_formatters = _ParameterFormatters()
 
 
 @click.command(name="language-container")
@@ -12,18 +43,17 @@ from exasol_transformers_extension.deployment.te_language_container_deployer imp
 @click.option('--bucketfs-use-https', type=bool, default=False)
 @click.option('--bucketfs-user', type=str, required=True, default="w")
 @click.option('--bucketfs-password', prompt='bucketFS password', hide_input=True,
-              default=lambda: os.environ.get(
-                  utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, ""))
+              default=lambda: os.environ.get(utils.BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--bucket', type=str, required=True)
 @click.option('--path-in-bucket', type=str, required=True, default=None)
 @click.option('--container-file',
               type=click.Path(exists=True, file_okay=True), default=None)
-@click.option('--version', type=str, default=None)
+@click.option('--version', type=str, default=None, expose_value=False,
+              callback=slc_parameter_formatters)
 @click.option('--dsn', type=str, required=True)
 @click.option('--db-user', type=str, required=True)
 @click.option('--db-pass', prompt='db password', hide_input=True,
-              default=lambda: os.environ.get(
-                  utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
+              default=lambda: os.environ.get(utils.DB_PASSWORD_ENVIRONMENT_VARIABLE, ""))
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
 @click.option('--ssl-cert-path', type=str, default="")
 @click.option('--ssl-client-cert-path', type=str, default="")
@@ -42,7 +72,6 @@ def language_container_deployer_main(
         bucket: str,
         path_in_bucket: str,
         container_file: str,
-        version: str,
         dsn: str,
         db_user: str,
         db_pass: str,
@@ -53,9 +82,11 @@ def language_container_deployer_main(
         use_ssl_cert_validation: bool,
         upload_container: bool,
         alter_system: bool,
-        allow_override: bool):
+        allow_override: bool,
+        container_url: str = None,
+        container_name: str = None):
 
-    deployer = TeLanguageContainerDeployer.create(
+    deployer = LanguageContainerDeployer.create(
         bucketfs_name=bucketfs_name,
         bucketfs_host=bucketfs_host,
         bucketfs_port=bucketfs_port,
@@ -77,9 +108,11 @@ def language_container_deployer_main(
         deployer.run(alter_system=alter_system, allow_override=allow_override)
     elif container_file:
         deployer.run(container_file=Path(container_file), alter_system=alter_system, allow_override=allow_override)
-    elif version:
-        deployer.download_from_git_and_run(version, alter_system=alter_system, allow_override=allow_override)
+    elif container_url and container_name:
+        deployer.download_and_run(container_url, container_name, alter_system=alter_system,
+                                  allow_override=allow_override)
     else:
+        # The error message should mention the parameters which the callback is specified for being missed.
         raise ValueError("To upload a language container you should specify either its "
                          "release version or a path of the already downloaded container file.")
 
