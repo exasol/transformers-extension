@@ -158,7 +158,7 @@ class LanguageContainerDeployer:
                            alter_type: LanguageActivationLevel = LanguageActivationLevel.Session,
                            allow_override: bool = False) -> None:
         """
-        Activates the SLC container at the required level.
+        Activates the language container at the required level.
 
         bucket_file_path - Path within the designated bucket where the container is uploaded.
         alter_type       - Language activation level, defaults to the SESSION.
