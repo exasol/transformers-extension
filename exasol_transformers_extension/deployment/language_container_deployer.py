@@ -77,7 +77,7 @@ class LanguageContainerDeployer:
                          alter_system: bool = True,
                          allow_override: bool = False) -> None:
         """
-        Downloads language container from the provided url to a temporary file and then deploys it.
+        Downloads the language container from the provided url to a temporary file and then deploys it.
         See docstring on the `run` method for details on what is involved in the deployment.
 
         url              - Address where the container will be downloaded from.
