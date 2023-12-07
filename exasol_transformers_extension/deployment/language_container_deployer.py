@@ -141,7 +141,7 @@ class LanguageContainerDeployer:
     def upload_container(self, container_file: Path,
                          bucket_file_path: Optional[str] = None) -> None:
         """
-        Uploads SLC to the BucketFS.
+        Upload the language container to the BucketFS.
 
         container_file   - Path of the container tar.gz file in a local file system.
         bucket_file_path - Path within the designated bucket where the container should be uploaded.
