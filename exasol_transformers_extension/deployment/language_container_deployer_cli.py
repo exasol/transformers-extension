@@ -51,7 +51,9 @@ class _ParameterFormatters:
             param_formatter = ctx.params.get(parameter_name, formatter)
             if param_formatter:
                 # Enclose in double curly brackets all other parameters in the formatting string,
-                # to avoid the missing parameters' error.
+                # to avoid the missing parameters' error. Below is an example of a formatter string
+                # before and after applying the regex, assuming the current parameter is 'version'.
+                # 'something-with-{version}/tailored-for-{user}' => 'something-with-{version}/tailored-for-{{user}}'
                 pattern = r'\{(?!' + param.name + r'\})\w+\}'
                 param_formatter = re.sub(pattern, lambda m: f'{{{m.group(0)}}}', param_formatter)
                 kwargs = {param.name: value}
