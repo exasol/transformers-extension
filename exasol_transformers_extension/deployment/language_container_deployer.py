@@ -60,6 +60,19 @@ class LanguageActivationLevel(Enum):
     System = 'SYSTEM'
 
 
+def get_language_settings(pyexasol_conn: pyexasol.ExaConnection, alter_type: LanguageActivationLevel) -> str:
+    """
+    Reads the current language settings at the specified level.
+
+    pyexasol_conn    - Opened database connection.
+    alter_type       - Activation level - SYSTEM or SESSION.
+    """
+    result = pyexasol_conn.execute(
+        f"""SELECT "{alter_type.value}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
+        PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()
+    return result[0][0]
+
+
 class LanguageContainerDeployer:
 
     def __init__(self,
@@ -189,21 +202,10 @@ class LanguageContainerDeployer:
             f"ALTER {alter_type.value} SET SCRIPT_LANGUAGES='{new_settings}';"
         return alter_command
 
-    def get_language_settings(self, alter_type: LanguageActivationLevel) -> str:
-        """
-        Reads the current language settings at the specified level.
-
-        alter_type       - Activation level - SYSTEM or SESSION.
-        """
-        result = self._pyexasol_conn.execute(
-            f"""SELECT "{alter_type.value}_VALUE" FROM SYS.EXA_PARAMETERS WHERE 
-            PARAMETER_NAME='SCRIPT_LANGUAGES'""").fetchall()
-        return result[0][0]
-
     def _update_previous_language_settings(self, alter_type: LanguageActivationLevel,
                                            allow_override: bool,
                                            path_in_udf: PurePosixPath) -> str:
-        prev_lang_settings = self.get_language_settings(alter_type)
+        prev_lang_settings = get_language_settings(self._pyexasol_conn, alter_type)
         prev_lang_aliases = prev_lang_settings.split(" ")
         self._check_if_requested_language_alias_already_exists(
             allow_override, prev_lang_aliases)

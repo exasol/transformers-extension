@@ -2,7 +2,7 @@
 # To be migrated to the script-languages-container-tool #
 #########################################################
 from pathlib import Path, PurePosixPath
-from unittest.mock import create_autospec, MagicMock
+from unittest.mock import create_autospec, MagicMock, patch
 import pytest
 from pyexasol import ExaConnection
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
@@ -50,7 +50,6 @@ def container_deployer(mock_pyexasol_conn, mock_bfs_location, language_alias) ->
 
     deployer.upload_container = MagicMock()
     deployer.activate_container = MagicMock()
-    deployer.get_language_settings = MagicMock()
     return deployer
 
 
@@ -69,16 +68,17 @@ def test_slc_deployer_upload(container_deployer, container_file_name, container_
 
 
 def test_slc_deployer_activate(container_deployer, container_file_name, container_file_path):
-    container_deployer.run(bucket_file_path=container_file_path, alter_system=True, allow_override=True)
+    container_deployer.run(bucket_file_path=container_file_name, alter_system=True, allow_override=True)
     container_deployer.upload_container.assert_not_called()
     container_deployer.activate_container.assert_called_once_with(container_file_name, LanguageActivationLevel.System,
                                                                   True)
 
 
-def test_slc_deployer_generate_activation_command(container_deployer, language_alias, container_file_name,
-                                                  container_bfs_path):
+@patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
+def test_slc_deployer_generate_activation_command(mock_lang_settings, container_deployer, language_alias,
+                                                  container_file_name, container_bfs_path):
 
-    container_deployer.get_language_settings.return_value = 'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3'
+    mock_lang_settings.return_value = 'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3'
 
     alter_type = LanguageActivationLevel.Session
     expected_command = f"ALTER {alter_type.value.upper()} SET SCRIPT_LANGUAGES='" \
@@ -90,11 +90,12 @@ def test_slc_deployer_generate_activation_command(container_deployer, language_a
     assert command == expected_command
 
 
-def test_slc_deployer_generate_activation_command_override(container_deployer, language_alias, container_file_name,
-                                                           container_bfs_path):
+@patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
+def test_slc_deployer_generate_activation_command_override(mock_lang_settings, container_deployer, language_alias,
+                                                           container_file_name, container_bfs_path):
 
     current_bfs_path = 'bfsdefault/default/container_abc'
-    container_deployer.get_language_settings.return_value = \
+    mock_lang_settings.return_value = \
         'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 ' \
         f'{language_alias}=localzmq+protobuf:///{current_bfs_path}?' \
         f'lang=python#/buckets/{current_bfs_path}/exaudf/exaudfclient_py3'
@@ -109,10 +110,12 @@ def test_slc_deployer_generate_activation_command_override(container_deployer, l
     assert command == expected_command
 
 
-def test_slc_deployer_generate_activation_command_failure(container_deployer, language_alias, container_file_name):
+@patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
+def test_slc_deployer_generate_activation_command_failure(mock_lang_settings, container_deployer, language_alias,
+                                                          container_file_name):
 
     current_bfs_path = 'bfsdefault/default/container_abc'
-    container_deployer.get_language_settings.return_value = \
+    mock_lang_settings.return_value = \
         'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 ' \
         f'{language_alias}=localzmq+protobuf:///{current_bfs_path}?' \
         f'lang=python#/buckets/{current_bfs_path}/exaudf/exaudfclient_py3'
