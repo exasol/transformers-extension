@@ -44,9 +44,3 @@ class DummyImplementationUDF(BaseModelUDF):
             results_df_list.append(result_df)
         return results_df_list
 
-    def load_models(self, model_name: str, token_conn_name: str) -> None:
-        token = False
-        self.last_loaded_model = self.base_model.from_pretrained(
-            model_name, cache_dir=self.cache_dir, use_auth_token=token)
-        self.last_loaded_tokenizer = self.tokenizer.from_pretrained(
-            model_name, cache_dir=self.cache_dir, use_auth_token=token)
