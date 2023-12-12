@@ -8,16 +8,24 @@ Code name: T.B.D
 T.B.D
 
 ### Features
+
   - #143: Added HuggingfaceTransfer class with save_pretrained for saving model locally
   - #152: Made the container uploading and language registration two separate actions
 
 ### Bug Fixes
 
 
- 
+### Bug Fixes
+
+### Refactorings
+
+  - #144: Extracted base_model_udf.load_models into separate class
+
 
 ### Documentation
 
 
-
 ### Security
+
+  - #144: Updated Cryptography to version 41.0.7
+

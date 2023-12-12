@@ -10,6 +10,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplementationUDF
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol
+from exasol_transformers_extension.utils.load_model import LoadModel
 from tests.utils.mock_cast import mock_cast
 import re
 
@@ -78,10 +79,13 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
         mock_meta,
         '',
         None)
+
+    mock_pipeline = lambda task_name, model, tokenizer, device, framework: None
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     udf = DummyImplementationUDF(exa=mock_exa,
-                             base_model=mock_base_model_factory,
-                             tokenizer=mock_tokenizer_factory)
+                                 base_model=mock_base_model_factory,
+                                 tokenizer=mock_tokenizer_factory,
+                                 pipeline=mock_pipeline)
     udf.run(mock_ctx)
     res = mock_ctx.output
     return res, mock_meta
