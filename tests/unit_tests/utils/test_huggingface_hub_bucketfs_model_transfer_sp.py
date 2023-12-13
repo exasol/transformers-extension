@@ -49,7 +49,9 @@ class TestSetup:
 
 def test_init():
     test_setup = TestSetup()
-    assert test_setup.temporary_directory_factory_mock.mock_calls == [call.create(), call.create().__enter__()] \
+    assert test_setup.temporary_directory_factory_mock.mock_calls == [call.create(),
+                                                                      call.create().__enter__(),
+                                                                      call.create().__enter__().__fspath__()] \
            and test_setup.model_factory_mock.mock_calls == [] \
            and test_setup.bucketfs_location_mock.mock_calls == [] \
            and mock_cast(test_setup.bucketfs_model_uploader_factory_mock.create).mock_calls == [
@@ -60,10 +62,10 @@ def test_init():
 def test_download_function_call():
     test_setup = TestSetup()
     test_setup.downloader.download_from_huggingface_hub(model_factory=test_setup.model_factory_mock)
-    cache_dir = test_setup.temporary_directory_factory_mock.create().__enter__().__truediv__()
+    cache_dir = test_setup.temporary_directory_factory_mock.create().__enter__()
     model_save_path = (test_setup.downloader._tmpdir_name/"pretrained"/test_setup.model_name)
     assert test_setup.model_factory_mock.mock_calls == [
-        call.from_pretrained(test_setup.model_name, cache_dir=cache_dir,
+        call.from_pretrained(test_setup.model_name, cache_dir=Path(cache_dir)/"cache",
                              use_auth_token=test_setup.token),
         call.from_pretrained().save_pretrained(model_save_path)]
 
