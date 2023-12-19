@@ -14,16 +14,15 @@ T.B.D
 
 ### Bug Fixes
 
-
-### Bug Fixes
+  - n/a
 
 ### Refactorings
 
   - #144: Extracted base_model_udf.load_models into separate class
-
-
+  
 ### Documentation
 
+  - n/a
 
 ### Security
 

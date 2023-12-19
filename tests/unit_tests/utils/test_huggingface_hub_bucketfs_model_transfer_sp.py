@@ -26,9 +26,9 @@ class TestSetup:
             create_autospec(BucketFSModelUploader)
         mock_cast(self.bucketfs_model_uploader_factory_mock.create).side_effect = [self.bucketfs_model_uploader_mock]
 
+
         self.token = "token"
         model_params_ = model_params.tiny_model
-        print(model_params_)
         self.model_name = model_params_
         self.model_path = Path("test_model_path")
         self.downloader = HuggingFaceHubBucketFSModelTransferSP(
@@ -45,6 +45,7 @@ class TestSetup:
         self.temporary_directory_factory_mock.reset_mock()
         self.model_factory_mock.reset_mock()
         self.bucketfs_model_uploader_mock.reset_mock()
+        self.bucketfs_model_uploader_factory_mock.reset_mock()
 
 
 def test_init():
@@ -62,8 +63,8 @@ def test_init():
 def test_download_function_call():
     test_setup = TestSetup()
     test_setup.downloader.download_from_huggingface_hub(model_factory=test_setup.model_factory_mock)
-    cache_dir = test_setup.temporary_directory_factory_mock.create().__enter__()
-    model_save_path = (test_setup.downloader._tmpdir_name/"pretrained"/test_setup.model_name)
+    cache_dir = mock_cast(test_setup.temporary_directory_factory_mock.create().__enter__).return_value
+    model_save_path = Path(cache_dir) / "pretrained" / test_setup.model_name
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(test_setup.model_name, cache_dir=Path(cache_dir)/"cache",
                              use_auth_token=test_setup.token),
@@ -74,6 +75,7 @@ def test_upload_function_call():
     test_setup = TestSetup()
     test_setup.downloader.download_from_huggingface_hub(model_factory=test_setup.model_factory_mock)
     test_setup.reset_mocks()
-    model_save_path = (test_setup.downloader._tmpdir_name/"pretrained"/test_setup.model_name)
+    cache_dir = mock_cast(test_setup.temporary_directory_factory_mock.create().__enter__).return_value
+    model_save_path = Path(cache_dir) / "pretrained" / test_setup.model_name
     test_setup.downloader.upload_to_bucketfs()
     assert mock_cast(test_setup.bucketfs_model_uploader_mock.upload_directory).mock_calls == [call(model_save_path)]

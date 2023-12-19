@@ -29,7 +29,6 @@ class TestSetup:
 
         self.token = "token"
         model_params_ = model_params.tiny_model
-        print(model_params_)
         self.model_name = model_params_
         self.model_path = Path("test_model_path")
         self.downloader = HuggingFaceHubBucketFSModelTransferSP(
@@ -51,8 +50,8 @@ def test_download_with_model(bucketfs_location):
         test_setup = TestSetup(bucketfs_location)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
-        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name/"pretrained"/test_setup.model_name)
-        test_setup.downloader.__del__()
+        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name / "pretrained" / test_setup.model_name)
+        del test_setup.downloader
 
 
 def test_download_with_duplicate_model(bucketfs_location):
@@ -61,5 +60,5 @@ def test_download_with_duplicate_model(bucketfs_location):
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
-        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name/"pretrained"/test_setup.model_name)
-        test_setup.downloader.__del__()
+        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name / "pretrained" / test_setup.model_name)
+        del test_setup.downloader

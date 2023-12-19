@@ -1,28 +1,19 @@
 from pathlib import Path
-from typing import Protocol, Union, runtime_checkable
 
-import transformers
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 
 
-@runtime_checkable
-class ModelFactoryProtocol(Protocol):
-    """
-    Protocol for better type hints.
-    """
-    def from_pretrained(self, model_name: str, cache_dir: Path, use_auth_token: str) -> transformers.PreTrainedModel:
-        pass
 
-    def save_pretrained(self, save_directory: Union[str, Path]):
-        pass
 
 
 class HuggingFaceHubBucketFSModelTransferSP:
     """
-    Class for downloading a model using the Huggingface Transformers API, and loading it into the BucketFS.
+    Class for downloading a model using the Huggingface Transformers API, and loading it into the BucketFS
+    using save_pretrained.
 
     :bucketfs_location:     BucketFSLocation the model should be loaded to
     :model_name:            Name of the model to be downloaded using Huggingface Transformers API
@@ -61,8 +52,8 @@ class HuggingFaceHubBucketFSModelTransferSP:
         Download a model from HuggingFace Hub into a temporary directory and save it with save_pretrained
         in temporary directory / pretrained .
         """
-        model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name/"cache", use_auth_token=self._token)
-        model.save_pretrained(self._tmpdir_name/"pretrained"/self._model_name)
+        model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name / "cache", use_auth_token=self._token)
+        model.save_pretrained(self._tmpdir_name / "pretrained" / self._model_name)
 
     def upload_to_bucketfs(self) -> Path:
         """
@@ -70,7 +61,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name/"pretrained"/self._model_name)
+        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name / "pretrained" / self._model_name)
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:
