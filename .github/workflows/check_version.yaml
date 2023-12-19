@@ -11,4 +11,4 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/prepare_poetry_env
       - name: Check Release
-        run: ./scripts/check_release_version.sh
+        run: poetry run python3 -u "./scripts/check_release.py"
