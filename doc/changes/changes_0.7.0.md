@@ -13,13 +13,16 @@ are some refactorings for better usability and the  Cryptography dependency vers
 
   - #151: Made the container uploading and language registration two separate actions
   - #167: Added version check workflow
+  - #143: Added HuggingfaceTransfer class with save_pretrained for saving model locally
+
 
 ### Refactorings
 
   - #144: Extracted base_model_udf.load_models into separate class
   - #159: Refactored LanguageContainer Deployer to make it reusable by other extensions
 
+
 ### Security
 
   - #144: Updated Cryptography to version 41.0.7
-  
+

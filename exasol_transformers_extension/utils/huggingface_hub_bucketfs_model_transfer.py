@@ -1,17 +1,11 @@
-import tempfile
 from pathlib import Path
-from typing import Protocol, runtime_checkable
+
 
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
-
-
-@runtime_checkable
-class ModelFactoryProtocol(Protocol):
-    def from_pretrained(self, model_name: str, cache_dir: Path, use_auth_token: str):
-        pass
 
 
 class HuggingFaceHubBucketFSModelTransfer:
