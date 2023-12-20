@@ -1,28 +1,26 @@
-# Transformers Extension 0.7.0, released T.B.D
+# Transformers Extension 0.7.0, released 2023-12-20
 
-Code name: T.B.D
+Code name: Split SLC actions
 
 
 ## Summary
 
-T.B.D
+This release splits the container uploading and registration into two separate actions. Additionally, 
+a workflow for checking the correctness of the version number in multiple places was added. Apart from that there 
+are some refactorings for better usability and the  Cryptography dependency version has been upgraded to 41.0.7
 
 ### Features
 
+  - #151: Made the container uploading and language registration two separate actions
+  - #167: Added version check workflow
   - #143: Added HuggingfaceTransfer class with save_pretrained for saving model locally
-  - #152: Made the container uploading and language registration two separate actions
 
-### Bug Fixes
-
-  - n/a
 
 ### Refactorings
 
   - #144: Extracted base_model_udf.load_models into separate class
-  
-### Documentation
+  - #159: Refactored LanguageContainer Deployer to make it reusable by other extensions
 
-  - n/a
 
 ### Security
 

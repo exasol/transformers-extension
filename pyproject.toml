@@ -33,6 +33,7 @@ tenacity = "^8.2.2"
 pytest = "^7.2.0"
 exasol-udf-mock-python = "^0.1.0"
 exasol-script-languages-container-tool = "^0.18.1"
+toml = "^0.10.2"
 
 [[tool.poetry.source]]
 name = "torch"
