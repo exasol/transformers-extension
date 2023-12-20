@@ -1,11 +1,11 @@
-# Transformers Extension 0.7.0, released 2023-12-19
+# Transformers Extension 0.7.0, released 2023-12-20
 
 Code name: Split SLC actions
 
 
 ## Summary
 
-In this Release split the container uploading and registration into two separate actions. Additionally, 
+This release splits the container uploading and registration into two separate actions. Additionally, 
 a workflow for checking the correctness of the version number in multiple places was added. Apart from that there 
 are some refactorings for better usability and the  Cryptography dependency version has been upgraded to 41.0.7
 

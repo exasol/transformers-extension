@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+from packaging import version
+
 from git import Repo
 import toml
 
@@ -41,7 +43,7 @@ if __name__ == '__main__':
 
     # We expect that the current version in pyproject.toml is always greater than the latest tag.
     # Thus we avoid creating a release without having the version number updated.
-    if not poetry_version > latest_tag:
+    if not version.parse(poetry_version) > version.parse(latest_tag):
         raise ValueError("Poetry version needs to be updated!")
 
     if changelog_version != poetry_version:
