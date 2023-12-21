@@ -25,3 +25,4 @@ T.B.D
 
 ### Security 
   - Update paramiko version to 3.4.0
+  - Updated transformers to 4.36.2
