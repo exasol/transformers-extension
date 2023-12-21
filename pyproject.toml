@@ -19,7 +19,7 @@ keywords = ['exasol']
 python = "^3.8.0"
 pandas = ">=1.4.2,<2.0.0"
 torch = { version="2.0.1+cpu", source = "torch"} # we use cpu version until GPUs are supported from Exasol
-transformers = {extras = ["torch"], version = "^4.31.0"}
+transformers = {extras = ["torch"], version = "^4.36.2"}
 Jinja2 = "^3.0.3"
 importlib-resources = "^5.4.0"
 click = "^8.0.4"
