@@ -3,9 +3,11 @@
 #########################################################
 from pathlib import Path, PurePosixPath
 from unittest.mock import create_autospec, MagicMock, patch
+
 import pytest
-from pyexasol import ExaConnection
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+from pyexasol import ExaConnection
+
 from exasol_transformers_extension.deployment.language_container_deployer import (
     LanguageContainerDeployer, LanguageActivationLevel)
 
@@ -77,14 +79,13 @@ def test_slc_deployer_activate(container_deployer, container_file_name, containe
 @patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
 def test_slc_deployer_generate_activation_command(mock_lang_settings, container_deployer, language_alias,
                                                   container_file_name, container_bfs_path):
-
     mock_lang_settings.return_value = 'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3'
 
     alter_type = LanguageActivationLevel.Session
     expected_command = f"ALTER {alter_type.value.upper()} SET SCRIPT_LANGUAGES='" \
-        "R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 " \
-        f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
-        f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3';"
+                       "R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 " \
+                       f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
+                       f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3';"
 
     command = container_deployer.generate_activation_command(container_file_name, alter_type)
     assert command == expected_command
@@ -93,7 +94,6 @@ def test_slc_deployer_generate_activation_command(mock_lang_settings, container_
 @patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
 def test_slc_deployer_generate_activation_command_override(mock_lang_settings, container_deployer, language_alias,
                                                            container_file_name, container_bfs_path):
-
     current_bfs_path = 'bfsdefault/default/container_abc'
     mock_lang_settings.return_value = \
         'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 ' \
@@ -102,9 +102,9 @@ def test_slc_deployer_generate_activation_command_override(mock_lang_settings, c
 
     alter_type = LanguageActivationLevel.Session
     expected_command = f"ALTER {alter_type.value.upper()} SET SCRIPT_LANGUAGES='" \
-        "R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 " \
-        f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
-        f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3';"
+                       "R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 " \
+                       f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
+                       f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3';"
 
     command = container_deployer.generate_activation_command(container_file_name, alter_type, allow_override=True)
     assert command == expected_command
@@ -113,7 +113,6 @@ def test_slc_deployer_generate_activation_command_override(mock_lang_settings, c
 @patch('exasol_transformers_extension.deployment.language_container_deployer.get_language_settings')
 def test_slc_deployer_generate_activation_command_failure(mock_lang_settings, container_deployer, language_alias,
                                                           container_file_name):
-
     current_bfs_path = 'bfsdefault/default/container_abc'
     mock_lang_settings.return_value = \
         'R=builtin_r JAVA=builtin_java PYTHON3=builtin_python3 ' \
@@ -123,3 +122,12 @@ def test_slc_deployer_generate_activation_command_failure(mock_lang_settings, co
     with pytest.raises(RuntimeError):
         container_deployer.generate_activation_command(container_file_name, LanguageActivationLevel.Session,
                                                        allow_override=False)
+
+
+def test_slc_deployer_get_language_activation(container_deployer, language_alias,
+                                              container_file_name, container_bfs_path):
+    expected_command = f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
+                       f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3"
+
+    command = container_deployer.get_language_activation(container_file_name)
+    assert command == expected_command

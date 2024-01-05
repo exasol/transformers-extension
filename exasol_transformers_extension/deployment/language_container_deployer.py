@@ -213,6 +213,11 @@ class LanguageContainerDeployer:
             path_in_udf, prev_lang_aliases)
         return new_definitions_str
 
+    def get_language_activation(self, bucket_file_path: str):
+        path_in_udf = self._bucketfs_location.generate_bucket_udf_path(bucket_file_path)
+        result = self._generate_new_language_settings(path_in_udf=path_in_udf, prev_lang_aliases=[])
+        return result
+
     def _generate_new_language_settings(self, path_in_udf: PurePosixPath,
                                         prev_lang_aliases: List[str]) -> str:
         other_definitions = [
