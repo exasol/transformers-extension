@@ -124,10 +124,10 @@ def test_slc_deployer_generate_activation_command_failure(mock_lang_settings, co
                                                        allow_override=False)
 
 
-def test_slc_deployer_get_language_activation(container_deployer, language_alias,
+def test_slc_deployer_get_language_definition(container_deployer, language_alias,
                                               container_file_name, container_bfs_path):
     expected_command = f"{language_alias}=localzmq+protobuf:///{container_bfs_path}?" \
                        f"lang=python#/buckets/{container_bfs_path}/exaudf/exaudfclient_py3"
 
-    command = container_deployer.get_language_activation(container_file_name)
+    command = container_deployer.get_language_definition(container_file_name)
     assert command == expected_command
