@@ -1,15 +1,16 @@
-# Transformers Extension 0.8.0, T.B.D
+# Transformers Extension 0.8.0, 2024-01-05
 
-Code name: T.B.D
+Code name: Get Language Definition in LanguageContainerDeployer
 
 
 ## Summary
 
-T.B.D
+This release added the get_language_definition function to the LanguageContainerDeployer.
 
 ### Features
 
- - #145: Added load function for loading local models
+ - #174: Added get_language_definition to the language container deployer
+
 
 ### Bug Fixes
 
@@ -24,5 +25,6 @@ T.B.D
  - n/a
 
 ### Security 
+
   - Update paramiko version to 3.4.0
   - Updated transformers to 4.36.2
