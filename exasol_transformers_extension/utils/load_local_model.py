@@ -1,58 +1,66 @@
 import torch
 import transformers.pipelines
-from transformers import AutoModel, AutoTokenizer
+from typing import Optional
 from pathlib import Path
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 
 
 class LoadLocalModel:
     """
     Class for loading locally saved models and tokenizers. Also stores information regarding the model and pipeline.
 
-    :pipeline:      current model pipeline
-    :task_name:     name of the current task
-    :device:        device to be used for pipeline creation
+    :pipeline_factory:      a function to create a transformers pipeline
+    :task_name:             name of the current task
+    :device:                device to be used for pipeline creation
+    :base_model_factory:    a ModelFactoryProtocol for creating the loaded model
+    :tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
-                 pipeline,
-                 task_name,
-                 device
+                 pipeline_factory,
+                 task_name: str,
+                 device: str,
+                 base_model_factory: ModelFactoryProtocol,
+                 tokenizer_factory: ModelFactoryProtocol
                  ):
-        self.pipeline = pipeline
+        self.pipeline_factory = pipeline_factory
         self.task_name = task_name
         self.device = device
-        self.last_loaded_model = None
-        self.last_loaded_tokenizer = None
-        self.last_loaded_model_key = None
+        self.base_model_factory = base_model_factory
+        self.tokenizer_factory = tokenizer_factory
+        self._loaded_model_key = None
 
-    def load_models(self, model_name: str,
-                    current_model_key,
-                    cache_dir: Path
+    @property
+    def loaded_model_key(self):
+        """Get the current loaded_model_key."""
+        return self._loaded_model_key
+
+    def load_models(self,
+                    model_path: Path,
+                    current_model_key: str
                     ) -> transformers.pipelines.Pipeline:
         """
         Loads a locally saved model and tokenizer from "cache_dir / "pretrained" / model_name".
         Returns new pipeline corresponding to the model and task.
 
-        :model_name:            name of the model to be loaded
-        :current_model_key:     Key of the model to be loaded
-        :cache_dir:             location of the saved model
+        :model_path:            location of the saved model and tokenizer
+        :current_model_key:     key of the model to be loaded
         """
 
-        self.last_loaded_model = AutoModel.from_pretrained(str(cache_dir / "pretrained" / model_name)) # or do we want to load tokenizer
-        self.last_loaded_tokenizer = AutoTokenizer.from_pretrained(str(cache_dir / "pretrained" / model_name))
+        loaded_model = self.base_model_factory.from_pretrained(str(model_path))
+        loaded_tokenizer = self.tokenizer_factory.from_pretrained(str(model_path))
 
-        last_created_pipeline = self.pipeline(
+        last_created_pipeline = self.pipeline_factory(
             self.task_name,
-            model=self.last_loaded_model,
-            tokenizer=self.last_loaded_tokenizer,
+            model=loaded_model,
+            tokenizer=loaded_tokenizer,
             device=self.device,
             framework="pt")
-        self.last_loaded_model_key = current_model_key
+        self._loaded_model_key = current_model_key
         return last_created_pipeline
 
     def clear_device_memory(self):
         """
         Delete models and free device memory
         """
-        self.last_loaded_model = None
-        self.last_loaded_tokenizer = None
         torch.cuda.empty_cache()
+
