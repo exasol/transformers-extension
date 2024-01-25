@@ -62,8 +62,7 @@ def test_load_local_model():
         model.save_pretrained(model_save_path)
         tokenizer.save_pretrained(model_save_path)
 
-        test_setup.loader.load_models(model_name=test_setup.model_name,
-                                      current_model_key=test_setup.mock_current_model_key,
+        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
                                       model_path=dir_p / "pretrained" / test_setup.model_name)
 
 
@@ -80,6 +79,5 @@ def test_load_local_model_with_huggingface_model_transfer():
         downloaded_model_path = download_model_with_huggingface_transfer(
             test_setup, mock_bucketfs_location)
 
-        test_setup.loader.load_models(model_name=test_setup.model_name,
-                                      current_model_key=test_setup.mock_current_model_key,
+        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
                                       model_path=downloaded_model_path)
