@@ -18,7 +18,7 @@ keywords = ['exasol']
 [tool.poetry.dependencies]
 python = "^3.8.0"
 pandas = ">=1.4.2,<2.0.0"
-torch = { version="2.0.1+cpu", source = "torch"} # we use cpu version until GPUs are supported from Exasol
+torch = "^2.0.1"
 transformers = {extras = ["torch"], version = "^4.36.2"}
 Jinja2 = "^3.0.3"
 importlib-resources = "^5.4.0"
@@ -34,12 +34,6 @@ pytest = "^7.2.0"
 exasol-udf-mock-python = "^0.1.0"
 exasol-script-languages-container-tool = "^0.18.1"
 toml = "^0.10.2"
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cpu"
-secondary = true
-
 
 [tool.poetry.group.dev.dependencies]
 nox = "^2023.4.22"
