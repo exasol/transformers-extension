@@ -1,5 +1,5 @@
 from pathlib import Path, PurePosixPath
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
 
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
@@ -25,11 +25,11 @@ class TestSetup:
         self.model_name = model_params_
 
         self.mock_current_model_key = None
-        mock_pipeline = lambda task_name, model, tokenizer, device, framework: None
+        test_pipeline = pipeline
         self.loader = LoadLocalModel(
-                                    mock_pipeline,
-                                    task_name="test_task",
-                                    device=0,
+                                    test_pipeline,
+                                    task_name="token-classification",
+                                    device="cpu",
                                     base_model_factory=self.base_model_factory,
                                     tokenizer_factory=self.tokenizer_factory
                                     )

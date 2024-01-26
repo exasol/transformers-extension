@@ -12,8 +12,8 @@ class LoadLocalModel:
     :pipeline_factory:      a function to create a transformers pipeline
     :task_name:             name of the current task
     :device:                device to be used for pipeline creation
-    :base_model_factory:    a ModelFactoryProtocol for creating the loaded model
-    :tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
+    :_base_model_factory:    a ModelFactoryProtocol for creating the loaded model
+    :_tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
                  pipeline_factory,
@@ -25,8 +25,8 @@ class LoadLocalModel:
         self.pipeline_factory = pipeline_factory
         self.task_name = task_name
         self.device = device
-        self.base_model_factory = base_model_factory
-        self.tokenizer_factory = tokenizer_factory
+        self._base_model_factory = base_model_factory
+        self._tokenizer_factory = tokenizer_factory
         self._loaded_model_key = None
 
     @property
@@ -46,8 +46,8 @@ class LoadLocalModel:
         :current_model_key:     key of the model to be loaded
         """
 
-        loaded_model = self.base_model_factory.from_pretrained(str(model_path))
-        loaded_tokenizer = self.tokenizer_factory.from_pretrained(str(model_path))
+        loaded_model = self._base_model_factory.from_pretrained(str(model_path))
+        loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(model_path))
 
         last_created_pipeline = self.pipeline_factory(
             self.task_name,
