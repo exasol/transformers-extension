@@ -5,6 +5,7 @@ from unittest.mock import create_autospec, MagicMock, call
 
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
+from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
 
 
 
@@ -18,11 +19,11 @@ class TestSetup:
         self.mock_current_model_key = "some_key"
         self.cache_dir = "test/Path"
 
-        mock_pipeline = lambda task_name, model, tokenizer, device, framework: None
+        self.mock_pipeline = MockPipeline
         self.loader = LoadLocalModel(
-                                     mock_pipeline,
+                                     self.mock_pipeline,
                                      task_name="test_task",
-                                     device=0,
+                                     device="cpu",
                                      base_model_factory=self.model_factory_mock,
                                      tokenizer_factory=self.tokenizer_factory_mock)
 
@@ -38,4 +39,5 @@ def test_load_function_call():
         call.from_pretrained(str(model_save_path))]
     assert test_setup.tokenizer_factory_mock.mock_calls == [
         call.from_pretrained(str(model_save_path))]
+    assert test_setup.mock_pipeline.counter == 1
 

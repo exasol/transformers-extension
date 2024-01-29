@@ -12,6 +12,7 @@ from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplement
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_model import LoadModel
 from tests.utils.mock_cast import mock_cast
+from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
 import re
 
 
@@ -80,7 +81,7 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
         '',
         None)
 
-    mock_pipeline = lambda task_name, model, tokenizer, device, framework: None
+    mock_pipeline = MockPipeline
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     udf = DummyImplementationUDF(exa=mock_exa,
                                  base_model=mock_base_model_factory,
