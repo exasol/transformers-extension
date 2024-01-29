@@ -17,7 +17,7 @@ T.B.D
 
 ### Refactorings
 
- - n/a
+ - #182: Removed torch package index from pyproject.toml
 
 ### Documentation
 

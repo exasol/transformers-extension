@@ -95,6 +95,11 @@ def add_wheel_to_flavor(flavor_base_path):
 
 def add_requirements_to_flavor(flavor_base_path: Path):
     project_directory = find_project_directory()
-    requirements = subprocess.check_output(["poetry", "export"], cwd=project_directory)
+    requirements_bytes = subprocess.check_output(["poetry", "export", "--without-hashes", "--without-urls"],
+                                                 cwd=project_directory)
+    requirements = requirements_bytes.decode("UTF-8")
+    requirements_without_cuda = "\n".join(line
+                                          for line in requirements.splitlines()
+                                          if not line.startswith("nvidia"))
     requirements_file = flavor_base_path / "dependencies" / "requirements.txt"
-    requirements_file.write_bytes(requirements)
+    requirements_file.write_text(requirements_without_cuda)
