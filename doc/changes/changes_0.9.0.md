@@ -9,7 +9,7 @@ T.B.D
 
 ### Features
 
- - n/a
+- #145: Added load function for loading local models
 
 ### Bug Fixes
 
