@@ -18,6 +18,7 @@ T.B.D
 ### Refactorings
 
  - #182: Removed torch package index from pyproject.toml
+ - #139: Installs Sacremoses tokenizer
 
 ### Documentation
 
