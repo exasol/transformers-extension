@@ -81,7 +81,7 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
         '',
         None)
 
-    mock_pipeline = MockPipeline
+    mock_pipeline = Mock()
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     udf = DummyImplementationUDF(exa=mock_exa,
                                  base_model=mock_base_model_factory,
