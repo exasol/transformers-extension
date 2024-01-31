@@ -1,28 +1,22 @@
-# Transformers Extension 0.9.0, T.B.D
+# Transformers Extension 0.9.0, 2024-01-31
 
-Code name: T.B.D
+Code name: Updated and Fixed Dependencies
 
 
 ## Summary
 
-T.B.D
+This release changes how we import the torch package, adds the sacremoses tokenizer 
+and includes security updates. It also adds functions to load locally saved models as 
+a preparation for changing the model downloading and saving process.
 
 ### Features
 
 - #145: Added load function for loading local models
 
-### Bug Fixes
-
- - n/a
-
 ### Refactorings
 
  - #182: Removed torch package index from pyproject.toml
  - #139: Installs Sacremoses tokenizer
-
-### Documentation
-
- - n/a
 
 ### Security 
 
