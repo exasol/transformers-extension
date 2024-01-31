@@ -9,7 +9,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplementationUDF
-from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_model import LoadModel
 from tests.utils.mock_cast import mock_cast
 from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline

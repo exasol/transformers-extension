@@ -9,11 +9,21 @@ from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
+    HuggingFaceHubBucketFSModelTransferSPFactory
 
 
 def download_model(model_name: str, tmpdir_name: Path) -> None:
-    for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-        downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
+    with HuggingFaceHubBucketFSModelTransferSPFactory().create(
+            bucketfs_location=,#todo
+            model_name=model_name,
+            model_path=tmpdir_name,
+            token=""
+    ) as downloader:
+        downloader.download_from_huggingface_hub(model_factory=ModelFactoryProtocol[transformers.AutoModel])
+        downloader.download_from_huggingface_hub(model_factory=ModelFactoryProtocol[transformers.AutoTokenizer])
+
 
 
 @contextmanager
