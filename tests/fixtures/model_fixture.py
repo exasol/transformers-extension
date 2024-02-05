@@ -36,7 +36,7 @@ def upload_model_to_local_bucketfs(
         model_name: str, download_tmpdir: Path) -> str:
 
     download_model(model_name, download_tmpdir)
-    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir",model_name,"pretrained")
+    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir")
     upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
     bucketfs_location = LocalFSMockBucketFSLocation(
         PurePosixPath(upload_tmpdir_name))

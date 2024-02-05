@@ -11,6 +11,7 @@ from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, cr
 from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplementationUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from tests.utils.mock_cast import mock_cast
+from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
 import re
 
 
