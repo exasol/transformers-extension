@@ -52,9 +52,9 @@ class MultipleTokenConnSingleBatchComplete:
     }
 
     mock_factory = MockFillingMaskFactory({
-        (PurePosixPath(base_cache_dir1, "sub_dir1", "model1"), "token1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1", "pretrained", "model1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        (PurePosixPath(base_cache_dir1, "sub_dir1", "model1"), "token2"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1", "pretrained", "model1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1)
     })
 

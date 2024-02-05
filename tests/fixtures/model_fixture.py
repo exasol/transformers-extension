@@ -9,21 +9,13 @@ from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
-    HuggingFaceHubBucketFSModelTransferSPFactory
 
 
+# todo also change upload?
 def download_model(model_name: str, tmpdir_name: Path) -> None:
-    with HuggingFaceHubBucketFSModelTransferSPFactory().create(
-            bucketfs_location=,#todo
-            model_name=model_name,
-            model_path=tmpdir_name,
-            token=""
-    ) as downloader:
-        downloader.download_from_huggingface_hub(model_factory=ModelFactoryProtocol[transformers.AutoModel])
-        downloader.download_from_huggingface_hub(model_factory=ModelFactoryProtocol[transformers.AutoTokenizer])
-
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache")
+        model.save_pretrained(tmpdir_name / "pretrained" / model_name)
 
 
 @contextmanager
@@ -44,7 +36,7 @@ def upload_model_to_local_bucketfs(
         model_name: str, download_tmpdir: Path) -> str:
 
     download_model(model_name, download_tmpdir)
-    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir")
+    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir",model_name,"pretrained")
     upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
     bucketfs_location = LocalFSMockBucketFSLocation(
         PurePosixPath(upload_tmpdir_name))

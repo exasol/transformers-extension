@@ -155,7 +155,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
 
     result = Result(result_df)
-    assert (
+    assert (#todo load path
             result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NoErrorMessageMatcher()
             and set(result_df['aggregation_strategy'].unique()) == {"none", "simple", "max", "average"}

@@ -60,7 +60,7 @@ class Context:
             ("English", "French"), ("English", "German"),
             ("English", "Romanian")])
     ])
-def test_translation_udf(
+def test_translation_udf(#todo wrong load path
         description, device_id, languages,
         upload_seq2seq_model_to_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from exasol_bucketfs_utils_python.abstract_bucketfs_location import AbstractBucketFSLocation
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
 from exasol_transformers_extension.utils import bucketfs_operations

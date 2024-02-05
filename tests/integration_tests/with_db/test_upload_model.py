@@ -13,13 +13,18 @@ from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
 
+from tests.fixtures.setup_database_fixture import setup_database
+from tests.fixtures.database_connection_fixture import pyexasol_connection
+from tests.fixtures.language_container_fixture import language_alias
 
+#todo just use download model fixture?
 @pytest.fixture(scope='function')
 def download_sample_models(tmp_path) -> Path:
-    for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-        downloader.from_pretrained(model_params.base_model, cache_dir=tmp_path)
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        model = model_factory.from_pretrained(model_params.base_model, cache_dir=tmp_path / "cache")
+        model.save_pretrained(tmp_path / "pretrained" / model_params.base_model)
 
-    yield tmp_path, model_params.base_model
+    yield tmp_path / "pretrained" , model_params.base_model
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
