@@ -13,8 +13,9 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
 
 # todo also change upload?
 def download_model(model_name: str, tmpdir_name: Path) -> None:
+    tmpdir_name = Path(tmpdir_name)
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
-        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache")
+        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
         model.save_pretrained(tmpdir_name / "pretrained" / model_name)
 
 

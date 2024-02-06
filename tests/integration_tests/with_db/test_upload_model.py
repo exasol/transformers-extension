@@ -19,12 +19,15 @@ from tests.fixtures.language_container_fixture import language_alias
 
 #todo just use download model fixture?
 @pytest.fixture(scope='function')
-def download_sample_models(tmp_path) -> Path:
+def download_sample_models(tmp_path: Path) -> Path:
+    tmp_path = Path(tmp_path)
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        print("start download")
         model = model_factory.from_pretrained(model_params.base_model, cache_dir=tmp_path / "cache")
         model.save_pretrained(tmp_path / "pretrained" / model_params.base_model)
+        print("model saved local")
 
-    yield tmp_path / "pretrained" , model_params.base_model
+    yield tmp_path / "pretrained" / model_params.base_model, model_params.base_model
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -42,8 +45,10 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
                       bucketfs_location: BucketFSLocation, bucketfs_config: config.BucketFs):
     sub_dir = 'sub_dir'
     download_path, model_name = download_sample_models
-    upload_path = bucketfs_operations.get_model_path(
+    upload_path = bucketfs_operations.get_model_path_with_pretrained(
         sub_dir, model_name)
+    print("upload path")#todo remove prints
+    print(upload_path)
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
     port = parsed_url.netloc.split(":")[1]
@@ -65,6 +70,8 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
         runner = CliRunner()
         result = runner.invoke(upload_model.main, args_list)
         assert result.exit_code == 0
+        print("ls: . ")
+        print(bucketfs_location.list_files_in_bucketfs("."))
         assert str(upload_path.with_suffix(".tar.gz")) in bucketfs_location.list_files_in_bucketfs(".")
 
         bucketfs_conn_name, schema_name = setup_database
@@ -95,6 +102,8 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
 
         # execute sequence classification UDF
         result = pyexasol_connection.execute(query).fetchall()
+        print("result:")
+        print(result)
         assert len(result) == 1 and result[0][-1] is None
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
