@@ -41,10 +41,12 @@ def create_bucketfs_location(
 def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> Path:
+    """
+    uploads model in tmpdir_name to model_path in bucketfs_location"""
     with tempfile.TemporaryFile() as fileobj:
         create_tar_of_directory(Path(tmpdir_name), fileobj)
-        model_tar_file = model_path.with_suffix(".tar.gz")
-        return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_tar_file)
+        model_upload_tar_file_path = model_path.with_suffix(".tar.gz")
+        return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_upload_tar_file_path)
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
@@ -73,4 +75,4 @@ def get_model_path(sub_dir: str, model_name: str) -> Path:
 
 
 def get_model_path_with_pretrained(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name.replace('-', '_'), "pretrained", model_name)#todo chnage all paths like this?
+    return Path(sub_dir, model_name.replace('-', '_'), "pretrained" , model_name)#todo chnage all paths like this?

@@ -1,3 +1,4 @@
+import os
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
 import torch
@@ -184,9 +185,9 @@ class BaseModelUDF(ABC):
 
         current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
         if self.model_loader.loaded_model_key != current_model_key:
-            self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
+            self.set_cache_dir(model_name, bucketfs_conn, sub_dir) #-> out = "/tmp/pytest-of-marlene/pytest-10/bert-base-uncased0/model_sub_dir/bert_base_uncased"
             self.model_loader.clear_device_memory()
-            self.last_created_pipeline = self.model_loader.load_models(self.cache_dir / "pretrained" / model_name,
+            self.last_created_pipeline = self.model_loader.load_models(self.cache_dir,
                                                                        current_model_key)
 
     def set_cache_dir(
@@ -203,7 +204,7 @@ class BaseModelUDF(ABC):
             bucketfs_operations.create_bucketfs_location_from_conn_object(
                 self.exa.get_connection(bucketfs_conn_name))
 
-        model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
+        model_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 

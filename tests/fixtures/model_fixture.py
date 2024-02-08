@@ -12,11 +12,12 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
 
 
 # todo also change upload?
-def download_model(model_name: str, tmpdir_name: Path) -> None:
+def download_model(model_name: str, tmpdir_name: Path) -> Path:
     tmpdir_name = Path(tmpdir_name)
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
         model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
         model.save_pretrained(tmpdir_name / "pretrained" / model_name)
+    return tmpdir_name / "pretrained" / model_name
 
 
 @contextmanager
@@ -29,20 +30,25 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
         tmpdir_name=str(model_dir),
         model_path=Path(model_path),
         bucketfs_location=bucketfs_location)
+    print("upload path")
+    print(model_path)
     yield model_path
 
 
 @contextmanager
 def upload_model_to_local_bucketfs(
         model_name: str, download_tmpdir: Path) -> str:
+    download_tmpdir_ = download_tmpdir/ "model_sub_dir/bert_base_uncased"
 
-    download_model(model_name, download_tmpdir)
-    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir")
+    local_model_save_path = download_model(model_name, download_tmpdir_)
+    upload_tmpdir_name = local_model_save_path
+    print("upload_tmpdir_name:")
+    print(upload_tmpdir_name)
     upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
     bucketfs_location = LocalFSMockBucketFSLocation(
         PurePosixPath(upload_tmpdir_name))
-    upload_model(bucketfs_location, model_name, download_tmpdir)
-    yield upload_tmpdir_name
+    upload_model(bucketfs_location, model_name, upload_tmpdir_name)
+    yield download_tmpdir
 
 
 @pytest.fixture(scope="session")
