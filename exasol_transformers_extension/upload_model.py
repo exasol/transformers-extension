@@ -43,7 +43,6 @@ def main(
 
     bucketfs_operations.upload_model_files_to_bucketfs(
         local_model_path, upload_path, bucketfs_location)
-    print("model uploaded to :" + str(upload_path)) #todo remove
 
 
 if __name__ == '__main__':

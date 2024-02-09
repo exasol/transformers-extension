@@ -42,7 +42,8 @@ def upload_model_files_to_bucketfs(
         tmpdir_name: str, model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> Path:
     """
-    uploads model in tmpdir_name to model_path in bucketfs_location"""
+    uploads model in tmpdir_name to model_path in bucketfs_location
+    """
     with tempfile.TemporaryFile() as fileobj:
         create_tar_of_directory(Path(tmpdir_name), fileobj)
         model_upload_tar_file_path = model_path.with_suffix(".tar.gz")
@@ -71,8 +72,8 @@ def get_local_bucketfs_path(
 
 
 def get_model_path(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name.replace('-', '_'))#todo check usage
+    return Path(sub_dir, model_name.replace('-', '_'))
 
 
 def get_model_path_with_pretrained(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name.replace('-', '_'), "pretrained" , model_name)#todo chnage all paths like this?
+    return Path(sub_dir, model_name.replace('-', '_'), "pretrained" , model_name)

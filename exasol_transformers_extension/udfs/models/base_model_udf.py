@@ -17,19 +17,26 @@ from exasol_transformers_extension.utils.model_factory_protocol import ModelFact
 class BaseModelUDF(ABC):
     """
     This base class should be extended by each UDF class containing model logic.
-    This class contains common operations for all prediction UDFs. The following
-    methods should be implemented specifically for each UDF class:
+    This class contains common operations for all prediction UDFs:
         - accesses data part-by-part based on predefined batch size
         - manages the script cache
         - reads the corresponding model from BucketFS into cache
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
+
+    Additionally, the following
+    methods should be implemented specifically for each UDF class:
+        - create_dataframes_from_predictions
+        - extract_unique_param_based_dataframes
+        - execute_prediction
+        - append_predictions_to_input_dataframe
+
     """
     def __init__(self,
                  exa,
                  batch_size: int,
                  pipeline: transformers.Pipeline,
-                 base_model: ModelFactoryProtocol, #todo rename?
+                 base_model: ModelFactoryProtocol,
                  tokenizer: ModelFactoryProtocol,
                  task_name: str):
         self.exa = exa
@@ -185,7 +192,7 @@ class BaseModelUDF(ABC):
 
         current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
         if self.model_loader.loaded_model_key != current_model_key:
-            self.set_cache_dir(model_name, bucketfs_conn, sub_dir) #-> out = "/tmp/pytest-of-marlene/pytest-10/bert-base-uncased0/model_sub_dir/bert_base_uncased"
+            self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.model_loader.clear_device_memory()
             self.last_created_pipeline = self.model_loader.load_models(self.cache_dir,
                                                                        current_model_key)

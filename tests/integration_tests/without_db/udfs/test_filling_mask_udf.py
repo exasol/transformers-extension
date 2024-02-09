@@ -48,7 +48,7 @@ class Context:
 
 @pytest.mark.parametrize(
     "description,  device_id, n_rows", [
-        #("on CPU with batch input", None, 3),
+        ("on CPU with batch input", None, 3),
         ("on CPU with single input", None, 1),
         ("on GPU with batch input", 0, 3),
         ("on GPU with single input", 0, 1)
@@ -60,9 +60,6 @@ def test_filling_mask_udf(
                     f"to execute the test")
 
     bucketfs_base_path = upload_base_model_to_local_bucketfs
-    print("upload path")
-    print(bucketfs_base_path)
-
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -98,8 +95,6 @@ def test_filling_mask_udf(
     new_columns = ['filled_text', 'score', 'rank', 'error_message']
 
     result = Result(result_df)
-    print("result:")
-    print(result_df)
     assert (
             result == ScoreMatcher()
             and result == RankDTypeMatcher()

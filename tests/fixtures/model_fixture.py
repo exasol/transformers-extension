@@ -11,7 +11,6 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 
 
-# todo also change upload?
 def download_model(model_name: str, tmpdir_name: Path) -> Path:
     tmpdir_name = Path(tmpdir_name)
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
@@ -30,21 +29,13 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
         tmpdir_name=str(model_dir),
         model_path=Path(model_path),
         bucketfs_location=bucketfs_location)
-    print("upload path")
-    print(model_path)
     yield model_path
 
 
 @contextmanager
 def upload_model_to_local_bucketfs(
         model_name: str, download_tmpdir: Path) -> str:
-    download_tmpdir_ = download_tmpdir/ "model_sub_dir/bert_base_uncased"
-
-    local_model_save_path = download_model(model_name, download_tmpdir_)
-    upload_tmpdir_name = local_model_save_path
-    print("upload_tmpdir_name:")
-    print(upload_tmpdir_name)
-    upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
+    upload_tmpdir_name = download_model(model_name, download_tmpdir)
     bucketfs_location = LocalFSMockBucketFSLocation(
         PurePosixPath(upload_tmpdir_name))
     upload_model(bucketfs_location, model_name, upload_tmpdir_name)
@@ -55,16 +46,16 @@ def upload_model_to_local_bucketfs(
 def upload_base_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     tmpdir = tmpdir_factory.mktemp(model_params.base_model)
     with upload_model_to_local_bucketfs(
-            model_params.base_model, tmpdir) as path:
-        yield path
+            model_params.base_model, tmpdir / model_params.sub_dir / model_params.base_model.replace("-", "_")):
+        yield tmpdir
 
 
 @pytest.fixture(scope="session")
 def upload_seq2seq_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
     with upload_model_to_local_bucketfs(
-            model_params.seq2seq_model, tmpdir) as path:
-        yield path
+            model_params.seq2seq_model, tmpdir / model_params.sub_dir / model_params.seq2seq_model.replace("-", "_")):
+        yield tmpdir
 
 
 @contextmanager

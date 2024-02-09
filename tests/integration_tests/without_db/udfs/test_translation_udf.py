@@ -9,7 +9,7 @@ from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher
     NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
-
+from tests.fixtures.model_fixture import upload_seq2seq_model_to_local_bucketfs
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -60,7 +60,7 @@ class Context:
             ("English", "French"), ("English", "German"),
             ("English", "Romanian")])
     ])
-def test_translation_udf(#todo wrong load path
+def test_translation_udf(
         description, device_id, languages,
         upload_seq2seq_model_to_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
