@@ -33,6 +33,10 @@ def main(
         model_name: str,
         sub_dir: str,
         local_model_path: str):
+    """
+    Script for uploading locally saved model files to BucketFS. Files should have been saved locally
+    using Transformers save_pretrained function. This ensures proper loading from the BucketFS later
+    """
     # create bucketfs location
     bucketfs_location = bucketfs_operations.create_bucketfs_location(
         bucketfs_name, bucketfs_host, bucketfs_port, bucketfs_use_https,

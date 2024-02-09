@@ -8,18 +8,15 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFS
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 
 
-
-
-
 class HuggingFaceHubBucketFSModelTransferSP:
     """
-    Class for downloading a model using the Huggingface Transformers API, and loading it into the BucketFS
-    using save_pretrained.
+    Class for downloading a model using the Huggingface Transformers API, saving it locally using
+    transformers save_pretrained, and loading the saved model files into the BucketFS.
 
-    :bucketfs_location:     BucketFSLocation the model should be loaded to
-    :model_name:            Name of the model to be downloaded using Huggingface Transformers API
-    :model_path:            Path the model will be loaded into the BucketFS at
-    :token:                 Huggingface token, only needed for private models
+    :bucketfs_location:                 BucketFSLocation the model should be loaded to
+    :model_name:                        Name of the model to be downloaded using Huggingface Transformers API
+    :model_path:                        Path the model will be loaded into the BucketFS at
+    :token:                             Huggingface token, only needed for private models
     :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory. Mainly change for testing.
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
     """
@@ -51,9 +48,10 @@ class HuggingFaceHubBucketFSModelTransferSP:
     def download_from_huggingface_hub(self, model_factory: ModelFactoryProtocol):
         """
         Download a model from HuggingFace Hub into a temporary directory and save it with save_pretrained
-        in temporary directory / pretrained .
+        in temporary directory / pretrained / model_name.
         """
-        model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name / "cache", use_auth_token=self._token)
+        model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name / "cache",
+                                              use_auth_token=self._token)
         model.save_pretrained(self._tmpdir_name / "pretrained" / self._model_name)
 
     def upload_to_bucketfs(self) -> Path:
@@ -62,7 +60,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name / "pretrained" / self._model_name)
+        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name / "pretrained" / self._model_name) #todo should we do replace(-,_) here to?
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:

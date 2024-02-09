@@ -229,9 +229,10 @@ Before you can use pre-trained models, the models must be stored in the
 BucketFS. We provide two different ways to load transformers models 
 into BucketFS:
 
+
 ### 1. Model Downloader UDF
 Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model 
-from the huggingface hub and upload it to bucketfs.
+from the huggingface hub and upload it to BucketFS.
 
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
@@ -274,6 +275,8 @@ models from the local filesystem into BucketFS:
   ```
 
 *Note*: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
+These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
+function to ensure proper loading by the Transformers Extension UDFs.
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
