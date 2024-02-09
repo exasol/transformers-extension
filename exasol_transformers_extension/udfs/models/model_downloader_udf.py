@@ -21,7 +21,6 @@ class ModelDownloaderUDF:
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """
-    #todo docu
     def __init__(self,
                  exa,
                  base_model_factory: ModelFactoryProtocol = transformers.AutoModel,
