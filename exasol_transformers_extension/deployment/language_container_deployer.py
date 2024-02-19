@@ -228,7 +228,7 @@ class LanguageContainerDeployer:
         other_definitions = [
             alias_definition for alias_definition in prev_lang_aliases
             if not alias_definition.startswith(self._language_alias + "=")]
-        path_in_udf_without_bucksts = Path(*path_in_udf.parts[2:])
+        path_in_udf_without_bucksts = PurePosixPath(*path_in_udf.parts[2:])
         new_language_alias_definition = \
             f"{self._language_alias}=localzmq+protobuf:///" \
             f"{path_in_udf_without_bucksts}?lang=python#" \
