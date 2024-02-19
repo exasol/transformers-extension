@@ -441,19 +441,19 @@ files = [
 
 [[package]]
 name = "exasol-bucketfs"
-version = "0.8.0"
+version = "0.9.0"
 description = "BucketFS utilities for the Python programming language"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "exasol_bucketfs-0.8.0-py3-none-any.whl", hash = "sha256:3bdee82faded20f65b559ba154d2f17812c62af8d0642ff0dac8ab4d996ba0e0"},
-    {file = "exasol_bucketfs-0.8.0.tar.gz", hash = "sha256:924a757bc6608fe29a9bbe6ddd4240583410669f8958f9859df874f7e57b4bc9"},
+    {file = "exasol_bucketfs-0.9.0-py3-none-any.whl", hash = "sha256:7264ff60a87ecd709595babf90de99bf46e1e81b39041069c6008c4393eae8a8"},
+    {file = "exasol_bucketfs-0.9.0.tar.gz", hash = "sha256:209689248cd0212c92f97555adac0a0a1a741346e33abf277341a3f9b3c80335"},
 ]
 
 [package.dependencies]
 joblib = ">=1.0.1"
 requests = ">=2.24.0"
-typeguard = ">=2.11.1,<3.0.0"
+typeguard = "4.0.0"
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
@@ -489,13 +489,13 @@ simplejson = ">=3.16.0"
 
 [[package]]
 name = "exasol-script-languages-container-tool"
-version = "0.18.1"
+version = "0.18.2"
 description = "Script Languages Container Tool"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "exasol_script_languages_container_tool-0.18.1-py3-none-any.whl", hash = "sha256:33c51708b316d2c7926ed7457e72f4b7e6e70f58854ed7005ebec47062503220"},
-    {file = "exasol_script_languages_container_tool-0.18.1.tar.gz", hash = "sha256:67b33f533fe79e57b585cf03c9301a0636fdf916c5fe697ae2b59266d77e9a48"},
+    {file = "exasol_script_languages_container_tool-0.18.2-py3-none-any.whl", hash = "sha256:15f8f353bd04e115d78e9c152a8c916b36e5de530c32baefe4fd7182645be36d"},
+    {file = "exasol_script_languages_container_tool-0.18.2.tar.gz", hash = "sha256:7bea396390aa1fb3b640c4b22cb046356cdc523f15eb372c2f33307610305d49"},
 ]
 
 [package.dependencies]
@@ -503,7 +503,6 @@ exasol-integration-test-docker-environment = ">=1.7.1,<2.0.0"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=5.4.0"
 networkx = "2.8.2"
-typeguard = "<3.0.0"
 
 [[package]]
 name = "exasol-udf-mock-python"
@@ -2397,18 +2396,22 @@ tutorials = ["matplotlib", "pandas", "tabulate", "torch"]
 
 [[package]]
 name = "typeguard"
-version = "2.13.3"
+version = "4.0.0"
 description = "Run-time type checker for Python"
 optional = false
-python-versions = ">=3.5.3"
+python-versions = ">=3.7.4"
 files = [
-    {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
-    {file = "typeguard-2.13.3.tar.gz", hash = "sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4"},
+    {file = "typeguard-4.0.0-py3-none-any.whl", hash = "sha256:c4a40af0ba8a41077221271b46d0a6d8d46045443e4d887887c69254ca861952"},
+    {file = "typeguard-4.0.0.tar.gz", hash = "sha256:194fb3dbcb06ea9caf7088f3befee014de57961689f9c859ac5239b1ef61d987"},
 ]
 
+[package.dependencies]
+importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
+typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.11\""}
+
 [package.extras]
-doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["mypy", "pytest", "typing-extensions"]
+doc = ["packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["mypy (>=1.2.0)", "pytest (>=7)"]
 
 [[package]]
 name = "typing-extensions"
@@ -2571,4 +2574,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "97eff8321031b0a26cfed9e21cad5356aa66d4dd825fff9dd362bf834772a2e2"
+content-hash = "0301a3951d28078ba6982b0c702e391a3f182c05c1ccd886dadbdc2ef07ef4b2"
