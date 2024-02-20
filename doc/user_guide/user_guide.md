@@ -286,7 +286,7 @@ You can download the model using python lke this:
         # save the downloaded model using the save_pretrained fuction
         model.save_pretrained(<save_path> / "pretrained" / <model_name>)
 ```
-And the upload it using exasol_transformers_extension.upload_model script where ```local-model-path = <save_path> / "pretrained" / <model_name>```
+And then upload it using exasol_transformers_extension.upload_model script where ```local-model-path = <save_path> / "pretrained" / <model_name>```
 
 
 ## Prediction UDFs
