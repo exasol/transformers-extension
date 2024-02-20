@@ -277,6 +277,17 @@ models from the local filesystem into BucketFS:
 *Note*: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
 These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
 function to ensure proper loading by the Transformers Extension UDFs.
+You can download the model using python lke this:
+
+```python
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        # download the model an tokenizer from huggingface
+        model = model_factory.from_pretrained(model_name, cache_dir=<your cache path> / <huggingface model name>)
+        # save the downloaded model using the save_pretrained fuction
+        model.save_pretrained(<save_path> / "pretrained" / <model_name>)
+```
+And the upload it using exasol_transformers_extension.upload_model script where ```local-model-path = <save_path> / "pretrained" / <model_name>```
+
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 

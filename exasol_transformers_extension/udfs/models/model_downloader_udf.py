@@ -12,7 +12,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 class ModelDownloaderUDF:
     """
     UDF which downloads a pretrained model from Huggingface using Huggingface's transformers API,
-    and uploads it to the BucketFS at , from where it can then be loaded without accessing Huggingface again.
+    and uploads it to the BucketFS, from where it can then be loaded without accessing Huggingface again.
     Must be called with the following Input Parameter:
 
     model_name                | sub_dir                 | bfs_conn            | token_conn

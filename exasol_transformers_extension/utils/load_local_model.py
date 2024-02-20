@@ -16,13 +16,13 @@ class LoadLocalModel:
     :_tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
-                 _pipeline_factory,
+                 pipeline_factory,
                  task_name: str,
                  device: str,
                  base_model_factory: ModelFactoryProtocol,
                  tokenizer_factory: ModelFactoryProtocol
                  ):
-        self.pipeline_factory = _pipeline_factory
+        self.pipeline_factory = pipeline_factory
         self.task_name = task_name
         self.device = device
         self._base_model_factory = base_model_factory

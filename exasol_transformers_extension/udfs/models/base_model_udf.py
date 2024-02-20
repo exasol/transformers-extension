@@ -70,7 +70,7 @@ class BaseModelUDF(ABC):
         """
         Creates the model_loader.
         """
-        self.model_loader = LoadLocalModel(_pipeline_factory=self.pipeline,
+        self.model_loader = LoadLocalModel(pipeline_factory=self.pipeline,
                                            base_model_factory=self.base_model,
                                            tokenizer_factory=self.tokenizer,
                                            task_name=self.task_name,
