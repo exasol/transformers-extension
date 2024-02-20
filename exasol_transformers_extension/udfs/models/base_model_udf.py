@@ -19,7 +19,7 @@ class BaseModelUDF(ABC):
     This base class should be extended by each UDF class containing model logic.
     This class contains common operations for all prediction UDFs:
         - accesses data part-by-part based on predefined batch size
-        - manages the script cache
+        - manages the model cache
         - reads the corresponding model from BucketFS into cache
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
