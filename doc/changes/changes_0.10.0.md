@@ -1,14 +1,15 @@
-# Transformers Extension 0.10.0, T.B.D
+# Transformers Extension 0.10.0, 2024-02-21
 
-Code name: T.B.D
+Code name: Fixing deployment issues.
 
 
 ## Summary
-T.B.D
 
+Deploying SLC under Windows, releasing to PyPi.
 
 ### Features
 
+- #185: Release to pypi during release workflow
 
 ### Bug Fixes
 
