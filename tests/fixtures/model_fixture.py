@@ -22,7 +22,6 @@ def download_model(model_name: str, tmpdir_name: Path) -> Path:
 @contextmanager
 def upload_model(bucketfs_location: AbstractBucketFSLocation,
                  model_name: str, model_dir: Path) -> Path:
-
     model_path = bucketfs_operations.get_model_path(
         model_params.sub_dir, model_name)
     bucketfs_operations.upload_model_files_to_bucketfs(
@@ -32,27 +31,28 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
     yield model_path
 
 
-@contextmanager
-def upload_model_to_local_bucketfs(
-        model_name: str, download_tmpdir: Path) -> str:
-    download_model(model_name, download_tmpdir)
-    yield download_tmpdir
+def generate_local_bucketfs_path_for_model(tmpdir, model):
+    return tmpdir / model_params.sub_dir / model.replace("-", "_")
+
+
+def prepare_model_in_local_bucketfs(model: str, tmpdir_factory):
+    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
+    tmpdir = tmpdir_factory.mktemp(model)
+    bucketfs_path_for_model = generate_local_bucketfs_path_for_model(tmpdir, model)
+    download_model(model, bucketfs_path_for_model)
+    yield tmpdir
 
 
 @pytest.fixture(scope="session")
-def upload_base_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.base_model)
-    with upload_model_to_local_bucketfs(
-            model_params.base_model, tmpdir / model_params.sub_dir / model_params.base_model.replace("-", "_")):
-        yield tmpdir
+def prepare_base_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model = model_params.base_model
+    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
 
 
 @pytest.fixture(scope="session")
-def upload_seq2seq_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
-    with upload_model_to_local_bucketfs(
-            model_params.seq2seq_model, tmpdir / model_params.sub_dir / model_params.seq2seq_model.replace("-", "_")):
-        yield tmpdir
+def prepare_seq2seq_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model = model_params.seq2seq_model
+    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
 
 
 @contextmanager
@@ -60,7 +60,6 @@ def upload_model_to_bucketfs(
         model_name: str,
         download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
-
     download_model(model_name, download_tmpdir)
     with upload_model(
             bucketfs_location, model_name, download_tmpdir) as model_path:
