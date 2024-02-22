@@ -64,7 +64,10 @@ models on the Exasol Cluster. More information on The BucketFS can be found
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASS>'
   ```
+
   - The `BUCKETFS_ADDRESS` looks like the following:
+  
+    **Note:** The `<PATH_IN_BUCKET>` can not be empty.
   ```buildoutcfg
     http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
   ```
@@ -154,7 +157,7 @@ Transformers Extension Package. See [the latest release](https://github.com/exas
       --use-ssl-cert-validation
   ```
 
-**Note:** The  that `--path-in-bucket` can not be empty.
+**Note:** The `PATH_IN_BUCKET` can not be empty.
 
 The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
 This certificate is basically a list of trusted CA. It is needed for the server's certificate 
@@ -225,7 +228,7 @@ There are two ways to install the language container: (1) using a python script 
      Please note, that all considerations described in the Quick Installation 
      section are still applicable.
 
-     **Note:** The  `--path-in-bucket` can not be empty.
+     **Note:** The  `PATH_IN_BUCKET` can not be empty.
 
 
   2. *Manual Installation*
@@ -235,7 +238,7 @@ There are two ways to install the language container: (1) using a python script 
      either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
      or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
      The following command uploads a given container into BucketFS through curl 
-     command, an http(s) client: 
+     , a http(s) client: 
       ```shell
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
@@ -334,7 +337,7 @@ models from the local filesystem into BucketFS:
   ```
 
 **Note:** The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
-**Note:** also: The `--path-in-bucket` can not be empty.
+**Note:** also: The `PATH_IN_BUCKET` can not be empty.
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
