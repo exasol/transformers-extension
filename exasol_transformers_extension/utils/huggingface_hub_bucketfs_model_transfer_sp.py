@@ -7,9 +7,6 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFS
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 
 
-
-
-
 class HuggingFaceHubBucketFSModelTransferSP:
     """
     Class for downloading a model using the Huggingface Transformers API, and loading it into the BucketFS

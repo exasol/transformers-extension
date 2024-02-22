@@ -20,6 +20,7 @@ model and perform prediction. These are the supported tasks:
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Getting Started](#getting-started)
 - [Setup](#setup)
 - [Model Downloader UDF](#model-downloader-udf)
@@ -33,7 +34,21 @@ model and perform prediction. These are the supported tasks:
   7. [Text Translation UDF](#text-translation-udf)
   8. [Zero-Shot Text Classification](#zero-shot-text-classification-udf)
 
+## Introduction
 
+This Exasol Extension provides UDFs for interacting with Huggingfaces Transformes API in order to use 
+pre-trained models on an Exasol Cluster.
+
+User Defined Function, UDFs for short, are scripts in various programming languages that can be 
+executed in the Exasol Database. They can be provided by the user for more flexibility in data processing. 
+In this Extension we provide multiple UDFs for you to use on your Exasol Database.
+You can find a more detailed documentation on UDFs
+[here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
+
+UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) 
+are stored in Exasol's file system BucketFS, and we also use this to store the transformers
+models on the Exasol Cluster. More information on The BucketFS can be found 
+[here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
 - Exasol DB
@@ -65,8 +80,26 @@ model and perform prediction. These are the supported tasks:
   - For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
   
 ## Setup
-### The Python Package
-#### Download The Python Wheel Package
+### Install the Python Package
+
+There are multiple ways to install the python Package. You can use Pip install, 
+Download the Wheel from GitHub or build the project yourself.
+Additionally, you will need a Script language container. Find the how-to below.
+
+#### Pip
+
+The Transformers Extension is published on [Pypi] (***ad link here***). 
+
+You can install it with:
+
+```shell
+pip install exasol-transformers-extension
+```
+
+
+#### Download and Install the Python Wheel Package
+
+You can also geht the wheel from a Github release.
 - The latest version of the python package of this extension can be 
 downloaded from the [GitHUb Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
@@ -75,18 +108,27 @@ exasol_transformers_extension-<version-number>-py3-none-any.whl
 ```
 If you need to use a version < 0.5.0, the build archive is called `transformers_extension.whl`.
 
-
-#### Install The Python Wheel Package
-Install the packaged transformers-extension project as follows:
+Then install the packaged transformers-extension project as follows:
 ```shell
 pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
+#### Build the project yourself
+
+In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/)
+(>= 1.1.11) package manager. Clone the Github Repository, and install and build 
+the `transformers-extension` as follows:
+```bash
+poetry install
+poetry build
+```
+
 ### The Pre-built Language Container
 
-This extension requires the installation of the language container for this 
-extension to run. It can be installed in two ways: Quick and Customized 
-installations
+This extension requires the installation of the Language Container in the Exasol Database for this 
+extension to run. The Script Language Container is a way to install the required programming language and 
+necessary dependencies in the Exasol Database so the UDF scripts can be executed.
+It can be installed in two ways: Quick and Customized installations:
 
 #### Quick Installation
 The language container is downloaded and installed by executing the 
@@ -111,10 +153,17 @@ Transformers Extension Package. See [the latest release](https://github.com/exas
       --ssl-cert-path <ssl-cert-path> \
       --use-ssl-cert-validation
   ```
+
+**Note:** The  that `--path-in-bucket` can not be empty.
+
 The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
+This certificate is basically a list of trusted CA. It is needed for the server's certificate 
+validation by the client.
 The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
 Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
 Database connection.
+This is not to be confused with the client's own certificate. It may or may not include the private key. 
+In the latter case the key may be provided as a separate file.
 
 By default, the above command will upload and activate the language container at the System level.
 The latter requires you to have the System Privileges, as it will attempt to change DB system settings.
@@ -176,6 +225,8 @@ There are two ways to install the language container: (1) using a python script 
      Please note, that all considerations described in the Quick Installation 
      section are still applicable.
 
+     **Note:** The  `--path-in-bucket` can not be empty.
+
 
   2. *Manual Installation*
 
@@ -227,11 +278,23 @@ python -m exasol_transformers_extension.deploy scripts
 ## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
 BucketFS. We provide two different ways to load transformers models 
-into BucketFS:
+into the BucketFS. You may either use the Model Downloader UDF to download the Huggingface 
+transformers model directly from the Exasol Database, or you can download the model to your local 
+file system and upload it to the Database using the Model Uploader Script.
+The Model Downloader UDF is the simpler option, but if you do not want to connect your Exasol Database
+directly to the internet, the Model Uploader Script is an option for you.
+
+Note that the extension currently only supports the `PyTorch` framework. 
+Please make sure that the selected models are in the `Pytorch` model library section.
 
 ### 1. Model Downloader UDF
 Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model 
-from the huggingface hub and upload it to bucketfs.
+from the huggingface hub and upload it to BucketFS.
+This requires the Exasol Database to have internet access, since the UDF will 
+download the model from Huggingface to the Database without saving it somewhere else intermittently.
+If you are using the Exasol DockerDB, this is not the case by default, and you need to specify a name server. 
+For example `--nameserver 8.8.8.8` will set it to use Google DNS.
+
 
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
@@ -243,16 +306,13 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 ```
 - Parameters:
   - ```model_name```: The name of the model to use for prediction. You can find the 
-  details of the models in [huggingface models page](https://huggingface.co/models).
+  details of the models on the [huggingface models page](https://huggingface.co/models).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```bucketfs_conn```: The BucketFS connection name.
   - ```token_conn```: The connection name containing the token required for 
   private models. You can use empty string ('') for public models. For details 
   on how to create a connection object with token information, please check 
   [here](#getting-started).
-
-Note that the extension currently only supports the `PyTorch` framework. 
-Please make sure that the selected models are in the `Pytorch` model library section.
 
 
 ### 2. Model Uploader Script
@@ -273,7 +333,8 @@ models from the local filesystem into BucketFS:
       --local-model-path <MODEL_PATH>     
   ```
 
-*Note*: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
+**Note:** The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
+**Note:** also: The `--path-in-bucket` can not be empty.
 
 ## Prediction UDFs
 We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
