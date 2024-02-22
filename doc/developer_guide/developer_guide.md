@@ -27,6 +27,12 @@ and install it as follows:
 pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
+### Check wheel installation
+
+The wheel should be installed in `transformers-extension/dist`. After updating and building a new release 
+there may be multiple wheels installed here. This leads to problems, so check and delete the old wheels if necessary.
+You may also need to check 
+`transformers-extension/language_container/exasol_transformers_extension_container/flavor_base/release/dist` for the same reason.
 
 ### Run Tests
 All unit and integration tests can be run within the Poetry environment created 
