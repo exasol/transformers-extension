@@ -1,15 +1,17 @@
-import tempfile
 import torch
-import pytest
-import pandas as pd
 from typing import Dict
+
+import pandas as pd
+import pytest
+import torch
+from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.translation_udf import \
     TranslationUDF
-from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher, ShapeMatcher, NoErrorMessageMatcher, \
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NoErrorMessageMatcher, \
     NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
-from exasol_udf_mock_python.connection import Connection
-from tests.fixtures.model_fixture import upload_seq2seq_model_to_local_bucketfs
+
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):

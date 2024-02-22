@@ -35,10 +35,7 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
 @contextmanager
 def upload_model_to_local_bucketfs(
         model_name: str, download_tmpdir: Path) -> str:
-    upload_tmpdir = download_model(model_name, download_tmpdir)
-    bucketfs_location = LocalFSMockBucketFSLocation(
-        PurePosixPath(upload_tmpdir))
-    upload_model(bucketfs_location, model_name, upload_tmpdir)
+    download_model(model_name, download_tmpdir)
     yield download_tmpdir
 
 
