@@ -31,28 +31,29 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
     yield model_path
 
 
-def generate_local_bucketfs_path_for_model(tmpdir, model):
+def generate_local_bucketfs_path_for_model(tmpdir: Path, model: str):
     return tmpdir / model_params.sub_dir / model.replace("-", "_")
 
 
-def prepare_model_in_local_bucketfs(model: str, tmpdir_factory):
-    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
+def prepare_model_for_local_bucketfs(model: str, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp(model)
     bucketfs_path_for_model = generate_local_bucketfs_path_for_model(tmpdir, model)
     download_model(model, bucketfs_path_for_model)
-    yield tmpdir
+    return tmpdir
 
 
 @pytest.fixture(scope="session")
-def prepare_base_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+def prepare_base_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     model = model_params.base_model
-    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
+    bucketfs_path = prepare_model_for_local_bucketfs(model, tmpdir_factory)
+    yield bucketfs_path
 
 
 @pytest.fixture(scope="session")
 def prepare_seq2seq_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     model = model_params.seq2seq_model
-    yield from prepare_model_in_local_bucketfs(model, tmpdir_factory)
+    bucketfs_path = prepare_model_for_local_bucketfs(model, tmpdir_factory)
+    yield bucketfs_path
 
 
 @contextmanager
