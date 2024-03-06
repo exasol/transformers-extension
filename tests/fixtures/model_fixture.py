@@ -32,7 +32,7 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
 
 
 def generate_local_bucketfs_path_for_model(tmpdir: Path, model: str):
-    return tmpdir / model_params.sub_dir / model.replace("-", "_")
+    return tmpdir / model_params.sub_dir / model
 
 
 def prepare_model_for_local_bucketfs(model: str, tmpdir_factory):

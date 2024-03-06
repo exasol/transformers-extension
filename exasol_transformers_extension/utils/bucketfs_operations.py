@@ -72,8 +72,8 @@ def get_local_bucketfs_path(
 
 
 def get_model_path(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name.replace('-', '_'))
+    return Path(sub_dir, model_name)
 
 
 def get_model_path_with_pretrained(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name.replace('-', '_'), "pretrained" , model_name)
+    return Path(sub_dir, model_name, "pretrained" , model_name)
