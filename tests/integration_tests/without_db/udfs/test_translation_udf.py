@@ -1,14 +1,16 @@
-import tempfile
 import torch
-import pytest
-import pandas as pd
 from typing import Dict
+
+import pandas as pd
+import pytest
+import torch
+from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.translation_udf import \
     TranslationUDF
-from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher, ShapeMatcher, NoErrorMessageMatcher, \
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NoErrorMessageMatcher, \
     NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
-from exasol_udf_mock_python.connection import Connection
 
 
 class ExaEnvironment:
@@ -62,12 +64,12 @@ class Context:
     ])
 def test_translation_udf(
         description, device_id, languages,
-        upload_seq2seq_model_to_local_bucketfs):
+        prepare_seq2seq_model_in_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_seq2seq_model_to_local_bucketfs
+    bucketfs_base_path = prepare_seq2seq_model_in_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -132,12 +134,12 @@ def test_translation_udf(
     ])
 def test_translation_udf_on_error_handling(
         description, device_id, languages,
-        upload_seq2seq_model_to_local_bucketfs):
+        prepare_seq2seq_model_in_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_seq2seq_model_to_local_bucketfs
+    bucketfs_base_path = prepare_seq2seq_model_in_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

@@ -11,15 +11,17 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
     AbstractBucketFSLocation
 
 
-def download_model(model_name: str, tmpdir_name: Path) -> None:
-    for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-        downloader.from_pretrained(model_name, cache_dir=tmpdir_name)
+def download_model(model_name: str, tmpdir_name: Path) -> Path:
+    tmpdir_name = Path(tmpdir_name)
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
+        model.save_pretrained(tmpdir_name / "pretrained" / model_name)
+    return tmpdir_name / "pretrained" / model_name
 
 
 @contextmanager
 def upload_model(bucketfs_location: AbstractBucketFSLocation,
                  model_name: str, model_dir: Path) -> Path:
-
     model_path = bucketfs_operations.get_model_path(
         model_params.sub_dir, model_name)
     bucketfs_operations.upload_model_files_to_bucketfs(
@@ -29,33 +31,29 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
     yield model_path
 
 
-@contextmanager
-def upload_model_to_local_bucketfs(
-        model_name: str, download_tmpdir: Path) -> str:
+def generate_local_bucketfs_path_for_model(tmpdir: Path, model: str):
+    return tmpdir / model_params.sub_dir / model
 
-    download_model(model_name, download_tmpdir)
-    upload_tmpdir_name = Path(download_tmpdir, "upload_tmpdir")
-    upload_tmpdir_name.mkdir(parents=True, exist_ok=True)
-    bucketfs_location = LocalFSMockBucketFSLocation(
-        PurePosixPath(upload_tmpdir_name))
-    upload_model(bucketfs_location, model_name, download_tmpdir)
-    yield upload_tmpdir_name
+
+def prepare_model_for_local_bucketfs(model: str, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp(model)
+    bucketfs_path_for_model = generate_local_bucketfs_path_for_model(tmpdir, model)
+    download_model(model, bucketfs_path_for_model)
+    return tmpdir
 
 
 @pytest.fixture(scope="session")
-def upload_base_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.base_model)
-    with upload_model_to_local_bucketfs(
-            model_params.base_model, tmpdir) as path:
-        yield path
+def prepare_base_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model = model_params.base_model
+    bucketfs_path = prepare_model_for_local_bucketfs(model, tmpdir_factory)
+    yield bucketfs_path
 
 
 @pytest.fixture(scope="session")
-def upload_seq2seq_model_to_local_bucketfs(tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
-    with upload_model_to_local_bucketfs(
-            model_params.seq2seq_model, tmpdir) as path:
-        yield path
+def prepare_seq2seq_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model = model_params.seq2seq_model
+    bucketfs_path = prepare_model_for_local_bucketfs(model, tmpdir_factory)
+    yield bucketfs_path
 
 
 @contextmanager
@@ -63,7 +61,6 @@ def upload_model_to_bucketfs(
         model_name: str,
         download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
-
     download_model(model_name, download_tmpdir)
     with upload_model(
             bucketfs_location, model_name, download_tmpdir) as model_path:

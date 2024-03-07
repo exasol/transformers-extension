@@ -1,33 +1,44 @@
+import os
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
 import torch
 import traceback
 import pandas as pd
 import numpy as np
+import transformers
+
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
-from exasol_transformers_extension.utils.load_model import LoadModel
+from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 
 
 class BaseModelUDF(ABC):
     """
     This base class should be extended by each UDF class containing model logic.
-    This class contains common operations for all prediction UDFs. The following
-    methods should be implemented specifically for each UDF class:
+    This class contains common operations for all prediction UDFs:
         - accesses data part-by-part based on predefined batch size
-        - manages the script cache
+        - manages the model cache
         - reads the corresponding model from BucketFS into cache
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
+
+    Additionally, the following
+    methods should be implemented specifically for each UDF class:
+        - create_dataframes_from_predictions
+        - extract_unique_param_based_dataframes
+        - execute_prediction
+        - append_predictions_to_input_dataframe
+
     """
     def __init__(self,
                  exa,
-                 batch_size,
-                 pipeline,
-                 base_model,
-                 tokenizer,
-                 task_name):
+                 batch_size: int,
+                 pipeline: transformers.Pipeline,
+                 base_model: ModelFactoryProtocol,
+                 tokenizer: ModelFactoryProtocol,
+                 task_name: str):
         self.exa = exa
         self.batch_size = batch_size
         self.pipeline = pipeline
@@ -59,11 +70,11 @@ class BaseModelUDF(ABC):
         """
         Creates the model_loader.
         """
-        self.model_loader = LoadModel(self.pipeline,
-                                      self.base_model,
-                                      self.tokenizer,
-                                      self.task_name,
-                                      self.device)
+        self.model_loader = LoadLocalModel(pipeline_factory=self.pipeline,
+                                           base_model_factory=self.base_model,
+                                           tokenizer_factory=self.tokenizer,
+                                           task_name=self.task_name,
+                                           device=self.device)
 
     def get_predictions_from_batch(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -180,17 +191,11 @@ class BaseModelUDF(ABC):
         token_conn = model_df["token_conn"].iloc[0]
 
         current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
-        if self.model_loader.last_loaded_model_key != current_model_key:
+        if self.model_loader.loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.model_loader.clear_device_memory()
-            if token_conn:
-                token_conn_obj = self.exa.get_connection(token_conn)
-            else:
-                token_conn_obj = None
-            self.last_created_pipeline = self.model_loader.load_models(model_name,
-                                                                       current_model_key,
-                                                                       self.cache_dir,
-                                                                       token_conn_obj)
+            self.last_created_pipeline = self.model_loader.load_models(self.cache_dir,
+                                                                       current_model_key)
 
     def set_cache_dir(
             self, model_name: str, bucketfs_conn_name: str,
@@ -206,10 +211,9 @@ class BaseModelUDF(ABC):
             bucketfs_operations.create_bucketfs_location_from_conn_object(
                 self.exa.get_connection(bucketfs_conn_name))
 
-        model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
+        model_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
-
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
