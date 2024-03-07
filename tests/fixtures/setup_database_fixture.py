@@ -8,6 +8,7 @@ from pytest_itde import config
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.parameters import bucketfs_params
+from tests.fixtures.language_container_fixture import language_alias
 
 bucketfs_connection_name = "TEST_TE_BFS_CONNECTION"
 schema_name = "TEST_INTEGRATION"

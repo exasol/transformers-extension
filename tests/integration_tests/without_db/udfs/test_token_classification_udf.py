@@ -60,12 +60,12 @@ class Context:
     ])
 def test_token_classification_udf(
         description, device_id, n_rows, agg,
-        upload_base_model_to_local_bucketfs):
+        prepare_base_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -113,12 +113,12 @@ def test_token_classification_udf(
         ("on GPU", 0)
     ])
 def test_token_classification_udf_with_multiple_aggregation_strategies(
-        description, device_id, upload_base_model_to_local_bucketfs):
+        description, device_id, prepare_base_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -155,8 +155,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
 
     result = Result(result_df)
-    assert (
-            result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+    assert (result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NoErrorMessageMatcher()
             and set(result_df['aggregation_strategy'].unique()) == {"none", "simple", "max", "average"}
     )
@@ -179,12 +178,12 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     ])
 def test_token_classification_udf_on_error_handling(
         description, device_id, n_rows, agg,
-        upload_base_model_to_local_bucketfs):
+        prepare_base_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

@@ -13,12 +13,13 @@ class MockFillingMaskModel:
 
 
 class MockFillingMaskFactory:
-    def __init__(self, mock_models: Dict[Tuple[PurePosixPath, str], MockFillingMaskModel]):
+    def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir, use_auth_token):
+
+    def from_pretrained(self, model_path):
         # the cache_dir path already has model_name
-        return self.mock_models[(cache_dir, use_auth_token)]
+        return self.mock_models[PurePosixPath(model_path)]
 
 
 class MockPipeline:

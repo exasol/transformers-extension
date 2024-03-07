@@ -10,19 +10,19 @@ class LoadLocalModel:
     Class for loading locally saved models and tokenizers. Also stores information regarding the model and pipeline.
 
     :_pipeline_factory:      a function to create a transformers pipeline
-    :task_name:             name of the current task
-    :device:                device to be used for pipeline creation
+    :task_name:              name of the current task
+    :device:                 device to be used for pipeline creation, i.e "CPU"
     :_base_model_factory:    a ModelFactoryProtocol for creating the loaded model
     :_tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
-                 _pipeline_factory,
+                 pipeline_factory,
                  task_name: str,
                  device: str,
                  base_model_factory: ModelFactoryProtocol,
                  tokenizer_factory: ModelFactoryProtocol
                  ):
-        self.pipeline_factory = _pipeline_factory
+        self.pipeline_factory = pipeline_factory
         self.task_name = task_name
         self.device = device
         self._base_model_factory = base_model_factory
@@ -39,7 +39,7 @@ class LoadLocalModel:
                     current_model_key: str
                     ) -> transformers.pipelines.Pipeline:
         """
-        Loads a locally saved model and tokenizer from "cache_dir / "pretrained" / model_name".
+        Loads a locally saved model and tokenizer from model_path.
         Returns new pipeline corresponding to the model and task.
 
         :model_path:            location of the saved model and tokenizer
