@@ -5,11 +5,18 @@ sys.path += [str(Path().parent.absolute())]
 
 import nox
 
+# imports all nox task provided by the python_toolbox
+from exasol.toolbox.nox.tasks import type_check
+from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disable=unused-wildcard-import
+
+# default actions to be run if nothing is explicitly specified with the -s option
+nox.options.sessions = ["fix"]
+
 from exasol_transformers_extension.deployment.language_container import (
     build_language_container,
     export,
     find_flavor_path,
-    prepare_flavor
+    prepare_flavor,
 )
 
 ROOT_PATH = Path(__file__).parent
@@ -32,21 +39,29 @@ def export_slc(session: nox.Session):
 
 @nox.session(python=False)
 def unit_tests(session):
-    session.run('pytest', 'tests/unit_tests')
+    session.run("pytest", "tests/unit_tests")
 
 
 @nox.session(python=False)
 def integration_tests(session):
     # We need to use a external database here, because the itde plugin doesn't provide all necassary options to
     # configure the database. See the start_database session.
-    session.run('pytest', '--itde-db-version=external', 'tests/integration_tests')
+    session.run("pytest", "--itde-db-version=external", "tests/integration_tests")
 
 
 @nox.session(python=False)
 def start_database(session):
-    session.run('itde', 'spawn-test-environment',
-                '--environment-name', 'test',
-                '--database-port-forward', '8888',
-                '--bucketfs-port-forward', '6666',
-                '--db-mem-size', '4GB',
-                '--nameserver', '8.8.8.8')
+    session.run(
+        "itde",
+        "spawn-test-environment",
+        "--environment-name",
+        "test",
+        "--database-port-forward",
+        "8888",
+        "--bucketfs-port-forward",
+        "6666",
+        "--db-mem-size",
+        "4GB",
+        "--nameserver",
+        "8.8.8.8",
+    )
