@@ -139,4 +139,4 @@ doc/_build
 
 # Vagrant
 
-.vagrant
+.vagrant.html-documentation
