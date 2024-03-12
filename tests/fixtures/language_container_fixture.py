@@ -7,8 +7,12 @@ from pathlib import Path
 
 import pytest
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
-from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import LanguageDefinition
+from exasol_script_languages_container_tool.lib.tasks.export.export_info import (
+    ExportInfo,
+)
+from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import (
+    LanguageDefinition,
+)
 from pytest_itde.config import TestConfig
 
 from exasol_transformers_extension.deployment import language_container
@@ -32,16 +36,16 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 @pytest.fixture(scope="session")
 def upload_slc(itde: TestConfig, flavor_path: Path, export_slc: ExportInfo) -> Path:
     cleanup_images()
-    container_bucketfs_location = \
-        BucketFSFactory().create_bucketfs_location(
-            url=f"{itde.bucketfs.url}/{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};{bucketfs_params.name}",
-            user=itde.bucketfs.username,
-            pwd=itde.bucketfs.password)
+    container_bucketfs_location = BucketFSFactory().create_bucketfs_location(
+        url=f"{itde.bucketfs.url}/{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};{bucketfs_params.name}",
+        user=itde.bucketfs.username,
+        pwd=itde.bucketfs.password,
+    )
     container_file_path = Path(export_slc.cache_file)
     with open(export_slc.cache_file, "rb") as fileobj:
         container_bucketfs_location.upload_fileobj_to_bucketfs(
-            fileobj,
-            container_file_path.name)
+            fileobj, container_file_path.name
+        )
     with set_language_alias(flavor_path, itde, container_file_path) as language_alias:
         wait_for_language_container_ready(itde, language_alias)
     return container_file_path
@@ -54,15 +58,17 @@ def language_alias(itde: TestConfig, flavor_path: Path, upload_slc: Path) -> str
 
 
 @contextlib.contextmanager
-def set_language_alias(flavor_path: Path, itde: TestConfig, container_file_path: Path) -> str:
-    release_name = container_file_path.with_suffix('').with_suffix('').name
+def set_language_alias(
+    flavor_path: Path, itde: TestConfig, container_file_path: Path
+) -> str:
+    release_name = container_file_path.with_suffix("").with_suffix("").name
     language_definition = LanguageDefinition(
         flavor_path=str(flavor_path),
         bucketfs_name=bucketfs_params.name,
         bucket_name=bucketfs_params.bucket,
         add_missing_builtin=False,
         path_in_bucket=bucketfs_params.path_in_bucket,
-        release_name=release_name
+        release_name=release_name,
     )
     with revert_language_settings(itde.ctrl_connection):
         language_alias = language_definition.generate_definition().split("=")[0]
@@ -95,15 +101,21 @@ def wait_for_language_container_ready(itde: TestConfig, language_alias: str):
         raise Exception(f"Language container not ready after {wait_time_in_seconds}s.")
 
 
-def is_language_container_ready(itde: TestConfig, language_alias: str, schema: str, udf_name: str) -> bool:
+def is_language_container_ready(
+    itde: TestConfig, language_alias: str, schema: str, udf_name: str
+) -> bool:
     try:
-        itde.ctrl_connection.execute(textwrap.dedent(f"""
-            CREATE OR REPLACE {language_alias} SCALAR SCRIPT {schema}.{udf_name}(i integer) 
+        itde.ctrl_connection.execute(
+            textwrap.dedent(
+                f"""
+            CREATE OR REPLACE {language_alias} SCALAR SCRIPT {schema}.{udf_name}(i integer)
             RETURNS INTEGER AS
                 def run(ctx):
                     return 1
-            / 
-            """))
+            /
+            """
+            )
+        )
         itde.ctrl_connection.execute(f"SELECT {schema}.{udf_name}(1)")
         return True
     except Exception as e:

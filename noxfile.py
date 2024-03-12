@@ -6,8 +6,8 @@ sys.path += [str(Path().parent.absolute())]
 import nox
 
 # imports all nox task provided by the python_toolbox
-from exasol.toolbox.nox.tasks import type_check
 from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disable=unused-wildcard-import
+from exasol.toolbox.nox.tasks import type_check
 
 # default actions to be run if nothing is explicitly specified with the -s option
 nox.options.sessions = ["fix"]

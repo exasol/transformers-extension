@@ -1,25 +1,32 @@
 from pathlib import PurePosixPath
+
 from exasol_udf_mock_python.connection import Connection
-from tests.unit_tests.udf_wrapper_params.translation.mock_translation import \
-    MockTranslationModel, MockTranslationFactory, MockPipeline
+
+from tests.unit_tests.udf_wrapper_params.translation.mock_translation import (
+    MockPipeline,
+    MockTranslationFactory,
+    MockTranslationModel,
+)
 
 
 def udf_wrapper():
     from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.models.translation_udf import \
-        TranslationUDF
-    from tests.unit_tests.udf_wrapper_params.translation. \
-        mock_translation_tokenizer import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.translation. \
-        multiple_bfsconn_single_subdir_single_model_single_batch import \
-        MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch as params
+
+    from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
+    from tests.unit_tests.udf_wrapper_params.translation.mock_translation_tokenizer import (
+        MockSequenceTokenizer,
+    )
+    from tests.unit_tests.udf_wrapper_params.translation.multiple_bfsconn_single_subdir_single_model_single_batch import (
+        MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch as params,
+    )
 
     udf = TranslationUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
         base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer)
+        tokenizer=MockSequenceTokenizer,
+    )
 
     def run(ctx: UDFContext):
         udf.run(ctx)
@@ -29,6 +36,7 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     """
     multiple bucketfs connection, single subdir, single model, single batch
     """
+
     expected_model_counter = 1
     batch_size = 4
     data_size = 2
@@ -36,16 +44,57 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     target_lang = "German"
     max_length = 10
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
-                   src_lang, target_lang, max_length)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir1", "model1", "text 2",
-                   src_lang, target_lang, max_length)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", src_lang,
-                    target_lang,  max_length, "text 1 übersetzt" * max_length, None)
-                   ] * data_size + \
-                  [("bfs_conn2", "sub_dir1", "model1", "text 2", src_lang,
-                    target_lang, max_length, "text 2 übersetzt" * max_length, None)
-                   ] * data_size
+    input_data = [
+        (
+            None,
+            "bfs_conn1",
+            "token_conn1",
+            "sub_dir1",
+            "model1",
+            "text 1",
+            src_lang,
+            target_lang,
+            max_length,
+        )
+    ] * data_size + [
+        (
+            None,
+            "bfs_conn2",
+            "token_conn1",
+            "sub_dir1",
+            "model1",
+            "text 2",
+            src_lang,
+            target_lang,
+            max_length,
+        )
+    ] * data_size
+    output_data = [
+        (
+            "bfs_conn1",
+            "token_conn1",
+            "sub_dir1",
+            "model1",
+            "text 1",
+            src_lang,
+            target_lang,
+            max_length,
+            "text 1 übersetzt" * max_length,
+            None,
+        )
+    ] * data_size + [
+        (
+            "bfs_conn2",
+            "sub_dir1",
+            "model1",
+            "text 2",
+            src_lang,
+            target_lang,
+            max_length,
+            "text 2 übersetzt" * max_length,
+            None,
+        )
+    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -53,14 +102,18 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
-        "token_conn1": Connection(address='', password="token")
+        "token_conn1": Connection(address="", password="token"),
     }
-    mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
-            MockTranslationModel(text_data="text 1"),
-        PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
-            MockTranslationModel(text_data="text 2")
-    })
+    mock_factory = MockTranslationFactory(
+        {
+            PurePosixPath(base_cache_dir1, "sub_dir1", "model1"): MockTranslationModel(
+                text_data="text 1"
+            ),
+            PurePosixPath(base_cache_dir2, "sub_dir1", "model1"): MockTranslationModel(
+                text_data="text 2"
+            ),
+        }
+    )
 
     mock_pipeline = MockPipeline
     udf_wrapper = udf_wrapper

@@ -2,13 +2,20 @@ import io
 import tarfile
 from pathlib import Path
 from typing import Union
-from unittest.mock import create_autospec, MagicMock, call, ANY
+from unittest.mock import (
+    ANY,
+    MagicMock,
+    call,
+    create_autospec,
+)
 
 import pytest
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
-from exasol_transformers_extension.utils.bucketfs_operations import upload_model_files_to_bucketfs, \
-    create_tar_of_directory
+from exasol_transformers_extension.utils.bucketfs_operations import (
+    create_tar_of_directory,
+    upload_model_files_to_bucketfs,
+)
 
 
 @pytest.fixture
@@ -22,12 +29,14 @@ def test_content(tmp_path):
 
 
 def test_upload_model_files_to_bucketfs(test_content):
-    mock_bucketfs_location: Union[BucketFSLocation, MagicMock] = create_autospec(BucketFSLocation)
+    mock_bucketfs_location: Union[BucketFSLocation, MagicMock] = create_autospec(
+        BucketFSLocation
+    )
     model_path = Path("test_model_path")
     upload_model_files_to_bucketfs(
         bucketfs_location=mock_bucketfs_location,
         model_path=model_path,
-        tmpdir_name=str(test_content)
+        tmpdir_name=str(test_content),
     )
     assert mock_bucketfs_location.mock_calls == [
         call.upload_fileobj_to_bucketfs(ANY, str(model_path.with_suffix(".tar.gz")))
@@ -67,12 +76,13 @@ def test_create_tar_of_directory(test_content):
     fileobj.seek(0)
     with tarfile.open(name="test.tar.gz", mode="r|gz", fileobj=fileobj) as tar:
         assert tar.getnames() == [
-            'test_model_name',
-            'test_model_name/.no_exist',
-            'test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837',
-            'test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/tokenizer_config.json',
-            'test_model_name/blobs',
-            'test_model_name/blobs/234608c922aaf3989d6a772af31711fbbdd62e3a',
-            'test_model_name/snapshots',
-            'test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837',
-            'test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json']
+            "test_model_name",
+            "test_model_name/.no_exist",
+            "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
+            "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/tokenizer_config.json",
+            "test_model_name/blobs",
+            "test_model_name/blobs/234608c922aaf3989d6a772af31711fbbdd62e3a",
+            "test_model_name/snapshots",
+            "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
+            "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json",
+        ]

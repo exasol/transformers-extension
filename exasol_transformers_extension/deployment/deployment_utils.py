@@ -1,13 +1,17 @@
-
 import logging
-import requests
-import tempfile
 import ssl
-from pathlib import Path
+import tempfile
 from contextlib import contextmanager
-from jinja2 import Environment, PackageLoader, select_autoescape
-from exasol_transformers_extension.deployment import constants
+from pathlib import Path
 
+import requests
+from jinja2 import (
+    Environment,
+    PackageLoader,
+    select_autoescape,
+)
+
+from exasol_transformers_extension.deployment import constants
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +23,8 @@ BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE = f"TE_BUCKETFS_PASSWORD"
 def load_and_render_statement(template_name, **kwargs) -> str:
     env = Environment(
         loader=PackageLoader(constants.BASE_DIR, constants.TEMPLATES_DIR),
-        autoescape=select_autoescape())
+        autoescape=select_autoescape(),
+    )
     template = env.get_template(template_name)
     statement = template.render(**kwargs)
     return statement

@@ -2,12 +2,15 @@ from pathlib import Path
 
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
-from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
-
-
-
+from exasol_transformers_extension.utils.bucketfs_model_uploader import (
+    BucketFSModelUploaderFactory,
+)
+from exasol_transformers_extension.utils.model_factory_protocol import (
+    ModelFactoryProtocol,
+)
+from exasol_transformers_extension.utils.temporary_directory_factory import (
+    TemporaryDirectoryFactory,
+)
 
 
 class HuggingFaceHubBucketFSModelTransferSP:
@@ -22,19 +25,22 @@ class HuggingFaceHubBucketFSModelTransferSP:
     :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory. Mainly change for testing.
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
     """
-    def __init__(self,
-                 bucketfs_location: BucketFSLocation,
-                 model_name: str,
-                 model_path: Path,
-                 token: str,
-                 temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
-                 bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory()):
+
+    def __init__(
+        self,
+        bucketfs_location: BucketFSLocation,
+        model_name: str,
+        model_path: Path,
+        token: str,
+        temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
+        bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory(),
+    ):
         self._token = token
         self._model_name = model_name
         self._temporary_directory_factory = temporary_directory_factory
         self._bucketfs_model_uploader = bucketfs_model_uploader_factory.create(
-            model_path=model_path,
-            bucketfs_location=bucketfs_location)
+            model_path=model_path, bucketfs_location=bucketfs_location
+        )
         self._tmpdir = temporary_directory_factory.create()
         self._tmpdir_name = Path(self._tmpdir.__enter__())
 
@@ -52,7 +58,11 @@ class HuggingFaceHubBucketFSModelTransferSP:
         Download a model from HuggingFace Hub into a temporary directory and save it with save_pretrained
         in temporary directory / pretrained .
         """
-        model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name / "cache", use_auth_token=self._token)
+        model = model_factory.from_pretrained(
+            self._model_name,
+            cache_dir=self._tmpdir_name / "cache",
+            use_auth_token=self._token,
+        )
         model.save_pretrained(self._tmpdir_name / "pretrained" / self._model_name)
 
     def upload_to_bucketfs(self) -> Path:
@@ -61,18 +71,23 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name / "pretrained" / self._model_name)
+        return self._bucketfs_model_uploader.upload_directory(
+            self._tmpdir_name / "pretrained" / self._model_name
+        )
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:
     """
     Class for creating a HuggingFaceHubBucketFSModelTransferSP object.
     """
-    def create(self,
-               bucketfs_location: BucketFSLocation,
-               model_name: str,
-               model_path: Path,
-               token: str) -> HuggingFaceHubBucketFSModelTransferSP:
+
+    def create(
+        self,
+        bucketfs_location: BucketFSLocation,
+        model_name: str,
+        model_path: Path,
+        token: str,
+    ) -> HuggingFaceHubBucketFSModelTransferSP:
         """
         Creates a HuggingFaceHubBucketFSModelTransferSP object.
 
@@ -83,7 +98,9 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
 
         returns: The created HuggingFaceHubBucketFSModelTransferSP object.
         """
-        return HuggingFaceHubBucketFSModelTransferSP(bucketfs_location=bucketfs_location,
-                                                     model_name=model_name,
-                                                     model_path=model_path,
-                                                     token=token)
+        return HuggingFaceHubBucketFSModelTransferSP(
+            bucketfs_location=bucketfs_location,
+            model_name=model_name,
+            model_path=model_path,
+            token=token,
+        )

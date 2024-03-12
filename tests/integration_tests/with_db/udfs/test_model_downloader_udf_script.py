@@ -6,7 +6,8 @@ SUB_DIR = "test_downloader_udf_sub_dir{id}"
 
 
 def test_model_downloader_udf_script(
-        setup_database, pyexasol_connection, bucketfs_location):
+    setup_database, pyexasol_connection, bucketfs_location
+):
     bucketfs_conn_name, schema_name = setup_database
     n_rows = 2
     sub_dirs = []
@@ -15,14 +16,10 @@ def test_model_downloader_udf_script(
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
-        model_paths.append(bucketfs_operations.get_model_path(
-            sub_dir, model_params.tiny_model))
-        input_data.append((
-            model_params.tiny_model,
-            sub_dir,
-            bucketfs_conn_name,
-            ''
-        ))
+        model_paths.append(
+            bucketfs_operations.get_model_path(sub_dir, model_params.tiny_model)
+        )
+        input_data.append((model_params.tiny_model, sub_dir, bucketfs_conn_name, ""))
 
     bucketfs_files = []
     try:
@@ -42,12 +39,16 @@ def test_model_downloader_udf_script(
         # assertions
         for i in range(n_rows):
             bucketfs_files.append(
-                bucketfs_location.list_files_in_bucketfs(str(sub_dirs[i])))
+                bucketfs_location.list_files_in_bucketfs(str(sub_dirs[i]))
+            )
 
-        assert result == [(str(model_path), str(model_path.with_suffix(".tar.gz")))
-                          for index, model_path in enumerate(model_paths)] \
-               and bucketfs_files == [[str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
-                                      for index, model_path in enumerate(model_paths)]
+        assert result == [
+            (str(model_path), str(model_path.with_suffix(".tar.gz")))
+            for index, model_path in enumerate(model_paths)
+        ] and bucketfs_files == [
+            [str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
+            for index, model_path in enumerate(model_paths)
+        ]
     finally:
         for sub_dir in sub_dirs:
             postprocessing.cleanup_buckets(bucketfs_location, sub_dir)

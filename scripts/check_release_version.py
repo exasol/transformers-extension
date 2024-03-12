@@ -1,10 +1,9 @@
 import re
 from pathlib import Path
 
-from packaging import version
-
-from git import Repo
 import toml
+from git import Repo
+from packaging import version
 
 
 def get_git_version():
@@ -19,13 +18,15 @@ def get_git_version():
 
 
 def get_poetry_version():
-    parsed_toml = toml.load('pyproject.toml')
+    parsed_toml = toml.load("pyproject.toml")
     return parsed_toml["tool"]["poetry"]["version"].strip()
 
 
 def get_change_log_version():
     # Path overloads __truediv__
-    with open(Path(__file__).parent / ".." / "doc" / "changes" / "changelog.md") as changelog:
+    with open(
+        Path(__file__).parent / ".." / "doc" / "changes" / "changelog.md"
+    ) as changelog:
         changelog_str = changelog.read()
         # Search for the FIRST pattern like: "* [0.5.0](changes_0.5.0.md)" in the changelog file.
         # Note that we encapsulate the [(0.5.0)] with parenthesis, which tells re to return the matching string as group
@@ -33,7 +34,7 @@ def get_change_log_version():
         return version_match.groups()[0]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     poetry_version = get_poetry_version()
     latest_tag = get_git_version()
     changelog_version = get_change_log_version()

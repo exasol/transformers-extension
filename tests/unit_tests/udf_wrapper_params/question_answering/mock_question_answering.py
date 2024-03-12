@@ -1,7 +1,14 @@
 from pathlib import PurePosixPath
-from typing import Dict, List, Union, NewType
-from tests.unit_tests.udf_wrapper_params.question_answering.\
-    mock_sequence_tokenizer import MockSequenceTokenizer
+from typing import (
+    Dict,
+    List,
+    NewType,
+    Union,
+)
+
+from tests.unit_tests.udf_wrapper_params.question_answering.mock_sequence_tokenizer import (
+    MockSequenceTokenizer,
+)
 
 
 class MockQuestionAnsweringModel:
@@ -14,8 +21,7 @@ class MockQuestionAnsweringModel:
 
 
 class MockQuestionAnsweringFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath,
-                                         MockQuestionAnsweringModel]):
+    def __init__(self, mock_models: Dict[PurePosixPath, MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_name, cache_dir):
@@ -27,12 +33,14 @@ class MockPipeline:
     ResultDict = NewType("ResultDict", Dict[str, Union[str, float]])
     counter = 0
 
-    def __init__(self,
-                 task_type: str,
-                 model: MockQuestionAnsweringModel,
-                 tokenizer: MockSequenceTokenizer,
-                 device: str,
-                 framework: str):
+    def __init__(
+        self,
+        task_type: str,
+        model: MockQuestionAnsweringModel,
+        tokenizer: MockSequenceTokenizer,
+        device: str,
+        framework: str,
+    ):
         self.task_type = task_type
         self.model = model
         self.tokenizer = tokenizer
@@ -40,8 +48,9 @@ class MockPipeline:
         self.framework = framework
         MockPipeline.counter += 1
 
-    def __call__(self, question: List[str], context: List[str], top_k: int) -> \
-            Union[ResultDict, List[ResultDict],  List[List[ResultDict]]]:
+    def __call__(
+        self, question: List[str], context: List[str], top_k: int
+    ) -> Union[ResultDict, List[ResultDict], List[List[ResultDict]]]:
         if "error" in context[0]:
             raise Exception("Error while performing prediction.")
 

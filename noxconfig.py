@@ -27,7 +27,8 @@ class Config:
     def pre_integration_tests_hook(
         _session: Session, _config: Config, _context: MutableMapping[str, Any]
     ) -> bool:
-        """Implement if project specific behaviour is required"""  # todo probably run start_database here?
+        """Implement if project specific behaviour is required"""
+        # todo probably run start_database here?
         return True
 
     @staticmethod

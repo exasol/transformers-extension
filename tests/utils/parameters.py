@@ -19,14 +19,13 @@ class ModelParams:
 
 
 bucketfs_params = BucketFSParams(
-    real_port="6583",
-    name="bfsdefault",
-    bucket="default",
-    path_in_bucket="container")
+    real_port="6583", name="bfsdefault", bucket="default", path_in_bucket="container"
+)
 
 model_params = ModelParams(
-    base_model='bert-base-uncased',
+    base_model="bert-base-uncased",
     seq2seq_model="t5-small",
     tiny_model="prajjwal1/bert-tiny",
-    text_data='The company Exasol is based in Nuremberg',
-    sub_dir='model_sub_dir')
+    text_data="The company Exasol is based in Nuremberg",
+    sub_dir="model_sub_dir",
+)

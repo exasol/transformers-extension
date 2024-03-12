@@ -11,23 +11,24 @@ repos:
         language: system
         entry: poetry run nox -s fix
 
- # - repo: local #deactivate for this commit
- #   hooks:
+  # todo reactivate once linter and type check run through
+  #- repo: local
+  #  hooks:
   #    - id: type-check
- #       name: type-check
+  #      name: type-check
   #      types: [ python ]
   #      pass_filenames: false
   #      language: system
   #      entry: poetry run nox -s type-check
 
-  #- repo: local #deactivate for this commit
- #   hooks:
+  #- repo: local
+  #  hooks:
   #    - id: lint
   #      name: lint
   #      types: [ python ]
-   #     pass_filenames: false
-   #     language: system
-    #    entry: poetry run nox -s lint
+  #      pass_filenames: false
+  #      language: system
+  #      entry: poetry run nox -s lint
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0

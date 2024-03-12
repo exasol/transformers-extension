@@ -1,7 +1,9 @@
 from pathlib import PurePosixPath
 from typing import List
-from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
-    AbstractBucketFSLocation
+
+from exasol_bucketfs_utils_python.abstract_bucketfs_location import (
+    AbstractBucketFSLocation,
+)
 from exasol_udf_mock_python.group import Group
 
 
@@ -35,7 +37,8 @@ def cleanup_buckets(bucketfs_location: AbstractBucketFSLocation, path: str):
         for file_ in bucketfs_files:
             try:
                 bucketfs_location.delete_file_in_bucketfs(
-                    str(PurePosixPath(path, file_)))
+                    str(PurePosixPath(path, file_))
+                )
             except Exception as exc:
                 print(f"Error while deleting downloaded files, {str(exc)}")
     except:

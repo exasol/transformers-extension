@@ -11,5 +11,9 @@ def revert_language_settings(connection: ExaConnection):
     try:
         yield
     finally:
-        connection.execute(f"ALTER SYSTEM SET SCRIPT_LANGUAGES='{language_settings.system_value}';")
-        connection.execute(f"ALTER SESSION SET SCRIPT_LANGUAGES='{language_settings.session_value}';")
+        connection.execute(
+            f"ALTER SYSTEM SET SCRIPT_LANGUAGES='{language_settings.system_value}';"
+        )
+        connection.execute(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES='{language_settings.session_value}';"
+        )

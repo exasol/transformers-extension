@@ -1,8 +1,12 @@
+from pathlib import Path
+from typing import Optional
+
 import torch
 import transformers.pipelines
-from typing import Optional
-from pathlib import Path
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+
+from exasol_transformers_extension.utils.model_factory_protocol import (
+    ModelFactoryProtocol,
+)
 
 
 class LoadLocalModel:
@@ -15,13 +19,15 @@ class LoadLocalModel:
     :_base_model_factory:    a ModelFactoryProtocol for creating the loaded model
     :_tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
-    def __init__(self,
-                 _pipeline_factory,
-                 task_name: str,
-                 device: str,
-                 base_model_factory: ModelFactoryProtocol,
-                 tokenizer_factory: ModelFactoryProtocol
-                 ):
+
+    def __init__(
+        self,
+        _pipeline_factory,
+        task_name: str,
+        device: str,
+        base_model_factory: ModelFactoryProtocol,
+        tokenizer_factory: ModelFactoryProtocol,
+    ):
         self.pipeline_factory = _pipeline_factory
         self.task_name = task_name
         self.device = device
@@ -34,10 +40,9 @@ class LoadLocalModel:
         """Get the current loaded_model_key."""
         return self._loaded_model_key
 
-    def load_models(self,
-                    model_path: Path,
-                    current_model_key: str
-                    ) -> transformers.pipelines.Pipeline:
+    def load_models(
+        self, model_path: Path, current_model_key: str
+    ) -> transformers.pipelines.Pipeline:
         """
         Loads a locally saved model and tokenizer from "cache_dir / "pretrained" / model_name".
         Returns new pipeline corresponding to the model and task.
@@ -54,7 +59,8 @@ class LoadLocalModel:
             model=loaded_model,
             tokenizer=loaded_tokenizer,
             device=self.device,
-            framework="pt")
+            framework="pt",
+        )
         self._loaded_model_key = current_model_key
         return last_created_pipeline
 
@@ -63,4 +69,3 @@ class LoadLocalModel:
         Delete models and free device memory
         """
         torch.cuda.empty_cache()
-

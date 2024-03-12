@@ -1,11 +1,18 @@
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
+from typing import (
+    Dict,
+    Optional,
+)
 
-from exasol_integration_test_docker_environment.lib.docker.images.image_info import ImageInfo
+from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
+    ImageInfo,
+)
 from exasol_script_languages_container_tool.lib import api
-from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainerResult
+from exasol_script_languages_container_tool.lib.tasks.export.export_containers import (
+    ExportContainerResult,
+)
 
 
 def find_file_or_folder_backwards(name: str) -> Path:
@@ -19,7 +26,9 @@ def find_file_or_folder_backwards(name: str) -> Path:
     if result_path is not None and result_path.exists():
         return result_path
     else:
-        raise RuntimeError(f"Could not find {name} when searching backwards from {Path(__file__).parent}")
+        raise RuntimeError(
+            f"Could not find {name} when searching backwards from {Path(__file__).parent}"
+        )
 
 
 CONTAINER_NAME = "exasol_transformers_extension_container"
@@ -36,8 +45,9 @@ def build_language_container(flavor_path: Path) -> Dict[str, ImageInfo]:
     return image_infos
 
 
-def export(flavor_path: Path,
-           export_path: Optional[Path] = None) -> ExportContainerResult:
+def export(
+    flavor_path: Path, export_path: Optional[Path] = None
+) -> ExportContainerResult:
     if export_path is not None:
         export_path = str(export_path)
     export_result = api.export(flavor_path=(str(flavor_path),), export_path=export_path)
@@ -45,15 +55,15 @@ def export(flavor_path: Path,
 
 
 def upload(
-        flavor_path: Path,
-        bucketfs_name: str,
-        bucket_name: str,
-        database_host: str,
-        bucketfs_port: int,
-        user: str,
-        password: str,
-        path_in_bucket: str,
-        release_name: str
+    flavor_path: Path,
+    bucketfs_name: str,
+    bucket_name: str,
+    database_host: str,
+    bucketfs_port: int,
+    user: str,
+    password: str,
+    path_in_bucket: str,
+    release_name: str,
 ):
     api.upload(
         flavor_path=(str(flavor_path),),
@@ -64,7 +74,7 @@ def upload(
         bucketfs_username=user,
         bucketfs_password=password,
         path_in_bucket=path_in_bucket,
-        release_name=release_name
+        release_name=release_name,
     )
 
 
@@ -85,8 +95,10 @@ def add_wheel_to_flavor(flavor_base_path):
     dist_path = project_directory / "dist"
     wheels = list(dist_path.glob("*.whl"))
     if len(wheels) != 1:
-        raise RuntimeError(f"Did not find exactly one wheel file in dist directory {dist_path}. "
-                           f"Found the following wheels: {wheels}")
+        raise RuntimeError(
+            f"Did not find exactly one wheel file in dist directory {dist_path}. "
+            f"Found the following wheels: {wheels}"
+        )
     wheel = wheels[0]
     wheel_target = flavor_base_path / "release" / "dist"
     wheel_target.mkdir(parents=True, exist_ok=True)
@@ -95,11 +107,13 @@ def add_wheel_to_flavor(flavor_base_path):
 
 def add_requirements_to_flavor(flavor_base_path: Path):
     project_directory = find_project_directory()
-    requirements_bytes = subprocess.check_output(["poetry", "export", "--without-hashes", "--without-urls"],
-                                                 cwd=project_directory)
+    requirements_bytes = subprocess.check_output(
+        ["poetry", "export", "--without-hashes", "--without-urls"],
+        cwd=project_directory,
+    )
     requirements = requirements_bytes.decode("UTF-8")
-    requirements_without_cuda = "\n".join(line
-                                          for line in requirements.splitlines()
-                                          if not line.startswith("nvidia"))
+    requirements_without_cuda = "\n".join(
+        line for line in requirements.splitlines() if not line.startswith("nvidia")
+    )
     requirements_file = flavor_base_path / "dependencies" / "requirements.txt"
     requirements_file.write_text(requirements_without_cuda)

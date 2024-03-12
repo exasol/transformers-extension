@@ -1,12 +1,24 @@
-from abc import abstractmethod, ABC
-from typing import Iterator, List, Any
-import torch
 import traceback
-import pandas as pd
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from typing import (
+    Any,
+    Iterator,
+    List,
+)
+
 import numpy as np
+import pandas as pd
+import torch
+
 from exasol_transformers_extension.deployment import constants
-from exasol_transformers_extension.utils import device_management, \
-    bucketfs_operations, dataframe_operations
+from exasol_transformers_extension.utils import (
+    bucketfs_operations,
+    dataframe_operations,
+    device_management,
+)
 from exasol_transformers_extension.utils.load_model import LoadModel
 
 
@@ -21,13 +33,8 @@ class BaseModelUDF(ABC):
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
     """
-    def __init__(self,
-                 exa,
-                 batch_size,
-                 pipeline,
-                 base_model,
-                 tokenizer,
-                 task_name):
+
+    def __init__(self, exa, batch_size, pipeline, base_model, tokenizer, task_name):
         self.exa = exa
         self.batch_size = batch_size
         self.pipeline = pipeline
@@ -41,7 +48,7 @@ class BaseModelUDF(ABC):
         self.new_columns = []
 
     def run(self, ctx):
-        device_id = ctx.get_dataframe(1).iloc[0]['device_id']
+        device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
         self.device = device_management.get_torch_device(device_id)
         self.create_model_loader()
         ctx.reset()
@@ -59,11 +66,9 @@ class BaseModelUDF(ABC):
         """
         Creates the model_loader.
         """
-        self.model_loader = LoadModel(self.pipeline,
-                                      self.base_model,
-                                      self.tokenizer,
-                                      self.task_name,
-                                      self.device)
+        self.model_loader = LoadModel(
+            self.pipeline, self.base_model, self.tokenizer, self.task_name, self.device
+        )
 
     def get_predictions_from_batch(self, batch_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -75,7 +80,9 @@ class BaseModelUDF(ABC):
         """
         result_df_list = []
 
-        unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(self, batch_df)
+        unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(
+            self, batch_df
+        )
         for model_df in unique_model_dataframes:
             if "error_message" in model_df:
                 result_df_list.append(model_df)
@@ -84,19 +91,20 @@ class BaseModelUDF(ABC):
                 self.check_cache(model_df)
             except Exception as exc:
                 stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(
-                    model_df, stack_trace)
+                result_with_error_df = self.get_result_with_error(model_df, stack_trace)
                 result_df_list.append(result_with_error_df)
             else:
-                current_results_df_list = \
+                current_results_df_list = (
                     self.get_prediction_from_unique_param_based_dataframes(model_df)
+                )
                 result_df_list.extend(current_results_df_list)
 
         result_df = pd.concat(result_df_list)
         return result_df.replace(np.nan, None)
 
-    def get_prediction_from_unique_param_based_dataframes(self, model_df) \
-            -> List[pd.DataFrame]:
+    def get_prediction_from_unique_param_based_dataframes(
+        self, model_df
+    ) -> List[pd.DataFrame]:
         """
         Performs separate predictions for data with the same parameters
         in the same model dataframe.
@@ -107,27 +115,33 @@ class BaseModelUDF(ABC):
         :return: List of prediction results
         """
         result_df_list = []
-        for param_based_model_df in self.extract_unique_param_based_dataframes(model_df):
+        for param_based_model_df in self.extract_unique_param_based_dataframes(
+            model_df
+        ):
             try:
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
             except Exception as exc:
                 stack_trace = traceback.format_exc()
                 result_with_error_df = self.get_result_with_error(
-                    param_based_model_df, stack_trace)
+                    param_based_model_df, stack_trace
+                )
                 result_df_list.append(result_with_error_df)
         return result_df_list
 
     @staticmethod
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
         if not (model_name and bucketfs_conn and sub_dir):
-            error_message = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
-                            f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
+            error_message = (
+                f"For each model model_name, bucketfs_conn and sub_dir need to be provided. "
+                f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
+            )
             raise ValueError(error_message)
 
     @staticmethod
-    def extract_unique_model_dataframes_from_batch(self,
-            batch_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+    def extract_unique_model_dataframes_from_batch(
+        self, batch_df: pd.DataFrame
+    ) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
         and sub_dir from the dataframe.
@@ -139,30 +153,29 @@ class BaseModelUDF(ABC):
         """
 
         unique_values = dataframe_operations.get_unique_values(
-            batch_df, constants.ORDERED_COLUMNS, sort=True)
+            batch_df, constants.ORDERED_COLUMNS, sort=True
+        )
 
         for model_name, bucketfs_conn, token_conn, sub_dir in unique_values:
             try:
                 self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
             except ValueError:
                 stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(
-                    batch_df, stack_trace)
+                result_with_error_df = self.get_result_with_error(batch_df, stack_trace)
                 yield result_with_error_df
                 return
 
             selections = (
-                    (batch_df['model_name'] == model_name) &
-                    (batch_df['bucketfs_conn'] == bucketfs_conn) &
-                    (batch_df['sub_dir'] == sub_dir)
+                (batch_df["model_name"] == model_name)
+                & (batch_df["bucketfs_conn"] == bucketfs_conn)
+                & (batch_df["sub_dir"] == sub_dir)
             )
 
             if token_conn is None:
-                selections = selections & pd.isnull(batch_df['token_conn'])
+                selections = selections & pd.isnull(batch_df["token_conn"])
             else:
-                selections = selections & (batch_df['token_conn'] == token_conn)
-            model_df = batch_df[
-                selections]
+                selections = selections & (batch_df["token_conn"] == token_conn)
+            model_df = batch_df[selections]
 
             yield model_df
 
@@ -187,14 +200,13 @@ class BaseModelUDF(ABC):
                 token_conn_obj = self.exa.get_connection(token_conn)
             else:
                 token_conn_obj = None
-            self.last_created_pipeline = self.model_loader.load_models(model_name,
-                                                                       current_model_key,
-                                                                       self.cache_dir,
-                                                                       token_conn_obj)
+            self.last_created_pipeline = self.model_loader.load_models(
+                model_name, current_model_key, self.cache_dir, token_conn_obj
+            )
 
     def set_cache_dir(
-            self, model_name: str, bucketfs_conn_name: str,
-            sub_dir: str) -> None:
+        self, model_name: str, bucketfs_conn_name: str, sub_dir: str
+    ) -> None:
         """
         Set the cache directory in bucketfs of the specified model.
 
@@ -202,14 +214,16 @@ class BaseModelUDF(ABC):
         :param bucketfs_conn_name: Name of the bucketFS connection
         :param sub_dir: Directory where the model is cached
         """
-        bucketfs_location = \
+        bucketfs_location = (
             bucketfs_operations.create_bucketfs_location_from_conn_object(
-                self.exa.get_connection(bucketfs_conn_name))
+                self.exa.get_connection(bucketfs_conn_name)
+            )
+        )
 
         model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
-            bucketfs_location=bucketfs_location, model_path=str(model_path))
-
+            bucketfs_location=bucketfs_location, model_path=str(model_path)
+        )
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -224,13 +238,13 @@ class BaseModelUDF(ABC):
 
         predictions = self.execute_prediction(model_df)
         pred_df_list = self.create_dataframes_from_predictions(predictions)
-        pred_df = self.append_predictions_to_input_dataframe(
-            model_df, pred_df_list)
-        pred_df['error_message'] = None
+        pred_df = self.append_predictions_to_input_dataframe(model_df, pred_df_list)
+        pred_df["error_message"] = None
         return pred_df
 
-    def get_result_with_error(self, model_df: pd.DataFrame, stack_trace: str) \
-            -> pd.DataFrame:
+    def get_result_with_error(
+        self, model_df: pd.DataFrame, stack_trace: str
+    ) -> pd.DataFrame:
         """
         Add the stack trace to the dataframe that received an error
         during prediction.
@@ -244,22 +258,23 @@ class BaseModelUDF(ABC):
         return model_df
 
     @abstractmethod
-    def create_dataframes_from_predictions(self, predictions: List[Any]) \
-            -> List[pd.DataFrame]:
+    def create_dataframes_from_predictions(
+        self, predictions: List[Any]
+    ) -> List[pd.DataFrame]:
         pass
 
     @abstractmethod
     def extract_unique_param_based_dataframes(
-            self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+        self, model_df: pd.DataFrame
+    ) -> Iterator[pd.DataFrame]:
         pass
 
     @abstractmethod
-    def execute_prediction(
-            self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
         pass
 
     @abstractmethod
     def append_predictions_to_input_dataframe(
-            self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
-            -> pd.DataFrame:
+        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+    ) -> pd.DataFrame:
         pass

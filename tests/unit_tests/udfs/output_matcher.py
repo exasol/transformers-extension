@@ -1,4 +1,9 @@
-from typing import List, Tuple, Any, Optional
+from typing import (
+    Any,
+    List,
+    Optional,
+    Tuple,
+)
 
 Row = List[Tuple[Any, ...]]
 
@@ -16,8 +21,9 @@ class Output:
 
 
 class OutputMatcher:
-    def __init__(self, output: Output, n_input_columns: int,
-                 error_message_index: int = -1):
+    def __init__(
+        self, output: Output, n_input_columns: int, error_message_index: int = -1
+    ):
         self.actual_output = output
         self._n_input_columns = n_input_columns
         self._error_message_index = error_message_index
@@ -37,8 +43,9 @@ class OutputMatcher:
     def __eq__(self, expected_output: Output) -> bool:
         result = all(
             self.compare_row(expected_row=expected, actual_row=actual_row)
-            for actual_row, expected in
-            zip(self.actual_output.data, expected_output.data)
+            for actual_row, expected in zip(
+                self.actual_output.data, expected_output.data
+            )
         )
         return result
 
@@ -46,7 +53,6 @@ class OutputMatcher:
         if not self.error_exists(expected_row):
             return expected_row == actual_row
         else:
-            return (
-                    self.error_message(expected_row) in self.error_message(actual_row)
-                    and self.input_columns(expected_row) == self.input_columns(actual_row)
-            )
+            return self.error_message(expected_row) in self.error_message(
+                actual_row
+            ) and self.input_columns(expected_row) == self.input_columns(actual_row)

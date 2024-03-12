@@ -1,5 +1,10 @@
 from pathlib import Path
-from typing import Protocol, Union, runtime_checkable, Optional
+from typing import (
+    Optional,
+    Protocol,
+    Union,
+    runtime_checkable,
+)
 
 import transformers
 
@@ -9,8 +14,13 @@ class ModelFactoryProtocol(Protocol):
     """
     Protocol for better type hints.
     """
-    def from_pretrained(self, model_name: str, cache_dir: Optional[Path]=None, use_auth_token: Optional[str]=None) \
-            -> transformers.PreTrainedModel:
+
+    def from_pretrained(
+        self,
+        model_name: str,
+        cache_dir: Optional[Path] = None,
+        use_auth_token: Optional[str] = None,
+    ) -> transformers.PreTrainedModel:
         """
         Either downloads a model from Huggingface Hub(all parameters required),
         or loads a locally saved model from file (only requires filepath)
