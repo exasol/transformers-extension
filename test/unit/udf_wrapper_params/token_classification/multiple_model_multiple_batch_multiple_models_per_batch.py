@@ -1,0 +1,227 @@
+from pathlib import PurePosixPath
+
+from exasol_udf_mock_python.connection import Connection
+
+from test.unit.udf_wrapper_params.token_classification.mock_token_classification import (
+    MockPipeline,
+    MockTokenClassificationFactory,
+    MockTokenClassificationModel,
+)
+
+
+def udf_wrapper():
+    from exasol_udf_mock_python.udf_context import UDFContext
+
+    from exasol_transformers_extension.udfs.models.token_classification_udf import (
+        TokenClassificationUDF,
+    )
+    from test.unit.udf_wrapper_params.token_classification.mock_sequence_tokenizer import (
+        MockSequenceTokenizer,
+    )
+    from test.unit.udf_wrapper_params.token_classification.multiple_model_multiple_batch_multiple_models_per_batch import (
+        MultipleModelMultipleBatchMultipleModelsPerBatch as params,
+    )
+
+    udf = TokenClassificationUDF(
+        exa,
+        batch_size=params.batch_size,
+        pipeline=params.mock_pipeline,
+        base_model=params.mock_factory,
+        tokenizer=MockSequenceTokenizer,
+    )
+
+    def run(ctx: UDFContext):
+        udf.run(ctx)
+
+
+class MultipleModelMultipleBatchMultipleModelsPerBatch:
+    """
+    multiple model, multiple batch, multiple models per batch
+    """
+
+    expected_model_counter = 4
+    batch_size = 2
+    data_size = 1
+    n_entities = 3
+    agg_strategy = "simple"
+
+    input_data = (
+        [
+            (
+                None,
+                "bfs_conn1",
+                "token_conn1",
+                "sub_dir1",
+                "model1",
+                "text1",
+                agg_strategy,
+            )
+        ]
+        * data_size
+        + [
+            (
+                None,
+                "bfs_conn2",
+                "token_conn1",
+                "sub_dir2",
+                "model2",
+                "text2",
+                agg_strategy,
+            )
+        ]
+        * data_size
+        + [
+            (
+                None,
+                "bfs_conn3",
+                "token_conn1",
+                "sub_dir3",
+                "model3",
+                "text3",
+                agg_strategy,
+            )
+        ]
+        * data_size
+        + [
+            (
+                None,
+                "bfs_conn4",
+                "token_conn1",
+                "sub_dir4",
+                "model4",
+                "text4",
+                agg_strategy,
+            )
+        ]
+        * data_size
+    )
+    output_data = (
+        [
+            (
+                "bfs_conn1",
+                "token_conn1",
+                "sub_dir1",
+                "model1",
+                "text1",
+                agg_strategy,
+                0,
+                6,
+                "text1",
+                "label1",
+                0.1,
+                None,
+            )
+        ]
+        * n_entities
+        * data_size
+        + [
+            (
+                "bfs_conn2",
+                "token_conn1",
+                "sub_dir2",
+                "model2",
+                "text2",
+                agg_strategy,
+                0,
+                6,
+                "text2",
+                "label2",
+                0.2,
+                None,
+            )
+        ]
+        * n_entities
+        * data_size
+        + [
+            (
+                "bfs_conn3",
+                "token_conn1",
+                "sub_dir3",
+                "model3",
+                "text3",
+                agg_strategy,
+                0,
+                6,
+                "text3",
+                "label3",
+                0.3,
+                None,
+            )
+        ]
+        * n_entities
+        * data_size
+        + [
+            (
+                "bfs_conn4",
+                "token_conn1",
+                "sub_dir4",
+                "model4",
+                "text4",
+                agg_strategy,
+                0,
+                6,
+                "text4",
+                "label4",
+                0.4,
+                None,
+            )
+        ]
+        * n_entities
+        * data_size
+    )
+
+    tmpdir_name = "_".join(("/tmpdir", __qualname__))
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+    base_cache_dir3 = PurePosixPath(tmpdir_name, "bfs_conn3")
+    base_cache_dir4 = PurePosixPath(tmpdir_name, "bfs_conn4")
+    bfs_connections = {
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+        "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
+        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
+        "token_conn1": Connection(address="", password="token"),
+    }
+    mock_factory = MockTokenClassificationFactory(
+        {
+            PurePosixPath(
+                base_cache_dir1, "sub_dir1", "model1"
+            ): MockTokenClassificationModel(
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
+                words=["text1"] * n_entities,
+                entities=["label1"] * n_entities,
+                scores=[0.1] * n_entities,
+            ),
+            PurePosixPath(
+                base_cache_dir2, "sub_dir2", "model2"
+            ): MockTokenClassificationModel(
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
+                words=["text2"] * n_entities,
+                entities=["label2"] * n_entities,
+                scores=[0.2] * n_entities,
+            ),
+            PurePosixPath(
+                base_cache_dir3, "sub_dir3", "model3"
+            ): MockTokenClassificationModel(
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
+                words=["text3"] * n_entities,
+                entities=["label3"] * n_entities,
+                scores=[0.3] * n_entities,
+            ),
+            PurePosixPath(
+                base_cache_dir4, "sub_dir4", "model4"
+            ): MockTokenClassificationModel(
+                starts=[0] * n_entities,
+                ends=[6] * n_entities,
+                words=["text4"] * n_entities,
+                entities=["label4"] * n_entities,
+                scores=[0.4] * n_entities,
+            ),
+        }
+    )
+
+    mock_pipeline = MockPipeline
+    udf_wrapper = udf_wrapper

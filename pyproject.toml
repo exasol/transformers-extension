@@ -78,9 +78,9 @@ max-module-lines = 800
 [[tool.mypy.overrides]]
 module = [
     "language_container.*",
-    "tests.fixtures.*",
-    "tests.unit_tests.*",
-    "tests.integration_tests.*",
+    "test.fixtures.*",
+    "test.unit.*",
+    "test.integration.*",
     "tests.utils.*"
 ]
 ignore_errors = true

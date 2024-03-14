@@ -1,5 +1,5 @@
-name: 'Run tests'
-description: 'This composite action runs the tests'
+name: 'Run test'
+description: 'This composite action runs the test'
 runs:
   using: "composite"
   steps:
@@ -7,6 +7,6 @@ runs:
       run: poetry build
       shell: bash
 
-    - name: Run Python unit tests
-      run: poetry run nox -s unit_tests
+    - name: Run Python unit test
+      run: poetry run nox -s unit
       shell: bash
