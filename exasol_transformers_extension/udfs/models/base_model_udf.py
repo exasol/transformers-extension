@@ -152,7 +152,7 @@ class BaseModelUDF(ABC):
         unique_values = dataframe_operations.get_unique_values(
             batch_df, constants.ORDERED_COLUMNS, sort=True)
 
-        for model_name, bucketfs_conn, token_conn, sub_dir in unique_values:
+        for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
                 self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
             except ValueError:
@@ -168,10 +168,6 @@ class BaseModelUDF(ABC):
                     (batch_df['sub_dir'] == sub_dir)
             )
 
-            if token_conn is None:
-                selections = selections & pd.isnull(batch_df['token_conn'])
-            else:
-                selections = selections & (batch_df['token_conn'] == token_conn)
             model_df = batch_df[
                 selections]
 
@@ -188,9 +184,8 @@ class BaseModelUDF(ABC):
         model_name = model_df["model_name"].iloc[0]
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
-        token_conn = model_df["token_conn"].iloc[0]
 
-        current_model_key = (bucketfs_conn, sub_dir, model_name, token_conn)
+        current_model_key = (bucketfs_conn, sub_dir, model_name)
         if self.model_loader.loaded_model_key != current_model_key:
             self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
             self.model_loader.clear_device_memory()

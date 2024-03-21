@@ -52,7 +52,7 @@ class ModelDownloaderUDF:
         # note that, token is required for private models. It doesn't matter
         # whether there is a token for public model or even what the token is.
         token = False
-        if token_conn:
+        if token_conn is not None: #todo is this none if no token cann?
             token_conn_obj = self._exa.get_connection(token_conn)
             token = token_conn_obj.password
 

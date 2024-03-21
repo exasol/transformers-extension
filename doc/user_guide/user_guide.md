@@ -248,7 +248,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```bucketfs_conn```: The BucketFS connection name.
   - ```token_conn```: The connection name containing the token required for 
-  private models. You can use empty string ('') for public models. For details 
+  private models. You can use an empty string ('') for public models. For details 
   on how to create a connection object with token information, please check 
   [here](#getting-started).
 
@@ -300,7 +300,6 @@ classes of the specified  model. An example usage is given below:
 SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data
@@ -310,10 +309,6 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -325,10 +320,10 @@ this UDF. In case of any error during model loading or prediction, these new
 columns are set to `null` and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
-| ------------- |-----------------|---------|------------| --------- |---------| ----- |----------------|
-| conn_name     | token_conn_name | dir/    | model_name | text      | label_1 | 0.75  | None           |          
-| ...           | ...             | ...     | ...        | ...       | ...     | ...   | ...            |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
+| ------------- |---------|------------| --------- |---------| ----- |----------------|
+| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None           |
+| ...           | ...     | ...        | ...       | ...     | ...   | ...            |
 
 
 ### Sequence Classification for Text Pair UDF
@@ -338,7 +333,6 @@ determine if two sequences are paraphrases of each other. An example usage is gi
 SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     first_text,
@@ -349,10 +343,6 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -374,7 +364,6 @@ An example usage is given below:
 SELECT TE_QUESTION_ANSWERING_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     question,
@@ -385,11 +374,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -404,11 +389,11 @@ If `top_k` > 1, each input row is repeated for each answer. In case of any error
 during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|------------|-----------| ----- |----------| ----- |------| ------------- |
-| conn_name     | token_conn_name | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
-| conn_name     | token_conn_name | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
-| ...           | ...             | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|------------|-----------| ----- |----------| ----- |------| ------------- |
+| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
 
 
 ### Masked Language Modelling UDF
@@ -419,7 +404,6 @@ this UDF is ```<mask>```. An example usage is given below:
 SELECT TE_FILLING_MASK_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -431,10 +415,6 @@ SELECT TE_FILLING_MASK_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -448,11 +428,11 @@ If `top_k` > 1, each input row is repeated for each prediction. In case of any
 error during model loading or prediction, these new columns are set to `null` 
 and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|---------------| ----- |---------------| ----- |------|---------------|
-| conn_name     | token_conn_name | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  | None          |
-| conn_name     | token_conn_name | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
-| ...           | ...             | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  | None          |
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
+| ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
 
 ### Text Generation UDF
@@ -464,7 +444,6 @@ An example usage is given below:
 SELECT TE_TEXT_GENERATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -476,10 +455,6 @@ SELECT TE_TEXT_GENERATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name.
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -503,7 +478,6 @@ There are two popular subtasks of token classification:
 SELECT TE_TOKEN_CLASSIFICATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -513,11 +487,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name.
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -534,10 +504,10 @@ In case of any error during model loading or prediction, these new
 columns are set to `null`, and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
-| conn_name     | token_conn_name | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
-| ...           | ...             | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
+| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
 
 
@@ -548,7 +518,6 @@ This UDF translates a given text from one language to another.
 SELECT TE_TRANSLATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -562,10 +531,6 @@ SELECT TE_TRANSLATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name.
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -581,10 +546,10 @@ combined with the inputs used when calling this UDF. In case of any error during
 model loading or prediction, these new columns are set to `null`, and 
 column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|-----------------|-----------------|------------| ---------------- |---------------|
-| conn_name     | token_conn_name | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
-| ...           | ...             | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|-----------------|-----------------|------------| ---------------- |---------------|
+| conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
+| ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
 
 ### Zero-Shot Text Classification UDF
@@ -596,7 +561,6 @@ string, and generate probability scores prediction for each label.
 SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -607,11 +571,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name.
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -624,8 +584,8 @@ columns, combined with the inputs used when calling this UDF. In case of any
 error during model loading or prediction, these new  columns are set to `null`, 
 and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|------------------|--------|-------|------|---------------|
-| conn_name     | token_conn_name | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
-| conn_name     | token_conn_name | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
-| ...           | ...             | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |  
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|------------------|--------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |  
