@@ -62,7 +62,7 @@ models on the Exasol Cluster. More information on The BucketFS can be found
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
-      IDENTIFIED BY '<BUCKETFS_PASS>'
+      IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
 
   - The `BUCKETFS_ADDRESS` looks like the following:
@@ -91,7 +91,7 @@ Additionally, you will need a Script language container. Find the how-to below.
 
 #### Pip
 
-The Transformers Extension is published on [Pypi] (***ad link here***). 
+The Transformers Extension is published on [Pypi](https://pypi.org/project/exasol-transformers-extension/). 
 
 You can install it with:
 
@@ -102,9 +102,9 @@ pip install exasol-transformers-extension
 
 #### Download and Install the Python Wheel Package
 
-You can also geht the wheel from a Github release.
+You can also get the wheel from a Github release.
 - The latest version of the python package of this extension can be 
-downloaded from the [GitHUb Release](https://github.com/exasol/transformers-extension/releases/latest).
+downloaded from the [GitHub Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
 ```buildoutcfg 
 exasol_transformers_extension-<version-number>-py3-none-any.whl
@@ -225,7 +225,7 @@ There are two ways to install the language container: (1) using a python script 
           --language-alias <LANGUAGE_ALIAS> \ 
           --container-file <path/to/language_container_name.tar.gz>       
       ```
-     Please note, that all considerations described in the Quick Installation 
+     Please note:  all considerations described in the Quick Installation 
      section are still applicable.
 
      **Note:** The  `--path-in-bucket` can not be empty.
@@ -233,19 +233,24 @@ There are two ways to install the language container: (1) using a python script 
 
   2. *Manual Installation*
 
-     In the manual installation, the pre-built container should be firstly 
-     uploaded into BucketFS. In order to do that, you can use 
+     In the manual installation, the pre-built container should be
+     uploaded into BucketFS first. In order to do that, you can use 
      either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
      or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
-     The following command uploads a given container into BucketFS through curl 
-     , a http(s) client: 
+     The following command uploads a given container into BucketFS through 
+     the http(s) client curl: 
+
       ```shell
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
           "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
 
-      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `BUCKETFS_WRITE_PASSWORD`:
+      Please note that specifying the password on command line will make your shell 
+      record the password in the history. To avoid leaking your password please 
+      consider to set an environment variable. The following examples sets
+      environment variable `BUCKETFS_WRITE_PASSWORD`:
+      
       ```shell 
         read -sp "password: " BUCKETFS_WRITE_PASSWORD
       ```
@@ -257,25 +262,24 @@ There are two ways to install the language container: (1) using a python script 
 
       ```sql
       ALTER SESSION SET SCRIPT_LANGUAGES=\
-      <ALIAS>=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
-              lang=<LANGUAGE>#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
+      _PYTHON3_TE_=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+              lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
               exaudf/exaudfclient_py3
       ```
-     
-      In project transformer-extensions replace `<ALIAS>` by `_PYTHON3_TE_` and `<LANGUAGE>` by `_python_`.
       For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
 
 
 ### Deployment
-- Deploy all necessary scripts installed in the previous step to the specified 
-`SCHEMA` in Exasol DB with the same `LANGUAGE_ALIAS`  using the following python cli command:
+
+Next you need to deploy all necessary scripts installed in the previous step to the specified 
+`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following python cli command:
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
-    --language-alias <LANGUAGE_ALIAS>
+    --language-alias _PYTHON3_TE_
 ```
 
 ## Store Models in BucketFS
@@ -316,11 +320,8 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   private models. You can use empty string ('') for public models. For details 
   on how to create a connection object with token information, please check 
   [here](#getting-started).
-
-Note that the extension currently only supports the `PyTorch` framework. 
-Please make sure that the selected models are in the `Pytorch` model library section.
-
-
+  
+    
 ### 2. Model Uploader Script
 You can invoke the python script as below which allows to load the transformer 
 models from the local filesystem into BucketFS:
@@ -352,12 +353,16 @@ You can download the model using python lke this:
         # save the downloaded model using the save_pretrained fuction
         model.save_pretrained(<save_path> / "pretrained" / <model_name>)
 ```
+***Note:*** Transformes models consist of two parts, the model and the tokenizer. 
+mKke sure to download and save both into the same cache folder so the upload model script uploads them together.
 And then upload it using exasol_transformers_extension.upload_model script where ```local-model-path = <save_path> / "pretrained" / <model_name>```
 
 
-## Prediction UDFs
-We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
-These tasks cache the model downloaded to BucketFS and make an inference using the cached models with user-supplied inputs.
+## Using Prediction UDFs
+We provide 7 prediction UDFs in this transformers Extension, each performing an NLP 
+task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
+These tasks cache the model downloaded to BucketFS and make an inference using 
+the cached models with user-supplied inputs.
 
 ### Sequence Classification for Single Text UDF
 This UDF classifies the given single text  according to a given number of 
