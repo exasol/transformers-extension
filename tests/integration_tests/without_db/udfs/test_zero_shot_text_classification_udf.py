@@ -73,7 +73,6 @@ def test_sequence_classification_single_text_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -138,7 +137,6 @@ def test_sequence_classification_single_text_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',

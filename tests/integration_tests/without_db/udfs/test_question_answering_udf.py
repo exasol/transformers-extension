@@ -80,7 +80,6 @@ def test_question_answering_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',
@@ -146,7 +145,6 @@ def test_question_answering_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',

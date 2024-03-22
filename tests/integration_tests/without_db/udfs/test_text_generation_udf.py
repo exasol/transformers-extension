@@ -78,7 +78,6 @@ def test_text_generation_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -138,7 +137,6 @@ def test_text_generation_udf_on_error_handlig(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',

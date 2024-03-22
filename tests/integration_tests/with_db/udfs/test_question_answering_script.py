@@ -23,15 +23,14 @@ def test_question_answering_script(
 
     query = f"SELECT TE_QUESTION_ANSWERING_UDF(" \
             f"t.device_id, " \
-            f"t.bucketfs_conn_name, " \
-            f"t.token_conn_name, " \
+            f"t.bucketfs_conn_name, "
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.question, " \
             f"t.context_text, " \
             f"t.top_k" \
             f") FROM (VALUES {python_rows_to_sql(input_data)} " \
-            f"AS t(device_id, bucketfs_conn_name, token_conn_name, sub_dir, " \
+            f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
             f"model_name, question, context_text, top_k));"
 
     # execute sequence classification UDF

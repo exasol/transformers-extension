@@ -36,16 +36,15 @@ class SingleModelMultipleBatchIncomplete:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text", agg_strategy,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
                     0, 6, "text", "label1", 0.1, None)] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
     }
 
     mock_factory = MockTokenClassificationFactory({

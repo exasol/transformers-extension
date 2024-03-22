@@ -33,13 +33,13 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     batch_size = 3
     data_size = 2
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", "label1")] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir2", "model2",
                    "error on pred", "label2")] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1",
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
                     "label1", "label1", 0.1, 1, None)] * data_size + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "error on pred",
+                  [("bfs_conn2", "sub_dir2", "model2", "error on pred",
                     "label2", None, None, None, "Traceback")] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -47,8 +47,7 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockZeroShotFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

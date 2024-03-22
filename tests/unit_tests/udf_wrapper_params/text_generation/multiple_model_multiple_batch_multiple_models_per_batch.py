@@ -35,24 +35,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     max_length = 10
     return_full_text = True
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
                    max_length, return_full_text)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2", "text 2",
+                 [(None, "bfs_conn2", "sub_dir2", "model2", "text 2",
                    max_length, return_full_text)] * data_size + \
-                 [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3", "text 3",
+                 [(None, "bfs_conn3", "sub_dir3", "model3", "text 3",
                    max_length, return_full_text)] * data_size + \
-                 [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4", "text 4",
+                 [(None, "bfs_conn4", "sub_dir4", "model4", "text 4",
                    max_length, return_full_text)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", max_length,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", max_length,
                     return_full_text, "text 1 generated" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "text 2", max_length,
+                  [("bfs_conn2", "sub_dir2", "model2", "text 2", max_length,
                     return_full_text, "text 2 generated" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "text 3", max_length,
+                  [("bfs_conn3", "sub_dir3", "model3", "text 3", max_length,
                     return_full_text, "text 3 generated" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "text 4", max_length,
+                  [("bfs_conn4", "sub_dir4", "model4", "text 4", max_length,
                     return_full_text, "text 4 generated" * max_length, None)
                    ] * data_size
 
@@ -65,8 +65,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
-        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}")
     }
     mock_factory = MockTextGenerationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

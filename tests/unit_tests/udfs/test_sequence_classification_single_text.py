@@ -46,7 +46,6 @@ def create_mock_metadata(udf_wrapper):
         input_columns=[
             Column("device_id", int, "INTEGER"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
-            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
@@ -54,7 +53,6 @@ def create_mock_metadata(udf_wrapper):
         output_type="EMITS",
         output_columns=[
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
-            Column("token_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
