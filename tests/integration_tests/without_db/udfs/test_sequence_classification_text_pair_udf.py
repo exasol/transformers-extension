@@ -62,7 +62,6 @@ def test_sequence_classification_text_pair_udf(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.base_model,
         model_params.text_data + str(i),
@@ -121,7 +120,6 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         "not existing model",
         model_params.text_data + str(i),

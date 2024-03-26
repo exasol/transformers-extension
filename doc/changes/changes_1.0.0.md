@@ -13,5 +13,7 @@ T.B.D
 
 ### Refactorings
 
+- #147: Removed token_con from model loading
+
 
 ### Security 

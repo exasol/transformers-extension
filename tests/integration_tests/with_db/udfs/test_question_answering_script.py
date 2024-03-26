@@ -13,7 +13,6 @@ def test_question_answering_script(
         input_data.append((
             '',
             bucketfs_conn_name,
-            None,
             str(model_params.sub_dir),
             model_params.base_model,
             question,
@@ -23,7 +22,7 @@ def test_question_answering_script(
 
     query = f"SELECT TE_QUESTION_ANSWERING_UDF(" \
             f"t.device_id, " \
-            f"t.bucketfs_conn_name, "
+            f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.question, " \
