@@ -62,7 +62,6 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
             (
                 '',
                 bucketfs_conn_name,
-                None,
                 sub_dir,
                 model_name,
                 text_data,
