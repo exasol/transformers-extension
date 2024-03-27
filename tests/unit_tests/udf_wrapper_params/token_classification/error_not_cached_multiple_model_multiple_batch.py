@@ -36,14 +36,14 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", agg_strategy)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "non_existing_model",
+                 [(None, "bfs_conn2", "sub_dir2", "non_existing_model",
                    "text2", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1", agg_strategy,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
                     0, 6, "text1", "label1", 0.1, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "non_existing_model", "text2",
+                  [("bfs_conn2", "sub_dir2", "non_existing_model", "text2",
                     agg_strategy, None, None, None, None, None, "Traceback")
                    ] * n_entities * data_size
 
@@ -52,8 +52,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

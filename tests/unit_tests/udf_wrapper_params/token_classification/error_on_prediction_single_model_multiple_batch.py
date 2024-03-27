@@ -36,17 +36,16 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "error on pred", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "error on pred",
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "error on pred",
                     agg_strategy, None, None, None, None, None, "Traceback")
                    ] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
     }
 
     mock_factory = MockTokenClassificationFactory({

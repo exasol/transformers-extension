@@ -34,13 +34,13 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     data_size = 2
     top_k = 3
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir1", "model1",
+                 [(None, "bfs_conn2", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 1", 0.1, 1, None)] * data_size * top_k + \
-                  [("bfs_conn2", "token_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+                  [("bfs_conn2", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 2", 0.2, 1, None)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -48,8 +48,7 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
-        "token_conn1": Connection(address='', password="token1")
+        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockFillingMaskFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1", "pretrained", "model1"):

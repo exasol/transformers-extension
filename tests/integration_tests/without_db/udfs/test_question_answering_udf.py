@@ -70,7 +70,6 @@ def test_question_answering_udf(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.base_model,
         question,
@@ -80,7 +79,6 @@ def test_question_answering_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',
@@ -136,7 +134,6 @@ def test_question_answering_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         "not existing model",
         question,
@@ -146,7 +143,6 @@ def test_question_answering_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',

@@ -12,7 +12,6 @@ def test_sequence_classification_single_text_script(
         input_data.append((
             '',
             bucketfs_conn_name,
-            None,
             str(model_params.sub_dir),
             model_params.base_model,
             model_params.text_data))
@@ -20,12 +19,11 @@ def test_sequence_classification_single_text_script(
     query = f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
-            f"t.token_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.text_data) " \
             f"FROM (VALUES {python_rows_to_sql(input_data)} " \
-            f"AS t(device_id, bucketfs_conn_name, token_conn_name, " \
+            f"AS t(device_id, bucketfs_conn_name, " \
             f"sub_dir, model_name, text_data));"
 
     # execute sequence classification UDF
