@@ -77,7 +77,6 @@ def test_translation_udf(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.seq2seq_model,
         model_params.text_data,
@@ -88,7 +87,6 @@ def test_translation_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -147,7 +145,6 @@ def test_translation_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         "not existing model",
         model_params.text_data,
@@ -158,7 +155,6 @@ def test_translation_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',

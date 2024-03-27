@@ -26,4 +26,4 @@ UDF_CALL_TEMPLATES = {
         "zero_shot_text_classification_udf.jinja.sql"
 }
 
-ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'token_conn', 'sub_dir']
+ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']

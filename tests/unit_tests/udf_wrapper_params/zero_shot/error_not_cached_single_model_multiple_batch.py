@@ -33,16 +33,15 @@ class ErrorNotCachedSingleModelMultipleBatch:
     batch_size = 2
     data_size = 5
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "non_existing_model",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "non_existing_model",
                    "text1", "label1")] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "non_existing_model", "text1",
+    output_data = [("bfs_conn1", "sub_dir1", "non_existing_model", "text1",
                     "label1", None, None, None, "Traceback")] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
     }
 
     mock_factory = MockZeroShotFactory({

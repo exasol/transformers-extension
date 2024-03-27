@@ -36,24 +36,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     target_lang = "German"
     max_length = 10
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
                    src_lang, target_lang, max_length)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2", "text 2",
+                 [(None, "bfs_conn2", "sub_dir2", "model2", "text 2",
                    src_lang, target_lang, max_length)] * data_size + \
-                 [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3", "text 3",
+                 [(None, "bfs_conn3", "sub_dir3", "model3", "text 3",
                    src_lang, target_lang, max_length)] * data_size + \
-                 [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4", "text 4",
+                 [(None, "bfs_conn4", "sub_dir4", "model4", "text 4",
                    src_lang, target_lang, max_length)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", src_lang,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
                     target_lang,  max_length, "text 1 übersetzt" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "text 2", src_lang,
+                  [("bfs_conn2", "sub_dir2", "model2", "text 2", src_lang,
                     target_lang,  max_length, "text 2 übersetzt" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "text 3", src_lang,
+                  [("bfs_conn3", "sub_dir3", "model3", "text 3", src_lang,
                     target_lang,  max_length, "text 3 übersetzt" * max_length, None)
                    ] * data_size + \
-                  [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "text 4", src_lang,
+                  [("bfs_conn4", "sub_dir4", "model4", "text 4", src_lang,
                     target_lang,  max_length, "text 4 übersetzt" * max_length, None)
                    ] * data_size
 
@@ -66,8 +66,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
-        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}")
     }
 
     mock_factory = MockTranslationFactory({

@@ -13,7 +13,6 @@ def test_filling_mask_script(
         input_data.append((
             '',
             bucketfs_conn_name,
-            None,
             str(model_params.sub_dir),
             model_params.base_model,
             text_data,
@@ -22,13 +21,12 @@ def test_filling_mask_script(
     query = f"SELECT TE_FILLING_MASK_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
-            f"t.token_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.text_data," \
             f"t.top_k" \
             f") FROM (VALUES {python_rows_to_sql(input_data)} " \
-            f"AS t(device_id, bucketfs_conn_name, token_conn_name, sub_dir, " \
+            f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
             f"model_name, text_data, top_k));"
 
     # execute sequence classification UDF

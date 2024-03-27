@@ -73,7 +73,6 @@ def test_token_classification_udf(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.base_model,
         model_params.text_data * (i + 1),
@@ -82,7 +81,6 @@ def test_token_classification_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -127,7 +125,6 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.base_model,
         model_params.text_data * (i + 1),
@@ -136,7 +133,6 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
@@ -191,7 +187,6 @@ def test_token_classification_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         "not existing model",
         model_params.text_data * (i + 1),
@@ -200,7 +195,6 @@ def test_token_classification_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'text_data',
