@@ -36,17 +36,17 @@ model and perform prediction. These are the supported tasks:
 
 ## Introduction
 
-This Exasol Extension provides UDFs for interacting with Huggingfaces Transformes API in order to use 
+This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API in order to use 
 pre-trained models on an Exasol Cluster.
 
 User Defined Function, UDFs for short, are scripts in various programming languages that can be 
-executed in the Exasol Database. They can be provided by the user for more flexibility in data processing. 
+executed in the Exasol Database. They can be used by the user for more flexibility in data processing. 
 In this Extension we provide multiple UDFs for you to use on your Exasol Database.
 You can find a more detailed documentation on UDFs
 [here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
 
 UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) 
-are stored in Exasol's file system BucketFS, and we also use this to store the transformers
+are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face
 models on the Exasol Cluster. More information on The BucketFS can be found 
 [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
@@ -85,9 +85,9 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 ## Setup
 ### Install the Python Package
 
-There are multiple ways to install the python Package. You can use Pip install, 
+There are multiple ways to install the Python Package. You can use Pip install, 
 Download the Wheel from GitHub or build the project yourself.
-Additionally, you will need a Script language container. Find the how-to below.
+Additionally, you will need a Script Language Container. Find the how-to below.
 
 #### Pip
 
@@ -103,7 +103,7 @@ pip install exasol-transformers-extension
 #### Download and Install the Python Wheel Package
 
 You can also get the wheel from a Github release.
-- The latest version of the python package of this extension can be 
+- The latest version of the Python package of this extension can be 
 downloaded from the [GitHub Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
 ```buildoutcfg 
@@ -113,13 +113,13 @@ If you need to use a version < 0.5.0, the build archive is called `transformers_
 
 Then install the packaged transformers-extension project as follows:
 ```shell
-pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
+pip install <path/wheel-filename.whl>
 ```
 
 #### Build the project yourself
 
 In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/)
-(>= 1.1.11) package manager. Clone the Github Repository, and install and build 
+(>= 1.1.11) package manager installed. Clone the Github Repository, and install and build 
 the `transformers-extension` as follows:
 ```bash
 poetry install
@@ -128,13 +128,13 @@ poetry build
 
 ### The Pre-built Language Container
 
-This extension requires the installation of the Language Container in the Exasol Database for this 
+This extension requires the installation of a Language Container in the Exasol Database for this 
 extension to run. The Script Language Container is a way to install the required programming language and 
 necessary dependencies in the Exasol Database so the UDF scripts can be executed.
 It can be installed in two ways: Quick and Customized installations:
 
 #### Quick Installation
-The language container is downloaded and installed by executing the 
+The Language Container is downloaded and installed by executing the 
 deployment script below with the desired version. Make sure the version matches with your installed version of the 
 Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
 
@@ -272,7 +272,7 @@ There are two ways to install the language container: (1) using a python script 
 ### Deployment
 
 Next you need to deploy all necessary scripts installed in the previous step to the specified 
-`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following python cli command:
+`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
@@ -285,7 +285,7 @@ python -m exasol_transformers_extension.deploy scripts
 ## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
 BucketFS. We provide two different ways to load transformers models 
-into the BucketFS. You may either use the Model Downloader UDF to download the Huggingface 
+into the BucketFS. You may either use the Model Downloader UDF to download a Hugging Face 
 transformers model directly from the Exasol Database, or you can download the model to your local 
 file system and upload it to the Database using the Model Uploader Script.
 The Model Downloader UDF is the simpler option, but if you do not want to connect your Exasol Database
@@ -298,7 +298,7 @@ Please make sure that the selected models are in the `Pytorch` model library sec
 Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model 
 from the huggingface hub and upload it to BucketFS.
 This requires the Exasol Database to have internet access, since the UDF will 
-download the model from Huggingface to the Database without saving it somewhere else intermittently.
+download the model from Hugging Face to the Database without saving it somewhere else intermittently.
 If you are using the Exasol DockerDB, this is not the case by default, and you need to specify a name server. 
 For example `--nameserver 8.8.8.8` will set it to use Google DNS.
 
@@ -344,25 +344,25 @@ models from the local filesystem into BucketFS:
 **Note**: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
 These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
 function to ensure proper loading by the Transformers Extension UDFs.
-You can download the model using python lke this:
+You can download the model using python like this:
 
 ```python
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
         # download the model an tokenizer from huggingface
         model = model_factory.from_pretrained(model_name, cache_dir=<your cache path> / <huggingface model name>)
-        # save the downloaded model using the save_pretrained fuction
+        # save the downloaded model using the save_pretrained function
         model.save_pretrained(<save_path> / "pretrained" / <model_name>)
 ```
-***Note:*** Transformes models consist of two parts, the model and the tokenizer. 
-mKke sure to download and save both into the same cache folder so the upload model script uploads them together.
-And then upload it using exasol_transformers_extension.upload_model script where ```local-model-path = <save_path> / "pretrained" / <model_name>```
+***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
+Make sure to download and save both into the same save directory so the upload model script uploads them together.
+And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <save_path> / "pretrained" / <model_name>```
 
 
 ## Using Prediction UDFs
-We provide 7 prediction UDFs in this transformers Extension, each performing an NLP 
+We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP 
 task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
-These tasks cache the model downloaded to BucketFS and make an inference using 
-the cached models with user-supplied inputs.
+These tasks use the model downloaded to BucketFS and run inference using 
+the user-supplied inputs.
 
 ### Sequence Classification for Single Text UDF
 This UDF classifies the given single text  according to a given number of 
