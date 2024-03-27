@@ -27,6 +27,12 @@ and install it as follows:
 pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
+### Check wheel installation
+
+The wheel should be installed in `transformers-extension/dist`. After updating and building a new release 
+there may be multiple wheels installed here. This leads to problems, so check and delete the old wheels if necessary.
+You may also need to check 
+`transformers-extension/language_container/exasol_transformers_extension_container/flavor_base/release/dist` for the same reason.
 
 ### Run Tests
 All unit and integration tests can be run within the Poetry environment created 
@@ -41,6 +47,8 @@ Start a test database and run integration tests:
       poetry run nox -s start_database
       poetry run nox -s integration_tests
 ```
+
+You can find more information regarding the tests in the [Tests](#tests) section below
 
 ## Add Transformer Tasks
 In the transformers-extension library, the 8 most popular NLP tasks provided by 
@@ -126,3 +134,21 @@ Currently, the CodeBuild project is managed manually and is triggered with a web
 For this our aws-ci user is added to this Repository. The webhook can be configured in the AWS CodeBuild 
 project directly.
 The CodeBuild project also uses our DockerHub user for the build. For this it has access to the AWS SecretsManager.
+
+
+#### 3. Release download test
+
+After you do a Release on the project, you may want to trigger the [SLC Download Test](https://github.com/exasol/transformers-extension/blob/8f57d1f0ca3f95a2d3edc9b84e8dd779aa6093d8/tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py#L117)
+to make sure the new SLC is uploaded and correctly named. 
+**This is especially important if the naming convention of the SLC was changed!**
+* testfile: [tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py](../../tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py)
+* test_name: test test_language_container_deployer_cli_by_downloading_container
+
+Also, during a release, the version object should be updated from time to time,
+so we actually use the correct SLC for the test. Do this 
+[here](https://github.com/exasol/transformers-extension/blob/8f57d1f0ca3f95a2d3edc9b84e8dd779aa6093d8/tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py#L128)
+
+## Good to know
+
+* Hugging Face models consist of 2 parts, the model and the Tokenizer. 
+Most of our functions deal with both parts

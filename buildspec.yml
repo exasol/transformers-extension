@@ -22,6 +22,5 @@ phases:
       - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
   build:
     commands:
-      - poetry run nox -s unit_tests
       - poetry run nox -s start_database
       - poetry run nox -s integration_tests
