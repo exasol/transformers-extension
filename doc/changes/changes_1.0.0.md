@@ -11,6 +11,10 @@ T.B.D
 
 - #146: Integrated new download and load functions using save_pretrained
 
+### Documentation
+
+- #133: Improved user and developer documentation with additional information
+
 ### Refactorings
 
 
