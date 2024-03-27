@@ -348,7 +348,7 @@ You can download the model using python like this:
 
 ```python
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
-        # download the model an tokenizer from huggingface
+        # download the model and tokenizer from Hugging Face
         model = model_factory.from_pretrained(model_name, cache_dir=<your cache path> / <huggingface model name>)
         # save the downloaded model using the save_pretrained function
         model.save_pretrained(<save_path> / "pretrained" / <model_name>)
