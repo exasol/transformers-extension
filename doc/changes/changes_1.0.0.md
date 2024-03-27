@@ -13,7 +13,8 @@ T.B.D
 
 ### Refactorings
 
-- #147: Removed token_con from model loading
+- #147: Removed token_con from 
+ Prediction UDFs
 
 
 ### Security 
