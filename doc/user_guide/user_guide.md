@@ -262,7 +262,7 @@ There are two ways to install the language container: (1) using a python script 
 
       ```sql
       ALTER SESSION SET SCRIPT_LANGUAGES=\
-      _PYTHON3_TE_=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+      PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
               lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
               exaudf/exaudfclient_py3
       ```
@@ -279,7 +279,7 @@ python -m exasol_transformers_extension.deploy scripts
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
-    --language-alias _PYTHON3_TE_
+    --language-alias PYTHON3_TE
 ```
 
 ## Store Models in BucketFS
@@ -349,9 +349,10 @@ You can download the model using python like this:
 ```python
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
         # download the model and tokenizer from Hugging Face
-        model = model_factory.from_pretrained(model_name, cache_dir=<your cache path> / <huggingface model name>)
+        model = model_factory.from_pretrained(model_name)
         # save the downloaded model using the save_pretrained function
-        model.save_pretrained(<save_path> / "pretrained" / <model_name>)
+        model_save_path = <save_path> / "pretrained" / <model_name>
+        model.save_pretrained(model_save_path)
 ```
 ***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
 Make sure to download and save both into the same save directory so the upload model script uploads them together.

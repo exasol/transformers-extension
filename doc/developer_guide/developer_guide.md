@@ -138,10 +138,10 @@ The CodeBuild project also uses our DockerHub user for the build. For this it ha
 
 #### 3. Release download test
 
-After you do a Release on the project, you may want to trigger the SLC Download Test ***link*** 
+After you do a Release on the project, you may want to trigger the [SLC Download Test](https://github.com/exasol/transformers-extension/blob/8f57d1f0ca3f95a2d3edc9b84e8dd779aa6093d8/tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py#L117)
 to make sure the new SLC is uploaded and correctly named. 
 **This is especially important if the naming convention of the SLC was changed!**
-* filepath: tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py
+* testfile: [tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py](tests/integration_tests/with_db/deployment/test_language_container_deployer_cli.py)
 * test_name: test test_language_container_deployer_cli_by_downloading_container
 
 Also, during a release, the version object should be updated from time to time,
