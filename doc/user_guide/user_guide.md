@@ -299,9 +299,13 @@ Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model
 from the huggingface hub and upload it to BucketFS.
 This requires the Exasol Database to have internet access, since the UDF will 
 download the model from Hugging Face to the Database without saving it somewhere else intermittently.
-If you are using the Exasol DockerDB, this is not the case by default, and you need to specify a name server. 
-For example `--nameserver 8.8.8.8` will set it to use Google DNS.
+If you are using the Exasol DockerDB, this is not the case by default, and you need to specify a name server.
+For example setting it to 'nameserver = 8.8.8.8' will set it to use Google DNS.
+You will need to used [ConfD](https://docs.exasol.com/db/latest/confd/confd.htm) to do this, 
+you can use the [general_settings](https://docs.exasol.com/db/latest/confd/jobs/general_settings.htm) command.
+If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment), you can just set the nameserver parameter like this: `--nameserver 8.8.8.8`
 
+Once you have internet access, invoke the UDF like this:
 
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
