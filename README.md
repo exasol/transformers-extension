@@ -3,6 +3,9 @@
 An Exasol extension to use state-of-the-art pretrained machine learning models 
 via the [transformers api](https://github.com/huggingface/transformers).
 
+This Extension is build and tested for Linux OS, and does not have Windows or MacOS support. 
+It might work regardless but proceed at your own risk.
+
 
 ## Table of Contents
 
