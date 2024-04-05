@@ -5,13 +5,12 @@ Code name: Local model loading
 
 ## Summary
 
-In this Release we integrated new model load functionality which means downloaded models will now be saved 
-in the bucketFS, meaning you can now use pretrained models without connecting to the internet as 
-long as you have saved them previously. There are also documentation updates.
+In this release, we integrated a new model loading functionality which means downloaded models will now be saved 
+in the BucketFS. This means, the Prediction UDFs do not connect to the internet to look for model updates. There are also documentation updates.
 
 ### Breaking API changes
 
-The change in the model loading functionality means the API of calling a model has changed. 
+The change in the model loading functionality means the API for the Prediction UDFs has changed. 
 The 'token_conn' parameter was removed from the UDF calls. You can now call the UDFs 
 as follows (Example case for the filling mask udf):
 
