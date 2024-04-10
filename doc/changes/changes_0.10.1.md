@@ -9,6 +9,7 @@ T.B.D
 
 ### Features
 
+- #205: Added vagrant setup
 
 ### Bug Fixes
 
