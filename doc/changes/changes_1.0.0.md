@@ -1,4 +1,4 @@
-# Transformers Extension 1.0.0, 2024-04-05
+# Transformers Extension 1.0.0, 2024-04-11
 
 Code name: Local model loading
 
