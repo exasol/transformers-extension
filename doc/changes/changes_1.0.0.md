@@ -6,7 +6,8 @@ Code name: Local model loading
 ## Summary
 
 In this release, we integrated a new model loading functionality which means downloaded models will now be saved 
-in the BucketFS. This means, the Prediction UDFs do not connect to the internet to look for model updates. There are also documentation updates.
+in the BucketFS. This means, the Prediction UDFs do not connect to the internet to look for model updates. 
+There are also documentation updates, and we updated cryptography to >= 42.0.4.
 
 ### Breaking API changes
 
@@ -28,6 +29,7 @@ SELECT TE_FILLING_MASK_UDF(
 
 ### Features
 
+- #205: Added vagrant setup
 - #146: Integrated new download and load functions using save_pretrained
 
 ### Documentation
@@ -37,4 +39,8 @@ SELECT TE_FILLING_MASK_UDF(
 ### Refactorings
 
 - #147: Removed token_con from Prediction UDFs
+
+### Security 
+
+ - Updated cryptography to >= 42.0.4
 
