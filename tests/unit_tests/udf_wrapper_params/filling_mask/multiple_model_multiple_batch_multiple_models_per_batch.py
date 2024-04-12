@@ -34,21 +34,21 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     data_size = 1
     top_k = 2
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2",
+                 [(None, "bfs_conn2", "sub_dir2", "model2",
                    "text <mask> 2", top_k)] * data_size + \
-                 [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3",
+                 [(None, "bfs_conn3", "sub_dir3", "model3",
                    "text <mask> 3", top_k)] * data_size + \
-                 [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4",
+                 [(None, "bfs_conn4", "sub_dir4", "model4",
                    "text <mask> 4", top_k)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text <mask> 1", top_k,
                     "text valid 1", 0.1, 1, None)] * data_size * top_k + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "text <mask> 2", top_k,
+                  [("bfs_conn2", "sub_dir2", "model2", "text <mask> 2", top_k,
                     "text valid 2", 0.2, 1, None)] * data_size * top_k + \
-                  [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "text <mask> 3", top_k,
+                  [("bfs_conn3", "sub_dir3", "model3", "text <mask> 3", top_k,
                     "text valid 3", 0.3, 1, None)] * data_size * top_k + \
-                  [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "text <mask> 4", top_k,
+                  [("bfs_conn4", "sub_dir4", "model4", "text <mask> 4", top_k,
                     "text valid 4", 0.4, 1, None)] * data_size * top_k
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -60,17 +60,16 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
-        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
-        "token_conn1": Connection(address='', password="token1")
+        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}")
     }
     mock_factory = MockFillingMaskFactory({
-        (PurePosixPath(base_cache_dir1, "sub_dir1", "model1"), "token1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1", "pretrained", "model1"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        (PurePosixPath(base_cache_dir2, "sub_dir2", "model2"), "token1"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2", "pretrained", "model2"):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1),
-        (PurePosixPath(base_cache_dir3, "sub_dir3", "model3"), "token1"):
+        PurePosixPath(base_cache_dir3, "sub_dir3", "model3", "pretrained", "model3"):
             MockFillingMaskModel(sequence="text valid 3", score=0.3, rank=1),
-        (PurePosixPath(base_cache_dir4, "sub_dir4", "model4"), "token1"):
+        PurePosixPath(base_cache_dir4, "sub_dir4", "model4", "pretrained", "model4"):
             MockFillingMaskModel(sequence="text valid 4", score=0.4, rank=1)
     })
 

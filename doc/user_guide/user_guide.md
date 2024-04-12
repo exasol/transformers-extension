@@ -20,6 +20,7 @@ model and perform prediction. These are the supported tasks:
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Getting Started](#getting-started)
 - [Setup](#setup)
 - [Model Downloader UDF](#model-downloader-udf)
@@ -33,7 +34,21 @@ model and perform prediction. These are the supported tasks:
   7. [Text Translation UDF](#text-translation-udf)
   8. [Zero-Shot Text Classification](#zero-shot-text-classification-udf)
 
+## Introduction
 
+This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API in order to use 
+pre-trained models on an Exasol Cluster.
+
+User Defined Function, UDFs for short, are scripts in various programming languages that can be 
+executed in the Exasol Database. They can be used by the user for more flexibility in data processing. 
+In this Extension we provide multiple UDFs for you to use on your Exasol Database.
+You can find a more detailed documentation on UDFs
+[here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
+
+UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) 
+are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face
+models on the Exasol Cluster. More information on The BucketFS can be found 
+[here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
 - Exasol DB
@@ -47,9 +62,12 @@ model and perform prediction. These are the supported tasks:
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
-      IDENTIFIED BY '<BUCKETFS_PASS>'
+      IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
+
   - The `BUCKETFS_ADDRESS` looks like the following:
+  
+    **Note:** The `<PATH_IN_BUCKET>` can not be empty.
   ```buildoutcfg
     http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
   ```
@@ -65,31 +83,58 @@ model and perform prediction. These are the supported tasks:
   - For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
   
 ## Setup
-### The Python Package
-#### Download The Python Wheel Package
-- The latest version of the python package of this extension can be 
-downloaded from the [GitHUb Release](https://github.com/exasol/transformers-extension/releases/latest).
+### Install the Python Package
+
+There are multiple ways to install the Python Package. You can use Pip install, 
+Download the Wheel from GitHub or build the project yourself.
+Additionally, you will need a Script Language Container. Find the how-to below.
+
+#### Pip
+
+The Transformers Extension is published on [Pypi](https://pypi.org/project/exasol-transformers-extension/). 
+
+You can install it with:
+
+```shell
+pip install exasol-transformers-extension
+```
+
+
+#### Download and Install the Python Wheel Package
+
+You can also get the wheel from a Github release.
+- The latest version of the Python package of this extension can be 
+downloaded from the [GitHub Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
 ```buildoutcfg 
 exasol_transformers_extension-<version-number>-py3-none-any.whl
 ```
 If you need to use a version < 0.5.0, the build archive is called `transformers_extension.whl`.
 
-
-#### Install The Python Wheel Package
-Install the packaged transformers-extension project as follows:
+Then install the packaged transformers-extension project as follows:
 ```shell
-pip install <path/wheel-filename.whl> --extra-index-url https://download.pytorch.org/whl/cpu
+pip install <path/wheel-filename.whl>
+```
+
+#### Build the project yourself
+
+In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/)
+(>= 1.1.11) package manager installed. Clone the Github Repository, and install and build 
+the `transformers-extension` as follows:
+```bash
+poetry install
+poetry build
 ```
 
 ### The Pre-built Language Container
 
-This extension requires the installation of the language container for this 
-extension to run. It can be installed in two ways: Quick and Customized 
-installations
+This extension requires the installation of a Language Container in the Exasol Database for this 
+extension to run. The Script Language Container is a way to install the required programming language and 
+necessary dependencies in the Exasol Database so the UDF scripts can be executed.
+It can be installed in two ways: Quick and Customized installations:
 
 #### Quick Installation
-The language container is downloaded and installed by executing the 
+The Language Container is downloaded and installed by executing the 
 deployment script below with the desired version. Make sure the version matches with your installed version of the 
 Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
 
@@ -111,10 +156,17 @@ Transformers Extension Package. See [the latest release](https://github.com/exas
       --ssl-cert-path <ssl-cert-path> \
       --use-ssl-cert-validation
   ```
+
+**Note:** The `PATH_IN_BUCKET` can not be empty.
+
 The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
+This certificate is basically a list of trusted CA. It is needed for the server's certificate 
+validation by the client.
 The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
 Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
 Database connection.
+This is not to be confused with the client's own certificate. It may or may not include the private key. 
+In the latter case the key may be provided as a separate file.
 
 By default, the above command will upload and activate the language container at the System level.
 The latter requires you to have the System Privileges, as it will attempt to change DB system settings.
@@ -173,25 +225,32 @@ There are two ways to install the language container: (1) using a python script 
           --language-alias <LANGUAGE_ALIAS> \ 
           --container-file <path/to/language_container_name.tar.gz>       
       ```
-     Please note, that all considerations described in the Quick Installation 
+     Please note:  all considerations described in the Quick Installation 
      section are still applicable.
+
+     **Note:** The  `--path-in-bucket` can not be empty.
 
 
   2. *Manual Installation*
 
-     In the manual installation, the pre-built container should be firstly 
-     uploaded into BucketFS. In order to do that, you can use 
+     In the manual installation, the pre-built container should be
+     uploaded into BucketFS first. In order to do that, you can use 
      either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
      or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
-     The following command uploads a given container into BucketFS through curl 
-     command, an http(s) client: 
+     The following command uploads a given container into BucketFS through 
+     the http(s) client curl: 
+
       ```shell
       curl -vX PUT -T \ 
           "<CONTAINER_FILE>" 
           "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
 
-      Please note that specifying the password on command line will make your shell record the password in the history. To avoid leaking your password please consider to set an environment variable. The following examples sets environment variable `BUCKETFS_WRITE_PASSWORD`:
+      Please note that specifying the password on command line will make your shell 
+      record the password in the history. To avoid leaking your password please 
+      consider to set an environment variable. The following examples sets
+      environment variable `BUCKETFS_WRITE_PASSWORD`:
+      
       ```shell 
         read -sp "password: " BUCKETFS_WRITE_PASSWORD
       ```
@@ -203,35 +262,53 @@ There are two ways to install the language container: (1) using a python script 
 
       ```sql
       ALTER SESSION SET SCRIPT_LANGUAGES=\
-      <ALIAS>=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
-              lang=<LANGUAGE>#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
+      PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+              lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
               exaudf/exaudfclient_py3
       ```
-     
-      In project transformer-extensions replace `<ALIAS>` by `_PYTHON3_TE_` and `<LANGUAGE>` by `_python_`.
       For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
 
 
 ### Deployment
-- Deploy all necessary scripts installed in the previous step to the specified 
-`SCHEMA` in Exasol DB with the same `LANGUAGE_ALIAS`  using the following python cli command:
+
+Next you need to deploy all necessary scripts installed in the previous step to the specified 
+`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts
     --dsn <DB_HOST:DB_PORT> \
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
-    --language-alias <LANGUAGE_ALIAS>
+    --language-alias PYTHON3_TE
 ```
 
 ## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
 BucketFS. We provide two different ways to load transformers models 
-into BucketFS:
+into the BucketFS. You may either use the Model Downloader UDF to download a Hugging Face 
+transformers model directly from the Exasol Database, or you can download the model to your local 
+file system and upload it to the Database using the Model Uploader Script.
+The Model Downloader UDF is the simpler option, but if you do not want to connect your Exasol Database
+directly to the internet, the Model Uploader Script is an option for you.
+
+Note that the extension currently only supports the `PyTorch` framework. 
+Please make sure that the selected models are in the `Pytorch` model library section.
 
 ### 1. Model Downloader UDF
 Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model 
-from the huggingface hub and upload it to bucketfs.
+from the huggingface hub and upload it to BucketFS.
+This requires the Exasol Database to have internet access, since the UDF will 
+download the model from Hugging Face to the Database without saving it somewhere else intermittently.
+If you are using the Exasol DockerDB or an Exasol version 8 setup via 
+[c4](https://docs.exasol.com/db/latest/administration/on-premise/admin_interface/c4.htm), 
+this is not the case by default, and you need to specify a name server.
+For example setting it to 'nameserver = 8.8.8.8' will set it to use Google DNS.
+You will need to use [ConfD](https://docs.exasol.com/db/latest/confd/confd.htm) to do this, 
+you can use the [general_settings](https://docs.exasol.com/db/latest/confd/jobs/general_settings.htm) command.
+If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment), 
+you can just set the nameserver parameter like this: `--nameserver 8.8.8.8`
+
+Once you have internet access, invoke the UDF like this:
 
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
@@ -243,18 +320,15 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 ```
 - Parameters:
   - ```model_name```: The name of the model to use for prediction. You can find the 
-  details of the models in [huggingface models page](https://huggingface.co/models).
+  details of the models on the [huggingface models page](https://huggingface.co/models).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```bucketfs_conn```: The BucketFS connection name.
   - ```token_conn```: The connection name containing the token required for 
-  private models. You can use empty string ('') for public models. For details 
+  private models. You can use an empty string ('') for public models. For details 
   on how to create a connection object with token information, please check 
   [here](#getting-started).
-
-Note that the extension currently only supports the `PyTorch` framework. 
-Please make sure that the selected models are in the `Pytorch` model library section.
-
-
+  
+    
 ### 2. Model Uploader Script
 You can invoke the python script as below which allows to load the transformer 
 models from the local filesystem into BucketFS:
@@ -273,11 +347,30 @@ models from the local filesystem into BucketFS:
       --local-model-path <MODEL_PATH>     
   ```
 
-*Note*: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
+**Note:**  The `--path-in-bucket` can not be empty.
+**Note**: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
+These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
+function to ensure proper loading by the Transformers Extension UDFs.
+You can download the model using python like this:
 
-## Prediction UDFs
-We provided 7 prediction UDFs, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
-These tasks cache the model downloaded to BucketFS and make an inference using the cached models with user-supplied inputs.
+```python
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+        # download the model and tokenizer from Hugging Face
+        model = model_factory.from_pretrained(model_name)
+        # save the downloaded model using the save_pretrained function
+        model_save_path = <save_path> / "pretrained" / <model_name>
+        model.save_pretrained(model_save_path)
+```
+***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
+Make sure to download and save both into the same save directory so the upload model script uploads them together.
+And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <save_path> / "pretrained" / <model_name>```
+
+
+## Using Prediction UDFs
+We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP 
+task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
+These tasks use the model downloaded to BucketFS and run inference using 
+the user-supplied inputs.
 
 ### Sequence Classification for Single Text UDF
 This UDF classifies the given single text  according to a given number of 
@@ -286,7 +379,6 @@ classes of the specified  model. An example usage is given below:
 SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data
@@ -296,10 +388,6 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -311,10 +399,10 @@ this UDF. In case of any error during model loading or prediction, these new
 columns are set to `null` and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
-| ------------- |-----------------|---------|------------| --------- |---------| ----- |----------------|
-| conn_name     | token_conn_name | dir/    | model_name | text      | label_1 | 0.75  | None           |          
-| ...           | ...             | ...     | ...        | ...       | ...     | ...   | ...            |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
+| ------------- |---------|------------| --------- |---------| ----- |----------------|
+| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None           |
+| ...           | ...     | ...        | ...       | ...     | ...   | ...            |
 
 
 ### Sequence Classification for Text Pair UDF
@@ -324,7 +412,6 @@ determine if two sequences are paraphrases of each other. An example usage is gi
 SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     first_text,
@@ -335,10 +422,6 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -360,7 +443,6 @@ An example usage is given below:
 SELECT TE_QUESTION_ANSWERING_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     question,
@@ -371,11 +453,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -390,11 +468,11 @@ If `top_k` > 1, each input row is repeated for each answer. In case of any error
 during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|------------|-----------| ----- |----------| ----- |------| ------------- |
-| conn_name     | token_conn_name | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
-| conn_name     | token_conn_name | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
-| ...           | ...             | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|------------|-----------| ----- |----------| ----- |------| ------------- |
+| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
 
 
 ### Masked Language Modelling UDF
@@ -405,7 +483,6 @@ this UDF is ```<mask>```. An example usage is given below:
 SELECT TE_FILLING_MASK_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -417,10 +494,6 @@ SELECT TE_FILLING_MASK_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -434,11 +507,11 @@ If `top_k` > 1, each input row is repeated for each prediction. In case of any
 error during model loading or prediction, these new columns are set to `null` 
 and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|---------------| ----- |---------------| ----- |------|---------------|
-| conn_name     | token_conn_name | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  | None          |
-| conn_name     | token_conn_name | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
-| ...           | ...             | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_1 | 0.75  |   1  | None          |
+| conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
+| ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
 
 ### Text Generation UDF
@@ -450,7 +523,6 @@ An example usage is given below:
 SELECT TE_TEXT_GENERATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -462,10 +534,6 @@ SELECT TE_TEXT_GENERATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name.
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -489,7 +557,6 @@ There are two popular subtasks of token classification:
 SELECT TE_TOKEN_CLASSIFICATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -499,11 +566,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name.
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -520,10 +583,10 @@ In case of any error during model loading or prediction, these new
 columns are set to `null`, and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
-| conn_name     | token_conn_name | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
-| ...           | ...             | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
+| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
 
 
@@ -534,7 +597,6 @@ This UDF translates a given text from one language to another.
 SELECT TE_TRANSLATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -548,10 +610,6 @@ SELECT TE_TRANSLATION_UDF(
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
   - ```bucketfs_conn```: The BucketFS connection name.
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -567,10 +625,10 @@ combined with the inputs used when calling this UDF. In case of any error during
 model loading or prediction, these new columns are set to `null`, and 
 column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|-----------------|-----------------|------------| ---------------- |---------------|
-| conn_name     | token_conn_name | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
-| ...           | ...             | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|-----------------|-----------------|------------| ---------------- |---------------|
+| conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
+| ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
 
 ### Zero-Shot Text Classification UDF
@@ -582,7 +640,6 @@ string, and generate probability scores prediction for each label.
 SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
     device_id,
     bucketfs_conn,
-    token_conn,
     sub_dir,
     model_name,
     text_data,
@@ -593,11 +650,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 - Parameters:
   - ```device_id```: To run on GPU, specify the valid cuda device ID. Otherwise, 
   you can provide NULL for this parameter.
-  - ```bucketfs_conn```: The BucketFS connection name. 
-  - ```token_conn```: The connection name containing the token required for 
-  private models. You can use NULL for public models. For details 
-  on how to create a connection object with token information, please check 
-  [here](#getting-started).
+  - ```bucketfs_conn```: The BucketFS connection name.
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models in [huggingface models page](https://huggingface.co/models).
@@ -610,8 +663,8 @@ columns, combined with the inputs used when calling this UDF. In case of any
 error during model loading or prediction, these new  columns are set to `null`, 
 and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | TOKEN_CONN      | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |-----------------|---------|------------|-----------|------------------|--------|-------|------|---------------|
-| conn_name     | token_conn_name | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
-| conn_name     | token_conn_name | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
-| ...           | ...             | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |  
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|------------------|--------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |  

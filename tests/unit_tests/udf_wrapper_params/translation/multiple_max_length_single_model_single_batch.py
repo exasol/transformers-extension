@@ -37,22 +37,21 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
     src_lang = "English"
     target_lang = "German"
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
                    src_lang, target_lang, max_length1)] * data_size + \
-                 [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1",
+                 [(None, "bfs_conn1", "sub_dir1", "model1", "text 1",
                    src_lang, target_lang, max_length2)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", src_lang,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
                     target_lang,  max_length1, "text 1 übersetzt" * max_length1, None)
                    ] * data_size + \
-                  [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text 1", src_lang,
+                  [("bfs_conn1", "sub_dir1", "model1", "text 1", src_lang,
                     target_lang,  max_length2, "text 1 übersetzt" * max_length2, None)
                    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
     }
 
     mock_factory = MockTranslationFactory({

@@ -56,12 +56,12 @@ class Context:
     ])
 def test_question_answering_udf(
         description, device_id, n_rows,
-        top_k, upload_base_model_to_local_bucketfs):
+        top_k, prepare_base_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -70,7 +70,6 @@ def test_question_answering_udf(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         model_params.base_model,
         question,
@@ -80,7 +79,6 @@ def test_question_answering_udf(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',
@@ -122,12 +120,12 @@ def test_question_answering_udf(
     ])
 def test_question_answering_udf_on_error_handling(
         description, device_id, n_rows,
-        top_k, upload_base_model_to_local_bucketfs):
+        top_k, prepare_base_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = upload_base_model_to_local_bucketfs
+    bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -136,7 +134,6 @@ def test_question_answering_udf_on_error_handling(
     sample_data = [(
         None,
         bucketfs_conn_name,
-        None,
         model_params.sub_dir,
         "not existing model",
         question,
@@ -146,7 +143,6 @@ def test_question_answering_udf_on_error_handling(
     columns = [
         'device_id',
         'bucketfs_conn',
-        'token_conn',
         'sub_dir',
         'model_name',
         'question',

@@ -36,24 +36,24 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     n_entities = 3
     agg_strategy = "simple"
 
-    input_data = [(None, "bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1",
+    input_data = [(None, "bfs_conn1", "sub_dir1", "model1", "text1",
                    agg_strategy)] * data_size + \
-                 [(None, "bfs_conn2", "token_conn1", "sub_dir2", "model2", "text2",
+                 [(None, "bfs_conn2", "sub_dir2", "model2", "text2",
                    agg_strategy)] * data_size + \
-                 [(None, "bfs_conn3", "token_conn1", "sub_dir3", "model3", "text3",
+                 [(None, "bfs_conn3", "sub_dir3", "model3", "text3",
                    agg_strategy)] * data_size + \
-                 [(None, "bfs_conn4", "token_conn1", "sub_dir4", "model4", "text4",
+                 [(None, "bfs_conn4", "sub_dir4", "model4", "text4",
                    agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "token_conn1", "sub_dir1", "model1", "text1", agg_strategy,
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1", agg_strategy,
                     0, 6, "text1", "label1", 0.1, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn2", "token_conn1", "sub_dir2", "model2", "text2", agg_strategy,
+                  [("bfs_conn2", "sub_dir2", "model2", "text2", agg_strategy,
                     0, 6, "text2", "label2", 0.2, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn3", "token_conn1", "sub_dir3", "model3", "text3", agg_strategy,
+                  [("bfs_conn3", "sub_dir3", "model3", "text3", agg_strategy,
                     0, 6, "text3", "label3", 0.3, None)
                    ] * n_entities * data_size + \
-                  [("bfs_conn4", "token_conn1", "sub_dir4", "model4", "text4", agg_strategy,
+                  [("bfs_conn4", "sub_dir4", "model4", "text4", agg_strategy,
                     0, 6, "text4", "label4", 0.4, None)
                    ] * n_entities * data_size
 
@@ -66,8 +66,7 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
         "bfs_conn3": Connection(address=f"file://{base_cache_dir3}"),
-        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}"),
-        "token_conn1": Connection(address='', password="token")
+        "bfs_conn4": Connection(address=f"file://{base_cache_dir4}")
     }
     mock_factory = MockTokenClassificationFactory({
         PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):

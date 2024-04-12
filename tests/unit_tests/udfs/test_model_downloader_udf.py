@@ -11,8 +11,9 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
-from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer import ModelFactoryProtocol, \
-    HuggingFaceHubBucketFSModelTransferFactory, HuggingFaceHubBucketFSModelTransfer
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
+    HuggingFaceHubBucketFSModelTransferSPFactory, HuggingFaceHubBucketFSModelTransferSP
 from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
@@ -47,10 +48,10 @@ def create_mock_metadata() -> MockMetaData:
 def test_model_downloader(description, count, token_conn_name, token_conn_obj, expected_token):
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
-    mock_model_downloader_factory: Union[HuggingFaceHubBucketFSModelTransferFactory, MagicMock] = create_autospec(
-        HuggingFaceHubBucketFSModelTransferFactory)
-    mock_model_downloaders: List[Union[HuggingFaceHubBucketFSModelTransfer, MagicMock]] = [
-        create_autospec(HuggingFaceHubBucketFSModelTransfer)
+    mock_model_downloader_factory: Union[HuggingFaceHubBucketFSModelTransferSPFactory, MagicMock] = create_autospec(
+        HuggingFaceHubBucketFSModelTransferSPFactory)
+    mock_model_downloaders: List[Union[HuggingFaceHubBucketFSModelTransferSP, MagicMock]] = [
+        create_autospec(HuggingFaceHubBucketFSModelTransferSP)
         for i in range(count)]
     for i in range(count):
         mock_cast(mock_model_downloaders[i].__enter__).side_effect = [mock_model_downloaders[i]]

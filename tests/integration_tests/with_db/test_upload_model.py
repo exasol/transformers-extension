@@ -12,14 +12,7 @@ from exasol_transformers_extension.utils import bucketfs_operations
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
-
-
-@pytest.fixture(scope='function')
-def download_sample_models(tmp_path) -> Path:
-    for downloader in [transformers.AutoModel, transformers.AutoTokenizer]:
-        downloader.from_pretrained(model_params.base_model, cache_dir=tmp_path)
-
-    yield tmp_path, model_params.base_model
+from tests.fixtures.model_fixture import download_model
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -33,11 +26,12 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
-def test_model_upload(setup_database, pyexasol_connection, download_sample_models: Path,
+def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
                       bucketfs_location: BucketFSLocation, bucketfs_config: config.BucketFs):
     sub_dir = 'sub_dir'
-    download_path, model_name = download_sample_models
-    upload_path = bucketfs_operations.get_model_path(
+    model_name = model_params.base_model
+    download_path = download_model(model_name, tmp_path)
+    upload_path = bucketfs_operations.get_model_path_with_pretrained(
         sub_dir, model_name)
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
@@ -68,7 +62,6 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
             (
                 '',
                 bucketfs_conn_name,
-                None,
                 sub_dir,
                 model_name,
                 text_data,
@@ -79,13 +72,12 @@ def test_model_upload(setup_database, pyexasol_connection, download_sample_model
         query = f"SELECT TE_FILLING_MASK_UDF(" \
                 f"t.device_id, " \
                 f"t.bucketfs_conn_name, " \
-                f"t.token_conn_name, " \
                 f"t.sub_dir, " \
                 f"t.model_name, " \
                 f"t.text_data," \
                 f"t.top_k" \
                 f") FROM (VALUES {python_rows_to_sql(input_data)} " \
-                f"AS t(device_id, bucketfs_conn_name, token_conn_name, sub_dir, " \
+                f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
                 f"model_name, text_data, top_k));"
 
         # execute sequence classification UDF
