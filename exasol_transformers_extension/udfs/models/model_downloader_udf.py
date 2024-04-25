@@ -57,7 +57,7 @@ class ModelDownloaderUDF:
             token = token_conn_obj.password
 
         # set model path in buckets
-        model_path = bucketfs_operations.get_model_path(sub_dir, model_name)
+        model_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
 
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)
