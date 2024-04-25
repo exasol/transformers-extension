@@ -74,7 +74,7 @@ class TestEnvironmentSetup:
             'bucketfs_conn_name': self.bucketfs_conn_name,
             'token_conn_name': self.token_conn_name
         }
-        self.model_path = bucketfs_operations.get_model_path(
+        self.model_path = bucketfs_operations.get_model_path_with_pretrained(
             self.sub_dir, self.tiny_model)
         self.bucketfs_connection = Connection(
             address=f"{url_localfs}/bucket{id}",
@@ -118,7 +118,7 @@ def test_model_downloader_udf_implementation():
         # assertions
         env1_bucketfs_files = env1.list_files_in_bucketfs()
         env2_bucketfs_files = env2.list_files_in_bucketfs()
-        assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz"))) \
-               and ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz"))) \
-               and str(Path(ctx.get_emitted()[0][1]).relative_to(env1.sub_dir)) in env1_bucketfs_files \
-               and str(Path(ctx.get_emitted()[1][1]).relative_to(env2.sub_dir)) in env2_bucketfs_files
+        assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz")))
+        assert ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz")))
+        assert str(Path(ctx.get_emitted()[0][1]).relative_to(env1.sub_dir)) in env1_bucketfs_files
+        assert str(Path(ctx.get_emitted()[1][1]).relative_to(env2.sub_dir)) in env2_bucketfs_files
