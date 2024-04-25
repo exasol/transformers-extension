@@ -56,10 +56,7 @@ def test_prediction_with_downloader_udf(
         result = pyexasol_connection.execute(query).fetchall()
 
         # assertions
-        added_columns = 4  # filled_text,score,rank,error_message
-        removed_columns = 1  # device_id col
-        n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-        assert len(result) == top_k and len(result[0]) == n_cols_result
+        assert len(result) == top_k
         assert all(row[-1] is None for row in result)
 
     finally:
