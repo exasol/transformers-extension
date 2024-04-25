@@ -11,12 +11,12 @@ def test_prediction_with_downloader_udf(
 
     try:
         # execute downloader UDF
-        input_data = ((
-                          MODEL_NAME,
-                          SUB_DIR,
-                          bucketfs_conn_name,
-                          ''
-                      ),)
+        input_data = (
+            MODEL_NAME,
+            SUB_DIR,
+            bucketfs_conn_name,
+            ''
+        )
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
             t.model_name,
@@ -33,14 +33,14 @@ def test_prediction_with_downloader_udf(
         # execute the filling mask UDF
         text_data = "I <mask> you so much."
         top_k = 3
-        input_data = ((
-                          '',
-                          bucketfs_conn_name,
-                          SUB_DIR,
-                          MODEL_NAME,
-                          text_data,
-                          top_k
-                      ),)
+        input_data = (
+            '',
+            bucketfs_conn_name,
+            SUB_DIR,
+            MODEL_NAME,
+            text_data,
+            top_k
+        )
 
         query = f"SELECT TE_FILLING_MASK_UDF(" \
                 f"t.device_id, " \
