@@ -2,6 +2,7 @@ from pathlib import Path
 
 from exasol_bucketfs_utils_python.abstract_bucketfs_location import AbstractBucketFSLocation
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
@@ -52,7 +53,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
         """
         model = model_factory.from_pretrained(self._model_name, cache_dir=self._tmpdir_name / "cache",
                                               use_auth_token=self._token)
-        model.save_pretrained(self._tmpdir_name / "pretrained" / self._model_name)
+        model.save_pretrained(create_save_pretrained_model_path(self._tmpdir_name, self._model_name)) #todo call outside and give whole path in?
 
     def upload_to_bucketfs(self) -> Path:
         """
@@ -60,7 +61,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._tmpdir_name / "pretrained" / self._model_name) #todo should we do replace(-,_) here to?
+        return self._bucketfs_model_uploader.upload_directory(create_save_pretrained_model_path(self._tmpdir_name, self._model_name))
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:

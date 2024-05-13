@@ -13,10 +13,11 @@ from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
 
 def download_model(model_name: str, tmpdir_name: Path) -> Path:
     tmpdir_name = Path(tmpdir_name)
+    local_model_save_path = bucketfs_operations.create_save_pretrained_model_path(tmpdir_name, model_name)
     for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
         model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
-        model.save_pretrained(tmpdir_name / "pretrained" / model_name)
-    return tmpdir_name / "pretrained" / model_name
+        model.save_pretrained(local_model_save_path)
+    return local_model_save_path
 
 
 @contextmanager
@@ -31,13 +32,10 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
     yield model_path
 
 
-def generate_local_bucketfs_path_for_model(tmpdir: Path, model: str):
-    return tmpdir / model_params.sub_dir / model
-
-
 def prepare_model_for_local_bucketfs(model: str, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp(model)
-    bucketfs_path_for_model = generate_local_bucketfs_path_for_model(tmpdir, model)
+    bucketfs_path_for_model = bucketfs_operations.generate_local_bucketfs_path_for_model(
+        tmpdir, model_params.sub_dir, model)
     download_model(model, bucketfs_path_for_model)
     return tmpdir
 

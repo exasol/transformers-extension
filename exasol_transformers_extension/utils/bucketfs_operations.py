@@ -15,6 +15,7 @@ from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from tenacity import retry, wait_fixed, stop_after_attempt
 
 
+
 def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> BucketFSLocation:
     return BucketFSFactory().create_bucketfs_location(
         url=bfs_conn_obj.address,
@@ -70,10 +71,24 @@ def get_local_bucketfs_path(
     bucketfs_local_path = bucketfs_location.generate_bucket_udf_path(model_path)
     return bucketfs_local_path
 
+# path used to save model in "local bucketfs" by prepare_model_for_local_bucketfs fixtures for testing
+# todo this should probably better reflect create_save_pretrained_model_path
+def generate_local_bucketfs_path_for_model(tmpdir: Path, sub_dir, model: str):
+    return tmpdir / sub_dir / model
 
+# path used to save model in bucketfs by upload_*_model_to_bucketfs fixtures for testing
+# todo this should probably better reflect create_save_pretrained_model_path
 def get_model_path(sub_dir: str, model_name: str) -> Path:
     return Path(sub_dir, model_name)
 
-
+# path model is saved at in the bucketfs
 def get_model_path_with_pretrained(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name, "pretrained" , model_name)
+    return Path(sub_dir, model_name, "pretrained", model_name)
+
+
+# path HuggingFaceHubBucketFSModelTransferSP saves the model at using sae_pretrained,
+# befor it is uploaded to the bucketfs
+def create_save_pretrained_model_path(_tmpdir_name, _model_name) -> Path: #todo here we will add the version and task to the path later
+    return Path(_tmpdir_name, "pretrained", _model_name)
+
+
