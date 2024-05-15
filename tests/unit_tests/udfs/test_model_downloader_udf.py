@@ -91,7 +91,7 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
     assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
         call(bucketfs_location=mock_bucketfs_locations[i],
              model_name=base_model_names[i],
-             model_path=PosixPath(f'{sub_directory_names[i]}/{base_model_names[i]}/pretrained/{base_model_names[i]}'),
+             model_path=PosixPath(f'{sub_directory_names[i]}/{base_model_names[i]}'),
              token=expected_token)
         for i in range(count)
     ]
@@ -107,7 +107,7 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
     ])
     assert mock_ctx.output == [
         (
-            f'{sub_directory_names[i]}/{base_model_names[i]}/pretrained/{base_model_names[i]}',
+            f'{sub_directory_names[i]}/{base_model_names[i]}',
             str(mock_model_downloaders[i].upload_to_bucketfs())
         )
         for i in range(count)

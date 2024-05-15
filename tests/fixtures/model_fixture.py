@@ -42,7 +42,7 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
 def prepare_model_for_local_bucketfs(model: str, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp(model)
     model_path_in_bucketfs = bucketfs_operations.get_bucketfs_model_save_path(model_params.sub_dir, model)
-    bucketfs_path_for_model = tempdir / model_path_in_bucketfs
+    bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
     download_model_to_standard_bucketfs_save_path(model, bucketfs_path_for_model)
     return tmpdir
 
@@ -67,6 +67,8 @@ def upload_model_to_bucketfs(
         download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
     download_model_to_standard_local_save_path(model_name, download_tmpdir)
+    download_tmpdir = bucketfs_operations.create_save_pretrained_model_path(download_tmpdir, model_name)
+
     with upload_model(
             bucketfs_location, model_name, download_tmpdir) as model_path:
         try:
