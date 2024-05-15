@@ -206,7 +206,7 @@ class BaseModelUDF(ABC):
             bucketfs_operations.create_bucketfs_location_from_conn_object(
                 self.exa.get_connection(bucketfs_conn_name))
 
-        model_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
+        model_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name) #todo get this path creation out?
         self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
             bucketfs_location=bucketfs_location, model_path=str(model_path))
 

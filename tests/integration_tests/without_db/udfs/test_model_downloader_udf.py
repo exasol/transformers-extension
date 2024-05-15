@@ -74,7 +74,7 @@ class TestEnvironmentSetup:
             'bucketfs_conn_name': self.bucketfs_conn_name,
             'token_conn_name': self.token_conn_name
         }
-        self.model_path = bucketfs_operations.get_model_path_with_pretrained(
+        self.model_path = bucketfs_operations.get_bucketfs_model_save_path(
             self.sub_dir, self.tiny_model)
         self.bucketfs_connection = Connection(
             address=f"{url_localfs}/bucket{id}",

@@ -8,7 +8,7 @@ from exasol_transformers_extension.utils.model_factory_protocol import ModelFact
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
 
-
+# todo look at userguide line 361
 class ModelDownloaderUDF:
     """
     UDF which downloads a pretrained model from Huggingface using Huggingface's transformers API,
@@ -57,7 +57,7 @@ class ModelDownloaderUDF:
             token = token_conn_obj.password
 
         # set model path in buckets
-        model_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
+        model_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name)
 
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)

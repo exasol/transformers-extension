@@ -12,7 +12,7 @@ from exasol_transformers_extension.utils import bucketfs_operations
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
-from tests.fixtures.model_fixture import download_model
+from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -30,8 +30,8 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
                       bucketfs_location: BucketFSLocation, bucketfs_config: config.BucketFs):
     sub_dir = 'sub_dir'
     model_name = model_params.base_model
-    download_path = download_model(model_name, tmp_path)
-    upload_path = bucketfs_operations.get_model_path_with_pretrained(
+    download_path = download_model_to_standard_local_save_path(model_name, tmp_path)
+    upload_path = bucketfs_operations.get_bucketfs_model_save_path(
         sub_dir, model_name)
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
