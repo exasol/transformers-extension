@@ -211,7 +211,7 @@ There are two ways to install the language container: (1) using a python script 
      performs this setup using the python script provided with this library:
 
       ```buildoutcfg
-      python -m exasol_transformers_extension.deploy language-container
+      python -m exasol_transformers_extension.deploy language-container \
           --dsn <DB_HOST:DB_PORT> \
           --db-user <DB_USER> \
           --db-pass <DB_PASSWORD> \
@@ -274,7 +274,7 @@ There are two ways to install the language container: (1) using a python script 
 Next you need to deploy all necessary scripts installed in the previous step to the specified 
 `SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
 ```buildoutcfg
-python -m exasol_transformers_extension.deploy scripts
+python -m exasol_transformers_extension.deploy scripts \
     --dsn <DB_HOST:DB_PORT> \
     --db-user <DB_USER> \
     --db-pass <DB_PASSWORD> \
@@ -315,7 +315,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
     model_name,
     sub_dir,
     bucketfs_conn,
-    token_conn,
+    token_conn
 )
 ```
 - Parameters:
@@ -334,7 +334,7 @@ You can invoke the python script as below which allows to load the transformer
 models from the local filesystem into BucketFS:
 
   ```buildoutcfg
-  python -m exasol_transformers_extension.upload_model
+  python -m exasol_transformers_extension.upload_model \
       --bucketfs-name <BUCKETFS_NAME> \
       --bucketfs-host <BUCKETFS_HOST> \
       --bucketfs-port <BUCKETFS_PORT> \
