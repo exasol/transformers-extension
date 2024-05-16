@@ -13,5 +13,7 @@ Code name:
 
 ### Refactorings
 
+- #216: Simplified model path constructions, consolidating them into one function
+
 ### Security 
 
