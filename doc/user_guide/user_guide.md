@@ -358,12 +358,12 @@ You can download the model using python like this:
         # download the model and tokenizer from Hugging Face
         model = model_factory.from_pretrained(model_name)
         # save the downloaded model using the save_pretrained function
-        model_save_path = <save_path> / "pretrained" / <model_name> #todo do we use the path function here? or should this be using none of our functions?
+        model_save_path = <your local model save path>
         model.save_pretrained(model_save_path)
 ```
 ***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
 Make sure to download and save both into the same save directory so the upload model script uploads them together.
-And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <save_path> / "pretrained" / <model_name>```
+And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <your local model save path>```
 
 
 ## Using Prediction UDFs

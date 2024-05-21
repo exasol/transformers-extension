@@ -66,8 +66,7 @@ def upload_model_to_bucketfs(
         model_name: str,
         download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
-    download_model_to_standard_local_save_path(model_name, download_tmpdir)
-    download_tmpdir = bucketfs_operations.create_save_pretrained_model_path(download_tmpdir, model_name)
+    download_tmpdir = download_model_to_standard_local_save_path(model_name, download_tmpdir)
 
     with upload_model(
             bucketfs_location, model_name, download_tmpdir) as model_path:
