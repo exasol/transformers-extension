@@ -26,8 +26,8 @@ def test_upload_model_files_to_bucketfs(test_content):
     model_path = Path("test_model_path")
     upload_model_files_to_bucketfs(
         bucketfs_location=mock_bucketfs_location,
-        model_path=model_path,
-        tmpdir_name=str(test_content)
+        bucketfs_model_path=model_path,
+        model_directory=str(test_content)
     )
     assert mock_bucketfs_location.mock_calls == [
         call.upload_fileobj_to_bucketfs(ANY, str(model_path.with_suffix(".tar.gz")))

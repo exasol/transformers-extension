@@ -1,5 +1,7 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
+
+from exasol_transformers_extension.utils.bucketfs_operations import get_bucketfs_model_save_path
 from tests.unit_tests.udf_wrapper_params.filling_mask.mock_filling_mask import \
     MockFillingMaskFactory, MockFillingMaskModel, MockPipeline
 
@@ -52,9 +54,9 @@ class MultipleModelMultipleBatchIncomplete:
     }
 
     mock_factory = MockFillingMaskFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1", "pretrained", "model1"):
+        PurePosixPath(base_cache_dir1, get_bucketfs_model_save_path("sub_dir1", "model1")):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2", "pretrained", "model2"):
+        PurePosixPath(base_cache_dir2, get_bucketfs_model_save_path("sub_dir2", "model2")):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1)
     })
 

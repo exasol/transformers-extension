@@ -43,7 +43,7 @@ def main(
         bucketfs_user, bucketfs_password, bucket, path_in_bucket)
 
     # upload the downloaded model files into bucketfs
-    upload_path = bucketfs_operations.get_model_path_with_pretrained(sub_dir, model_name)
+    upload_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name)
 
     bucketfs_operations.upload_model_files_to_bucketfs(
         local_model_path, upload_path, bucketfs_location)

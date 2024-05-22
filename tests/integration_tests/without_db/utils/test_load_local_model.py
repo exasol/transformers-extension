@@ -8,6 +8,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
     HuggingFaceHubBucketFSModelTransferSPFactory
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
+from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 
 from tests.utils.parameters import model_params
 
@@ -55,7 +56,7 @@ def test_load_local_model():
 
     with tempfile.TemporaryDirectory() as dir:
         dir_p = Path(dir)
-        model_save_path = dir_p / "pretrained" / test_setup.model_name
+        model_save_path = create_save_pretrained_model_path(dir_p, test_setup.model_name)
         # download a model
         model = AutoModel.from_pretrained(test_setup.model_name)
         tokenizer = AutoTokenizer.from_pretrained(test_setup.model_name)
@@ -63,7 +64,7 @@ def test_load_local_model():
         tokenizer.save_pretrained(model_save_path)
 
         test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
-                                      model_path=dir_p / "pretrained" / test_setup.model_name)
+                                      model_path=model_save_path)
 
 
 def test_load_local_model_with_huggingface_model_transfer():

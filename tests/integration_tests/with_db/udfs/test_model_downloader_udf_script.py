@@ -15,7 +15,7 @@ def test_model_downloader_udf_script(
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
-        model_paths.append(bucketfs_operations.get_model_path_with_pretrained(
+        model_paths.append(bucketfs_operations.get_bucketfs_model_save_path(
             sub_dir, model_params.tiny_model))
         input_data.append((
             model_params.tiny_model,

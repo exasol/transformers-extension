@@ -5,6 +5,7 @@ from unittest.mock import create_autospec, MagicMock, call, Mock
 
 import transformers
 
+from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
@@ -32,7 +33,7 @@ class TestSetup:
 
 def test_load_function_call():
     test_setup = TestSetup()
-    model_save_path = Path(test_setup.cache_dir) / "pretrained" / test_setup.model_name
+    model_save_path = create_save_pretrained_model_path(test_setup.cache_dir, test_setup.model_name)
 
     test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
                                   model_path=model_save_path)

@@ -102,7 +102,7 @@ pip install exasol-transformers-extension
 
 #### Download and Install the Python Wheel Package
 
-You can also get the wheel from a Github release.
+You can also get the wheel from a GitHub release.
 - The latest version of the Python package of this extension can be 
 downloaded from the [GitHub Release](https://github.com/exasol/transformers-extension/releases/latest).
 Please download the following built archive:
@@ -119,7 +119,7 @@ pip install <path/wheel-filename.whl>
 #### Build the project yourself
 
 In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/)
-(>= 1.1.11) package manager installed. Clone the Github Repository, and install and build 
+(>= 1.1.11) package manager installed. Clone the GitHub Repository, and install and build 
 the `transformers-extension` as follows:
 ```bash
 poetry install
@@ -136,7 +136,7 @@ It can be installed in two ways: Quick and Customized installations:
 #### Quick Installation
 The Language Container is downloaded and installed by executing the 
 deployment script below with the desired version. Make sure the version matches with your installed version of the 
-Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
+Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
 
   ```buildoutcfg
   python -m exasol_transformers_extension.deploy language-container \
@@ -231,42 +231,42 @@ There are two ways to install the language container: (1) using a python script 
      **Note:** The  `--path-in-bucket` can not be empty.
 
 
-  2. *Manual Installation*
+2. *Manual Installation*
 
-     In the manual installation, the pre-built container should be
-     uploaded into BucketFS first. In order to do that, you can use 
-     either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
-     or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
-     The following command uploads a given container into BucketFS through 
-     the http(s) client curl: 
+   In the manual installation, the pre-built container should be
+   uploaded into BucketFS first. In order to do that, you can use 
+   either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
+   or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
+   The following command uploads a given container into BucketFS through 
+   the http(s) client curl: 
 
-      ```shell
-      curl -vX PUT -T \ 
-          "<CONTAINER_FILE>" 
-          "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
-      ```
+    ```shell
+    curl -vX PUT -T \ 
+        "<CONTAINER_FILE>" 
+        "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
+    ```
 
-      Please note that specifying the password on command line will make your shell 
-      record the password in the history. To avoid leaking your password please 
-      consider to set an environment variable. The following examples sets
-      environment variable `BUCKETFS_WRITE_PASSWORD`:
+    Please note that specifying the password on command line will make your shell 
+    record the password in the history. To avoid leaking your password please 
+    consider to set an environment variable. The following examples sets
+    environment variable `BUCKETFS_WRITE_PASSWORD`:
       
-      ```shell 
-        read -sp "password: " BUCKETFS_WRITE_PASSWORD
-      ```
+    ```shell 
+      read -sp "password: " BUCKETFS_WRITE_PASSWORD
+    ```
 
-      The uploaded container should be secondly activated through adjusting 
-      the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
-      either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
-      The following example query activates the container session-wide:
+    The uploaded container should be secondly activated through adjusting 
+    the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
+    either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
+    The following example query activates the container session-wide:
 
-      ```sql
-      ALTER SESSION SET SCRIPT_LANGUAGES=\
-      PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
-              lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
-              exaudf/exaudfclient_py3
-      ```
-      For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
+    ```sql
+    ALTER SESSION SET SCRIPT_LANGUAGES=\
+    PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+            lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
+            exaudf/exaudfclient_py3
+    ```
+    For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
 
 
 ### Deployment
@@ -358,12 +358,12 @@ You can download the model using python like this:
         # download the model and tokenizer from Hugging Face
         model = model_factory.from_pretrained(model_name)
         # save the downloaded model using the save_pretrained function
-        model_save_path = <save_path> / "pretrained" / <model_name>
+        model_save_path = <your local model save path>
         model.save_pretrained(model_save_path)
 ```
 ***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
 Make sure to download and save both into the same save directory so the upload model script uploads them together.
-And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <save_path> / "pretrained" / <model_name>```
+And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <your local model save path>```
 
 
 ## Using Prediction UDFs
@@ -460,7 +460,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
   - ```question```: The question text
   - ```context_text```: The context text, associated with question
   - ```top_k```: The number of answers to return. Note that, `k` number of answers are not guaranteed. If there are not enough options 
-in the context, it might return less than `top_k` answers (see the [top_k parameter of QuestoinAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk)).
+in the context, it might return less than `top_k` answers (see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk)).
 
 The inference results are presented with predicted _ANSWER_, confidence 
  _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
@@ -626,7 +626,7 @@ model loading or prediction, these new columns are set to `null`, and
 column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
-| ------------- |---------|------------|-----------|-----------------|-----------------|------------| ---------------- |---------------|
+|---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 

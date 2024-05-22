@@ -8,6 +8,7 @@ from transformers import AutoModel
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploader, \
     BucketFSModelUploaderFactory
+from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import ModelFactoryProtocol, \
     HuggingFaceHubBucketFSModelTransferSP
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
@@ -50,7 +51,8 @@ def test_download_with_model(bucketfs_location):
         test_setup = TestSetup(bucketfs_location)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
-        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name / "pretrained" / test_setup.model_name)
+        assert AutoModel.from_pretrained(create_save_pretrained_model_path(
+            test_setup.downloader._tmpdir_name, test_setup.model_name))
         del test_setup.downloader
 
 
@@ -60,5 +62,6 @@ def test_download_with_duplicate_model(bucketfs_location):
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
-        assert AutoModel.from_pretrained(test_setup.downloader._tmpdir_name / "pretrained" / test_setup.model_name)
+        assert AutoModel.from_pretrained(create_save_pretrained_model_path(
+            test_setup.downloader._tmpdir_name, test_setup.model_name))
         del test_setup.downloader

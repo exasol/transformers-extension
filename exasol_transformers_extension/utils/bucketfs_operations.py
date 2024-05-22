@@ -39,14 +39,14 @@ def create_bucketfs_location(
 
 
 def upload_model_files_to_bucketfs(
-        tmpdir_name: str, model_path: Path,
+        model_directory: str, bucketfs_model_path: Path,
         bucketfs_location: AbstractBucketFSLocation) -> Path:
     """
     uploads model in tmpdir_name to model_path in bucketfs_location
     """
     with tempfile.TemporaryFile() as fileobj:
-        create_tar_of_directory(Path(tmpdir_name), fileobj)
-        model_upload_tar_file_path = model_path.with_suffix(".tar.gz")
+        create_tar_of_directory(Path(model_directory), fileobj)
+        model_upload_tar_file_path = bucketfs_model_path.with_suffix(".tar.gz")
         return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_upload_tar_file_path)
 
 
@@ -67,13 +67,25 @@ def create_tar_of_directory(path: Path, fileobj: BinaryIO):
 
 def get_local_bucketfs_path(
         bucketfs_location: BucketFSLocation, model_path: str) -> PurePosixPath:
+    """
+    returns path model defined by model_path can be found at in bucket defined by bucketfs_location
+    """
     bucketfs_local_path = bucketfs_location.generate_bucket_udf_path(model_path)
     return bucketfs_local_path
 
 
-def get_model_path(sub_dir: str, model_name: str) -> Path:
+def get_bucketfs_model_save_path(sub_dir: str, model_name: str) -> Path:
+    """
+    path model is saved at in the bucketfs
+    """
     return Path(sub_dir, model_name)
 
 
-def get_model_path_with_pretrained(sub_dir: str, model_name: str) -> Path:
-    return Path(sub_dir, model_name, "pretrained" , model_name)
+def create_save_pretrained_model_path(_tmpdir_name, _model_name) -> Path:
+    """
+    path HuggingFaceHubBucketFSModelTransferSP saves the model at using save_pretrained,
+    before it is uploaded to the bucketfs
+    """
+    return Path(_tmpdir_name, "pretrained", _model_name)
+
+
