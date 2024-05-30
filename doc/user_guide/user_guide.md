@@ -135,31 +135,56 @@ It can be installed in two ways: Quick and Customized installations:
 
 #### Quick Installation
 The Language Container is downloaded and installed by executing the 
-deployment script below with the desired version. Make sure the version matches with your installed version of the 
+deployment script below and specifying the desired version. Make sure the version matches with your installed version of the 
 Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
 
   ```buildoutcfg
-  python -m exasol_transformers_extension.deploy language-container \
-      --dsn <DB_HOST:DB_PORT> \
-      --db-user <DB_USER> \
-      --db-pass <DB_PASSWORD> \
-      --bucketfs-name <BUCKETFS_NAME> \
-      --bucketfs-host <BUCKETFS_HOST> \
-      --bucketfs-port <BUCKETFS_PORT> \
-      --bucketfs-user <BUCKETFS_USER> \
-      --bucketfs-password <BUCKETFS_PASSWORD> \
-      --bucketfs-use-https <USE_HTTPS_BOOL> \
-      --bucket <BUCKETFS_NAME> \
-      --path-in-bucket <PATH_IN_BUCKET> \
-      --language-alias <LANGUAGE_ALIAS> \ 
-      --version <RELEASE_VERSION> \
-      --ssl-cert-path <ssl-cert-path> \
-      --use-ssl-cert-validation
+  python -m exasol_transformers_extension.deploy language-container <options>
   ```
 
-**Note:** The `PATH_IN_BUCKET` can not be empty.
+The table below lists all available options. It shows which ones are applicable for On-Prem and for SaaS backends.
+Unless stated otherwise in the comments column, an option is required for either or both backends.
 
-The `--ssl-cert-path` is optional if your certificate is not in the OS truststore. 
+Some of the values, like passwords, are considered confidential. For security reasons, it is recommended to store
+those values in environment variables instead of providing them in the command line. The names of the environment
+variables are given in the comments column, where applicable. Alternatively, it is possible to put just the name of
+an option in the command line, without providing its value. In this case, the command will prompt to enter the value
+interactively. For long values, such as the SaaS account id, it is more practical to copy/paste the value from
+another source.
+
+
+| Option name                  | On-Prem | SaaS | Comment                                           |
+|:-----------------------------|:-------:|:----:|:--------------------------------------------------|
+| dsn                          |   [x]   |      | i.e. <db_host:db_port>                            |
+| db-user                      |   [x]   |      |                                                   | 
+| db-pass                      |   [x]   |      | Env. [DB_PASSWORD]                                |
+| bucketfs-name                |   [x]   |      |                                                   |
+| bucketfs-host                |   [x]   |      |                                                   |
+| bucketfs-port                |   [x]   |      |                                                   |
+| bucketfs-user                |   [x]   |      |                                                   |
+| bucketfs-password            |   [x]   |      | Env. [BUCKETFS_PASSWORD]                          |
+| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to False               |
+| bucket                       |   [x]   |      |                                                   |
+| saas-url                     |         | [x]  |                                                   |
+| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                            |
+| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]                 |
+| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown   |
+| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                                 |
+| path-in-bucket               |   [x]   | [x]  |                                                   |
+| language-alias               |   [x]   | [x]  |                                                   | 
+| version                      |   [x]   | [x]  | Optional, provide for downloading SLC from GitHub |
+| container-file               |   [x]   | [x]  | Optional, provide for uploading SLC file          |
+| ssl-cert-path                |   [x]   | [x]  | Optional                                          |
+| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True                |
+| ssl-client-cert-path         |   [x]   |      | Optional                                          |
+| ssl-client-private-key       |   [x]   |      | Optional                                          |
+| [no_]upload-container        |   [x]   | [x]  | Optional boolean, defaults to True                |
+| [no_]alter-system            |   [x]   | [x]  | Optional boolean, defaults to True                |
+| [dis]allow-override          |   [x]   | [x]  | Optional boolean, defaults to False               |
+
+In this scenario, we provide the `version` and do not provide the `container-file`. 
+
+The `--ssl-cert-path` is needed if your certificate is not in the OS truststore. 
 This certificate is basically a list of trusted CA. It is needed for the server's certificate 
 validation by the client.
 The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
@@ -207,66 +232,46 @@ There are two ways to install the language container: (1) using a python script 
   1. *Installation with Python Script*
 
      To install the language container, it is necessary to load the container 
-     into the BucketFS and activate it in the database. The following command 
-     performs this setup using the python script provided with this library:
+     into the BucketFS and activate it in the database. Run the language container deployment command described above,
+     but use the `container-file` option instead of the `version`. With this option, provide a path to the language
+     container file in the local file system.
 
-      ```buildoutcfg
-      python -m exasol_transformers_extension.deploy language-container \
-          --dsn <DB_HOST:DB_PORT> \
-          --db-user <DB_USER> \
-          --db-pass <DB_PASSWORD> \
-          --bucketfs-name <BUCKETFS_NAME> \
-          --bucketfs-host <BUCKETFS_HOST> \
-          --bucketfs-port <BUCKETFS_PORT> \
-          --bucketfs-user <BUCKETFS_USER> \
-          --bucketfs-password <BUCKETFS_PASSWORD> \
-          --bucket <BUCKETFS_NAME> \
-          --path-in-bucket <PATH_IN_BUCKET> \
-          --language-alias <LANGUAGE_ALIAS> \ 
-          --container-file <path/to/language_container_name.tar.gz>       
+  2. *Manual Installation*
+
+     In the manual installation, the pre-built container should be
+     uploaded into BucketFS first. In order to do that, you can use 
+     either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
+     or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
+     The following command uploads a given container into BucketFS through 
+     the http(s) client curl (this can be done only with the On-Prem backend): 
+
+      ```shell
+      curl -vX PUT -T \ 
+          "<CONTAINER_FILE>" 
+          "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
       ```
-     Please note:  all considerations described in the Quick Installation 
-     section are still applicable.
 
-     **Note:** The  `--path-in-bucket` can not be empty.
-
-
-2. *Manual Installation*
-
-   In the manual installation, the pre-built container should be
-   uploaded into BucketFS first. In order to do that, you can use 
-   either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
-   or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
-   The following command uploads a given container into BucketFS through 
-   the http(s) client curl: 
-
-    ```shell
-    curl -vX PUT -T \ 
-        "<CONTAINER_FILE>" 
-        "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
-    ```
-
-    Please note that specifying the password on command line will make your shell 
-    record the password in the history. To avoid leaking your password please 
-    consider to set an environment variable. The following examples sets
-    environment variable `BUCKETFS_WRITE_PASSWORD`:
+      Please note that specifying the password on command line will make your shell 
+      record the password in the history. To avoid leaking your password please 
+      consider to set an environment variable. The following examples sets
+      environment variable `BUCKETFS_WRITE_PASSWORD`:
       
-    ```shell 
-      read -sp "password: " BUCKETFS_WRITE_PASSWORD
-    ```
+      ```shell 
+        read -sp "password: " BUCKETFS_WRITE_PASSWORD
+      ```
 
-    The uploaded container should be secondly activated through adjusting 
-    the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
-    either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
-    The following example query activates the container session-wide:
+      The uploaded container should be secondly activated through adjusting 
+      the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
+      either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
+      The following example query activates the container session-wide:
 
-    ```sql
-    ALTER SESSION SET SCRIPT_LANGUAGES=\
-    PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
-            lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
-            exaudf/exaudfclient_py3
-    ```
-    For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
+      ```sql
+      ALTER SESSION SET SCRIPT_LANGUAGES=\
+      PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
+              lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
+              exaudf/exaudfclient_py3
+      ```
+      For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
 
 
 ### Deployment
@@ -399,10 +404,10 @@ this UDF. In case of any error during model loading or prediction, these new
 columns are set to `null` and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE  |
-| ------------- |---------|------------| --------- |---------| ----- |----------------|
-| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None           |
-| ...           | ...     | ...        | ...       | ...     | ...   | ...            |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE |
+|---------------|---------|------------|-----------|---------|-------|---------------|
+| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None          |
+| ...           | ...     | ...        | ...       | ...     | ...   | ...           |
 
 
 ### Sequence Classification for Text Pair UDF
@@ -469,7 +474,7 @@ during model loading or prediction, these new columns are set to `null` and colu
 to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |---------|------------|------------|-----------| ----- |----------| ----- |------| ------------- |
+|---------------|---------|------------|------------|-----------|-------|----------|-------|------|---------------|
 | conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
 | conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
 | ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |

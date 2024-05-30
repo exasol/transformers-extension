@@ -2,7 +2,7 @@ import logging
 import click
 from exasol_transformers_extension.deployment.scripts_deployer_cli import \
     scripts_deployer_main
-from exasol_transformers_extension.deployment.language_container_deployer_cli \
+from exasol.python_extension_common.deployment.language_container_deployer_cli \
     import language_container_deployer_main, slc_parameter_formatters, CustomizableParameters
 from exasol_transformers_extension.deployment.te_language_container_deployer import TeLanguageContainerDeployer
 
