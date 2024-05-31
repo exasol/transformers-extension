@@ -2,7 +2,7 @@ FROM exasol/script-language-container:python-3.8-minimal-EXASOL-6.2.0-build_run_
 
 # Temporary fix for having a git dependency for the python-extension-common
 # To be removed when the dependency is updated to a releasd version of it.
-RUN apt install git -y -q
+RUN apt install git -y -q --fix-missing
 
 Run mkdir /project
 COPY dependencies/requirements.txt /project/requirements.txt
