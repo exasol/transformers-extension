@@ -27,7 +27,7 @@ pyexasol = "^0.25.0"
 exasol-bucketfs = ">=0.9.0,<1.0.0"
 tenacity = "^8.2.2"
 sacremoses = ">=0.0.53"
-python-extension-common= {git = "https://github.com/exasol/python-extension-common.git", branch= "main"}
+python-extension-common= {git = "https://github.com/exasol/python-extension-common", branch= "main"}
 
 
 [tool.poetry.dev-dependencies]
