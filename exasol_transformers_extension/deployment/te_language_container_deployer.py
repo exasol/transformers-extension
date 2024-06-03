@@ -1,6 +1,6 @@
 from typing import Optional
 from pathlib import Path
-from exasol_transformers_extension.deployment.language_container_deployer import LanguageContainerDeployer
+from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
 
 
 class TeLanguageContainerDeployer(LanguageContainerDeployer):
