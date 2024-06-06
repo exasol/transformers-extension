@@ -2,6 +2,7 @@ import os
 import click
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.deployment import deployment_utils as utils
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 
 
 @click.command()
@@ -43,7 +44,8 @@ def main(
         bucketfs_user, bucketfs_password, bucket, path_in_bucket)
 
     # upload the downloaded model files into bucketfs
-    upload_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name)
+    upload_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir,
+                                                                   ModelSpecificationString(model_name))
 
     bucketfs_operations.upload_model_files_to_bucketfs(
         local_model_path, upload_path, bucketfs_location)

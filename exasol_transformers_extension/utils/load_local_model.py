@@ -3,7 +3,8 @@ import transformers.pipelines
 from typing import Optional
 from pathlib import Path
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-
+from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 
 class LoadLocalModel:
     """
@@ -27,7 +28,8 @@ class LoadLocalModel:
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._loaded_model_key = None
+        self._loaded_model_key = None #todo should this be ModelSpecificationString?
+        self._bucketfs_model_cache_dir = None
 
     @property
     def loaded_model_key(self):
@@ -35,7 +37,6 @@ class LoadLocalModel:
         return self._loaded_model_key
 
     def load_models(self,
-                    model_path: Path,
                     current_model_key: str
                     ) -> transformers.pipelines.Pipeline:
         """
@@ -46,8 +47,8 @@ class LoadLocalModel:
         :current_model_key:     key of the model to be loaded
         """
 
-        loaded_model = self._base_model_factory.from_pretrained(str(model_path))
-        loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(model_path))
+        loaded_model = self._base_model_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
+        loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
 
         last_created_pipeline = self.pipeline_factory(
             self.task_name,
@@ -57,6 +58,20 @@ class LoadLocalModel:
             framework="pt")
         self._loaded_model_key = current_model_key
         return last_created_pipeline
+
+    def set_bucketfs_model_cache_dir(
+            self, model_specification_string: ModelSpecificationString,
+            sub_dir: str, bucketfs_location) -> None:
+        """
+        Set the cache directory in bucketfs of the specified model.
+
+        :param model_specification_string:   Holds information specifying details of Huggingface model to be cached
+        :param bucketfs_conn_name: Name of the bucketFS connection
+        :param sub_dir: Directory where the model is cached
+        """
+        model_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_specification_string)
+        self._bucketfs_model_cache_dir = bucketfs_operations.get_local_bucketfs_path(
+            bucketfs_location=bucketfs_location, model_path=str(model_path))
 
     def clear_device_memory(self):
         """

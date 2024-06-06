@@ -24,7 +24,7 @@ bucketfs_params = BucketFSParams(
     bucket="default",
     path_in_bucket="container")
 
-model_params = ModelParams(
+model_params = ModelParams( #todo probs just put a ModelSpecificationString in here
     base_model='bert-base-uncased',
     seq2seq_model="t5-small",
     tiny_model="prajjwal1/bert-tiny",

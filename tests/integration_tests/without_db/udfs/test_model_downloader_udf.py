@@ -7,6 +7,7 @@ from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.utils.parameters import model_params
 
 
@@ -75,7 +76,7 @@ class TestEnvironmentSetup:
             'token_conn_name': self.token_conn_name
         }
         self.model_path = bucketfs_operations.get_bucketfs_model_save_path(
-            self.sub_dir, self.tiny_model)
+            self.sub_dir, ModelSpecificationString(self.tiny_model))
         self.bucketfs_connection = Connection(
             address=f"{url_localfs}/bucket{id}",
             user=None,

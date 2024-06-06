@@ -8,6 +8,7 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -90,7 +91,7 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
 
     assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
         call(bucketfs_location=mock_bucketfs_locations[i],
-             model_name=base_model_names[i],
+             model_specification_string=ModelSpecificationString(base_model_names[i]),
              model_path=PosixPath(f'{sub_directory_names[i]}/{base_model_names[i]}'),
              token=expected_token)
         for i in range(count)

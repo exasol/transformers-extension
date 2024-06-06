@@ -12,6 +12,7 @@ from exasol_transformers_extension.utils.bucketfs_operations import create_save_
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import ModelFactoryProtocol, \
     HuggingFaceHubBucketFSModelTransferSP
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.utils.mock_cast import mock_cast
 
 from tests.utils.parameters import model_params
@@ -34,8 +35,8 @@ class TestSetup:
         self.model_path = Path("test_model_path")
         self.downloader = HuggingFaceHubBucketFSModelTransferSP(
             bucketfs_location=self.bucketfs_location,
-            model_path=self.model_path,
-            model_name=self.model_name,
+            bucketfs_model_path=self.model_path,
+            model_specification_string=ModelSpecificationString(self.model_name),
             token=self.token,
             temporary_directory_factory=self.temporary_directory_factory,
             bucketfs_model_uploader_factory=self.bucketfs_model_uploader_factory_mock
@@ -52,7 +53,7 @@ def test_download_with_model(bucketfs_location):
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         assert AutoModel.from_pretrained(create_save_pretrained_model_path(
-            test_setup.downloader._tmpdir_name, test_setup.model_name))
+            test_setup.downloader._tmpdir_name, ModelSpecificationString(test_setup.model_name)))
         del test_setup.downloader
 
 
@@ -63,5 +64,5 @@ def test_download_with_duplicate_model(bucketfs_location):
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         assert AutoModel.from_pretrained(create_save_pretrained_model_path(
-            test_setup.downloader._tmpdir_name, test_setup.model_name))
+            test_setup.downloader._tmpdir_name, ModelSpecificationString(test_setup.model_name)))
         del test_setup.downloader

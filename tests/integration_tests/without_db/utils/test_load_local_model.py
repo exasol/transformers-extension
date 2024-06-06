@@ -9,6 +9,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 
 from tests.utils.parameters import model_params
 
@@ -39,7 +40,8 @@ class TestSetup:
 def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location):
     model_transfer_factory = HuggingFaceHubBucketFSModelTransferSPFactory()
     downloader = model_transfer_factory.create(bucketfs_location=mock_bucketfs_location,
-                                               model_name=test_setup.model_name,
+                                               model_specification_string=ModelSpecificationString(
+                                                   test_setup.model_name),
                                                model_path=Path("cached_files"),
                                                token="")
     downloader.download_from_huggingface_hub(test_setup.base_model_factory)
@@ -56,15 +58,18 @@ def test_load_local_model():
 
     with tempfile.TemporaryDirectory() as dir:
         dir_p = Path(dir)
-        model_save_path = create_save_pretrained_model_path(dir_p, test_setup.model_name)
+        model_name = test_setup.model_name
+        model_specification_string = ModelSpecificationString(model_name)
+        model_save_path = create_save_pretrained_model_path(dir_p, model_specification_string)
         # download a model
-        model = AutoModel.from_pretrained(test_setup.model_name)
-        tokenizer = AutoTokenizer.from_pretrained(test_setup.model_name)
+        model = AutoModel.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
         model.save_pretrained(model_save_path)
         tokenizer.save_pretrained(model_save_path)
 
-        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
-                                      model_path=model_save_path)
+        test_setup.loader._bucketfs_model_cache_dir = model_save_path
+        #todo prbs need to switch this to use set_bucketfs_model_cache_dir, or add test for set_bucketfs_model_cache_dir
+        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key)
 
 
 def test_load_local_model_with_huggingface_model_transfer():
@@ -80,5 +85,5 @@ def test_load_local_model_with_huggingface_model_transfer():
         downloaded_model_path = download_model_with_huggingface_transfer(
             test_setup, mock_bucketfs_location)
 
-        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
-                                      model_path=downloaded_model_path)
+        test_setup.loader._bucketfs_model_cache_dir = downloaded_model_path
+        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key)

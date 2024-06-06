@@ -1,6 +1,8 @@
 import json
 import tempfile
 from pathlib import Path
+
+from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.utils.parameters import model_params
 from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
@@ -11,7 +13,7 @@ def test_download_pretrained_model():
     """
 
     with tempfile.TemporaryDirectory() as download_tmpdir:
-        download_model_to_standard_local_save_path(model_params.tiny_model, download_tmpdir)
+        download_model_to_standard_local_save_path(ModelSpecificationString(model_params.tiny_model), download_tmpdir)
         url_fields = []
         for file_ in Path(download_tmpdir).iterdir():
             if str(file_).endswith(".json"):
