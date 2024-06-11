@@ -181,6 +181,7 @@ another source.
 | [no_]upload-container        |   [x]   | [x]  | Optional boolean, defaults to True                |
 | [no_]alter-system            |   [x]   | [x]  | Optional boolean, defaults to True                |
 | [dis]allow-override          |   [x]   | [x]  | Optional boolean, defaults to False               |
+| [no_]wait_for_completion     |   [x]   | [x]  | Optional boolean, defaults to True                |
 
 In this scenario, we provide the `version` and do not provide the `container-file`. 
 
