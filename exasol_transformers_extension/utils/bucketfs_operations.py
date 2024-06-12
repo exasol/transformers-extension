@@ -76,12 +76,12 @@ def get_local_bucketfs_path(
     return bucketfs_local_path
 
 
-def get_bucketfs_model_save_path(sub_dir: str, model_specification_string: ModelSpecificationString) -> Path:
-    """
-    path model is saved at in the bucketfs
-    """
-    model_name = model_specification_string.deconstruct()
-    return Path(sub_dir, model_name)
+#def get_bucketfs_model_save_path(sub_dir: str, model_specification_string: ModelSpecificationString) -> Path:#todo replace
+ #   """
+#    path model is saved at in the bucketfs
+ #   """
+ #   model_name = model_specification_string.deconstruct()
+ #   return Path(sub_dir, model_name)
 
 
 def create_save_pretrained_model_path(_tmpdir_name, model_specification_string: ModelSpecificationString) -> Path:
@@ -89,7 +89,7 @@ def create_save_pretrained_model_path(_tmpdir_name, model_specification_string: 
     path HuggingFaceHubBucketFSModelTransferSP saves the model at using save_pretrained,
     before it is uploaded to the bucketfs
     """
-    model_name = model_specification_string.deconstruct()
-    return Path(_tmpdir_name, "pretrained", model_name)
+    model_specific_path_suffix = model_specification_string.get_model_specific_path_suffix()
+    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix)
 
 

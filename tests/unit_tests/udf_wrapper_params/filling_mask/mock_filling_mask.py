@@ -18,7 +18,7 @@ class MockFillingMaskFactory:
 
 
     def from_pretrained(self, model_path):
-        # the cache_dir path already has model_name
+        # the model_path path already has model_name
         return self.mock_models[PurePosixPath(model_path)]
 
 

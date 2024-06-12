@@ -10,6 +10,7 @@ import transformers
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
@@ -162,7 +163,7 @@ class BaseModelUDF(ABC):
                 yield result_with_error_df
                 return
 
-            selections = (
+            selections = ( #todo replace with specification
                     (batch_df['model_name'] == model_name) &
                     (batch_df['bucketfs_conn'] == bucketfs_conn) &
                     (batch_df['sub_dir'] == sub_dir)
@@ -182,18 +183,17 @@ class BaseModelUDF(ABC):
         bucketfs_connection, and sub_dir
         """
         model_name = model_df["model_name"].iloc[0]
-        model_specification_string = ModelSpecificationString(model_name)
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
+        current_model_specification = CurrentModelSpecification(model_name, bucketfs_conn, sub_dir)
 
-        current_model_key = (bucketfs_conn, sub_dir, model_name) #todo replace with ModelSpecificationString? should this include bucketfs_conn?
-        if self.model_loader.loaded_model_key != current_model_key:
+        if self.model_loader.loaded_model_key != current_model_specification:
             bucketfs_location = \
                 bucketfs_operations.create_bucketfs_location_from_conn_object(
-                    self.exa.get_connection(bucketfs_conn))
-            self.model_loader.set_bucketfs_model_cache_dir(model_specification_string, sub_dir, bucketfs_location)
+                    self.exa.get_connection(bucketfs_conn))#todo move this to current_model_specification?
+            self.model_loader.set_bucketfs_model_cache_dir(current_model_specification, bucketfs_location)
             self.model_loader.clear_device_memory()
-            self.last_created_pipeline = self.model_loader.load_models(current_model_key)
+            self.last_created_pipeline = self.model_loader.load_models(current_model_specification)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

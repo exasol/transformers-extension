@@ -13,7 +13,7 @@ def test_token_classification_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model,
+            model_params.base_model_specs.model_name,
             model_params.text_data,
             aggregation_strategy
         ))

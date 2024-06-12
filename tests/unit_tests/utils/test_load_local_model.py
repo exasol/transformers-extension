@@ -6,6 +6,7 @@ from unittest.mock import create_autospec, MagicMock, call, Mock
 import transformers
 
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
@@ -20,7 +21,7 @@ class TestSetup:
         self.tokenizer_factory_mock: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
         self.token = "token"
         self.model_name = "model_name"
-        self.mock_current_model_key = "some_key"
+        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)
         self.cache_dir = "test/Path"
 
         self.mock_pipeline = Mock()
@@ -37,7 +38,7 @@ def test_load_function_call():
     model_save_path = create_save_pretrained_model_path(test_setup.cache_dir, ModelSpecificationString(test_setup.model_name))
 
     test_setup.loader._bucketfs_model_cache_dir = model_save_path
-    test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key)
+    test_setup.loader.load_models(current_model_specification=test_setup.mock_current_model_specification)
 
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(str(model_save_path))]

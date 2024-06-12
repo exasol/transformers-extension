@@ -78,7 +78,7 @@ def test_translation_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.seq2seq_model,
+        model_params.seq2seq_model_specs.model_name,
         model_params.text_data,
         src_lang,
         target_lang,

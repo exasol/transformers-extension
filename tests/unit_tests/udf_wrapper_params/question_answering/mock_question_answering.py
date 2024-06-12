@@ -18,7 +18,7 @@ class MockQuestionAnsweringFactory:
                                          MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
+    def from_pretrained(self, model_name, cache_dir):#todo
         # the cache_dir path already has model_name
         return self.mock_models[cache_dir]
 

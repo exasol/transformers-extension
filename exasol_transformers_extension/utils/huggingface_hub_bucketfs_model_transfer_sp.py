@@ -52,9 +52,9 @@ class HuggingFaceHubBucketFSModelTransferSP:
     def download_from_huggingface_hub(self, model_factory: ModelFactoryProtocol):
         """
         Download a model from HuggingFace Hub into a temporary directory and save it with save_pretrained
-        in temporary directory / pretrained / model_name.
+        in a temporary directory.
         """
-        model_name = self._model_specification_string.deconstruct()
+        model_name = self._model_specification_string.model_name
         model = model_factory.from_pretrained(model_name, cache_dir=self._tmpdir_name / "cache",
                                               use_auth_token=self._token)
         model.save_pretrained(self._save_pretrained_model_path)

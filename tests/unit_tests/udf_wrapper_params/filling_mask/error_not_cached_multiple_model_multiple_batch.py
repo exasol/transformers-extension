@@ -2,9 +2,11 @@ from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.utils.bucketfs_operations import get_bucketfs_model_save_path
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.unit_tests.udf_wrapper_params.filling_mask.mock_filling_mask import \
     MockFillingMaskFactory, MockFillingMaskModel, MockPipeline
+from tests.utils.parameters import filling_mask_model_params
 
 
 def udf_wrapper():
@@ -37,6 +39,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     data_size = 2
     top_k = 3
 
+    filling_mask_model_params
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text <mask> 1", top_k)] * data_size + \
                  [(None, "bfs_conn2", "sub_dir2", "non_existing_model",

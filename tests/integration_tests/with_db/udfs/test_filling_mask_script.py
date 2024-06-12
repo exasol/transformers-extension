@@ -20,7 +20,7 @@ def test_filling_mask_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model,
+            model_params.base_model_specs.model_name,
             text_data,
             top_k))
 

@@ -30,13 +30,12 @@ class TestSetup:
         mock_cast(self.bucketfs_model_uploader_factory_mock.create).side_effect = [self.bucketfs_model_uploader_mock]
 
         self.token = "token"
-        model_params_ = model_params.tiny_model
-        self.model_name = model_params_
+        self.model_specification_string = model_params.tiny_model_specs
         self.model_path = Path("test_model_path")
         self.downloader = HuggingFaceHubBucketFSModelTransferSP(
             bucketfs_location=self.bucketfs_location,
             bucketfs_model_path=self.model_path,
-            model_specification_string=ModelSpecificationString(self.model_name),
+            model_specification_string=self.model_specification_string,
             token=self.token,
             temporary_directory_factory=self.temporary_directory_factory,
             bucketfs_model_uploader_factory=self.bucketfs_model_uploader_factory_mock
@@ -53,7 +52,7 @@ def test_download_with_model(bucketfs_location):
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         assert AutoModel.from_pretrained(create_save_pretrained_model_path(
-            test_setup.downloader._tmpdir_name, ModelSpecificationString(test_setup.model_name)))
+            test_setup.downloader._tmpdir_name, test_setup.model_specification_string))
         del test_setup.downloader
 
 
@@ -64,5 +63,5 @@ def test_download_with_duplicate_model(bucketfs_location):
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         test_setup.downloader.download_from_huggingface_hub(model_factory=base_model_factory)
         assert AutoModel.from_pretrained(create_save_pretrained_model_path(
-            test_setup.downloader._tmpdir_name, ModelSpecificationString(test_setup.model_name)))
+            test_setup.downloader._tmpdir_name, test_setup.model_specification_string))
         del test_setup.downloader
