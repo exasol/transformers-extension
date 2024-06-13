@@ -11,11 +11,14 @@ class MockFillingMaskModel:
         self.device = device
         return self
 
+    @classmethod
+    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
+        return cls
+
 
 class MockFillingMaskFactory:
     def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
-
 
     def from_pretrained(self, model_path):
         # the model_path path already has model_name

@@ -38,9 +38,11 @@ class LoadLocalModel:
         """Get the current current_model_specification."""
         return self._current_model_specification
 
-    def load_models(self,
-                    current_model_specification: CurrentModelSpecification
-                    ) -> transformers.pipelines.Pipeline:
+    def set_current_model_specification(self, current_model_specification: CurrentModelSpecification):
+        """Set the current_model_specification."""
+        self._current_model_specification = current_model_specification
+
+    def load_models(self) -> transformers.pipelines.Pipeline:
         """
         Loads a locally saved model and tokenizer from model_path.
         Returns new pipeline corresponding to the model and task.
@@ -58,7 +60,6 @@ class LoadLocalModel:
             tokenizer=loaded_tokenizer,
             device=self.device,
             framework="pt")
-        self._current_model_specification = current_model_specification
         return last_created_pipeline
 
     def set_bucketfs_model_cache_dir(

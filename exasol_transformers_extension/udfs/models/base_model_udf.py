@@ -187,13 +187,14 @@ class BaseModelUDF(ABC):
         sub_dir = model_df["sub_dir"].iloc[0]
         current_model_specification = CurrentModelSpecification(model_name, bucketfs_conn, sub_dir)
 
-        if self.model_loader.loaded_model_key != current_model_specification:
+        if self.model_loader.current_model_specification != current_model_specification:
             bucketfs_location = \
                 bucketfs_operations.create_bucketfs_location_from_conn_object(
                     self.exa.get_connection(bucketfs_conn))#todo move this to current_model_specification?
-            self.model_loader.set_bucketfs_model_cache_dir(current_model_specification, bucketfs_location)
             self.model_loader.clear_device_memory()
-            self.last_created_pipeline = self.model_loader.load_models(current_model_specification)
+            self.model_loader.set_current_model_specification(current_model_specification)
+            self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
+            self.last_created_pipeline = self.model_loader.load_models()
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

@@ -18,7 +18,7 @@ class CurrentModelSpecification(ModelSpecificationString):
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, CurrentModelSpecification):
-            return (self.__eq__(other)
+            return (super().__eq__(other)
                     and self.sub_dir == other.sub_dir and
                     self.bucketfs_conn_name == other.bucketfs_conn_name)
         return False
@@ -29,7 +29,15 @@ class CurrentModelSpecification(ModelSpecificationString):
         """
         model_name = self.get_model_specific_path_suffix() #todo change in other path creations
         return Path(self.sub_dir, model_name)
-    # todo add class replacing current_model_key includes a ModelSpecification and move path cration functions there
+    # todo add class replacing current_model_key includes a ModelSpecification and move path creation functions there
+
+
+class CurrentModelSpecificationFactory:
+    def create(self,
+               model_name: str,
+               bucketfs_conn_name: str,
+               sub_dir: Path):
+        return CurrentModelSpecification(model_name, bucketfs_conn_name, sub_dir)
 
 
 class CurrentModelSpecificationFromModelSpecs:

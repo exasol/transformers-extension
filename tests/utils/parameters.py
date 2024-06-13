@@ -22,14 +22,6 @@ class ModelParams:
     sub_dir: str
 
 
-@dataclass(frozen=True)
-class FillingMaskModelParams:
-    model1: CurrentModelSpecification
-    model2: CurrentModelSpecification
-    text_mask1: str
-    text_mask2: str
-
-
 bucketfs_params = BucketFSParams(
     real_port="6583",
     name="bfsdefault",
@@ -42,14 +34,3 @@ model_params = ModelParams(
     tiny_model_specs=ModelSpecificationString("prajjwal1/bert-tiny"),
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
-
-filling_mask_model_params = FillingMaskModelParams(
-    model1=CurrentModelSpecification("model1",
-                                     "bfs_conn1",
-                                     Path("sub_dir1")),
-    model2=CurrentModelSpecification("model2",
-                                     "bfs_conn2",
-                                     Path("sub_dir2")),
-    text_mask1="text <mask> 1",
-    text_mask2="text <mask> 2",
-)

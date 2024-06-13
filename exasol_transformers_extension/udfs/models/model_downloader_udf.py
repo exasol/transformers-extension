@@ -4,7 +4,8 @@ import transformers
 from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
+    CurrentModelSpecificationFactory
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
@@ -28,12 +29,14 @@ class ModelDownloaderUDF:
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =
                  HuggingFaceHubBucketFSModelTransferSPFactory(),
-                 bucketfs_factory: BucketFSFactory = BucketFSFactory()):
+                 bucketfs_factory: BucketFSFactory = BucketFSFactory(),
+                 current_model_specification_string_factory: CurrentModelSpecificationFactory = CurrentModelSpecificationFactory()):
         self._exa = exa
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
         self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer
         self._bucketfs_factory = bucketfs_factory
+        self._current_model_specification_string_factory = current_model_specification_string_factory
 
     def run(self, ctx) -> None:
         while True:
@@ -46,7 +49,9 @@ class ModelDownloaderUDF:
         # parameters
         bfs_conn = ctx.bfs_conn         # BucketFS connection
         token_conn = ctx.token_conn     # name of token connection
-        current_model_specification_string = CurrentModelSpecification(ctx.model_name, bfs_conn, ctx.sub_dir)   # specifies details of Huggingface model
+        current_model_specification_string = self._current_model_specification_string_factory.create(ctx.model_name,
+                                                                                                     bfs_conn,
+                                                                                                     ctx.sub_dir)   # specifies details of Huggingface model
 
         # extract token from the connection if token connection name is given.
         # note that, token is required for private models. It doesn't matter

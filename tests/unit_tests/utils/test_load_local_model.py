@@ -38,7 +38,8 @@ def test_load_function_call():
     model_save_path = create_save_pretrained_model_path(test_setup.cache_dir, ModelSpecificationString(test_setup.model_name))
 
     test_setup.loader._bucketfs_model_cache_dir = model_save_path
-    test_setup.loader.load_models(current_model_specification=test_setup.mock_current_model_specification)
+    test_setup.loader.set_current_model_specification(test_setup.mock_current_model_specification)
+    test_setup.loader.load_models()
 
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(str(model_save_path))]
