@@ -30,7 +30,7 @@ class LoadLocalModel:
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._current_model_specification = None
+        self._current_model_specification = None #todo weather this is cms
         self._bucketfs_model_cache_dir = None
 
     @property

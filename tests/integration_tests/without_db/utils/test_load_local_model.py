@@ -68,9 +68,12 @@ def test_load_local_model():
         model.save_pretrained(model_save_path)
         tokenizer.save_pretrained(model_save_path)
 
+
+        test_setup.loader.set_current_model_specification(current_model_specification=
+                                                          test_setup.mock_current_model_specification)
+        #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
         test_setup.loader._bucketfs_model_cache_dir = model_save_path
-        #todo prbs need to switch this to use set_bucketfs_model_cache_dir, or add test for set_bucketfs_model_cache_dir
-        test_setup.loader.load_models(current_model_specification=test_setup.mock_current_model_specification)
+        test_setup.loader.load_models()
 
 
 def test_load_local_model_with_huggingface_model_transfer():
@@ -86,5 +89,8 @@ def test_load_local_model_with_huggingface_model_transfer():
         downloaded_model_path = download_model_with_huggingface_transfer(
             test_setup, mock_bucketfs_location)
 
+        test_setup.loader.set_current_model_specification(current_model_specification=
+                                                          test_setup.mock_current_model_specification)
+        #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
         test_setup.loader._bucketfs_model_cache_dir = downloaded_model_path
-        test_setup.loader.load_models(current_model_specification=test_setup.mock_current_model_specification)
+        test_setup.loader.load_models()

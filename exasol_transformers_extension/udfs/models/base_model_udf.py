@@ -163,7 +163,7 @@ class BaseModelUDF(ABC):
                 yield result_with_error_df
                 return
 
-            selections = ( #todo replace with specification
+            selections = ( #todo replace with specification?
                     (batch_df['model_name'] == model_name) &
                     (batch_df['bucketfs_conn'] == bucketfs_conn) &
                     (batch_df['sub_dir'] == sub_dir)

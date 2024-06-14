@@ -3,7 +3,8 @@ import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
+    CurrentModelSpecificationFromModelSpecs
 from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -38,7 +39,7 @@ def download_model_to_path(model_specification_string: ModelSpecificationString,
 
 @contextmanager
 def upload_model(bucketfs_location: AbstractBucketFSLocation,
-                 current_model_specification_string: CurrentModelSpecification,#todo fix usages
+                 current_model_specification_string: CurrentModelSpecification,
                  model_dir: Path) -> Path:
     model_path = current_model_specification_string.get_bucketfs_model_save_path()
     bucketfs_operations.upload_model_files_to_bucketfs(
@@ -48,13 +49,16 @@ def upload_model(bucketfs_location: AbstractBucketFSLocation,
     yield model_path
 
 
-def prepare_model_for_local_bucketfs(current_model_specification_string: CurrentModelSpecification,#todo fix usages
+def prepare_model_for_local_bucketfs(model_specification_string: ModelSpecificationString,
                                      tmpdir_factory):
-    tmpdir = tmpdir_factory.mktemp(current_model_specification_string.get_model_specific_path_suffix())
-    model_path_in_bucketfs = current_model_specification_string.get_bucketfs_model_save_path()
+    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification_string,
+                                                                              "",
+                                                                              model_params.sub_dir)
+    tmpdir = tmpdir_factory.mktemp(current_model_specs.get_model_specific_path_suffix())
+    model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
 
     bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
-    download_model_to_path(current_model_specification_string, bucketfs_path_for_model)
+    download_model_to_path(current_model_specs, bucketfs_path_for_model)
     return tmpdir
 
 
@@ -78,8 +82,11 @@ def upload_model_to_bucketfs(
         download_tmpdir: Path,
         bucketfs_location: AbstractBucketFSLocation) -> str:
     download_tmpdir = download_model_to_standard_local_save_path(model_specification_string, download_tmpdir)
+    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification_string,
+                                                                              "",
+                                                                              model_params.sub_dir)
     with upload_model(
-            bucketfs_location, model_specification_string, download_tmpdir) as model_path: #todo change
+            bucketfs_location, current_model_specs, download_tmpdir) as model_path:
         try:
             yield model_path
         finally:
@@ -89,16 +96,18 @@ def upload_model_to_bucketfs(
 @pytest.fixture(scope="session")
 def upload_base_model_to_bucketfs(
         bucketfs_location, tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.base_model_specs.get_model_specific_path_suffix())
+    base_model_specs = model_params.base_model_specs
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(
-            model_params.base_model_specs, tmpdir, bucketfs_location) as path:
+            base_model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 
 @pytest.fixture(scope="session")
 def upload_seq2seq_model_to_bucketfs(
         bucketfs_location, tmpdir_factory) -> PurePosixPath:
-    tmpdir = tmpdir_factory.mktemp(model_params.seq2seq_model)
+    model_specification = model_params.seq2seq_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specification.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(
-            ModelSpecificationString(model_params.seq2seq_model), tmpdir, bucketfs_location) as path:
+            model_specification, tmpdir, bucketfs_location) as path:
         yield path
