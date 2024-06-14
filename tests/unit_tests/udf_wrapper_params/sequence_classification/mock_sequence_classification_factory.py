@@ -11,7 +11,7 @@ class LabelScore:
     score: float
 
 
-class MockSequenceClassificationModel: #todo these classe seem duplicate
+class MockSequenceClassificationModel: #todo these classe seem duplicate -> create ticket
     def __init__(self, label_scores: List[LabelScore]):
         self.label_scores = label_scores
 

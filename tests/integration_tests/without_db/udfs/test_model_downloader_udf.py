@@ -8,7 +8,7 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils.parameters import model_params
 
 

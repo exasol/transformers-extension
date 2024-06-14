@@ -9,7 +9,7 @@ from exasol_transformers_extension.utils.current_model_specification import Curr
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 class ModelDownloaderUDF:
     """
@@ -30,13 +30,13 @@ class ModelDownloaderUDF:
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =
                  HuggingFaceHubBucketFSModelTransferSPFactory(),
                  bucketfs_factory: BucketFSFactory = BucketFSFactory(),
-                 current_model_specification_string_factory: CurrentModelSpecificationFactory = CurrentModelSpecificationFactory()):
+                 current_model_specification_factory: CurrentModelSpecificationFactory = CurrentModelSpecificationFactory()):
         self._exa = exa
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
         self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer
         self._bucketfs_factory = bucketfs_factory
-        self._current_model_specification_string_factory = current_model_specification_string_factory
+        self._current_model_specification_factory = current_model_specification_factory
 
     def run(self, ctx) -> None:
         while True:
@@ -49,7 +49,7 @@ class ModelDownloaderUDF:
         # parameters
         bfs_conn = ctx.bfs_conn         # BucketFS connection
         token_conn = ctx.token_conn     # name of token connection
-        current_model_specification_string = self._current_model_specification_string_factory.create(ctx.model_name,
+        current_model_specification = self._current_model_specification_factory.create(ctx.model_name,
                                                                                                      bfs_conn,
                                                                                                      ctx.sub_dir)   # specifies details of Huggingface model
 
@@ -62,7 +62,7 @@ class ModelDownloaderUDF:
             token = token_conn_obj.password
 
         # set model path in buckets
-        model_path = current_model_specification_string.get_bucketfs_model_save_path()
+        model_path = current_model_specification.get_bucketfs_model_save_path()
 
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)
@@ -75,7 +75,7 @@ class ModelDownloaderUDF:
         # download base model and tokenizer into the model path
         with self._huggingface_hub_bucketfs_model_transfer.create(
                 bucketfs_location=bucketfs_location,
-                model_specification_string=current_model_specification_string,
+                model_specification=current_model_specification,
                 model_path=model_path,
                 token=token
         ) as downloader:

@@ -13,7 +13,7 @@ from exasol_transformers_extension.utils import device_management, \
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 class BaseModelUDF(ABC):
@@ -163,7 +163,7 @@ class BaseModelUDF(ABC):
                 yield result_with_error_df
                 return
 
-            selections = ( #todo replace with specification?
+            selections = ( #todo replace with specification in future?
                     (batch_df['model_name'] == model_name) &
                     (batch_df['bucketfs_conn'] == bucketfs_conn) &
                     (batch_df['sub_dir'] == sub_dir)
@@ -190,7 +190,7 @@ class BaseModelUDF(ABC):
         if self.model_loader.current_model_specification != current_model_specification:
             bucketfs_location = \
                 bucketfs_operations.create_bucketfs_location_from_conn_object(
-                    self.exa.get_connection(bucketfs_conn))#todo move this to current_model_specification?
+                    self.exa.get_connection(bucketfs_conn))
             self.model_loader.clear_device_memory()
             self.model_loader.set_current_model_specification(current_model_specification)
             self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)

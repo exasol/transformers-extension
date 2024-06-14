@@ -1,7 +1,7 @@
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from pathlib import PurePosixPath, Path
 
-class CurrentModelSpecification(ModelSpecificationString):
+class CurrentModelSpecification(ModelSpecification):
     """
     Class describing a model with additional information about
     the bucketFS connection and the subdir in the bucketfs the model can be found at.
@@ -10,8 +10,8 @@ class CurrentModelSpecification(ModelSpecificationString):
                  model_name: str,
                  bucketfs_conn_name: str,
                  sub_dir: Path):
-        ModelSpecificationString.__init__(self, model_name)
-        #self.model_specification_string = model_specification_string
+        ModelSpecification.__init__(self, model_name)
+        #self.model_specification = model_specification
         self.bucketfs_conn_name = bucketfs_conn_name
         self.sub_dir = sub_dir
 
@@ -27,9 +27,9 @@ class CurrentModelSpecification(ModelSpecificationString):
         """
         path model is saved at in the bucketfs
         """
-        model_name = self.get_model_specific_path_suffix() #todo change in other path creations
+        model_name = self.get_model_specific_path_suffix()
         return Path(self.sub_dir, model_name)
-    # todo add class replacing current_model_key includes a ModelSpecification and move path creation functions there
+
 
 
 class CurrentModelSpecificationFactory:
@@ -42,9 +42,9 @@ class CurrentModelSpecificationFactory:
 
 class CurrentModelSpecificationFromModelSpecs:
     def transform(self,
-                  model_specification_string: ModelSpecificationString,
+                  model_specification: ModelSpecification,
                   bucketfs_conn_name: str,
                   sub_dir: Path):
-        return CurrentModelSpecification(model_name=model_specification_string.model_name,
+        return CurrentModelSpecification(model_name=model_specification.model_name,
                                          bucketfs_conn_name=bucketfs_conn_name,
                                          sub_dir=sub_dir)

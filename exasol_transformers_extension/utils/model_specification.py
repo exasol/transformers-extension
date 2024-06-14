@@ -1,6 +1,6 @@
 from pathlib import PurePosixPath, Path
 
-class ModelSpecificationString:
+class ModelSpecification:
     """
     Class describing a model.
     """
@@ -13,10 +13,10 @@ class ModelSpecificationString:
 
     def __eq__(self, other):
         """Overrides the default implementation"""
-        if isinstance(other, ModelSpecificationString):
+        if isinstance(other, ModelSpecification):
             return self.model_name == other.model_name
         return False
 
-    def get_model_specific_path_suffix(self) -> PurePosixPath: #todo use
+    def get_model_specific_path_suffix(self) -> PurePosixPath:
         return PurePosixPath(self.model_name) #model_name-version-task
 

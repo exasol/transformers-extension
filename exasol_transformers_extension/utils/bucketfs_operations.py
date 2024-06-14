@@ -14,7 +14,7 @@ from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from tenacity import retry, wait_fixed, stop_after_attempt
 
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> BucketFSLocation:
@@ -76,20 +76,12 @@ def get_local_bucketfs_path(
     return bucketfs_local_path
 
 
-#def get_bucketfs_model_save_path(sub_dir: str, model_specification_string: ModelSpecificationString) -> Path:#todo replace
- #   """
-#    path model is saved at in the bucketfs
- #   """
- #   model_name = model_specification_string.deconstruct()
- #   return Path(sub_dir, model_name)
-
-
-def create_save_pretrained_model_path(_tmpdir_name, model_specification_string: ModelSpecificationString) -> Path:
+def create_save_pretrained_model_path(_tmpdir_name, model_specification: ModelSpecification) -> Path:
     """
     path HuggingFaceHubBucketFSModelTransferSP saves the model at using save_pretrained,
     before it is uploaded to the bucketfs
     """
-    model_specific_path_suffix = model_specification_string.get_model_specific_path_suffix()
-    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix)
+    model_specific_path_suffix = model_specification.get_model_specific_path_suffix()
+    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix) #todo move to modespecstring eventually?
 
 

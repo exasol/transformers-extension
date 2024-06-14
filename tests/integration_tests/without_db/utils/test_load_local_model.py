@@ -13,7 +13,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 from tests.utils.parameters import model_params
 
@@ -43,7 +43,7 @@ class TestSetup:
 def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location):
     model_transfer_factory = HuggingFaceHubBucketFSModelTransferSPFactory()
     downloader = model_transfer_factory.create(bucketfs_location=mock_bucketfs_location,
-                                               model_specification_string=test_setup.model_specification,
+                                               model_specification=test_setup.model_specification,
                                                model_path=Path("cached_files"),
                                                token="")
     downloader.download_from_huggingface_hub(test_setup.base_model_factory)
@@ -60,11 +60,11 @@ def test_load_local_model():
 
     with tempfile.TemporaryDirectory() as dir:
         dir_p = Path(dir)
-        model_specification_string = test_setup.model_specification
-        model_save_path = create_save_pretrained_model_path(dir_p, model_specification_string)
+        model_specification = test_setup.model_specification
+        model_save_path = create_save_pretrained_model_path(dir_p, model_specification)
         # download a model
-        model = AutoModel.from_pretrained(model_specification_string.model_name)
-        tokenizer = AutoTokenizer.from_pretrained(model_specification_string.model_name)
+        model = AutoModel.from_pretrained(model_specification.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
         model.save_pretrained(model_save_path)
         tokenizer.save_pretrained(model_save_path)
 

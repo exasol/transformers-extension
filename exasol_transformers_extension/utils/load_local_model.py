@@ -6,7 +6,7 @@ from pathlib import Path
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 class LoadLocalModel:
     """
@@ -30,7 +30,7 @@ class LoadLocalModel:
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._current_model_specification = None #todo weather this is cms
+        self._current_model_specification = None
         self._bucketfs_model_cache_dir = None
 
     @property

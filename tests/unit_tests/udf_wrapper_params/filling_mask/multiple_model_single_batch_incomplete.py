@@ -1,7 +1,7 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.utils.model_specification_string import ModelSpecificationString
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.unit_tests.udf_wrapper_params.filling_mask.mock_filling_mask import \
     MockFillingMaskFactory, MockFillingMaskModel, MockPipeline
 
