@@ -1,12 +1,12 @@
 from typing import Tuple
 
 import transformers
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
+
 
 # todo look at userguide line 361
 class ModelDownloaderUDF:
@@ -26,13 +26,11 @@ class ModelDownloaderUDF:
                  base_model_factory: ModelFactoryProtocol = transformers.AutoModel,
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =
-                 HuggingFaceHubBucketFSModelTransferSPFactory(),
-                 bucketfs_factory: BucketFSFactory = BucketFSFactory()):
+                 HuggingFaceHubBucketFSModelTransferSPFactory()):
         self._exa = exa
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
         self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer
-        self._bucketfs_factory = bucketfs_factory
 
     def run(self, ctx) -> None:
         while True:
@@ -61,11 +59,7 @@ class ModelDownloaderUDF:
 
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)
-        bucketfs_location = self._bucketfs_factory.create_bucketfs_location(
-            url=bfs_conn_obj.address,
-            user=bfs_conn_obj.user,
-            pwd=bfs_conn_obj.password
-        )
+        bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(bfs_conn_obj)
 
         # download base model and tokenizer into the model path
         with self._huggingface_hub_bucketfs_model_transfer.create(

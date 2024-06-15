@@ -8,9 +8,11 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
     HuggingFaceHubBucketFSModelTransferSPFactory
 from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
     LocalFSMockBucketFSLocation
-from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
+from exasol_transformers_extension.utils.bucketfs_operations import (
+    create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
 
 from tests.utils.parameters import model_params
+from tests.utils.mounted_bucketfs_connection import create_mounted_bucketfs_connection
 
 import tempfile
 
@@ -44,11 +46,7 @@ def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location)
                                                token="")
     downloader.download_from_huggingface_hub(test_setup.base_model_factory)
     downloader.download_from_huggingface_hub(test_setup.tokenizer_factory)
-    bucketfs_model_path = downloader.upload_to_bucketfs()
-
-    with tarfile.open(mock_bucketfs_location.base_path / bucketfs_model_path) as tar:
-        tar.extractall(path=mock_bucketfs_location.base_path / bucketfs_model_path.parent)
-    return mock_bucketfs_location.base_path / bucketfs_model_path.parent
+    return downloader.upload_to_bucketfs()
 
 
 def test_load_local_model():
@@ -67,18 +65,21 @@ def test_load_local_model():
                                       model_path=model_save_path)
 
 
-def test_load_local_model_with_huggingface_model_transfer():
+def test_load_local_model_with_huggingface_model_transfer(tmp_path):
     test_setup = TestSetup()
 
-    with tempfile.TemporaryDirectory() as dire:
-        dir_p = Path(dire)
+    sub_dir = "bucket"
 
-        mock_bucketfs_location = LocalFSMockBucketFSLocation(
-            PurePosixPath(dir_p / "bucket"))
+    mock_bucketfs_location = create_bucketfs_location_from_conn_object(
+        create_mounted_bucketfs_connection(tmp_path, sub_dir))
 
-        # download a model
-        downloaded_model_path = download_model_with_huggingface_transfer(
-            test_setup, mock_bucketfs_location)
+    # download a model
+    downloaded_model_path = download_model_with_huggingface_transfer(
+        test_setup, mock_bucketfs_location)
 
-        test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
-                                      model_path=downloaded_model_path)
+    sub_dir_path = tmp_path / sub_dir
+    with tarfile.open(str(sub_dir_path / downloaded_model_path)) as tar:
+        tar.extractall(path=str(sub_dir_path))
+
+    test_setup.loader.load_models(current_model_key=test_setup.mock_current_model_key,
+                                  model_path=sub_dir_path)

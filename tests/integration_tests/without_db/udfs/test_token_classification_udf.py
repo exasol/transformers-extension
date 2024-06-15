@@ -6,6 +6,7 @@ from typing import Dict
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
+from tests.utils.mounted_bucketfs_connection import create_mounted_bucketfs_connection
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
     TokenClassificationUDF
@@ -67,7 +68,7 @@ def test_token_classification_udf(
 
     bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
     sample_data = [(

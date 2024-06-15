@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.group import Group
@@ -37,6 +39,7 @@ from tests.unit_tests.udf_wrapper_params.sequence_classification.single_model_si
     SingleModelSingleBatchIncomplete
 from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils import postprocessing
+from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 
 
 def create_mock_metadata(udf_wrapper):
@@ -81,7 +84,12 @@ def create_mock_metadata(udf_wrapper):
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch
 ])
-def test_sequence_classification_single_text(params):
+@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
+def test_sequence_classification_single_text(mock_local_path, mock_create_loc, params):
+
+    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
+    mock_local_path.side_effect = fake_local_bucketfs_path
 
     executor = UDFMockExecutor()
     meta = create_mock_metadata(params.udf_wrapper_single_text)

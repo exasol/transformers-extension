@@ -1,11 +1,9 @@
 from pathlib import Path, PosixPath
 from urllib.parse import urlparse
 
-import pytest
-import transformers
 from click.testing import CliRunner
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
 from pytest_itde import config
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension import upload_model
 from exasol_transformers_extension.utils import bucketfs_operations
@@ -27,7 +25,7 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
 
 
 def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
-                      bucketfs_location: BucketFSLocation, bucketfs_config: config.BucketFs):
+                      bucketfs_location: bfs.path.PathLike, bucketfs_config: config.BucketFs):
     sub_dir = 'sub_dir'
     model_name = model_params.base_model
     download_path = download_model_to_standard_local_save_path(model_name, tmp_path)
@@ -54,7 +52,8 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
         runner = CliRunner()
         result = runner.invoke(upload_model.main, args_list)
         assert result.exit_code == 0
-        assert str(upload_path.with_suffix(".tar.gz")) in bucketfs_location.list_files_in_bucketfs(".")
+        bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")
+        assert bucketfs_upload_location.is_file()
 
         bucketfs_conn_name, schema_name = setup_database
         text_data = "Exasol is an analytics <mask> management software company."

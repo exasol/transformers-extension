@@ -1,8 +1,9 @@
-import tempfile
+from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List
+from dataclasses import dataclass
 
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -10,11 +11,22 @@ from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 
 
+@dataclass
 class Connection:
-    def __init__(self, address: str, user: str = None, password: str = None):
-        self.address = address
-        self.user = user
-        self.password = password
+    address: str | None
+    user: str | None
+    password: str | None
+
+
+def _create_bucketfs_connection(base_path: Path | str,
+                                path_in_bucket: Path | str = '') -> Connection:
+    address = (f'{{"backend":"{bfs.path.StorageBackend.mounted.name}", '
+               f'"base_path":"{base_path}", "path":"{path_in_bucket}"}}')
+    return Connection(address=address, user='{}', password='{}')
+
+
+def _create_hf_token_connection(token: str) -> Connection:
+    return Connection(address='', user='', password=token)
 
 
 class ExaEnvironment:
@@ -63,7 +75,7 @@ class Context:
 class TestEnvironmentSetup:
     __test__ = False
 
-    def __init__(self, id: str, url_localfs: str, token_conn_name: str):
+    def __init__(self, id: str, tmp_dir: Path, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
         self.tiny_model = model_params.tiny_model
@@ -76,49 +88,38 @@ class TestEnvironmentSetup:
         }
         self.model_path = bucketfs_operations.get_bucketfs_model_save_path(
             self.sub_dir, self.tiny_model)
-        self.bucketfs_connection = Connection(
-            address=f"{url_localfs}/bucket{id}",
-            user=None,
-            password=None
-        )
+        self.bucketfs_connection = _create_bucketfs_connection(tmp_dir, f'bucket{id}')
         self.token_connection = None if not self.token_conn_name \
-            else Connection(address=f"", password="valid")
-
-    @property
-    def bucketfs_location(self):
-        return BucketFSFactory().create_bucketfs_location(
-            url=self.bucketfs_connection.address,
-            user=self.bucketfs_connection.user,
-            pwd=self.bucketfs_connection.password)
+            else _create_hf_token_connection("valid")
 
     def list_files_in_bucketfs(self):
-        return self.bucketfs_location.list_files_in_bucketfs(
-            str(self.sub_dir))
+        bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(
+            self.bucketfs_connection)
+        return [str(node[0] / leaf) for node in bucketfs_location.walk()
+                for leaf in node[2] if not node[1]]
 
 
-def test_model_downloader_udf_implementation():
-    with tempfile.TemporaryDirectory() as tmpdir_name:
-        url_localfs = f"file://{tmpdir_name}/bucket"
-        env1 = TestEnvironmentSetup(
-            "1", url_localfs, token_conn_name='')
-        env2 = TestEnvironmentSetup(
-            "2", url_localfs, token_conn_name='token_conn_name')
+def test_model_downloader_udf_implementation(tmp_path):
+    env1 = TestEnvironmentSetup(
+        "1", tmp_path, token_conn_name='')
+    env2 = TestEnvironmentSetup(
+        "2", tmp_path, token_conn_name='token_conn_name')
 
-        ctx = Context([env1.ctx_data, env2.ctx_data])
-        exa = ExaEnvironment({
-            env1.bucketfs_conn_name: env1.bucketfs_connection,
-            env2.bucketfs_conn_name: env2.bucketfs_connection,
-            env2.token_conn_name: env2.token_connection
-        })
+    ctx = Context([env1.ctx_data, env2.ctx_data])
+    exa = ExaEnvironment({
+        env1.bucketfs_conn_name: env1.bucketfs_connection,
+        env2.bucketfs_conn_name: env2.bucketfs_connection,
+        env2.token_conn_name: env2.token_connection
+    })
 
-        # run udf implementation
-        model_downloader = ModelDownloaderUDF(exa)
-        model_downloader.run(ctx)
+    # run udf implementation
+    model_downloader = ModelDownloaderUDF(exa)
+    model_downloader.run(ctx)
 
-        # assertions
-        env1_bucketfs_files = env1.list_files_in_bucketfs()
-        env2_bucketfs_files = env2.list_files_in_bucketfs()
-        assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz")))
-        assert ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz")))
-        assert str(Path(ctx.get_emitted()[0][1]).relative_to(env1.sub_dir)) in env1_bucketfs_files
-        assert str(Path(ctx.get_emitted()[1][1]).relative_to(env2.sub_dir)) in env2_bucketfs_files
+    # assertions
+    env1_bucketfs_files = env1.list_files_in_bucketfs()
+    env2_bucketfs_files = env2.list_files_in_bucketfs()
+    assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz")))
+    assert ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz")))
+    assert any(bfs_file.endswith(ctx.get_emitted()[0][1]) for bfs_file in env1_bucketfs_files)
+    assert any(bfs_file.endswith(ctx.get_emitted()[1][1]) for bfs_file in env2_bucketfs_files)

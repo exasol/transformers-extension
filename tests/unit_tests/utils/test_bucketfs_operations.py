@@ -1,14 +1,18 @@
 import io
 import tarfile
 from pathlib import Path
-from typing import Union
-from unittest.mock import create_autospec, MagicMock, call, ANY
+from unittest.mock import patch
 
 import pytest
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+import exasol.bucketfs as bfs
+from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.utils.bucketfs_operations import upload_model_files_to_bucketfs, \
+from exasol_transformers_extension.utils.bucketfs_operations import (
+    create_bucketfs_location,
+    create_bucketfs_location_from_conn_object,
+    upload_model_files_to_bucketfs,
     create_tar_of_directory
+)
 
 
 @pytest.fixture
@@ -21,17 +25,49 @@ def test_content(tmp_path):
     return tmp_path
 
 
-def test_upload_model_files_to_bucketfs(test_content):
-    mock_bucketfs_location: Union[BucketFSLocation, MagicMock] = create_autospec(BucketFSLocation)
+@patch("exasol.bucketfs.path.build_path")
+def test_create_bucketfs_location_from_conn_object(mock_build_path):
+    url = 'https://bucket-fs-service'
+    bucket = 'my-bucket'
+    user = 'the-user'
+    password = 'the-password'
+    conn = Connection(
+        address=f'{{"url":"{url}", "bucket":"{bucket}"}}',
+        user=f'{{"user":"{user}"}}',
+        password=f'{{"password":"{password}"}}'
+    )
+    create_bucketfs_location_from_conn_object(conn)
+    mock_build_path.assert_called_with(url=url, bucket=bucket, user=user, password=password)
+
+
+@patch("exasol.bucketfs.path.build_path")
+def test_create_bucketfs_location_on_prem(mock_build_path):
+    create_bucketfs_location(bucketfs_host='https://bucket-fs-service', bucketfs_port=5678,
+                             bucketfs_name='bfs-service', bucket='my-bucket', bucketfs_user='bfs-user',
+                             bucketfs_password='bfs-password', path_in_bucket='bucket_path')
+    assert mock_build_path.call_args.kwargs['backend'] == bfs.path.StorageBackend.onprem
+
+
+@patch("exasol.bucketfs.path.build_path")
+def test_create_bucketfs_location_saas(mock_build_path):
+    create_bucketfs_location(saas_url='https://saas-service', saas_account_id='fake-account-id',
+                             saas_database_id='fake-database-id', saas_token='fake-saas-token',
+                             path_in_bucket='bucket_path')
+    assert mock_build_path.call_args.kwargs['backend'] == bfs.path.StorageBackend.saas
+
+
+def test_upload_model_files_to_bucketfs(test_content, tmp_path):
+    path_in_backet = 'abcd'
+    bucket = bfs.MountedBucket(base_path=str(tmp_path))
+    bucketfs_location = bfs.path.BucketPath(path_in_backet, bucket)
     model_path = Path("test_model_path")
     upload_model_files_to_bucketfs(
-        bucketfs_location=mock_bucketfs_location,
+        bucketfs_location=bucketfs_location,
         bucketfs_model_path=model_path,
         model_directory=str(test_content)
     )
-    assert mock_bucketfs_location.mock_calls == [
-        call.upload_fileobj_to_bucketfs(ANY, str(model_path.with_suffix(".tar.gz")))
-    ]
+    expected_tar_path = tmp_path / path_in_backet / model_path.with_suffix(".tar.gz")
+    assert expected_tar_path.exists()
 
 
 def create_no_exist_directory(model_name, ref, tmp_path):

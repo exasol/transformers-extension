@@ -1,7 +1,7 @@
-from pathlib import PurePosixPath
+from __future__ import annotations
+from pathlib import Path
 from typing import List
-from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
-    AbstractBucketFSLocation
+import exasol.bucketfs as bfs
 from exasol_udf_mock_python.group import Group
 
 
@@ -29,14 +29,9 @@ def get_rounded_result(result: List[Group], round_: int = 2) -> List[tuple]:
     return rounded_result
 
 
-def cleanup_buckets(bucketfs_location: AbstractBucketFSLocation, path: str):
-    try:
-        bucketfs_files = bucketfs_location.list_files_in_bucketfs(path)
-        for file_ in bucketfs_files:
-            try:
-                bucketfs_location.delete_file_in_bucketfs(
-                    str(PurePosixPath(path, file_)))
-            except Exception as exc:
-                print(f"Error while deleting downloaded files, {str(exc)}")
-    except:
-        pass
+def cleanup_buckets(bucketfs_location: bfs.path.PathLike, path: str | Path):
+    bucketfs_path = bucketfs_location / path
+    if bucketfs_path.is_dir():
+        bucketfs_path.rmdir(recursive=True)
+    elif bucketfs_path.is_file():
+        bucketfs_path.rm()

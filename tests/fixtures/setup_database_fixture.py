@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import pytest
 from pyexasol import ExaConnection
 from pytest_itde import config
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
@@ -28,14 +29,29 @@ def _deploy_scripts(pyexasol_connection: ExaConnection, language_alias: str) -> 
 
 def _create_bucketfs_connection(bucketfs_config: config.BucketFs,
                                 pyexasol_connection: ExaConnection) -> None:
+    def to_json_str(**kwargs) -> str:
+        def format_value(v):
+            return f'"{v}"' if isinstance(v, str) else v
+
+        return "{" + ", ".join(f'"{k}":{format_value(v)}' for k, v in kwargs.items()
+                               if v is not None) + "}"
+
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
-    address = f"{parsed_url.scheme}://{host}:{bucketfs_params.real_port}/{bucketfs_params.bucket}/" \
-              f"{bucketfs_params.path_in_bucket};{bucketfs_params.name}"
+    url = f"{parsed_url.scheme}://{host}:{bucketfs_params.real_port}"
+    conn_to = to_json_str(backend=bfs.path.StorageBackend.onprem.name,
+                          url=url,
+                          service_name=bucketfs_params.name,
+                          bucket_name=bucketfs_params.bucket,
+                          path=bucketfs_params.path_in_bucket,
+                          verify=False)
+    conn_user = to_json_str(username=bucketfs_config.username)
+    conn_password = to_json_str(password=bucketfs_config.password)
+
     query = f"CREATE OR REPLACE  CONNECTION {bucketfs_connection_name} " \
-            f"TO '{address}' " \
-            f"USER '{bucketfs_config.username}' " \
-            f"IDENTIFIED BY '{bucketfs_config.password}'"
+            f"TO '{conn_to}' " \
+            f"USER '{conn_user}' " \
+            f"IDENTIFIED BY '{conn_password}'"
     pyexasol_connection.execute(query)
 
 
