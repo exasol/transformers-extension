@@ -31,7 +31,11 @@ def _create_bucketfs_connection(bucketfs_config: config.BucketFs,
                                 pyexasol_connection: ExaConnection) -> None:
     def to_json_str(**kwargs) -> str:
         def format_value(v):
-            return f'"{v}"' if isinstance(v, str) else v
+            if isinstance(v, str):
+                return f'"{v}"'
+            elif isinstance(v, bool):
+                return str(v).lower()
+            return v
 
         return "{" + ", ".join(f'"{k}":{format_value(v)}' for k, v in kwargs.items()
                                if v is not None) + "}"
