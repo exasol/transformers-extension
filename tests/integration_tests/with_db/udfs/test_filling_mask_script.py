@@ -38,6 +38,10 @@ def test_filling_mask_script(
     # execute sequence classification UDF
     result = pyexasol_connection.execute(query).fetchall()
 
+    # Debugging
+    if result[0][-1] is not None:
+        print("\n\n\n*******\n\n\n", result[0][-1], "\n\n\n*******\n\n\n")
+
     # assertions
     assert result[0][-1] is None
     added_columns = 4  # filled_text,score,rank,error_message
