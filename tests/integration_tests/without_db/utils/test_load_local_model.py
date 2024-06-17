@@ -1,4 +1,4 @@
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
 
@@ -6,8 +6,6 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
-from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
-    LocalFSMockBucketFSLocation
 from exasol_transformers_extension.utils.bucketfs_operations import (
     create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
 

@@ -37,6 +37,7 @@ def test_text_generation_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    assert result[0][-1] is None
     added_columns = 2  # generated_text,error_message
     removed_columns = 1  # device_id
     n_rows_result = n_rows

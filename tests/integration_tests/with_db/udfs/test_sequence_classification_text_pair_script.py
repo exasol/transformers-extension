@@ -32,6 +32,7 @@ def test_sequence_classification_text_pair_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    assert result[0][-1] is None
     added_columns = 3  # label,score,error_message
     removed_columns = 1  # device_id
     n_rows_result = n_rows * n_labels

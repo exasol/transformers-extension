@@ -33,6 +33,7 @@ def test_token_classification_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    assert result[0][-1] is None
     added_columns = 6  # start_pos,end_pos,word,entity,score,error_message
     removed_columns = 1  # device_id
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
