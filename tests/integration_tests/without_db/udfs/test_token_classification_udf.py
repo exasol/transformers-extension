@@ -6,7 +6,7 @@ from typing import Dict
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
-from tests.utils.mounted_bucketfs_connection import create_mounted_bucketfs_connection
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
     TokenClassificationUDF

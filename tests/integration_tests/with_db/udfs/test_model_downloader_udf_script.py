@@ -1,3 +1,5 @@
+from pathlib import PurePosixPath
+
 from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -41,8 +43,11 @@ def test_model_downloader_udf_script(
 
         # assertions
         for i in range(n_rows):
-            bucketfs_files.append(
-                child.name for child in (bucketfs_location / sub_dirs[i]).iterdir())
+            sub_dir_location = bucketfs_location / sub_dirs[i]
+            sub_dir_posix = PurePosixPath(str(sub_dir_location))
+            bucketfs_files.extend(str(PurePosixPath(str(node[0] / leaf)).relative_to(sub_dir_posix))
+                                  for node in sub_dir_location.walk()
+                                  for leaf in node[2] if not node[1])
 
         expected_result = [(str(model_path), str(model_path.with_suffix(".tar.gz")))
                            for index, model_path in enumerate(model_paths)]

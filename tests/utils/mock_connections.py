@@ -10,3 +10,7 @@ def create_mounted_bucketfs_connection(base_path: Path | PurePosixPath | str,
     address = (f'{{"backend":"{bfs.path.StorageBackend.mounted.name}", '
                f'"base_path":"{base_path}", "path":"{path_in_bucket}"}}')
     return Connection(address=address, user='{}', password='{}')
+
+
+def create_hf_token_connection(token: str) -> Connection:
+    return Connection(address='', user='', password=token)

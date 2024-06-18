@@ -1,32 +1,13 @@
 from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List
-from dataclasses import dataclass
-
-import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
-
-
-@dataclass
-class Connection:
-    address: str | None
-    user: str | None
-    password: str | None
-
-
-def _create_bucketfs_connection(base_path: Path | str,
-                                path_in_bucket: Path | str = '') -> Connection:
-    address = (f'{{"backend":"{bfs.path.StorageBackend.mounted.name}", '
-               f'"base_path":"{base_path}", "path":"{path_in_bucket}"}}')
-    return Connection(address=address, user='{}', password='{}')
-
-
-def _create_hf_token_connection(token: str) -> Connection:
-    return Connection(address='', user='', password=token)
+from tests.utils.mock_connections import (
+    create_mounted_bucketfs_connection, create_hf_token_connection)
 
 
 class ExaEnvironment:
@@ -88,9 +69,9 @@ class TestEnvironmentSetup:
         }
         self.model_path = bucketfs_operations.get_bucketfs_model_save_path(
             self.sub_dir, self.tiny_model)
-        self.bucketfs_connection = _create_bucketfs_connection(tmp_dir, f'bucket{id}')
+        self.bucketfs_connection = create_mounted_bucketfs_connection(tmp_dir, f'bucket{id}')
         self.token_connection = None if not self.token_conn_name \
-            else _create_hf_token_connection("valid")
+            else create_hf_token_connection("valid")
 
     def list_files_in_bucketfs(self):
         bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(

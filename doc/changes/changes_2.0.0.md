@@ -15,6 +15,6 @@ Code name:
 
 - #216: Simplified model path constructions, consolidating them into one function
 - #228: Now use python-extension-common for the language container deployment.
+- #236: Moved to the PathLike bucketfs interface.
 
 ### Security 
-

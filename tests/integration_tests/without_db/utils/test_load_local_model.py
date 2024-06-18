@@ -10,7 +10,7 @@ from exasol_transformers_extension.utils.bucketfs_operations import (
     create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
 
 from tests.utils.parameters import model_params
-from tests.utils.mounted_bucketfs_connection import create_mounted_bucketfs_connection
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 import tempfile
 

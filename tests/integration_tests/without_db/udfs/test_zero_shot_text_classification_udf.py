@@ -9,7 +9,7 @@ from tests.integration_tests.without_db.udfs.matcher import Result, NoErrorMessa
     ShapeMatcher, RankMonotonicMatcher, RankDTypeMatcher, ScoreMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, \
     ColumnsMatcher
 from tests.utils.parameters import model_params
-from tests.utils.mounted_bucketfs_connection import create_mounted_bucketfs_connection
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 
 class ExaEnvironment:
