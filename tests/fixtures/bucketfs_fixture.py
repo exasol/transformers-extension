@@ -1,5 +1,3 @@
-from urllib.parse import urlparse
-
 import pytest
 from pytest_itde.config import TestConfig
 import exasol.bucketfs as bfs
