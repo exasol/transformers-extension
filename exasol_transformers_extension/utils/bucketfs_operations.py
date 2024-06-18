@@ -36,8 +36,9 @@ def create_bucketfs_location(
 ) -> bfs.path.PathLike:
 
     # Infer where the database is - on-prem or SaaS.
-    if all((any((bucketfs_url, all((bucketfs_host, bucketfs_port)))), bucketfs_name,
-            bucket, bucketfs_user, bucketfs_password)):
+    is_on_prem = all((any((bucketfs_url, all((bucketfs_host, bucketfs_port)))), bucketfs_name,
+                      bucket, bucketfs_user, bucketfs_password))
+    if is_on_prem:
         if not bucketfs_url:
             bucketfs_url = (f"{'https' if bucketfs_use_https else 'http'}://"
                             f"{bucketfs_host}:{bucketfs_port}")
@@ -50,8 +51,9 @@ def create_bucketfs_location(
                                    verify=use_ssl_cert_validation,
                                    path=path_in_bucket)
 
-    elif all((saas_url, saas_account_id, saas_token,
-              any((saas_database_id, saas_database_name)))):
+    is_saas = all((saas_url, saas_account_id, saas_token,
+                   any((saas_database_id, saas_database_name))))
+    if is_saas:
         saas_database_id = (saas_database_id or
                             get_database_id(
                                 host=saas_url,
@@ -65,13 +67,13 @@ def create_bucketfs_location(
                                    database_id=saas_database_id,
                                    pat=saas_token,
                                    path=path_in_bucket)
-    else:
-        raise ValueError('Incomplete parameter list. '
-                         'Please either provide the parameters [bucketfs_host, '
-                         'bucketfs_port, bucketfs_name, bucket, bucketfs_user, '
-                         'bucketfs_password] for an On-Prem database or [saas_url, '
-                         'saas_account_id, saas_database_id or saas_database_name, '
-                         'saas_token] for a SaaS database.')
+
+    raise ValueError('Incomplete parameter list. '
+                     'Please either provide the parameters [bucketfs_host, '
+                     'bucketfs_port, bucketfs_name, bucket, bucketfs_user, '
+                     'bucketfs_password] for an On-Prem database or [saas_url, '
+                     'saas_account_id, saas_database_id or saas_database_name, '
+                     'saas_token] for a SaaS database.')
 
 
 def upload_model_files_to_bucketfs(

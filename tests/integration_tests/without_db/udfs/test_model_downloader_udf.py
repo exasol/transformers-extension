@@ -2,12 +2,15 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List
 
+from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
+from tests.utils.bucketfs_file_list import get_bucketfs_file_list
 
 
 class ExaEnvironment:
@@ -76,8 +79,7 @@ class TestEnvironmentSetup:
     def list_files_in_bucketfs(self):
         bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(
             self.bucketfs_connection)
-        return [str(node[0] / leaf) for node in bucketfs_location.walk()
-                for leaf in node[2] if not node[1]]
+        return get_bucketfs_file_list(bucketfs_location)
 
 
 def test_model_downloader_udf_implementation(tmp_path):
@@ -102,5 +104,5 @@ def test_model_downloader_udf_implementation(tmp_path):
     env2_bucketfs_files = env2.list_files_in_bucketfs()
     assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz")))
     assert ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz")))
-    assert any(bfs_file.endswith(ctx.get_emitted()[0][1]) for bfs_file in env1_bucketfs_files)
-    assert any(bfs_file.endswith(ctx.get_emitted()[1][1]) for bfs_file in env2_bucketfs_files)
+    assert ctx.get_emitted()[0][1] in env1_bucketfs_files
+    assert ctx.get_emitted()[1][1] in env2_bucketfs_files

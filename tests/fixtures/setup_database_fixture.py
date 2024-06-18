@@ -1,6 +1,7 @@
 from typing import Tuple
-from urllib.parse import urlparse
+import json
 
+from urllib.parse import urlparse
 import pytest
 from pyexasol import ExaConnection
 from pytest_itde import config
@@ -30,15 +31,8 @@ def _deploy_scripts(pyexasol_connection: ExaConnection, language_alias: str) -> 
 def _create_bucketfs_connection(bucketfs_config: config.BucketFs,
                                 pyexasol_connection: ExaConnection) -> None:
     def to_json_str(**kwargs) -> str:
-        def format_value(v):
-            if isinstance(v, str):
-                return f'"{v}"'
-            elif isinstance(v, bool):
-                return str(v).lower()
-            return v
-
-        return "{" + ", ".join(f'"{k}":{format_value(v)}' for k, v in kwargs.items()
-                               if v is not None) + "}"
+        filtered_kwargs = {k: v for k,v in kwargs.items() if v is not None}
+        return json.dumps(filtered_kwargs)
 
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
