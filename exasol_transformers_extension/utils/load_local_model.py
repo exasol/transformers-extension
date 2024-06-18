@@ -32,6 +32,8 @@ class LoadLocalModel:
         self._tokenizer_factory = tokenizer_factory
         self._current_model_specification = None
         self._bucketfs_model_cache_dir = None
+        self.last_model_loaded_successfully = None
+        self.model_load_error = None
 
     @property
     def current_model_specification(self):
@@ -60,6 +62,7 @@ class LoadLocalModel:
             tokenizer=loaded_tokenizer,
             device=self.device,
             framework="pt")
+        self.last_model_loaded_successfully = True
         return last_created_pipeline
 
     def set_bucketfs_model_cache_dir(

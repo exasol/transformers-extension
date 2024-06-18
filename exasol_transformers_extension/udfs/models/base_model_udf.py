@@ -191,10 +191,21 @@ class BaseModelUDF(ABC):
             bucketfs_location = \
                 bucketfs_operations.create_bucketfs_location_from_conn_object(
                     self.exa.get_connection(bucketfs_conn))
+
             self.model_loader.clear_device_memory()
             self.model_loader.set_current_model_specification(current_model_specification)
             self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
-            self.last_created_pipeline = self.model_loader.load_models()
+
+            try:
+                self.last_created_pipeline = self.model_loader.load_models()
+            except Exception as exc:
+                stack_trace = traceback.format_exc()
+                self.model_loader.last_model_loaded_successfully = False
+                self.model_loader.model_load_error = stack_trace
+                raise
+
+        elif not self.model_loader.last_model_loaded_successfully:
+            raise Exception("Model loading failed previously with :" + self.model_loader.model_load_error)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """

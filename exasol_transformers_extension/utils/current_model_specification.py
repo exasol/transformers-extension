@@ -11,7 +11,6 @@ class CurrentModelSpecification(ModelSpecification):
                  bucketfs_conn_name: str,
                  sub_dir: Path):
         ModelSpecification.__init__(self, model_name)
-        #self.model_specification = model_specification
         self.bucketfs_conn_name = bucketfs_conn_name
         self.sub_dir = sub_dir
 
