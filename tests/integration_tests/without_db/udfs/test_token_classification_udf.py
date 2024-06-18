@@ -11,6 +11,9 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
     TokenClassificationUDF
 
+# debugging
+from tests.fixtures.model_fixture import prepare_base_model_for_local_bucketfs
+
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -119,7 +122,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
 
     bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
     agg_strategies = [None, 'none', 'simple', 'max', 'average']
@@ -182,7 +185,7 @@ def test_token_classification_udf_on_error_handling(
 
     bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
     sample_data = [(

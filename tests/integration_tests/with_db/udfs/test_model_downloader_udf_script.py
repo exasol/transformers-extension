@@ -42,12 +42,15 @@ def test_model_downloader_udf_script(
         # assertions
         for i in range(n_rows):
             bucketfs_files.append(
-                bucketfs_location.list_files_in_bucketfs(str(sub_dirs[i])))
+                child.name for child in (bucketfs_location / sub_dirs[i]).iterdir())
 
-        assert result == [(str(model_path), str(model_path.with_suffix(".tar.gz")))
-                          for index, model_path in enumerate(model_paths)] \
-               and bucketfs_files == [[str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
-                                      for index, model_path in enumerate(model_paths)]
+        expected_result = [(str(model_path), str(model_path.with_suffix(".tar.gz")))
+                           for index, model_path in enumerate(model_paths)]
+        expected_bfs_files = [[str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
+                              for index, model_path in enumerate(model_paths)]
+
+        assert result == expected_result
+        assert bucketfs_files == expected_bfs_files
     finally:
         for sub_dir in sub_dirs:
             postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
