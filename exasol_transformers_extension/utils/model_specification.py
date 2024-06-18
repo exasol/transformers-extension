@@ -8,7 +8,8 @@ class ModelSpecification:
         # task_type, model_version
         self.model_name = model_name
 
-    def deconstruct(self):
+    def get_model_specs_for_download(self):
+        # returns all attributes necessary for downloading the model from Huggingface
         return self.model_name
 
     def __eq__(self, other):
