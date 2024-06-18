@@ -7,6 +7,12 @@ Code name:
 
 ### Features
 
+n/a
+
+### Bugs
+
+- #237: Fixed reference to python-extension-common
+
 ### Documentation
 
 - #210: Fixed typos in user guide
