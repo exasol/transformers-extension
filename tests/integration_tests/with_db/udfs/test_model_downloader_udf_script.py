@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
 
@@ -15,10 +18,11 @@ def test_model_downloader_udf_script(
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
-        model_paths.append(bucketfs_operations.get_bucketfs_model_save_path(
-            sub_dir, model_params.tiny_model))
+        current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_params.tiny_model_specs,
+                                                                                  bucketfs_conn_name, Path(sub_dir))
+        model_paths.append(current_model_specs.get_bucketfs_model_save_path())
         input_data.append((
-            model_params.tiny_model,
+            current_model_specs.model_name,
             sub_dir,
             bucketfs_conn_name,
             ''

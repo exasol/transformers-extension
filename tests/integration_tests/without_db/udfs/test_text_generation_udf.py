@@ -69,7 +69,7 @@ def test_text_generation_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model,
+        model_params.base_model_specs.model_name,
         text_data,
         max_length,
         return_full_text

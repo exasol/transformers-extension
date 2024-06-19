@@ -1,6 +1,7 @@
 import json
 import tempfile
 from pathlib import Path
+
 from tests.utils.parameters import model_params
 from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
@@ -11,7 +12,7 @@ def test_download_pretrained_model():
     """
 
     with tempfile.TemporaryDirectory() as download_tmpdir:
-        download_model_to_standard_local_save_path(model_params.tiny_model, download_tmpdir)
+        download_model_to_standard_local_save_path(model_params.tiny_model_specs, download_tmpdir)
         url_fields = []
         for file_ in Path(download_tmpdir).iterdir():
             if str(file_).endswith(".json"):
@@ -20,5 +21,5 @@ def test_download_pretrained_model():
                     url_fields.append(desc_file['url'])
 
         assert Path(download_tmpdir).is_dir() \
-               and all(model_params.tiny_model in url_ for url_ in url_fields)
+               and all(model_params.tiny_model_specs.model_name in url_ for url_ in url_fields)
 

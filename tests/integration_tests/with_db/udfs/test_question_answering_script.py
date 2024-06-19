@@ -14,7 +14,7 @@ def test_question_answering_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model,
+            model_params.base_model_specs.model_name,
             question,
             ' '.join((model_params.text_data, str(i))),
             top_k
