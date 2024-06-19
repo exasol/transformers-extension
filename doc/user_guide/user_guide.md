@@ -57,20 +57,40 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 - BucketFS Connection 
   - An Exasol connection object must be created with Exasol BucketFS connection 
   information and credentials. 
-  - An example connection object is created as follows: 
+  - A format of the connection object is as following: 
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
+'<BUCKETFS_ADDRESS>', '<BUCKETFS_USER>' and '<BUCKETFS_PASSWORD>' are JSON strings whose content depends on the storage backend.
+Below is the description of the parameters that need to be passed for On-Prem and SaaS databases. The distribution of
+the parameters among those three JSON strings do not matter.
 
-  - The `BUCKETFS_ADDRESS` looks like the following:
-  
-    **Note:** The `<PATH_IN_BUCKET>` can not be empty.
-  ```buildoutcfg
-    http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
+**On-Prem Database**
+* url: Url of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
+* username: BucketFS username (generally, different from the DB username).
+* password: BucketFS user password.
+* bucket_name: Name of the bucket in the BucketFS.
+* verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
+    TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
+* service_name: Name of the BucketFS service.
+
+**SaaS Database**
+* url: Optional rrl of the Exasol SaaS. Defaults to 'https://cloud.exasol.com'.
+* account_id: SaaS user account ID.
+* database_id: Database ID. 
+* pat: Personal Access Token.
+
+Here is an example of a connection object for an On-Prem database.
+  ```sql
+  CREATE OR REPLACE CONNECTION "MyBucketFSConnection"
+      TO '{"url":"https://my_cluster_11:6583", "bucket_name":"default", "service_name":"bfsdefault"}'
+      USER '{"username":"wxxxy"}'
+      IDENTIFIED BY '{"password":"wrx1t09x9e"}';
   ```
+
   - A valid token is required to download private models from the Huggingface hub and run prediction on them. 
   To avoid exposing such sensitive information, you can use Exasol Connection 
   objects. As seen in the example below, a token can be specified in the 
