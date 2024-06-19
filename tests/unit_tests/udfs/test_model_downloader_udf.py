@@ -1,16 +1,14 @@
-from pathlib import PosixPath
-from typing import Union, Any, Tuple, List
+from typing import Union, List
+from pathlib import Path
 from unittest.mock import create_autospec, MagicMock, call, Mock, patch
 
 import pytest
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
     CurrentModelSpecificationFactory
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -62,8 +60,6 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     for i in range(count):
         mock_cast(mock_model_downloaders[i].__enter__).side_effect = [mock_model_downloaders[i]]
     mock_cast(mock_model_downloader_factory.create).side_effect = mock_model_downloaders
-
-    mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
     mock_bucketfs_locations = [Mock() for i in range(count)]
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]

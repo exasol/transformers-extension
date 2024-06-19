@@ -1,5 +1,4 @@
 from __future__ import annotations
-import os
 from pathlib import Path
 
 import click
@@ -42,6 +41,9 @@ from exasol_transformers_extension.utils.current_model_specification import Curr
 @click.option('--path-in-bucket', type=str, required=True, default=None)
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 def main(
+        model_name: str,
+        sub_dir: str,
+        local_model_path: str,
         bucketfs_name: str,
         bucketfs_host: str,
         bucketfs_port: int,

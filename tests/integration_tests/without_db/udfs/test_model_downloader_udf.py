@@ -8,7 +8,6 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
@@ -61,7 +60,7 @@ class Context:
 class TestEnvironmentSetup:
     __test__ = False
 
-    def __init__(self, id: str, url_localfs: str, token_conn_name: str):
+    def __init__(self, id: str, tmp_dir: Path, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
         current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_params.tiny_model_specs,
@@ -78,6 +77,7 @@ class TestEnvironmentSetup:
         self.bucketfs_connection = create_mounted_bucketfs_connection(tmp_dir, f'bucket{id}')
         self.token_connection = None if not self.token_conn_name \
             else create_hf_token_connection("valid")
+
     def list_files_in_bucketfs(self):
         bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(
             self.bucketfs_connection)
@@ -97,9 +97,9 @@ def test_model_downloader_udf_implementation(tmp_path):
         env2.token_conn_name: env2.token_connection
     })
 
-        # run udf implementation
-        model_downloader = ModelDownloaderUDF(exa)
-        model_downloader.run(ctx)
+    # run udf implementation
+    model_downloader = ModelDownloaderUDF(exa)
+    model_downloader.run(ctx)
 
     # assertions
     env1_bucketfs_files = env1.list_files_in_bucketfs()

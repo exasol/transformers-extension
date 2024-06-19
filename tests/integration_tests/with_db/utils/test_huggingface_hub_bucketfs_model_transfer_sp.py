@@ -12,7 +12,6 @@ from exasol_transformers_extension.utils.bucketfs_operations import create_save_
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import ModelFactoryProtocol, \
     HuggingFaceHubBucketFSModelTransferSP
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils.mock_cast import mock_cast
 
 from tests.utils.parameters import model_params

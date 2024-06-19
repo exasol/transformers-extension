@@ -3,15 +3,13 @@ from typing import Tuple
 import transformers
 
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
+from exasol_transformers_extension.utils.current_model_specification import \
     CurrentModelSpecificationFactory
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
-# todo look at userguide line 361
 class ModelDownloaderUDF:
     """
     UDF which downloads a pretrained model from Huggingface using Huggingface's transformers API,
