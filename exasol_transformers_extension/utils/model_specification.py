@@ -9,7 +9,9 @@ class ModelSpecification:
         self.model_name = model_name
 
     def get_model_specs_for_download(self):
-        # returns all attributes necessary for downloading the model from Huggingface
+        """
+        returns all attributes necessary for downloading the model from Huggingface.
+        """
         return self.model_name
 
     def __eq__(self, other):
