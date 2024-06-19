@@ -21,6 +21,8 @@ n/a
 
 - #216: Simplified model path constructions, consolidating them into one function
 - #228: Now use python-extension-common for the language container deployment.
+- #232: Added Class which holds model information  
+- #217: Refactored PredictionUDFs and LoadLocalModel so that LoadLocalModel constructs the bucketfs model file path
 - #236: Moved to the PathLike bucketfs interface.
 
 ### Security 

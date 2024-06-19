@@ -1,9 +1,14 @@
 from __future__ import annotations
+import os
+from pathlib import Path
+
 import click
 
 from exasol.python_extension_common.deployment.language_container_deployer_cli import (
     SECRET_DISPLAY, SecretParams, secret_callback)
 from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.deployment import deployment_utils as utils
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 
 
 @click.command()
@@ -37,12 +42,9 @@ from exasol_transformers_extension.utils import bucketfs_operations
 @click.option('--path-in-bucket', type=str, required=True, default=None)
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 def main(
-        model_name: str,
-        sub_dir: str,
-        local_model_path: str,
-        bucketfs_name: str | None,
-        bucketfs_host: str | None,
-        bucketfs_port: int | None,
+        bucketfs_name: str,
+        bucketfs_host: str,
+        bucketfs_port: int,
         bucketfs_use_https: bool,
         bucketfs_user: str,
         bucketfs_password: str | None,
@@ -75,9 +77,10 @@ def main(
         path_in_bucket=path_in_bucket,
         use_ssl_cert_validation=use_ssl_cert_validation)
 
+    # create CurrentModelSpecification for model to be loaded
+    current_model_specs = CurrentModelSpecification(model_name, "", Path(sub_dir))
     # upload the downloaded model files into bucketfs
-    upload_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name)
-
+    upload_path = current_model_specs.get_bucketfs_model_save_path()
     bucketfs_operations.upload_model_files_to_bucketfs(
         local_model_path, upload_path, bucketfs_location)
 

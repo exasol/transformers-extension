@@ -2,8 +2,11 @@ import torch
 import transformers.pipelines
 from typing import Optional
 from pathlib import Path
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 class LoadLocalModel:
     """
@@ -27,17 +30,21 @@ class LoadLocalModel:
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._loaded_model_key = None
+        self._current_model_specification = None
+        self._bucketfs_model_cache_dir = None
+        self.last_model_loaded_successfully = None
+        self.model_load_error = None
 
     @property
-    def loaded_model_key(self):
-        """Get the current loaded_model_key."""
-        return self._loaded_model_key
+    def current_model_specification(self):
+        """Get the current current_model_specification."""
+        return self._current_model_specification
 
-    def load_models(self,
-                    model_path: Path,
-                    current_model_key: str
-                    ) -> transformers.pipelines.Pipeline:
+    def set_current_model_specification(self, current_model_specification: CurrentModelSpecification):
+        """Set the current_model_specification."""
+        self._current_model_specification = current_model_specification
+
+    def load_models(self) -> transformers.pipelines.Pipeline:
         """
         Loads a locally saved model and tokenizer from model_path.
         Returns new pipeline corresponding to the model and task.
@@ -46,8 +53,8 @@ class LoadLocalModel:
         :current_model_key:     key of the model to be loaded
         """
 
-        loaded_model = self._base_model_factory.from_pretrained(str(model_path))
-        loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(model_path))
+        loaded_model = self._base_model_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
+        loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
 
         last_created_pipeline = self.pipeline_factory(
             self.task_name,
@@ -55,8 +62,18 @@ class LoadLocalModel:
             tokenizer=loaded_tokenizer,
             device=self.device,
             framework="pt")
-        self._loaded_model_key = current_model_key
+        self.last_model_loaded_successfully = True
         return last_created_pipeline
+
+    def set_bucketfs_model_cache_dir(
+            self, bucketfs_location) -> None:
+        """
+        Set the cache directory in bucketfs of the specified model.
+        :param bucketfs_conn_name: Name of the bucketFS connection
+        """
+        model_path = self._current_model_specification.get_bucketfs_model_save_path()
+        self._bucketfs_model_cache_dir = bucketfs_operations.get_local_bucketfs_path(
+            bucketfs_location=bucketfs_location, model_path=str(model_path))
 
     def clear_device_memory(self):
         """

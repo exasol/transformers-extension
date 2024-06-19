@@ -78,7 +78,7 @@ def test_token_classification_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model,
+        model_params.base_model_specs.model_name,
         model_params.text_data * (i + 1),
         agg
     ) for i in range(n_rows)]
@@ -130,7 +130,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model,
+        model_params.base_model_specs.model_name,
         model_params.text_data * (i + 1),
         agg_strategy
     ) for i, agg_strategy in enumerate(agg_strategies)]

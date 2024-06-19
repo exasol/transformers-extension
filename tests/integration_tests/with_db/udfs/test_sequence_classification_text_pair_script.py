@@ -13,7 +13,7 @@ def test_sequence_classification_text_pair_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model,
+            model_params.base_model_specs.model_name,
             model_params.text_data,
             ' '.join((model_params.text_data, str(i)))))
 

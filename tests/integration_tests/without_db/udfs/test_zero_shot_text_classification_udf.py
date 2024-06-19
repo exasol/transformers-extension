@@ -66,7 +66,7 @@ def test_sequence_classification_single_text_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model,
+        model_params.base_model_specs.model_name,
         model_params.text_data + str(i),
         candidate_labels + str(i)
     ) for i in range(n_rows)]

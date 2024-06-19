@@ -8,6 +8,8 @@ import json
 import exasol.bucketfs as bfs
 from exasol.saas.client.api_access import get_database_id   # type: ignore
 
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
+
 
 def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> bfs.path.PathLike:
 
@@ -107,18 +109,12 @@ def get_local_bucketfs_path(
     return PurePosixPath(bucketfs_model_location.as_udf_path())
 
 
-def get_bucketfs_model_save_path(sub_dir: str, model_name: str) -> Path:
-    """
-    path model is saved at in the bucketfs
-    """
-    return Path(sub_dir, model_name)
-
-
-def create_save_pretrained_model_path(_tmpdir_name, _model_name) -> Path:
+def create_save_pretrained_model_path(_tmpdir_name, model_specification: ModelSpecification) -> Path:
     """
     path HuggingFaceHubBucketFSModelTransferSP saves the model at using save_pretrained,
     before it is uploaded to the bucketfs
     """
-    return Path(_tmpdir_name, "pretrained", _model_name)
+    model_specific_path_suffix = model_specification.get_model_specific_path_suffix()
+    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix) #todo move to modespecstring eventually?
 
 

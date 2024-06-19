@@ -10,8 +10,10 @@ import transformers
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
+from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 class BaseModelUDF(ABC):
@@ -46,7 +48,6 @@ class BaseModelUDF(ABC):
         self.tokenizer = tokenizer
         self.task_name = task_name
         self.device = None
-        self.cache_dir = None
         self.model_loader = None
         self.last_created_pipeline = None
         self.new_columns = []
@@ -162,7 +163,7 @@ class BaseModelUDF(ABC):
                 yield result_with_error_df
                 return
 
-            selections = (
+            selections = ( #todo replace with specification in future?
                     (batch_df['model_name'] == model_name) &
                     (batch_df['bucketfs_conn'] == bucketfs_conn) &
                     (batch_df['sub_dir'] == sub_dir)
@@ -184,31 +185,27 @@ class BaseModelUDF(ABC):
         model_name = model_df["model_name"].iloc[0]
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
+        current_model_specification = CurrentModelSpecification(model_name, bucketfs_conn, sub_dir)
 
-        current_model_key = (bucketfs_conn, sub_dir, model_name)
-        if self.model_loader.loaded_model_key != current_model_key:
-            self.set_cache_dir(model_name, bucketfs_conn, sub_dir)
+        if self.model_loader.current_model_specification != current_model_specification:
+            bucketfs_location = \
+                bucketfs_operations.create_bucketfs_location_from_conn_object(
+                    self.exa.get_connection(bucketfs_conn))
+
             self.model_loader.clear_device_memory()
-            self.last_created_pipeline = self.model_loader.load_models(self.cache_dir,
-                                                                       current_model_key)
+            self.model_loader.set_current_model_specification(current_model_specification)
+            self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
-    def set_cache_dir(
-            self, model_name: str, bucketfs_conn_name: str,
-            sub_dir: str) -> None:
-        """
-        Set the cache directory in bucketfs of the specified model.
+            try:
+                self.last_created_pipeline = self.model_loader.load_models()
+            except Exception as exc:
+                stack_trace = traceback.format_exc()
+                self.model_loader.last_model_loaded_successfully = False
+                self.model_loader.model_load_error = stack_trace
+                raise
 
-        :param model_name: Name of the model to be cached
-        :param bucketfs_conn_name: Name of the bucketFS connection
-        :param sub_dir: Directory where the model is cached
-        """
-        bucketfs_location = \
-            bucketfs_operations.create_bucketfs_location_from_conn_object(
-                self.exa.get_connection(bucketfs_conn_name))
-
-        model_path = bucketfs_operations.get_bucketfs_model_save_path(sub_dir, model_name) #todo get this path creation out?
-        self.cache_dir = bucketfs_operations.get_local_bucketfs_path(
-            bucketfs_location=bucketfs_location, model_path=str(model_path))
+        elif not self.model_loader.last_model_loaded_successfully:
+            raise Exception("Model loading failed previously with :" + self.model_loader.model_load_error)
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
         """
