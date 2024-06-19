@@ -2,9 +2,9 @@
 
 ## Run Time Dependencies
 
-| Dependency                    | Purpose                      | License            |
-|-------------------------------|------------------------------|--------------------|
-| [Python 3][python]            | Python version 3.8 and above | PSF                |
+| Dependency                    | Purpose                       | License            |
+|-------------------------------|-------------------------------|--------------------|
+| [Python 3][python]            | Python version 3.10 and above | PSF                |
 
 
 ## Test Dependencies
