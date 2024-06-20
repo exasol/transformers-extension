@@ -75,6 +75,21 @@ the parameters among those three JSON strings do not matter.
 * bucket_name: Name of the bucket in the BucketFS.
 * verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
     TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
+    To use a custom CA bundle, firstly it needs to be uploaded to the BucketFS. Below is an example curl command
+    that puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
+    ```commandline
+        curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
+    ```
+    For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm)
+    Please use the [Exasol REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database.
+    The CA bundle path should have the following format:
+    ```
+        /buckets/<service-name>/<bucket-name>/<path-to-the-file-or-directory>
+    ```
+    In the previous example, if the service name is ``bfs_service1``, the path should look like
+    ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``.
+    Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at
+    respectively ``upload`` and ``default``.
 * service_name: Name of the BucketFS service.
 
 **SaaS Database**
