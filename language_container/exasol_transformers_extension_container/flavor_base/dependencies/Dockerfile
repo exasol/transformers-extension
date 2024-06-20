@@ -1,4 +1,4 @@
-FROM exasol/script-language-container:template-Exasol-all-python-3.10-build_run_BUXX2FHQPEBXZNMS6RQRXPKRMKZREERZ5HIRVNXTV56DLNXXTGQA
+FROM exasol/script-language-container:template-Exasol-all-python-3.10-release_BFRSH344TDRPT7LK2FBOJK4KBIDW6A253FFPYEUYT4O2ERFMTCNA
 
 Run mkdir /project
 COPY dependencies/requirements.txt /project/requirements.txt

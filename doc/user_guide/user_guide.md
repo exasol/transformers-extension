@@ -64,9 +64,10 @@ models on the Exasol Cluster. More information on The BucketFS can be found
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
-'<BUCKETFS_ADDRESS>', '<BUCKETFS_USER>' and '<BUCKETFS_PASSWORD>' are JSON strings whose content depends on the storage backend.
+`<BUCKETFS_ADDRESS>`, `<BUCKETFS_USER>` and `<BUCKETFS_PASSWORD>` are JSON strings whose content depends on the storage backend.
 Below is the description of the parameters that need to be passed for On-Prem and SaaS databases. The distribution of
-the parameters among those three JSON strings do not matter.
+the parameters among those three JSON strings do not matter. However, we recommend to put secrets like passwords and or access tokens
+into the `<BUCKETFS_PASSWORD>` part.
 
 **On-Prem Database**
 * url: Url of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
@@ -80,13 +81,13 @@ the parameters among those three JSON strings do not matter.
     ```commandline
         curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
     ```
-    For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm)
-    Please use the [Exasol REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database.
+    For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
+    Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database.
     The CA bundle path should have the following format:
     ```
         /buckets/<service-name>/<bucket-name>/<path-to-the-file-or-directory>
     ```
-    In the previous example, if the service name is ``bfs_service1``, the path should look like
+    For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like
     ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``.
     Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at
     respectively ``upload`` and ``default``.
