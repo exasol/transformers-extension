@@ -1,7 +1,6 @@
 from pathlib import Path
 
-from exasol_bucketfs_utils_python.abstract_bucketfs_location import AbstractBucketFSLocation
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+import exasol.bucketfs as bfs
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
@@ -23,7 +22,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
     """
     def __init__(self,
-                 bucketfs_location: BucketFSLocation,
+                 bucketfs_location: bfs.path.PathLike,
                  model_specification: ModelSpecification,
                  bucketfs_model_path: Path,
                  token: str,
@@ -73,7 +72,7 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
     Class for creating a HuggingFaceHubBucketFSModelTransferSP object.
     """
     def create(self,
-               bucketfs_location: BucketFSLocation,
+               bucketfs_location: bfs.path.PathLike,
                model_specification: ModelSpecification,
                model_path: Path,
                token: str) -> HuggingFaceHubBucketFSModelTransferSP:

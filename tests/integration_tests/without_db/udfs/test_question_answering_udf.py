@@ -7,6 +7,7 @@ from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher
     ErrorMessageMatcher, ScoreMatcher, RankDTypeMatcher, NoErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
 from exasol_udf_mock_python.connection import Connection
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 from exasol_transformers_extension.udfs.models.question_answering_udf import \
     QuestionAnsweringUDF
 
@@ -63,7 +64,7 @@ def test_question_answering_udf(
 
     bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
     question = "Where is the Exasol?"

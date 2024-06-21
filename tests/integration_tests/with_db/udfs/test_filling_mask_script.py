@@ -1,11 +1,5 @@
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
-from tests.fixtures.model_fixture import upload_base_model_to_bucketfs
-from tests.fixtures.bucketfs_fixture import bucketfs_location
-from tests.fixtures.setup_database_fixture import setup_database
-from tests.fixtures.database_connection_fixture import pyexasol_connection
-from tests.fixtures.language_container_fixture import (language_alias,
-                                                       flavor_path, upload_slc, export_slc)
 
 
 def test_filling_mask_script(
@@ -39,6 +33,7 @@ def test_filling_mask_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    assert result[0][-1] is None
     added_columns = 4  # filled_text,score,rank,error_message
     removed_columns = 1  # device_id col
     n_rows_result = n_rows * top_k

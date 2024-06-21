@@ -9,6 +9,7 @@ from tests.integration_tests.without_db.udfs.matcher import Result, NoErrorMessa
     ShapeMatcher, RankMonotonicMatcher, RankDTypeMatcher, ScoreMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, \
     ColumnsMatcher
 from tests.utils.parameters import model_params
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 
 class ExaEnvironment:
@@ -56,7 +57,7 @@ def test_sequence_classification_single_text_udf(
 
     bucketfs_base_path = prepare_base_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     n_rows = 3
     batch_size = 2

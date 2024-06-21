@@ -36,6 +36,7 @@ def test_question_answering_script(
     result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
+    assert result[0][-1] is None
     added_columns = 4  # answer,score,rank,error_message
     removed_columns = 1  # device_id col
     n_rows_result = n_rows

@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Union
 from unittest.mock import create_autospec, MagicMock, call
 
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploader, \
     BucketFSModelUploaderFactory
@@ -18,7 +18,7 @@ from tests.utils.parameters import model_params
 
 class TestSetup:
     def __init__(self):
-        self.bucketfs_location_mock: Union[BucketFSLocation, MagicMock] = create_autospec(BucketFSLocation)
+        self.bucketfs_location_mock: Union[bfs.path.PathLike, MagicMock] = create_autospec(bfs.path.PathLike)
         self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
         self.temporary_directory_factory_mock: Union[TemporaryDirectoryFactory, MagicMock] = \
             create_autospec(TemporaryDirectoryFactory)

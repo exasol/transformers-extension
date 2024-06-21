@@ -1,8 +1,8 @@
-from typing import Union, Any, Tuple, List
-from unittest.mock import create_autospec, MagicMock, call, Mock
+from typing import Union
+from unittest.mock import create_autospec, MagicMock, Mock, patch
+import re
 
 import pytest
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
@@ -10,9 +10,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from tests.unit_tests.udfs.base_model_dummy_implementation import DummyImplementationUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from tests.utils.mock_cast import mock_cast
-from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
-import re
+from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 
 
 class regex_matcher:
@@ -59,10 +57,6 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
-    mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
-    mock_bucketfs_locations = [Mock()]
-    mock_cast(mock_bucketfs_factory.create_bucketfs_location).side_effect = mock_bucketfs_locations
-
     input_data = [
         (
             1,
@@ -96,7 +90,13 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      "test_subdir", "test_model")
 ])
-def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
+def test_model_downloader_all_parameters(mock_local_path, mock_create_loc, description,
+                                         bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+
+    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
+    mock_local_path.side_effect = fake_local_bucketfs_path
 
     res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
     # check if no errors
@@ -115,7 +115,14 @@ def test_model_downloader_all_parameters(description, bucketfs_conn_name, bucket
     ("model_name missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      "test_subdir", None)
 ])
-def test_model_downloader_missing_parameters(description, bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
+def test_model_downloader_missing_parameters(mock_local_path, mock_create_loc, description,
+                                             bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
+
+    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
+    mock_local_path.side_effect = fake_local_bucketfs_path
+
     res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
 
     error_field = res[0][-1]

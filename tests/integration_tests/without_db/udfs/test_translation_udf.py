@@ -11,6 +11,7 @@ from exasol_transformers_extension.udfs.models.translation_udf import \
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NoErrorMessageMatcher, \
     NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 
 class ExaEnvironment:
@@ -71,7 +72,7 @@ def test_translation_udf(
 
     bucketfs_base_path = prepare_seq2seq_model_in_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
     sample_data = [(

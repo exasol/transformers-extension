@@ -1,7 +1,7 @@
-from pathlib import Path, PurePosixPath
 from typing import Union
 from unittest.mock import MagicMock, create_autospec
 
+from pathlib import Path
 from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
 
@@ -10,16 +10,15 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
-from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
-    LocalFSMockBucketFSLocation
-from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
+from exasol_transformers_extension.utils.bucketfs_operations import (
+    create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
 
 from tests.utils.parameters import model_params
-
-import tempfile
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 #todo rename all modelspecification strings
+
+
 class TestSetup:
     def __init__(self):
 
@@ -48,49 +47,45 @@ def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location)
                                                token="")
     downloader.download_from_huggingface_hub(test_setup.base_model_factory)
     downloader.download_from_huggingface_hub(test_setup.tokenizer_factory)
-    bucketfs_model_path = downloader.upload_to_bucketfs()
-
-    with tarfile.open(mock_bucketfs_location.base_path / bucketfs_model_path) as tar:
-        tar.extractall(path=mock_bucketfs_location.base_path / bucketfs_model_path.parent)
-    return mock_bucketfs_location.base_path / bucketfs_model_path.parent
+    return downloader.upload_to_bucketfs()
 
 
-def test_load_local_model():
+def test_load_local_model(tmp_path):
     test_setup = TestSetup()
 
-    with tempfile.TemporaryDirectory() as dir:
-        dir_p = Path(dir)
-        model_specification = test_setup.model_specification
-        model_save_path = create_save_pretrained_model_path(dir_p, model_specification)
-        # download a model
-        model = AutoModel.from_pretrained(model_specification.model_name)
-        tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
-        model.save_pretrained(model_save_path)
-        tokenizer.save_pretrained(model_save_path)
+    model_specification = test_setup.model_specification
+    model_save_path = create_save_pretrained_model_path(tmp_path, model_specification)
+    # download a model
+    model = AutoModel.from_pretrained(model_specification.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
+    model.save_pretrained(model_save_path)
+    tokenizer.save_pretrained(model_save_path)
+
+    test_setup.loader.set_current_model_specification(current_model_specification=
+                                                      test_setup.mock_current_model_specification)
+    #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
+    test_setup.loader._bucketfs_model_cache_dir = model_save_path
+    test_setup.loader.load_models()
 
 
-        test_setup.loader.set_current_model_specification(current_model_specification=
-                                                          test_setup.mock_current_model_specification)
-        #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
-        test_setup.loader._bucketfs_model_cache_dir = model_save_path
-        test_setup.loader.load_models()
-
-
-def test_load_local_model_with_huggingface_model_transfer():
+def test_load_local_model_with_huggingface_model_transfer(tmp_path):
     test_setup = TestSetup()
 
-    with tempfile.TemporaryDirectory() as dire:
-        dir_p = Path(dire)
+    sub_dir = "bucket"
 
-        mock_bucketfs_location = LocalFSMockBucketFSLocation(
-            PurePosixPath(dir_p / "bucket"))
+    mock_bucketfs_location = create_bucketfs_location_from_conn_object(
+        create_mounted_bucketfs_connection(tmp_path, sub_dir))
 
-        # download a model
-        downloaded_model_path = download_model_with_huggingface_transfer(
-            test_setup, mock_bucketfs_location)
+    # download a model
+    downloaded_model_path = download_model_with_huggingface_transfer(
+        test_setup, mock_bucketfs_location)
 
-        test_setup.loader.set_current_model_specification(current_model_specification=
-                                                          test_setup.mock_current_model_specification)
-        #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
-        test_setup.loader._bucketfs_model_cache_dir = downloaded_model_path
-        test_setup.loader.load_models()
+    sub_dir_path = tmp_path / sub_dir
+    with tarfile.open(str(sub_dir_path / downloaded_model_path)) as tar:
+        tar.extractall(path=str(sub_dir_path))
+
+    test_setup.loader.set_current_model_specification(current_model_specification=
+                                                      test_setup.mock_current_model_specification)
+    #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
+    test_setup.loader._bucketfs_model_cache_dir = sub_dir_path
+    test_setup.loader.load_models()

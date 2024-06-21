@@ -24,6 +24,6 @@ n/a
 - #232: Added Class which holds model information  
 - #217: Refactored PredictionUDFs and LoadLocalModel so that LoadLocalModel constructs the bucketfs model file path
 - #230: Updated supported python version to >= Python 3.10
+- #236: Moved to the PathLike bucketfs interface.
 
 ### Security 
-

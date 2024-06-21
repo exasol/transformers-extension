@@ -1,64 +1,97 @@
-import subprocess
+from __future__ import annotations
 import tarfile
 import tempfile
 from pathlib import PurePosixPath, Path
 from typing import BinaryIO
 
-from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
-    AbstractBucketFSLocation
-from exasol_bucketfs_utils_python.bucket_config import BucketConfig
-from exasol_bucketfs_utils_python.bucketfs_config import BucketFSConfig
-from exasol_bucketfs_utils_python.bucketfs_connection_config import \
-    BucketFSConnectionConfig
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
-from exasol_bucketfs_utils_python.bucketfs_location import BucketFSLocation
-from tenacity import retry, wait_fixed, stop_after_attempt
+import json
+import exasol.bucketfs as bfs
+from exasol.saas.client.api_access import get_database_id   # type: ignore
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
-def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> BucketFSLocation:
-    return BucketFSFactory().create_bucketfs_location(
-        url=bfs_conn_obj.address,
-        user=bfs_conn_obj.user,
-        pwd=bfs_conn_obj.password)
+def create_bucketfs_location_from_conn_object(bfs_conn_obj) -> bfs.path.PathLike:
+
+    bfs_params = json.loads(bfs_conn_obj.address)
+    bfs_params.update(json.loads(bfs_conn_obj.user))
+    bfs_params.update(json.loads(bfs_conn_obj.password))
+    return bfs.path.build_path(**bfs_params)
 
 
 def create_bucketfs_location(
-        bucketfs_name: str, bucketfs_host: str, bucketfs_port: int,
-        bucketfs_use_https: bool, bucketfs_user: str, bucketfs_password: str,
-        bucket: str, path_in_bucket: str) -> BucketFSLocation:
-    _bucketfs_connection = BucketFSConnectionConfig(
-        host=bucketfs_host, port=bucketfs_port, user=bucketfs_user,
-        pwd=bucketfs_password, is_https=bucketfs_use_https)
-    _bucketfs_config = BucketFSConfig(
-        bucketfs_name=bucketfs_name, connection_config=_bucketfs_connection)
-    _bucket_config = BucketConfig(
-        bucket_name=bucket, bucketfs_config=_bucketfs_config)
-    return BucketFSLocation(
-        bucket_config=_bucket_config,
-        base_path=PurePosixPath(path_in_bucket))
+        path_in_bucket: str = '',
+        bucketfs_name: str | None = None,
+        bucketfs_url: str | None = None,
+        bucketfs_host: str | None = None,
+        bucketfs_port: int | None = None,
+        bucketfs_use_https: bool = True,
+        bucketfs_user: str | None = None,
+        bucketfs_password: str | None = None,
+        bucket: str | None = None,
+        saas_url: str | None = None,
+        saas_account_id: str | None = None,
+        saas_database_id: str | None = None,
+        saas_database_name: str | None = None,
+        saas_token: str | None = None,
+        use_ssl_cert_validation: bool = False
+) -> bfs.path.PathLike:
+
+    # Infer where the database is - on-prem or SaaS.
+    is_on_prem = all((any((bucketfs_url, all((bucketfs_host, bucketfs_port)))), bucketfs_name,
+                      bucket, bucketfs_user, bucketfs_password))
+    if is_on_prem:
+        if not bucketfs_url:
+            bucketfs_url = (f"{'https' if bucketfs_use_https else 'http'}://"
+                            f"{bucketfs_host}:{bucketfs_port}")
+        return bfs.path.build_path(backend=bfs.path.StorageBackend.onprem,
+                                   url=bucketfs_url,
+                                   username=bucketfs_user,
+                                   password=bucketfs_password,
+                                   service_name=bucketfs_name,
+                                   bucket_name=bucket,
+                                   verify=use_ssl_cert_validation,
+                                   path=path_in_bucket)
+
+    is_saas = all((saas_url, saas_account_id, saas_token,
+                   any((saas_database_id, saas_database_name))))
+    if is_saas:
+        saas_database_id = (saas_database_id or
+                            get_database_id(
+                                host=saas_url,
+                                account_id=saas_account_id,
+                                pat=saas_token,
+                                database_name=saas_database_name
+                            ))
+        return bfs.path.build_path(backend=bfs.path.StorageBackend.saas,
+                                   url=saas_url,
+                                   account_id=saas_account_id,
+                                   database_id=saas_database_id,
+                                   pat=saas_token,
+                                   path=path_in_bucket)
+
+    raise ValueError('Incomplete parameter list. '
+                     'Please either provide the parameters [bucketfs_host, '
+                     'bucketfs_port, bucketfs_name, bucket, bucketfs_user, '
+                     'bucketfs_password] for an On-Prem database or [saas_url, '
+                     'saas_account_id, saas_database_id or saas_database_name, '
+                     'saas_token] for a SaaS database.')
 
 
 def upload_model_files_to_bucketfs(
-        model_directory: str, bucketfs_model_path: Path,
-        bucketfs_location: AbstractBucketFSLocation) -> Path:
+        model_directory: str,
+        bucketfs_model_path: Path,
+        bucketfs_location: bfs.path.PathLike) -> Path:
     """
     uploads model in tmpdir_name to model_path in bucketfs_location
     """
     with tempfile.TemporaryFile() as fileobj:
         create_tar_of_directory(Path(model_directory), fileobj)
+        fileobj.seek(0)
         model_upload_tar_file_path = bucketfs_model_path.with_suffix(".tar.gz")
-        return upload_file_to_bucketfs_with_retry(bucketfs_location, fileobj, model_upload_tar_file_path)
-
-
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(10))
-def upload_file_to_bucketfs_with_retry(bucketfs_location: AbstractBucketFSLocation,
-                                       fileobj: BinaryIO,
-                                       file_path: Path) -> Path:
-    fileobj.seek(0)
-    bucketfs_location.upload_fileobj_to_bucketfs(fileobj, str(file_path))
-    return file_path
+        bucketfs_model_location = bucketfs_location / model_upload_tar_file_path
+        bucketfs_model_location.write(fileobj)
+        return model_upload_tar_file_path
 
 
 def create_tar_of_directory(path: Path, fileobj: BinaryIO):
@@ -68,12 +101,12 @@ def create_tar_of_directory(path: Path, fileobj: BinaryIO):
 
 
 def get_local_bucketfs_path(
-        bucketfs_location: BucketFSLocation, model_path: str) -> PurePosixPath:
+        bucketfs_location: bfs.path.PathLike, model_path: str) -> PurePosixPath:
     """
     returns path model defined by model_path can be found at in bucket defined by bucketfs_location
     """
-    bucketfs_local_path = bucketfs_location.generate_bucket_udf_path(model_path)
-    return bucketfs_local_path
+    bucketfs_model_location = bucketfs_location / model_path
+    return PurePosixPath(bucketfs_model_location.as_udf_path())
 
 
 def create_save_pretrained_model_path(_tmpdir_name, model_specification: ModelSpecification) -> Path:

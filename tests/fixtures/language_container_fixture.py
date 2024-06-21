@@ -1,17 +1,17 @@
 import contextlib
 import os
 import subprocess
-import textwrap
-import time
 from pathlib import Path
 
 import pytest
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import LanguageDefinition
 from pytest_itde.config import TestConfig
+from exasol.python_extension_common.deployment.language_container_validator import (
+    wait_language_container, temp_schema)
 
 from exasol_transformers_extension.deployment import language_container
+from exasol_transformers_extension.utils.bucketfs_operations import create_bucketfs_location
 from tests.utils.parameters import bucketfs_params
 from tests.utils.revert_language_settings import revert_language_settings
 
@@ -32,18 +32,23 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 @pytest.fixture(scope="session")
 def upload_slc(itde: TestConfig, flavor_path: Path, export_slc: ExportInfo) -> Path:
     cleanup_images()
-    container_bucketfs_location = \
-        BucketFSFactory().create_bucketfs_location(
-            url=f"{itde.bucketfs.url}/{bucketfs_params.bucket}/{bucketfs_params.path_in_bucket};{bucketfs_params.name}",
-            user=itde.bucketfs.username,
-            pwd=itde.bucketfs.password)
+    container_bucketfs_location = create_bucketfs_location(
+        path_in_bucket=bucketfs_params.path_in_bucket,
+        bucketfs_name=bucketfs_params.name,
+        bucketfs_url=itde.bucketfs.url,
+        bucketfs_user=itde.bucketfs.username,
+        bucketfs_password=itde.bucketfs.password,
+        bucket=bucketfs_params.bucket,
+        use_ssl_cert_validation=False)
     container_file_path = Path(export_slc.cache_file)
+    container_file_bfs_path = container_bucketfs_location / container_file_path.name
+
     with open(export_slc.cache_file, "rb") as fileobj:
-        container_bucketfs_location.upload_fileobj_to_bucketfs(
-            fileobj,
-            container_file_path.name)
+        container_file_bfs_path.write(fileobj)
+
     with set_language_alias(flavor_path, itde, container_file_path) as language_alias:
-        wait_for_language_container_ready(itde, language_alias)
+        with temp_schema(itde.ctrl_connection) as schema:
+            wait_language_container(itde.ctrl_connection, language_alias, schema)
     return container_file_path
 
 
@@ -78,34 +83,3 @@ def cleanup_images():
         # TODO: This code can be removed when we move to a CI with larger disks.
         rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
         subprocess.run(rm_docker_image, shell=True)
-
-
-def wait_for_language_container_ready(itde: TestConfig, language_alias: str):
-    schema = "upload_language_container"
-    udf_name = f"wait_{schema}"
-    itde.ctrl_connection.execute(f"CREATE SCHEMA If NOT EXISTS {schema}")
-    is_ready = False
-    wait_time_in_seconds = 180
-    for i in range(wait_time_in_seconds):
-        time.sleep(1)
-        is_ready = is_language_container_ready(itde, language_alias, schema, udf_name)
-        if is_ready:
-            break
-    if not is_ready:
-        raise Exception(f"Language container not ready after {wait_time_in_seconds}s.")
-
-
-def is_language_container_ready(itde: TestConfig, language_alias: str, schema: str, udf_name: str) -> bool:
-    try:
-        itde.ctrl_connection.execute(textwrap.dedent(f"""
-            CREATE OR REPLACE {language_alias} SCALAR SCRIPT {schema}.{udf_name}(i integer) 
-            RETURNS INTEGER AS
-                def run(ctx):
-                    return 1
-            / 
-            """))
-        itde.ctrl_connection.execute(f"SELECT {schema}.{udf_name}(1)")
-        return True
-    except Exception as e:
-        print(e)
-        return False

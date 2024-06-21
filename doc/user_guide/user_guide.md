@@ -57,20 +57,56 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 - BucketFS Connection 
   - An Exasol connection object must be created with Exasol BucketFS connection 
   information and credentials. 
-  - An example connection object is created as follows: 
+  - A format of the connection object is as following: 
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
+`<BUCKETFS_ADDRESS>`, `<BUCKETFS_USER>` and `<BUCKETFS_PASSWORD>` are JSON strings whose content depends on the storage backend.
+Below is the description of the parameters that need to be passed for On-Prem and SaaS databases. The distribution of
+the parameters among those three JSON strings do not matter. However, we recommend to put secrets like passwords and or access tokens
+into the `<BUCKETFS_PASSWORD>` part.
 
-  - The `BUCKETFS_ADDRESS` looks like the following:
-  
-    **Note:** The `<PATH_IN_BUCKET>` can not be empty.
-  ```buildoutcfg
-    http[s]://<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKET_NAME>/<PATH_IN_BUCKET>;<BUCKETFS_NAME>
+**On-Prem Database**
+* url: Url of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
+* username: BucketFS username (generally, different from the DB username).
+* password: BucketFS user password.
+* bucket_name: Name of the bucket in the BucketFS.
+* verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
+    TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
+    To use a custom CA bundle, firstly it needs to be uploaded to the BucketFS. Below is an example curl command
+    that puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
+    ```commandline
+        curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
+    ```
+    For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
+    Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database.
+    The CA bundle path should have the following format:
+    ```
+        /buckets/<service-name>/<bucket-name>/<path-to-the-file-or-directory>
+    ```
+    For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like
+    ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``.
+    Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at
+    respectively ``upload`` and ``default``.
+* service_name: Name of the BucketFS service.
+
+**SaaS Database**
+* url: Optional rrl of the Exasol SaaS. Defaults to 'https://cloud.exasol.com'.
+* account_id: SaaS user account ID.
+* database_id: Database ID. 
+* pat: Personal Access Token.
+
+Here is an example of a connection object for an On-Prem database.
+  ```sql
+  CREATE OR REPLACE CONNECTION "MyBucketFSConnection"
+      TO '{"url":"https://my_cluster_11:6583", "bucket_name":"default", "service_name":"bfsdefault"}'
+      USER '{"username":"wxxxy"}'
+      IDENTIFIED BY '{"password":"wrx1t09x9e"}';
   ```
+
   - A valid token is required to download private models from the Huggingface hub and run prediction on them. 
   To avoid exposing such sensitive information, you can use Exasol Connection 
   objects. As seen in the example below, a token can be specified in the 

@@ -3,16 +3,14 @@ import transformers
 from contextlib import contextmanager
 from pathlib import PurePosixPath, Path
 
+import exasol.bucketfs as bfs
+
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
     CurrentModelSpecificationFromModelSpecs
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_bucketfs_utils_python.localfs_mock_bucketfs_location import \
-    LocalFSMockBucketFSLocation
-from exasol_bucketfs_utils_python.abstract_bucketfs_location import \
-    AbstractBucketFSLocation
 
 
 def download_model_to_standard_local_save_path(model_specification: ModelSpecification,
@@ -38,7 +36,7 @@ def download_model_to_path(model_specification: ModelSpecification,
 
 
 @contextmanager
-def upload_model(bucketfs_location: AbstractBucketFSLocation,
+def upload_model(bucketfs_location: bfs.path.PathLike,
                  current_model_specification: CurrentModelSpecification,
                  model_dir: Path) -> Path:
     model_path = current_model_specification.get_bucketfs_model_save_path()
@@ -80,7 +78,7 @@ def prepare_seq2seq_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
 def upload_model_to_bucketfs(
         model_specification: ModelSpecification,
         download_tmpdir: Path,
-        bucketfs_location: AbstractBucketFSLocation) -> str:
+        bucketfs_location: bfs.path.PathLike) -> str:
     download_tmpdir = download_model_to_standard_local_save_path(model_specification, download_tmpdir)
     current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
                                                                               "",
@@ -90,12 +88,12 @@ def upload_model_to_bucketfs(
         try:
             yield model_path
         finally:
-            postprocessing.cleanup_buckets(bucketfs_location, str(model_path.parent))
+            postprocessing.cleanup_buckets(bucketfs_location, model_path)
 
 
 @pytest.fixture(scope="session")
 def upload_base_model_to_bucketfs(
-        bucketfs_location, tmpdir_factory) -> PurePosixPath:
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
     base_model_specs = model_params.base_model_specs
     tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(
@@ -105,7 +103,7 @@ def upload_base_model_to_bucketfs(
 
 @pytest.fixture(scope="session")
 def upload_seq2seq_model_to_bucketfs(
-        bucketfs_location, tmpdir_factory) -> PurePosixPath:
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
     model_specification = model_params.seq2seq_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specification.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(

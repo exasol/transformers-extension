@@ -1,16 +1,14 @@
-from pathlib import PosixPath, Path
-from typing import Union, Any, Tuple, List
-from unittest.mock import create_autospec, MagicMock, call, Mock
+from typing import Union, List
+from pathlib import Path
+from unittest.mock import create_autospec, MagicMock, call, Mock, patch
 
 import pytest
-from exasol_bucketfs_utils_python.bucketfs_factory import BucketFSFactory
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
     CurrentModelSpecificationFactory
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -48,7 +46,9 @@ def create_mock_metadata() -> MockMetaData:
     ('without token', '', None, False),
     ('with token', 'conn_name', Connection(address="", password="valid"), "valid"),
 ])
-def test_model_downloader(description, count, token_conn_name, token_conn_obj, expected_token):
+@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+def test_model_downloader(mock_create_loc, description, count, token_conn_name, token_conn_obj, expected_token):
+
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
@@ -60,10 +60,8 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
     for i in range(count):
         mock_cast(mock_model_downloaders[i].__enter__).side_effect = [mock_model_downloaders[i]]
     mock_cast(mock_model_downloader_factory.create).side_effect = mock_model_downloaders
-
-    mock_bucketfs_factory: Union[BucketFSFactory, MagicMock] = create_autospec(BucketFSFactory)
     mock_bucketfs_locations = [Mock() for i in range(count)]
-    mock_cast(mock_bucketfs_factory.create_bucketfs_location).side_effect = mock_bucketfs_locations
+    mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
@@ -100,7 +98,6 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
                              base_model_factory=mock_base_model_factory,
                              tokenizer_factory=mock_tokenizer_factory,
                              huggingface_hub_bucketfs_model_transfer=mock_model_downloader_factory,
-                             bucketfs_factory=mock_bucketfs_factory,
                              current_model_specification_factory=mock_current_model_specification_factory)
     udf.run(mock_ctx)
     assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
@@ -116,10 +113,9 @@ def test_model_downloader(description, count, token_conn_name, token_conn_obj, e
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls
-    assert mock_cast(mock_bucketfs_factory.create_bucketfs_location).mock_calls == AnyOrder([
-        call(url=f'file:///test{i}', user=None, pwd=None)
-        for i in range(count)
-    ])
+    called_loc_addresses = [arg_list[0][0].address for arg_list in mock_create_loc.call_args_list]
+    expected_loc_addresses = [f'file:///test{i}' for i in range(count)]
+    assert expected_loc_addresses == AnyOrder(called_loc_addresses)
     assert mock_ctx.output == [
         (
             f'{sub_directory_names[i]}/{base_model_names[i]}',
