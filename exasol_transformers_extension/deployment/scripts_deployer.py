@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+import logging
 import pyexasol
+from exasol.python_extension_common.connections.pyexasol_connection import open_pyexasol_connection
+
 from exasol_transformers_extension.deployment import constants, \
     deployment_utils as utils
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -45,18 +49,11 @@ class ScriptsDeployer:
         logger.debug(f"Scripts are deployed.")
 
     @classmethod
-    def run(cls, dsn: str, user: str, password: str,
-            schema: str, language_alias: str,
-            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
-        websocket_sslopt = utils.get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
+    def run(cls,
+            schema: str,
+            language_alias: str,
+            **kwargs):
 
-        pyexasol_conn = pyexasol.connect(
-            dsn=dsn,
-            user=user,
-            password=password,
-            encryption=True,
-            websocket_sslopt=websocket_sslopt
-        )
-
+        pyexasol_conn = open_pyexasol_connection(**kwargs)
         scripts_deployer = cls(language_alias, schema, pyexasol_conn)
         scripts_deployer.deploy_scripts()
