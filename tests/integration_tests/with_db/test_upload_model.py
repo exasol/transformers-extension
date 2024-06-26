@@ -51,6 +51,7 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
         "--model-name", model_name,
         "--sub-dir", sub_dir,
         "--local-model-path", str(download_path),
+        "--task_type", "filling_mask"
     ]
 
     try:

@@ -13,6 +13,7 @@ from exasol_transformers_extension.utils.current_model_specification import Curr
 @click.command()
 @click.option('--model-name', type=str, required=True,
               help="name of the model")
+@click.option('--task_type', type=str, required=True) #todo change docu (needed to know where to safe model)
 @click.option('--sub-dir', type=str, required=True,
               help="directory where the model is stored in the BucketFS")
 @click.option('--local-model-path', type=click.Path(exists=True, file_okay=True),
@@ -42,6 +43,7 @@ from exasol_transformers_extension.utils.current_model_specification import Curr
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 def main(
         model_name: str,
+        task_type: str,
         sub_dir: str,
         local_model_path: str,
         bucketfs_name: str,
@@ -80,7 +82,7 @@ def main(
         use_ssl_cert_validation=use_ssl_cert_validation)
 
     # create CurrentModelSpecification for model to be loaded
-    current_model_specs = CurrentModelSpecification(model_name, "", Path(sub_dir))
+    current_model_specs = CurrentModelSpecification(model_name, task_type, "", Path(sub_dir))
     # upload the downloaded model files into bucketfs
     upload_path = current_model_specs.get_bucketfs_model_save_path()
     bucketfs_operations.upload_model_files_to_bucketfs(

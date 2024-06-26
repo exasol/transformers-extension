@@ -58,6 +58,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
                                               use_auth_token=self._token)
         model.save_pretrained(self._save_pretrained_model_path)
 
+
     def upload_to_bucketfs(self) -> Path:
         """
         Upload the downloaded models into the BucketFS.

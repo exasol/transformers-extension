@@ -22,15 +22,13 @@ class ModelDownloaderUDF:
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """
-    def __init__(self,
+    def __init__(self, #todo change calls and docu!
                  exa,
-                 base_model_factory: ModelFactoryProtocol = transformers.AutoModel,
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =
                  HuggingFaceHubBucketFSModelTransferSPFactory(),
                  current_model_specification_factory: CurrentModelSpecificationFactory = CurrentModelSpecificationFactory()):
         self._exa = exa
-        self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
         self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer
         self._current_model_specification_factory = current_model_specification_factory
@@ -47,9 +45,11 @@ class ModelDownloaderUDF:
         bfs_conn = ctx.bfs_conn         # BucketFS connection
         token_conn = ctx.token_conn     # name of token connection
         current_model_specification = self._current_model_specification_factory.create(ctx.model_name,
-                                                                                                     bfs_conn,
-                                                                                                     ctx.sub_dir)   # specifies details of Huggingface model
+                                                                                       ctx.task_type,
+                                                                                       bfs_conn,
+                                                                                       ctx.sub_dir)   # specifies details of Huggingface model
 
+        model_factory = current_model_specification.get_model_factory()
         # extract token from the connection if token connection name is given.
         # note that, token is required for private models. It doesn't matter
         # whether there is a token for public model or even what the token is.
@@ -72,7 +72,7 @@ class ModelDownloaderUDF:
                 model_path=model_path,
                 token=token
         ) as downloader:
-            for model in [self._base_model_factory, self._tokenizer_factory]:
+            for model in [model_factory, self._tokenizer_factory]:
                 downloader.download_from_huggingface_hub(model)
             # upload model files to BucketFS
             model_tar_file_path = downloader.upload_to_bucketfs()

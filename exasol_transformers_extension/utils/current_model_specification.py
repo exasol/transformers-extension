@@ -8,9 +8,10 @@ class CurrentModelSpecification(ModelSpecification):
     """
     def __init__(self,
                  model_name: str,
+                 task_type: str,
                  bucketfs_conn_name: str,
                  sub_dir: Path):
-        ModelSpecification.__init__(self, model_name)
+        ModelSpecification.__init__(self, model_name, task_type)
         self.bucketfs_conn_name = bucketfs_conn_name
         self.sub_dir = sub_dir
 
@@ -26,17 +27,17 @@ class CurrentModelSpecification(ModelSpecification):
         """
         path model is saved at in the bucketfs
         """
-        model_name = self.get_model_specific_path_suffix()
-        return Path(self.sub_dir, model_name)
-
+        model_path_suffix = self.get_model_specific_path_suffix()
+        return Path(self.sub_dir, model_path_suffix)
 
 
 class CurrentModelSpecificationFactory:
     def create(self,
                model_name: str,
+               task_type: str,
                bucketfs_conn_name: str,
                sub_dir: Path):
-        return CurrentModelSpecification(model_name, bucketfs_conn_name, sub_dir)
+        return CurrentModelSpecification(model_name, task_type, bucketfs_conn_name, sub_dir)
 
 
 class CurrentModelSpecificationFromModelSpecs:
@@ -45,5 +46,6 @@ class CurrentModelSpecificationFromModelSpecs:
                   bucketfs_conn_name: str,
                   sub_dir: Path):
         return CurrentModelSpecification(model_name=model_specification.model_name,
+                                         task_type=model_specification.task_type,
                                          bucketfs_conn_name=bucketfs_conn_name,
                                          sub_dir=sub_dir)

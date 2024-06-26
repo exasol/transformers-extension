@@ -18,7 +18,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
-
+#todo add tests?
 def create_mock_metadata() -> MockMetaData:
     def udf_wrapper():
         pass
@@ -29,6 +29,7 @@ def create_mock_metadata() -> MockMetaData:
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("task_type", str, "VARCHAR(2000000)"),
             Column("bfs_conn", str, "VARCHAR(2000000)"),
             Column("token_conn", str, "VARCHAR(2000000)"),
         ],
@@ -49,7 +50,6 @@ def create_mock_metadata() -> MockMetaData:
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 def test_model_downloader(mock_create_loc, description, count, token_conn_name, token_conn_obj, expected_token):
 
-    mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
     mock_model_downloader_factory: Union[HuggingFaceHubBucketFSModelTransferSPFactory, MagicMock] = create_autospec(
@@ -64,12 +64,15 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
+    task_type = [f"task_type_{i}" for i in range(count)] #todo just use real type?
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
     mock_cmss = [create_autospec(CurrentModelSpecification,
                                  model_name=base_model_names[i],
-                                 sub_dir=Path(sub_directory_names[i])) for i in range(count)]
+                                 task_type=task_type[i],
+                                 sub_dir=Path(sub_directory_names[i]),
+                                 get_model_factory=CurrentModelSpecification.get_model_factory) for i in range(count)]
     for i in range(count):
         mock_cast(mock_cmss[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
     mock_current_model_specification_factory: Union[CurrentModelSpecificationFactory, MagicMock] = (
@@ -80,6 +83,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
         (
             base_model_names[i],
             sub_directory_names[i],
+            task_type[i],
             bfs_conn_name[i],
             token_conn_name
         )
@@ -95,7 +99,6 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
     udf = ModelDownloaderUDF(exa=mock_exa,
-                             base_model_factory=mock_base_model_factory,
                              tokenizer_factory=mock_tokenizer_factory,
                              huggingface_hub_bucketfs_model_transfer=mock_model_downloader_factory,
                              current_model_specification_factory=mock_current_model_specification_factory)
@@ -109,7 +112,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     ]
     for i in range(count):
         assert mock_cast(mock_model_downloaders[i].download_from_huggingface_hub).mock_calls == [
-            call(mock_base_model_factory),
+            call(mock_cmss[i].get_model_factory), #todo add to call transformers.taskthing #todo d dont match how mock corecctly?
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls

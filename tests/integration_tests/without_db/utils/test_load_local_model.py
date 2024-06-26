@@ -28,7 +28,7 @@ class TestSetup:
         self.token = "token"
         self.model_specification = model_params.tiny_model_specs
 
-        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)
+        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)#todo need change?
         test_pipeline = pipeline
         self.loader = LoadLocalModel(
                                     test_pipeline,
@@ -56,14 +56,13 @@ def test_load_local_model(tmp_path):
     model_specification = test_setup.model_specification
     model_save_path = create_save_pretrained_model_path(tmp_path, model_specification)
     # download a model
-    model = AutoModel.from_pretrained(model_specification.model_name)
+    model = AutoModel.from_pretrained(model_specification.model_name) #todo change?
     tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
     model.save_pretrained(model_save_path)
     tokenizer.save_pretrained(model_save_path)
 
     test_setup.loader.set_current_model_specification(current_model_specification=
                                                       test_setup.mock_current_model_specification)
-    #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
     test_setup.loader._bucketfs_model_cache_dir = model_save_path
     test_setup.loader.load_models()
 
@@ -80,7 +79,7 @@ def test_load_local_model_with_huggingface_model_transfer(tmp_path):
     downloaded_model_path = download_model_with_huggingface_transfer(
         test_setup, mock_bucketfs_location)
 
-    sub_dir_path = tmp_path / sub_dir
+    sub_dir_path = tmp_path / sub_dir #todo better name?
     with tarfile.open(str(sub_dir_path / downloaded_model_path)) as tar:
         tar.extractall(path=str(sub_dir_path))
 
