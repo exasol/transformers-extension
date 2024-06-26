@@ -15,9 +15,9 @@ class BucketFSParams:
 
 @dataclass(frozen=True)
 class ModelParams:
-    base_model_specs: ModelSpecification
-    seq2seq_model_specs: ModelSpecification
-    tiny_model_specs: ModelSpecification
+    base_model_specs: ModelSpecification #this is used for other tests, task_type should be set per test
+    seq2seq_model_specs: ModelSpecification #tis model is used for testing translation_udf
+    tiny_model_specs: ModelSpecification #this model is used for upload/download tests
     text_data: str
     sub_dir: str
 
@@ -29,8 +29,8 @@ bucketfs_params = BucketFSParams(
     path_in_bucket="container")
 
 model_params = ModelParams(
-    base_model_specs=ModelSpecification('bert-base-uncased'),
-    seq2seq_model_specs=ModelSpecification("t5-small"),
-    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny"),
+    base_model_specs=ModelSpecification('bert-base-uncased', "need to set this task_type"),
+    seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
+    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", ""),#todo make work with empty task_zype or use a real one?
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')

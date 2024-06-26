@@ -355,6 +355,7 @@ Once you have internet access, invoke the UDF like this:
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
     model_name,
+    task_name, #todo description
     sub_dir,
     bucketfs_conn,
     token_conn

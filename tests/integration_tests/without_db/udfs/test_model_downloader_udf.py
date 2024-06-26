@@ -13,7 +13,7 @@ from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
 from tests.utils.bucketfs_file_list import get_bucketfs_file_list
 
-
+# todo add tests for checking if model metadata is correct?
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
         self._connections = connections
@@ -37,6 +37,10 @@ class Context:
     @property
     def sub_dir(self):
         return self.ctx_data[self.index]['sub_dir']
+
+    @property
+    def task_type(self):
+        return self.ctx_data[self.index]['task_type']
 
     @property
     def bfs_conn(self):
@@ -68,6 +72,7 @@ class TestEnvironmentSetup:
         self.token_conn_name = token_conn_name
         self.ctx_data = {
             'tiny_model': current_model_specs.model_name,
+            'task_type': current_model_specs.task_type,
             'sub_dir': self.sub_dir,
             'bucketfs_conn_name': self.bucketfs_conn_name,
             'token_conn_name': self.token_conn_name

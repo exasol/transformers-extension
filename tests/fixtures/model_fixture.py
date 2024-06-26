@@ -19,9 +19,10 @@ def download_model_to_standard_local_save_path(model_specification: ModelSpecifi
     local_model_save_path = bucketfs_operations.create_save_pretrained_model_path(tmpdir_name,
                                                                                   model_specification)
     model_name = model_specification.model_name
-    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
-        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
-        model.save_pretrained(local_model_save_path)
+    model_factory = model_specification.get_model_factory()
+    for model in [model_factory, transformers.AutoTokenizer]:
+        downloaded_model = model.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
+        downloaded_model.save_pretrained(local_model_save_path)
     return local_model_save_path
 
 
@@ -61,8 +62,9 @@ def prepare_model_for_local_bucketfs(model_specification: ModelSpecification,
 
 
 @pytest.fixture(scope="session")
-def prepare_base_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+def prepare_base_model_for_local_bucketfs(tmpdir_factory, task_type: str) -> PurePosixPath: #todo change usages
     model_specification = model_params.base_model_specs
+    model_specification.task_type = task_type
     bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
     yield bucketfs_path
 
@@ -92,9 +94,10 @@ def upload_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_base_model_to_bucketfs(
-        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+def upload_base_model_to_bucketfs( #todo change usages
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory, task_type:str ) -> PurePosixPath:
     base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = task_type
     tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(
             base_model_specs, tmpdir, bucketfs_location) as path:
