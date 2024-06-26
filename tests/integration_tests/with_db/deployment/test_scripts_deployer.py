@@ -21,7 +21,7 @@ def test_scripts_deployer(
         db_pass=exasol_config.password,
         schema=schema_name,
         language_alias=language_alias,
-        ssl_cert_path="",
+        ssl_trusted_ca="",
         use_ssl_cert_validation=False
     )
     assert DBQueries.check_all_scripts_deployed(
@@ -52,7 +52,7 @@ def test_scripts_deployer_no_schema_creation_permission(
         db_pass=limited_user_password,
         schema=schema_name,
         language_alias=language_alias,
-        ssl_cert_path="",
+        ssl_trusted_ca="",
         use_ssl_cert_validation=False
     )
     assert DBQueries.check_all_scripts_deployed(
