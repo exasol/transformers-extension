@@ -7,7 +7,7 @@ Code name:
 
 ### Features
 
-n/a
+- #243: Added an option to deploy scripts in a SaaS database. 
 
 ### Bugs
 
