@@ -315,6 +315,9 @@ There are two ways to install the language container: (1) using a python script 
 
 Next you need to deploy all necessary scripts installed in the previous step to the specified 
 `SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
+
+**On-Prem Database**
+
 ```buildoutcfg
 python -m exasol_transformers_extension.deploy scripts \
     --dsn <DB_HOST:DB_PORT> \
@@ -322,6 +325,23 @@ python -m exasol_transformers_extension.deploy scripts \
     --db-pass <DB_PASSWORD> \
     --schema <SCHEMA> \
     --language-alias PYTHON3_TE
+```
+
+**SaaS Database**
+
+```buildoutcfg
+python -m exasol_transformers_extension.deploy scripts \
+    --saas-url <SAAS_SERVICE_URL> \
+    --saas-account-id <SAAS_ACCOUNT_ID> \
+    --saas-database-id <SAAS_DATABASE_ID> \
+    --saas-token <SAA_PERSONAL_ACCESS_TOKEN> \
+    --schema <SCHEMA> \
+    --language-alias PYTHON3_TE
+```
+
+If the SaaS database id is unknown, the database name can be used instead, i.e.
+```buildoutcfg
+    --saas-database-name <SAAS_DATABASE_NAME>
 ```
 
 ## Store Models in BucketFS

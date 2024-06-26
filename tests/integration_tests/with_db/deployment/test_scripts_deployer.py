@@ -17,8 +17,8 @@ def test_scripts_deployer(
 
     ScriptsDeployer.run(
         dsn=f"{exasol_config.host}:{exasol_config.port}",
-        user=exasol_config.username,
-        password=exasol_config.password,
+        db_user=exasol_config.username,
+        db_pass=exasol_config.password,
         schema=schema_name,
         language_alias=language_alias,
         ssl_cert_path="",
@@ -48,8 +48,8 @@ def test_scripts_deployer_no_schema_creation_permission(
 
     ScriptsDeployer.run(
         dsn=f"{exasol_config.host}:{exasol_config.port}",
-        user=limited_user,
-        password=limited_user_password,
+        db_user=limited_user,
+        db_pass=limited_user_password,
         schema=schema_name,
         language_alias=language_alias,
         ssl_cert_path="",
