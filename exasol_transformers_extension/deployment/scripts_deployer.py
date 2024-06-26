@@ -54,6 +54,6 @@ class ScriptsDeployer:
             language_alias: str,
             **kwargs):
 
-        pyexasol_conn = open_pyexasol_connection(schema=schema, **kwargs)
+        pyexasol_conn = open_pyexasol_connection(**kwargs)
         scripts_deployer = cls(language_alias, schema, pyexasol_conn)
         scripts_deployer.deploy_scripts()
