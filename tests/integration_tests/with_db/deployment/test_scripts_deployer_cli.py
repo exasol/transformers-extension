@@ -30,6 +30,8 @@ def test_scripts_deployer_cli(backend,
 
         runner = CliRunner()
         result = runner.invoke(deploy.main, args_list)
+        if result.exit_code != 0:
+            print(result.exception)
         assert result.exit_code == 0
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
