@@ -16,7 +16,8 @@ from tests.utils.parameters import get_arg_list
 
 def test_scripts_deployer_cli(backend,
                               deploy_params: dict[str, Any],
-                              pyexasol_connection: ExaConnection):
+                              pyexasol_connection: ExaConnection,
+                              upload_slc):
     with temp_schema(pyexasol_connection) as schema_name:
         pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
@@ -36,7 +37,8 @@ def test_scripts_deployer_cli(backend,
 
 def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      deploy_params: dict[str, Any],
-                                                     pyexasol_connection: ExaConnection):
+                                                     pyexasol_connection: ExaConnection,
+                                                     upload_slc):
     if backend != bfs.path.StorageBackend.onprem:
         pytest.skip("We run this test only in the Docker-DB")
     with temp_schema(pyexasol_connection) as schema_name:
