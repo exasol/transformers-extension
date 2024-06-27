@@ -1,7 +1,7 @@
+from __future__ import annotations
+from typing import Any
 from dataclasses import dataclass
-from pathlib import Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
@@ -34,3 +34,17 @@ model_params = ModelParams(
     tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny"),
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
+
+
+def get_deploy_arg_list(deploy_params: dict[str, Any], schema: str, language_alias: str) -> list[Any]:
+    """
+    Creates a CLI parameter list to be used when calling the script deployment
+    command (see deployment/deploy_cli.py).
+    """
+    args_list: list[Any] = ["scripts"]
+    for param_name, param_value in deploy_params.items():
+        args_list.append(f'--{param_name.replace("_", "-")}')
+        args_list.append(param_value)
+    args_list.extend(["--schema", schema])
+    args_list.extend(["--language-alias", language_alias])
+    return args_list

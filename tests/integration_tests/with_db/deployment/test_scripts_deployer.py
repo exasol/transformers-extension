@@ -1,38 +1,43 @@
+from __future__ import annotations
+from typing import Any
+
+import pytest
 from _pytest.fixtures import FixtureRequest
 from pyexasol import ExaConnection
 from pytest_itde import config
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.db_queries import DBQueries
+from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 
 def test_scripts_deployer(
-        language_alias: str,
+        deploy_params: dict[str, Any],
         pyexasol_connection: ExaConnection,
-        exasol_config: config.Exasol,
         request: FixtureRequest):
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
-    ScriptsDeployer.run(
-        dsn=f"{exasol_config.host}:{exasol_config.port}",
-        db_user=exasol_config.username,
-        db_pass=exasol_config.password,
-        schema=schema_name,
-        language_alias=language_alias,
-        ssl_trusted_ca="",
-        use_ssl_cert_validation=False
-    )
+    # We validate the server certificate in SaaS, but not in the Docker DB
+    cert_validation = "saas_url" in deploy_params
+    ScriptsDeployer.run(**deploy_params,
+                        schema=schema_name,
+                        language_alias=LANGUAGE_ALIAS,
+                        use_ssl_cert_validation=cert_validation)
     assert DBQueries.check_all_scripts_deployed(
         pyexasol_connection, schema_name)
 
 
 def test_scripts_deployer_no_schema_creation_permission(
-        language_alias: str,
+        backend,
         pyexasol_connection,
         exasol_config: config.Exasol,
         request: FixtureRequest):
+    if backend != bfs.path.StorageBackend.onprem:
+        pytest.skip("We run this test only in the Docker-DB")
+
     schema_name = request.node.name
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")
@@ -51,7 +56,7 @@ def test_scripts_deployer_no_schema_creation_permission(
         db_user=limited_user,
         db_pass=limited_user_password,
         schema=schema_name,
-        language_alias=language_alias,
+        language_alias=LANGUAGE_ALIAS,
         ssl_trusted_ca="",
         use_ssl_cert_validation=False
     )

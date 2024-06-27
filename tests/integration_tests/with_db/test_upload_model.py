@@ -1,15 +1,14 @@
 from pathlib import Path, PosixPath
 from urllib.parse import urlparse
 
+import pytest
 from click.testing import CliRunner
 from pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension import upload_model
-from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
+from exasol_transformers_extension.utils.current_model_specification import \
     CurrentModelSpecificationFromModelSpecs
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
@@ -27,8 +26,12 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
-def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
+def test_model_upload(backend,
+                      setup_database, pyexasol_connection, tmp_path: Path,
                       bucketfs_location: bfs.path.PathLike, bucketfs_config: config.BucketFs):
+    if backend != bfs.path.StorageBackend.onprem:
+        pytest.skip("Run this just in the Docker-DB for now")
+
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
     model_name = model_specification.model_name
