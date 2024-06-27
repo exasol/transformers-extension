@@ -43,7 +43,7 @@ def upload_slc(backend, bucketfs_location, pyexasol_connection, flavor_path: Pat
 
     # Let's see if this helps
     if backend == bfs.path.StorageBackend.saas:
-        time.sleep(120)
+        time.sleep(180)
 
 
 def cleanup_images():

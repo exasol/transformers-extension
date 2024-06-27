@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 
 def test_filling_mask_script(
-        setup_database, db_conn, upload_base_model_to_bucketfs):
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
     text_data = "Exasol is an analytics <mask> management software company."
     n_rows = 100
@@ -30,7 +30,7 @@ def test_filling_mask_script(
             f"model_name, text_data, top_k));"
 
     # execute sequence classification UDF
-    result = db_conn.execute(query).fetchall()
+    result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None

@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_single_text_script(
-        setup_database, db_conn, upload_base_model_to_bucketfs):
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
     n_labels = 2
     n_rows = 100
@@ -27,7 +27,7 @@ def test_sequence_classification_single_text_script(
             f"sub_dir, model_name, text_data));"
 
     # execute sequence classification UDF
-    result = db_conn.execute(query).fetchall()
+    result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None
