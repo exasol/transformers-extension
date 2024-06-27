@@ -44,10 +44,11 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
         pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
+        args_list.insert(0, "scripts")
         args_list.append("--use-ssl-cert-validation")
         expected_exception_message = '[SSL: CERTIFICATE_VERIFY_FAILED]'
         runner = CliRunner()
-        result = runner.invoke(deploy.main, args_list)
+        result = runner.invoke(deploy.main, args_list, catch_exceptions=False)
         assert result.exit_code == 1
         assert expected_exception_message in result.exception.args[0].message
         assert isinstance(result.exception, ExaConnectionFailedError)
