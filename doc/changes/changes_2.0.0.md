@@ -8,6 +8,7 @@ Code name:
 ### Features
 
 - #243: Added an option to deploy scripts in a SaaS database. 
+- #244: Made the integration tests running in SaaS, as well as in the Docker-DB.
 
 ### Bugs
 
