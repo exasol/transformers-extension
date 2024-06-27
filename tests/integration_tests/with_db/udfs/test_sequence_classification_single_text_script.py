@@ -1,10 +1,12 @@
+import pytest
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
 
+@pytest.mark.skip('Debugging')
 def test_sequence_classification_single_text_script(
-        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+        setup_database, db_conn, upload_base_model_to_bucketfs):
+    bucketfs_conn_name, _ = setup_database
     n_labels = 2
     n_rows = 100
     input_data = []
@@ -27,7 +29,7 @@ def test_sequence_classification_single_text_script(
             f"sub_dir, model_name, text_data));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None

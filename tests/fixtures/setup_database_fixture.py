@@ -2,6 +2,8 @@ from typing import Tuple
 import json
 
 from urllib.parse import urlparse
+
+import pyexasol
 import pytest
 from pyexasol import ExaConnection
 from pytest_itde import config
@@ -99,3 +101,12 @@ def setup_database(backend: bfs.path.StorageBackend,
     else:
         raise ValueError(f'No setup_database fixture for the backend {backend}')
     return bucketfs_connection_name, schema_name
+
+
+@pytest.fixture
+def db_conn(pyexasol_connection, setup_database) -> pyexasol.ExaConnection:
+    """
+    This is a per-test fixture that makes sure the default schema is reset.
+    """
+    pyexasol_connection.execute(f'OPEN SCHEMA "{schema_name}";')
+    return pyexasol_connection
