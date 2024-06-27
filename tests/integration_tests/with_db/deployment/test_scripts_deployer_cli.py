@@ -19,8 +19,6 @@ def test_scripts_deployer_cli(backend,
                               pyexasol_connection: ExaConnection,
                               upload_slc):
     with temp_schema(pyexasol_connection) as schema_name:
-        pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
-
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
         args_list.insert(0, "scripts")
         # We validate the server certificate in SaaS, but not in the Docker DB
@@ -29,14 +27,8 @@ def test_scripts_deployer_cli(backend,
         else:
             args_list.append("--no-use-ssl-cert-validation")
 
-        print('\n**** args_list ****\n')
-        print(args_list)
-        print('\n********\n')
-
         runner = CliRunner()
-        result = runner.invoke(deploy.main, args_list)
-        if result.exit_code != 0:
-            print(result.exception)
+        result = runner.invoke(deploy.main, args_list, catch_exceptions=False)
         assert result.exit_code == 0
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
