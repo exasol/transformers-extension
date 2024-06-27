@@ -1,4 +1,3 @@
-import pytest
 import tempfile
 from pathlib import Path
 from typing import Union
@@ -45,7 +44,6 @@ class TestSetup:
         self.bucketfs_model_uploader_mock.reset_mock()
 
 
-@pytest.mark.skip('Debugging')
 def test_download_with_model(bucketfs_location):
     with tempfile.TemporaryDirectory() as folder:
         test_setup = TestSetup(bucketfs_location)
@@ -56,7 +54,6 @@ def test_download_with_model(bucketfs_location):
         del test_setup.downloader
 
 
-@pytest.mark.skip('Debugging')
 def test_download_with_duplicate_model(bucketfs_location):
     with tempfile.TemporaryDirectory() as folder:
         test_setup = TestSetup(bucketfs_location)
