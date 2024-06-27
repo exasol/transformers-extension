@@ -26,7 +26,7 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 
 
 @pytest.fixture(scope="session")
-def upload_slc(bucketfs_location, pyexasol_connection, flavor_path: Path, export_slc: ExportInfo) -> Path:
+def upload_slc(bucketfs_location, pyexasol_connection, flavor_path: Path, export_slc: ExportInfo) -> None:
     cleanup_images()
 
     container_file_path = Path(export_slc.cache_file)
@@ -38,8 +38,6 @@ def upload_slc(bucketfs_location, pyexasol_connection, flavor_path: Path, export
     deployer.run(container_file=container_file_path,
                  bucket_file_path=CONTAINER_FILE_NAME,
                  wait_for_completion=True)
-
-    return container_file_path
 
 
 def cleanup_images():

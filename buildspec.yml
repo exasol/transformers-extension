@@ -5,6 +5,9 @@ env:
   secrets-manager:
     DOCKER_USER: "Dockerhub:User"
     DOCKER_PASSWORD: "Dockerhub:AccessToken"
+    SAAS_HOST: "ExasolSaaSDatabase:SAAS_HOST"
+    SAAS_ACCOUNT_ID: "ExasolSaaSDatabase:SAAS_ACCOUNT_ID"
+    SAAS_PAT: "ExasolSaaSDatabase:SAAS_PAT"
 
 phases:
   install:
