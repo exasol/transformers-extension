@@ -79,14 +79,15 @@ def _create_bucketfs_connection_saas(url: str,
     _create_bucketfs_connection(pyexasol_connection, conn_to, conn_user, conn_password)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def setup_database(backend: bfs.path.StorageBackend,
                    bucketfs_config: config.BucketFs,
                    saas_url: str,
                    saas_account_id: str,
                    saas_database_id: str,
                    saas_token: str,
-                   pyexasol_connection: ExaConnection) -> Tuple[str, str]:
+                   pyexasol_connection: ExaConnection,
+                   upload_slc) -> Tuple[str, str]:
 
     _create_schema(pyexasol_connection)
     _deploy_scripts(pyexasol_connection)
