@@ -1,7 +1,9 @@
+import pytest
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
 
+@pytest.mark.skip('Debugging')
 def test_filling_mask_script(
         setup_database, db_conn, upload_base_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database

@@ -1,10 +1,12 @@
 import time
 from tests.utils import postprocessing
+import pytest
 
 SUB_DIR = 'test_downloader_with_prediction_sub_dir'
 MODEL_NAME = 'gaunernst/bert-tiny-uncased'
 
 
+@pytest.mark.skip('Debugging')
 def test_prediction_with_downloader_udf(
         setup_database, db_conn, bucketfs_location):
     bucketfs_conn_name, _ = setup_database

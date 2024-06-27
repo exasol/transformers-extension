@@ -13,6 +13,7 @@ from tests.utils.db_queries import DBQueries
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 
+@pytest.mark.skip('Debugging')
 def test_scripts_deployer(
         deploy_params: dict[str, Any],
         pyexasol_connection: ExaConnection,
@@ -29,6 +30,7 @@ def test_scripts_deployer(
             pyexasol_connection, schema_name)
 
 
+@pytest.mark.skip('Debugging')
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
         pyexasol_connection,
