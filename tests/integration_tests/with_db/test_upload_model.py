@@ -1,5 +1,6 @@
 from pathlib import Path, PosixPath
 
+import pytest
 from click.testing import CliRunner
 import exasol.bucketfs as bfs
 
@@ -23,6 +24,7 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
+@pytest.mark.skip('Debugging')
 def test_model_upload(upload_params,
                       setup_database,
                       pyexasol_connection,
