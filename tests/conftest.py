@@ -5,4 +5,5 @@ pytest_plugins = [
     "tests.fixtures.setup_database_fixture",
     "tests.fixtures.bucketfs_fixture",
     "tests.fixtures.model_fixture"
+    "tests.fixtures.script_deployment_fixture"
 ]
