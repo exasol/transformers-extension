@@ -13,7 +13,6 @@ from tests.utils.db_queries import DBQueries
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 
-@pytest.mark.skip('Debugging')
 def test_scripts_deployer(
         deploy_params: dict[str, Any],
         pyexasol_connection: ExaConnection,
@@ -30,7 +29,6 @@ def test_scripts_deployer(
             pyexasol_connection, schema_name)
 
 
-@pytest.mark.skip('Debugging')
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
         pyexasol_connection,
@@ -38,7 +36,7 @@ def test_scripts_deployer_no_schema_creation_permission(
         upload_slc):
 
     if backend != bfs.path.StorageBackend.onprem:
-        pytest.skip("We run this test only in the Docker-DB")
+        pytest.skip("We run this test only with the Docker-DB")
 
     with temp_schema(pyexasol_connection) as schema_name:
         pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")

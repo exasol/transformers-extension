@@ -39,7 +39,7 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      pyexasol_connection: ExaConnection,
                                                      upload_slc):
     if backend != bfs.path.StorageBackend.onprem:
-        pytest.skip("We run this test only in the Docker-DB")
+        pytest.skip("We run this test only with the Docker-DB")
     with temp_schema(pyexasol_connection) as schema_name:
         pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
 
@@ -48,7 +48,7 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
         args_list.append("--use-ssl-cert-validation")
         expected_exception_message = '[SSL: CERTIFICATE_VERIFY_FAILED]'
         runner = CliRunner()
-        result = runner.invoke(deploy.main, args_list, catch_exceptions=False)
+        result = runner.invoke(deploy.main, args_list)
         assert result.exit_code == 1
         assert expected_exception_message in result.exception.args[0].message
         assert isinstance(result.exception, ExaConnectionFailedError)
