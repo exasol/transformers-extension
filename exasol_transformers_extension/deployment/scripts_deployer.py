@@ -18,6 +18,15 @@ class ScriptsDeployer:
         self._pyexasol_conn = pyexasol_conn
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
+    def _get_current_schema(self) -> str | None:
+        return self._pyexasol_conn.execute(f"SELECT_CURRENT_SCHEMA;").fetchval()
+
+    def _set_current_schema(self, schema: str | None):
+        if schema:
+            self._pyexasol_conn.execute(f"OPEN SCHEMA {schema};")
+        else:
+            self._pyexasol_conn.execute("CLOSE SCHEMA;")
+
     def _open_schema(self) -> None:
         try:
             self._pyexasol_conn.execute(
@@ -26,7 +35,7 @@ class ScriptsDeployer:
             logger.warning(
                 f"Could not create schema {self._schema}. Got error: {e}")
             logger.info(f"Trying to open schema {self._schema} instead.")
-        self._pyexasol_conn.execute(f"OPEN SCHEMA {self._schema}")
+        self._set_current_schema(self._schema)
         logger.info(f"Schema {self._schema} is opened.")
 
     def _deploy_udf_scripts(self) -> None:
@@ -44,9 +53,13 @@ class ScriptsDeployer:
                          f"{template_src} is executed.")
 
     def deploy_scripts(self) -> None:
-        self._open_schema()
-        self._deploy_udf_scripts()
-        logger.debug(f"Scripts are deployed.")
+        current_schema = self._get_current_schema()
+        try:
+            self._open_schema()
+            self._deploy_udf_scripts()
+            logger.debug(f"Scripts are deployed.")
+        finally:
+            self._set_current_schema(current_schema)
 
     @classmethod
     def run(cls,

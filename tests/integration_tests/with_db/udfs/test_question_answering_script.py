@@ -3,7 +3,7 @@ from tests.utils.parameters import model_params
 
 
 def test_question_answering_script(
-        setup_database, db_conn, upload_base_model_to_bucketfs):
+        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
     question = "Where is the Exasol?"
     n_rows = 100
@@ -33,7 +33,7 @@ def test_question_answering_script(
             f"model_name, question, context_text, top_k));"
 
     # execute sequence classification UDF
-    result = db_conn.execute(query).fetchall()
+    result = pyexasol_connection.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None
