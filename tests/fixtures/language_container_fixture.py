@@ -1,10 +1,12 @@
 import os
 import subprocess
 from pathlib import Path
+import time
 
 import pytest
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment import language_container
 
@@ -26,7 +28,7 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 
 
 @pytest.fixture(scope="session")
-def upload_slc(bucketfs_location, pyexasol_connection, flavor_path: Path, export_slc: ExportInfo) -> None:
+def upload_slc(backend, bucketfs_location, pyexasol_connection, flavor_path: Path, export_slc: ExportInfo) -> None:
     cleanup_images()
 
     container_file_path = Path(export_slc.cache_file)
@@ -38,6 +40,10 @@ def upload_slc(bucketfs_location, pyexasol_connection, flavor_path: Path, export
     deployer.run(container_file=container_file_path,
                  bucket_file_path=CONTAINER_FILE_NAME,
                  wait_for_completion=True)
+
+    # Let's see if this helps
+    if backend == bfs.path.StorageBackend.saas:
+        time.sleep(120)
 
 
 def cleanup_images():

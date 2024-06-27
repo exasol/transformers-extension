@@ -1,9 +1,6 @@
 from pathlib import Path, PosixPath
-from urllib.parse import urlparse
 
-import pytest
 from click.testing import CliRunner
-from pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension import upload_model
@@ -11,7 +8,7 @@ from exasol_transformers_extension.utils.current_model_specification import \
     CurrentModelSpecificationFromModelSpecs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
-from tests.utils.parameters import bucketfs_params, model_params
+from tests.utils.parameters import bucketfs_params, model_params, get_arg_list
 from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
 
@@ -26,11 +23,11 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
-def test_model_upload(backend,
-                      setup_database, pyexasol_connection, tmp_path: Path,
-                      bucketfs_location: bfs.path.PathLike, bucketfs_config: config.BucketFs):
-    if backend != bfs.path.StorageBackend.onprem:
-        pytest.skip("Run this just in the Docker-DB for now")
+def test_model_upload(upload_params,
+                      setup_database,
+                      pyexasol_connection,
+                      tmp_path: Path,
+                      bucketfs_location: bfs.path.PathLike):
 
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
@@ -39,22 +36,11 @@ def test_model_upload(backend,
     current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
                                                                               "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
-    parsed_url = urlparse(bucketfs_config.url)
-    host = parsed_url.netloc.split(":")[0]
-    port = parsed_url.netloc.split(":")[1]
-    args_list = [
-        "--bucketfs-name", bucketfs_params.name,
-        "--bucketfs-host", host,
-        "--bucketfs-port", port,
-        "--bucketfs-use-https", False,
-        "--bucketfs-user", bucketfs_config.username,
-        "--bucketfs-password", bucketfs_config.password,
-        "--bucket", bucketfs_params.bucket,
-        "--path-in-bucket", bucketfs_params.path_in_bucket,
-        "--model-name", model_name,
-        "--sub-dir", sub_dir,
-        "--local-model-path", str(download_path),
-    ]
+    args_list = get_arg_list(**upload_params,
+                             path_in_bucket=bucketfs_params.path_in_bucket,
+                             model_name=model_name,
+                             sub_dir=sub_dir,
+                             local_model_path=str(download_path))
 
     try:
         runner = CliRunner()
