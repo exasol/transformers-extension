@@ -13,9 +13,6 @@ from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.parameters import bucketfs_params
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
-# Debugging
-from tests.utils.db_queries import DBQueries
-
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"
@@ -104,10 +101,6 @@ def setup_database(backend: bfs.path.StorageBackend,
                                          pyexasol_connection)
     else:
         raise ValueError(f'No setup_database fixture for the backend {backend}')
-
-    # Debugging
-    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == SCHEMA_NAME
-    assert DBQueries.check_all_scripts_deployed(pyexasol_connection, SCHEMA_NAME)
 
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 

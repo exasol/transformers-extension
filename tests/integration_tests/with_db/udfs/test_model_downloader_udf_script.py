@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -10,7 +8,6 @@ from tests.utils.bucketfs_file_list import get_bucketfs_file_list
 SUB_DIR = "test_downloader_udf_sub_dir{id}"
 
 
-@pytest.mark.skip('Debugging')
 def test_model_downloader_udf_script(
         setup_database, db_conn, bucketfs_location):
     bucketfs_conn_name, _ = setup_database

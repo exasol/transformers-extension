@@ -1,16 +1,10 @@
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
-# Debugging
-from tests.utils.db_queries import DBQueries
 
 
 def test_filling_mask_script(
         setup_database, db_conn, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
-
-    # Debugging
-    assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == schema_name
-    assert DBQueries.check_all_scripts_deployed(db_conn, schema_name)
 
     text_data = "Exasol is an analytics <mask> management software company."
     n_rows = 100
