@@ -64,7 +64,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
-    task_type = [f"task_type_{i}" for i in range(count)] #todo just use real type?
+    task_type = [f"task_type_{i}" for i in range(count)]
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
@@ -112,7 +112,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     ]
     for i in range(count):
         assert mock_cast(mock_model_downloaders[i].download_from_huggingface_hub).mock_calls == [
-            call(mock_cmss[i].get_model_factory), #todo add to call transformers.taskthing #todo d dont match how mock corecctly?
+            call(mock_cmss[i].get_model_factory()), #todo add to call transformers.taskthing #todo d dont match how mock corecctly?
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls

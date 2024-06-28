@@ -22,7 +22,7 @@ class ModelDownloaderUDF:
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """
-    def __init__(self, #todo change calls and docu!
+    def __init__(self, #todo change docu!
                  exa,
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =

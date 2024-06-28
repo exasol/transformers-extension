@@ -1,9 +1,15 @@
+from tests.fixtures.model_fixture import upload_text_generation_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
+from tests.fixtures.model_fixture import *
+from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.language_container_fixture import *
+from tests.fixtures.bucketfs_fixture import *
+from tests.fixtures.database_connection_fixture import *
 
 def test_text_generation_script(
-        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
+        setup_database, pyexasol_connection, upload_text_generation_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics database management"
     n_rows = 100
@@ -43,3 +49,18 @@ def test_text_generation_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+
+    # lenient test for quality of results, will be replaced by deterministic test later
+    for i in range(5):
+        print(result[i])
+    results = [result[i][6] for i in range(len(result))]
+    acceptable_results = ["software", "system", "solution"]
+    number_accepted_results = 0
+
+    def contains(string,list):
+        return any(map(lambda x: x in string, list))
+
+    for i in range(len(results)):
+        if contains(results[i], acceptable_results):
+            number_accepted_results += 1
+    assert number_accepted_results > n_rows_result/2

@@ -17,7 +17,7 @@ from tests.utils.mock_cast import mock_cast
 class TestSetup:
     def __init__(self):
 
-        self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol) #todo change?
+        self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
         self.tokenizer_factory_mock: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
         self.token = "token"
         self.model_name = "model_name"

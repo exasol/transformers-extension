@@ -5,6 +5,7 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import \
     SequenceClassificationSingleTextUDF
+from tests.fixtures.model_fixture import prepare_sequence_classification_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, ColumnsMatcher, NoErrorMessageMatcher, \
     NewColumnsEmptyMatcher, ErrorMessageMatcher
 from tests.utils.parameters import model_params
@@ -49,12 +50,12 @@ class Context:
         ("on GPU", 0)
     ])
 def test_sequence_classification_single_text_udf(
-        description, device_id, prepare_base_model_for_local_bucketfs):
+        description, device_id, prepare_sequence_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_sequence_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -105,12 +106,12 @@ def test_sequence_classification_single_text_udf(
         ("on GPU", 0)
     ])
 def test_sequence_classification_single_text_udf_on_error_handling(
-        description, device_id, prepare_base_model_for_local_bucketfs):
+        description, device_id, prepare_sequence_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_sequence_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

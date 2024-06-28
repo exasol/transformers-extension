@@ -13,7 +13,6 @@ from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
 from tests.utils.bucketfs_file_list import get_bucketfs_file_list
 
-# todo add tests for checking if model metadata is correct?
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
         self._connections = connections

@@ -26,7 +26,7 @@ class LoadLocalModel:
                  tokenizer_factory: ModelFactoryProtocol
                  ):
         self.pipeline_factory = pipeline_factory
-        self.task_name = task_name #todo replace this?
+        self.task_name = task_name
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
@@ -53,7 +53,7 @@ class LoadLocalModel:
         :current_model_key:     key of the model to be loaded
         """
 
-        loaded_model = self._base_model_factory.from_pretrained(str(self._bucketfs_model_cache_dir)) #todo does this need change?
+        loaded_model = self._base_model_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
         loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
 
         last_created_pipeline = self.pipeline_factory(

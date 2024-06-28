@@ -16,8 +16,6 @@ from exasol_transformers_extension.utils.bucketfs_operations import (
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
-#todo rename all modelspecification strings
-
 
 class TestSetup:
     def __init__(self):
@@ -28,7 +26,7 @@ class TestSetup:
         self.token = "token"
         self.model_specification = model_params.tiny_model_specs
 
-        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)#todo need change?
+        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)
         test_pipeline = pipeline
         self.loader = LoadLocalModel(
                                     test_pipeline,
@@ -79,12 +77,12 @@ def test_load_local_model_with_huggingface_model_transfer(tmp_path):
     downloaded_model_path = download_model_with_huggingface_transfer(
         test_setup, mock_bucketfs_location)
 
-    sub_dir_path = tmp_path / sub_dir #todo better name?
+    sub_dir_path = tmp_path / sub_dir
     with tarfile.open(str(sub_dir_path / downloaded_model_path)) as tar:
         tar.extractall(path=str(sub_dir_path))
 
     test_setup.loader.set_current_model_specification(current_model_specification=
                                                       test_setup.mock_current_model_specification)
-    #test_setup.loader.set_bucketfs_model_cache_dir(bucketfs_location=) #todo macke a mock? or add test for set_bucketfs_model_cache_dir
+
     test_setup.loader._bucketfs_model_cache_dir = sub_dir_path
     test_setup.loader.load_models()

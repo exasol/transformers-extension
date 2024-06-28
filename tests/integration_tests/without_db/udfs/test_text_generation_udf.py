@@ -7,6 +7,7 @@ from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.udfs.models.text_generation_udf import \
     TextGenerationUDF
+from tests.fixtures.model_fixture import prepare_text_generation_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, ScoreMatcher, ColumnsMatcher, NoErrorMessageMatcher
 from tests.utils.parameters import model_params
@@ -53,12 +54,12 @@ class Context:
         ("on GPU with single input", 0, 1)
     ])
 def test_text_generation_udf(
-        description, device_id, n_rows, prepare_base_model_for_local_bucketfs):
+        description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -111,12 +112,12 @@ def test_text_generation_udf(
         ("on GPU with single input", 0, 1)
     ])
 def test_text_generation_udf_on_error_handlig(
-        description, device_id, n_rows, prepare_base_model_for_local_bucketfs):
+        description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

@@ -1,9 +1,10 @@
+from tests.fixtures.model_fixture import upload_sequence_classification_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_single_text_script(
-        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
+        setup_database, pyexasol_connection, upload_sequence_classification_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     n_labels = 2
     n_rows = 100
@@ -36,3 +37,19 @@ def test_sequence_classification_single_text_script(
     n_rows_result = n_rows * n_labels
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+
+    for i in range(10):
+        print(result[i])
+
+    # lenient test for quality of results, will be replaced by deterministic test later
+    results = [result[i][5] for i in range(len(result))]
+    acceptable_results = ["love", "miss", "want", "need"]
+    number_accepted_results = 0
+
+    def contains(string,list):
+        return any(map(lambda x: x in string, list))
+
+    for i in range(len(results)):
+        if contains(results[i], acceptable_results):
+            number_accepted_results += 1
+    assert number_accepted_results > n_rows_result/2

@@ -45,3 +45,17 @@ def test_translation_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+
+    print(result)
+    # lenient test for quality of results, will be replaced by deterministic test later
+    results = [result[i][7] for i in range(len(result))]
+    acceptable_results = ["Die Firma Exasol hat ihren Sitz in Nürnberg"]
+    number_accepted_results = 0
+
+    def contains(string,list):
+        return any(map(lambda x: x in string, list))
+
+    for i in range(len(results)):
+        if contains(results[i], acceptable_results):
+            number_accepted_results += 1
+    assert number_accepted_results > n_rows_result/2

@@ -29,8 +29,10 @@ bucketfs_params = BucketFSParams(
     path_in_bucket="container")
 
 model_params = ModelParams(
+    #todo add aditional models for test tasks
+    # https://huggingface.co/dslim/bert-base-NER for token classification
     base_model_specs=ModelSpecification('bert-base-uncased', "need to set this task_type"),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
-    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", ""),#todo make work with empty task_zype or use a real one?
+    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "task"),
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')

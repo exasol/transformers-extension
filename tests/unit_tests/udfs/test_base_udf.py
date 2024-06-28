@@ -36,7 +36,6 @@ def create_mock_metadata() -> MockMetaData:
             Column("device_id", int, "INTEGER"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("task_type", str, "VARCHAR(2000000)"),
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("token_conn", str, "VARCHAR(2000000)"),
         ],
@@ -54,7 +53,7 @@ def create_mock_metadata() -> MockMetaData:
     return meta
 
 
-def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, task_type):
+def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
@@ -63,7 +62,6 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, 
             1,
             model_name,
             sub_dir,
-            task_type,
             bucketfs_conn_name,
             ''
         )
@@ -88,46 +86,44 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, 
 
 
 @pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
-                         "sub_dir", "model_name", "task_type"], [
+                         "sub_dir", "model_name"], [
     ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", "test_model", "filling_mask")
+     "test_subdir", "test_model")
 ])
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_model_downloader_all_parameters(mock_local_path, mock_create_loc, description,
-                                         bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, task_type):
+                                         bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, task_type)
+    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
     # check if no errors
     assert res[0][-1] is None and len(res[0]) == len(mock_meta.output_columns)
 
 
 @pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
-                         "sub_dir", "model_name", "task_type"], [
-    ("all null", None, None, None, None, None),
+                         "sub_dir", "model_name"], [
+    ("all null", None, None, None, None),
     ("model name missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", None, "filling_mask"),
+     "test_subdir", None),
     ("bucketfs_conn missing", None, None,
-     "test_subdir", "test_model", "filling_mask"),
+     "test_subdir", "test_model"),
     ("sub_dir missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     None, "test_model", "filling_mask"),
+     None, "test_model"),
     ("model_name missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", None, "filling_mask"),
-    ("task_type missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", "test_model", None)
+     "test_subdir", None),
 ])
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_model_downloader_missing_parameters(mock_local_path, mock_create_loc, description,
-                                             bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, task_type):
+                                             bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name, task_type)
+    res, mock_meta = setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name)
 
     error_field = res[0][-1]
     expected_error = regex_matcher(f".*For each model model_name, bucketfs_conn and sub_dir need to be provided."

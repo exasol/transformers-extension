@@ -397,7 +397,7 @@ function to ensure proper loading by the Transformers Extension UDFs.
 You can download the model using python like this:
 
 ```python
-    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
+    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:#todo hange?
         # download the model and tokenizer from Hugging Face
         model = model_factory.from_pretrained(model_name)
         # save the downloaded model using the save_pretrained function

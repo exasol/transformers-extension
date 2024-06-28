@@ -60,11 +60,52 @@ def prepare_model_for_local_bucketfs(model_specification: ModelSpecification,
     download_model_to_path(current_model_specs, bucketfs_path_for_model)
     return tmpdir
 
+@pytest.fixture(scope="session")
+def prepare_filling_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "fill-mask"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
 
 @pytest.fixture(scope="session")
-def prepare_base_model_for_local_bucketfs(tmpdir_factory, task_type: str) -> PurePosixPath: #todo change usages
+def prepare_question_answering_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     model_specification = model_params.base_model_specs
-    model_specification.task_type = task_type
+    model_specification.task_type = "question-answering"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
+
+@pytest.fixture(scope="session")
+def prepare_sequence_classification_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "text-classification"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
+
+@pytest.fixture(scope="session")
+def prepare_text_generation_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "text-generation"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
+
+@pytest.fixture(scope="session")
+def prepare_token_classification_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "token-classification"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
+
+@pytest.fixture(scope="session")
+def prepare_translation_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "translation"
+    bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
+    yield bucketfs_path
+
+@pytest.fixture(scope="session")
+def prepare_zero_shot_classification_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+    model_specification = model_params.base_model_specs
+    model_specification.task_type = "zero-shot-classification"
     bucketfs_path = prepare_model_for_local_bucketfs(model_specification, tmpdir_factory)
     yield bucketfs_path
 
@@ -94,14 +135,76 @@ def upload_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_base_model_to_bucketfs( #todo change usages
-        bucketfs_location: bfs.path.PathLike, tmpdir_factory, task_type:str ) -> PurePosixPath:
+def upload_filling_mask_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
     base_model_specs = model_params.base_model_specs
-    base_model_specs.task_type = task_type
+    base_model_specs.task_type = "fill-mask"
     tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
     with upload_model_to_bucketfs(
             base_model_specs, tmpdir, bucketfs_location) as path:
         yield path
+
+
+@pytest.fixture(scope="session")
+def upload_question_answering_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "question-answering"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+@pytest.fixture(scope="session")
+def upload_sequence_classification_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "text-classification"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+@pytest.fixture(scope="session")
+def upload_text_generation_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "text-generation"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+@pytest.fixture(scope="session")
+def upload_token_classification_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "token-classification"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+@pytest.fixture(scope="session")
+def upload_translation_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "translation"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+@pytest.fixture(scope="session")
+def upload_zero_shot_classification_model_to_bucketfs(
+        bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
+    base_model_specs = model_params.base_model_specs
+    base_model_specs.task_type = "zero-shot-classification"
+    tmpdir = tmpdir_factory.mktemp(base_model_specs.get_model_specific_path_suffix())
+    with upload_model_to_bucketfs(
+            base_model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
 
 
 @pytest.fixture(scope="session")

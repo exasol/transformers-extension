@@ -183,10 +183,9 @@ class BaseModelUDF(ABC):
         bucketfs_connection, and sub_dir
         """
         model_name = model_df["model_name"].iloc[0]
-        task_type = model_df["task_type"].iloc[0]#todo do we need as input? or do self.task_name
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
-        current_model_specification = CurrentModelSpecification(model_name, task_type, bucketfs_conn, sub_dir)
+        current_model_specification = CurrentModelSpecification(model_name, self.task_name, bucketfs_conn, sub_dir)
 
         if self.model_loader.current_model_specification != current_model_specification:
             bucketfs_location = \

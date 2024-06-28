@@ -1,6 +1,6 @@
 import pyexasol
 import pytest
-from pytest_itde import config# todo not found where moved?
+from pytest_itde import config
 
 
 @pytest.fixture(scope="module")

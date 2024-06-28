@@ -11,6 +11,28 @@ class ModelSpecification:
         self.model_name = model_name
         self.task_type = task_type
 
+    def set_task_type_from_udf_name(self, text):
+        """
+        switches user input(matching udf name) to transformers task types
+        """
+        if text == "filling_mask":
+            task_type = "fill-mask"
+        elif text == "question_answering":
+            task_type = "question-answering"
+        elif text == "sequence_classification":
+            task_type = "text-classification"
+        elif text == "text_generation":
+            task_type = "text-generation"
+        elif text == "token_classification":
+            task_type = "token-classification"
+        elif text == "translation":
+            task_type = "translation"
+        elif text == "zero_shot_classification":
+            task_type = "zero-shot-classification"
+        else:
+            task_type = text
+        self.task_type = task_type
+
     def get_model_specs_for_download(self):#todo change usages?
         """
         returns all attributes necessary for downloading the model from Huggingface.
@@ -32,11 +54,20 @@ class ModelSpecification:
         sets model factory depending on the task_type of the specific model
         """
         model_task_type = self.task_type
-        if model_task_type == "filling_mask":
-            model_factory = transformers.AutoModelForMaskedLM #todo make switchcase?
+        if model_task_type == "fill-mask":
+            model_factory = transformers.AutoModelForMaskedLM
         elif model_task_type == "translation":
-            model_factory = transformers.T5Model #todo correct?
+            model_factory = transformers.T5Model #todo correct? se to seq in translation udf
+        elif model_task_type == "zero-shot-classification":
+            model_factory = transformers.AutoModelForSequenceClassification
+        elif model_task_type == "text-classification":
+            model_factory = transformers.AutoModelForSequenceClassification
+        elif model_task_type == "question-answering":
+            model_factory = transformers.AutoModelForQuestionAnswering
+        #elif model_task_type == "text-generation":
+        #    model_factory = transformers.AutoModelFor
+        elif model_task_type == "token-classification":
+            model_factory = transformers.AutoModelForTokenClassification
         else:
             model_factory = transformers.AutoModel
         return model_factory
-
