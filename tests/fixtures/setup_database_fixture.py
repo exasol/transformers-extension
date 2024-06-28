@@ -21,6 +21,7 @@ schema_name = "TEST_INTEGRATION"
 def _create_schema(pyexasol_connection: ExaConnection) -> None:
     pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
     pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name};")
+    pyexasol_connection.execute(f"OPEN SCHEMA {schema_name};")
 
 
 def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
