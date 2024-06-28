@@ -3,6 +3,7 @@ import json
 
 from urllib.parse import urlparse
 
+import pyexasol
 import pytest
 from pyexasol import ExaConnection
 from pytest_itde import config
@@ -109,3 +110,13 @@ def setup_database(backend: bfs.path.StorageBackend,
     assert DBQueries.check_all_scripts_deployed(pyexasol_connection, SCHEMA_NAME)
 
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
+
+
+@pytest.fixture
+def db_conn(setup_database, pyexasol_connection) -> pyexasol.ExaConnection:
+    """
+    Per-test fixture that returns the same session-wide pyexasol connection,
+    but makes sure the default schema is open.
+    """
+    pyexasol_connection.execute(f"OPEN SCHEMA {SCHEMA_NAME};")
+    return pyexasol_connection

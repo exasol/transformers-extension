@@ -26,7 +26,7 @@ class DBQueries:
             f"""
                 SELECT SCRIPT_NAME 
                 FROM EXA_ALL_SCRIPTS
-                WHERE SCRIPT_SCHEMA = '{schema_name.upper()}'
+                WHERE SCRIPT_SCHEMA = '{schema_name}'
             """
         all_scripts = db_conn.execute(query_all_scripts).fetchall()
         return list(map(lambda x: x[0], all_scripts))

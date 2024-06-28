@@ -25,12 +25,12 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
 
 def test_model_upload(upload_params,
                       setup_database,
-                      pyexasol_connection,
+                      db_conn,
                       tmp_path: Path,
                       bucketfs_location: bfs.path.PathLike):
 
     # Debugging
-    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]
+    assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]
 
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
@@ -77,10 +77,10 @@ def test_model_upload(upload_params,
                 f"model_name, text_data, top_k));"
 
         # execute sequence classification UDF
-        result = pyexasol_connection.execute(query).fetchall()
+        result = db_conn.execute(query).fetchall()
         assert len(result) == 1 and result[0][-1] is None
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
 
         # Debugging
-        assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]
+        assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]

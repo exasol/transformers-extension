@@ -5,7 +5,7 @@ import pytest
 
 @pytest.mark.skip('Debugging')
 def test_translation_script(
-        setup_database, pyexasol_connection, upload_seq2seq_model_to_bucketfs):
+        setup_database, db_conn, upload_seq2seq_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
     n_rows = 100
     src_lang = "English"
@@ -38,7 +38,7 @@ def test_translation_script(
             f"text_data, source_language, target_language, max_length));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None
