@@ -18,6 +18,9 @@ def test_scripts_deployer(
         pyexasol_connection: ExaConnection,
         upload_slc):
 
+    # Debugging
+    current_schema = pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
+
     with temp_schema(pyexasol_connection) as schema_name:
         # We validate the server certificate in SaaS, but not in the Docker DB
         cert_validation = "saas_url" in deploy_params
@@ -28,6 +31,9 @@ def test_scripts_deployer(
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
 
+    # Debugging
+    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == current_schema
+
 
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
@@ -37,6 +43,9 @@ def test_scripts_deployer_no_schema_creation_permission(
 
     if backend != bfs.path.StorageBackend.onprem:
         pytest.skip("We run this test only with the Docker-DB")
+
+    # Debugging
+    current_schema = pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
 
     with temp_schema(pyexasol_connection) as schema_name:
         limited_user = "limited_user"
@@ -59,3 +68,6 @@ def test_scripts_deployer_no_schema_creation_permission(
         )
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
+
+    # Debugging
+    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == current_schema
