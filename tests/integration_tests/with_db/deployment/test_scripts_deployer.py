@@ -39,8 +39,6 @@ def test_scripts_deployer_no_schema_creation_permission(
         pytest.skip("We run this test only with the Docker-DB")
 
     with temp_schema(pyexasol_connection) as schema_name:
-        pyexasol_connection.execute(f"CREATE SCHEMA {schema_name};")
-
         limited_user = "limited_user"
         limited_user_password = "limited_user"
         pyexasol_connection.execute(f"DROP USER IF EXISTS {limited_user};")
