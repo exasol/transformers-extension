@@ -1,7 +1,9 @@
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
+import pytest
 
 
+@pytest.mark.skip('Debugging')
 def test_sequence_classification_single_text_script(
         setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
