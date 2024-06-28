@@ -19,7 +19,7 @@ class ScriptsDeployer:
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
     def _get_current_schema(self) -> str | None:
-        return self._pyexasol_conn.execute(f"SELECT_CURRENT_SCHEMA;").fetchval()
+        return self._pyexasol_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
 
     def _set_current_schema(self, schema: str | None):
         if schema:
