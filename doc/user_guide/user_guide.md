@@ -51,13 +51,14 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
-- Exasol DB
-  - The Exasol cluster must already be running with version 7.1 or later.
-  - DB connection information and credentials are needed.
-- BucketFS Connection 
-  - An Exasol connection object must be created with Exasol BucketFS connection 
-  information and credentials. 
-  - A format of the connection object is as following: 
+
+### Exasol DB
+- The Exasol cluster must already be running with version 7.1 or later.
+- DB connection information and credentials are needed.
+
+### BucketFS Connection 
+An Exasol connection object must be created with Exasol BucketFS connection  information and credentials. 
+A format of the connection object is as following: 
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
@@ -70,11 +71,11 @@ the parameters among those three JSON strings do not matter. However, we recomme
 into the `<BUCKETFS_PASSWORD>` part.
 
 **On-Prem Database**
-* url: Url of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
-* username: BucketFS username (generally, different from the DB username).
-* password: BucketFS user password.
-* bucket_name: Name of the bucket in the BucketFS.
-* verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
+- url: Url of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
+- username: BucketFS username (generally, different from the DB username).
+- password: BucketFS user password.
+- bucket_name: Name of the bucket in the BucketFS.
+- verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
     TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
     To use a custom CA bundle, firstly it needs to be uploaded to the BucketFS. Below is an example curl command
     that puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
@@ -91,13 +92,13 @@ into the `<BUCKETFS_PASSWORD>` part.
     ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``.
     Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at
     respectively ``upload`` and ``default``.
-* service_name: Name of the BucketFS service.
+- service_name: Name of the BucketFS service.
 
 **SaaS Database**
-* url: Optional rrl of the Exasol SaaS. Defaults to 'https://cloud.exasol.com'.
-* account_id: SaaS user account ID.
-* database_id: Database ID. 
-* pat: Personal Access Token.
+- url: Optional rrl of the Exasol SaaS. Defaults to 'https://cloud.exasol.com'.
+- account_id: SaaS user account ID.
+- database_id: Database ID. 
+- pat: Personal Access Token.
 
 Here is an example of a connection object for an On-Prem database.
   ```sql
@@ -106,17 +107,18 @@ Here is an example of a connection object for an On-Prem database.
       USER '{"username":"wxxxy"}'
       IDENTIFIED BY '{"password":"wrx1t09x9e"}';
   ```
+For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
 
-  - A valid token is required to download private models from the Huggingface hub and run prediction on them. 
-  To avoid exposing such sensitive information, you can use Exasol Connection 
-  objects. As seen in the example below, a token can be specified in the 
-  password part of the Exasol connection object:
+### Huggingface token
+A valid token is required to download private models from the Huggingface hub and run prediction on them. 
+To avoid exposing such sensitive information, you can use Exasol Connection 
+objects. As seen in the example below, a token can be specified in the 
+password part of the Exasol connection object:
   ```sql
   CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
       TO ''
       IDENTIFIED BY '<PRIVATE_MODEL_TOKEN>'
   ```
-  - For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
   
 ## Setup
 ### Install the Python Package
@@ -164,22 +166,35 @@ poetry build
 
 ### The Pre-built Language Container
 
-This extension requires the installation of a Language Container in the Exasol Database for this 
-extension to run. The Script Language Container is a way to install the required programming language and 
+This extension requires the installation of a Language Container in the Exasol Database. 
+The Script Language Container is a way to install the required programming language and 
 necessary dependencies in the Exasol Database so the UDF scripts can be executed.
-It can be installed in two ways: Quick and Customized installations:
 
-#### Quick Installation
 The Language Container is downloaded and installed by executing the 
-deployment script below and specifying the desired version. Make sure the version matches with your installed version of the 
-Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
+deployment script below. Please make sure that the version of the Language Container matches the
+installed version of the Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
 
   ```buildoutcfg
   python -m exasol_transformers_extension.deploy language-container <options>
   ```
 
+Please refer to the [Language Container Deployment Guide] for details about this command. 
+
+### Scripts Deployment
+
+Next you need to deploy all necessary scripts installed in the previous step to the specified 
+`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
+
+  ```buildoutcfg
+  python -m exasol_transformers_extension.deploy scripts <options>
+  ```
+
+The choice of options is primarily determined by the storage backend being used - On-Prem or SaaS.
+
+### List of options
+
 The table below lists all available options. It shows which ones are applicable for On-Prem and for SaaS backends.
-Unless stated otherwise in the comments column, an option is required for either or both backends.
+Unless stated otherwise in the comments column, the option is required for either or both backends.
 
 Some of the values, like passwords, are considered confidential. For security reasons, it is recommended to store
 those values in environment variables instead of providing them in the command line. The names of the environment
@@ -188,161 +203,34 @@ an option in the command line, without providing its value. In this case, the co
 interactively. For long values, such as the SaaS account id, it is more practical to copy/paste the value from
 another source.
 
+| Option name                  | On-Prem | SaaS | Comment                                         |
+|:-----------------------------|:-------:|:----:|:------------------------------------------------|
+| dsn                          |   [x]   |      | i.e. <db_host:db_port>                          |
+| db-user                      |   [x]   |      |                                                 |
+| db-pass                      |   [x]   |      | Env. [DB_PASSWORD]                              |
+| saas-url                     |         | [x]  | Optional, Env. [SAAS_HOST]                      |
+| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                          |
+| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]               |
+| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown |
+| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                               |
+| language-alias               |   [x]   | [x]  | Optional                                        |
+| schema                       |   [x]   | [x]  | DB schema to deploy the scripts in              |
+| ssl-cert-path                |   [x]   | [x]  | Optional                                        |
+| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True              |
+| ssl-client-cert-path         |   [x]   |      | Optional                                        |
+| ssl-client-private-key       |   [x]   |      | Optional                                        |
 
-| Option name                  | On-Prem | SaaS | Comment                                           |
-|:-----------------------------|:-------:|:----:|:--------------------------------------------------|
-| dsn                          |   [x]   |      | i.e. <db_host:db_port>                            |
-| db-user                      |   [x]   |      |                                                   | 
-| db-pass                      |   [x]   |      | Env. [DB_PASSWORD]                                |
-| bucketfs-name                |   [x]   |      |                                                   |
-| bucketfs-host                |   [x]   |      |                                                   |
-| bucketfs-port                |   [x]   |      |                                                   |
-| bucketfs-user                |   [x]   |      |                                                   |
-| bucketfs-password            |   [x]   |      | Env. [BUCKETFS_PASSWORD]                          |
-| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to False               |
-| bucket                       |   [x]   |      |                                                   |
-| saas-url                     |         | [x]  |                                                   |
-| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                            |
-| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]                 |
-| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown   |
-| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                                 |
-| path-in-bucket               |   [x]   | [x]  |                                                   |
-| language-alias               |   [x]   | [x]  |                                                   | 
-| version                      |   [x]   | [x]  | Optional, provide for downloading SLC from GitHub |
-| container-file               |   [x]   | [x]  | Optional, provide for uploading SLC file          |
-| ssl-cert-path                |   [x]   | [x]  | Optional                                          |
-| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True                |
-| ssl-client-cert-path         |   [x]   |      | Optional                                          |
-| ssl-client-private-key       |   [x]   |      | Optional                                          |
-| [no_]upload-container        |   [x]   | [x]  | Optional boolean, defaults to True                |
-| [no_]alter-system            |   [x]   | [x]  | Optional boolean, defaults to True                |
-| [dis]allow-override          |   [x]   | [x]  | Optional boolean, defaults to False               |
-| [no_]wait_for_completion     |   [x]   | [x]  | Optional boolean, defaults to True                |
+### TLS/SSL options
 
-In this scenario, we provide the `version` and do not provide the `container-file`. 
-
-The `--ssl-cert-path` is needed if your certificate is not in the OS truststore. 
-This certificate is basically a list of trusted CA. It is needed for the server's certificate 
+The `--ssl-cert-path` is needed if the TLS/SSL certificate is not in the OS truststore.
+Generally speaking, this certificate is a list of trusted CA. It is needed for the server's certificate
 validation by the client.
-The option `--use-ssl-cert-validation`is the default, you can disable it with `--no-use-ssl-cert-validation`.
-Use caution if you want to turn certificate validation off as it potentially lowers the security of your 
+The option `--use-ssl-cert-validation`is the default, it can be disabled with `--no-use-ssl-cert-validation`.
+One needs to exercise caution when turning the certificate validation off as it potentially lowers the security of the
 Database connection.
-This is not to be confused with the client's own certificate. It may or may not include the private key. 
-In the latter case the key may be provided as a separate file.
-
-By default, the above command will upload and activate the language container at the System level.
-The latter requires you to have the System Privileges, as it will attempt to change DB system settings.
-If such privileges cannot be granted the activation can be skipped by using the `--no-alter-system` option.
-The command will then print two possible language activation SQL queries, which look like the following:
-```sql
-ALTER SESSION SET SCRIPT_LANGUAGES=...
-ALTER SYSTEM SET SCRIPT_LANGUAGES=...
-```
-These queries represent two alternative ways of activating a language container. The first one activates the
-container at the [Session level](https://docs.exasol.com/db/latest/sql/alter_session.htm). It doesn't require 
-System Privileges. However, it must be run every time a new session starts. The second one activates the container
-at the [System level](https://docs.exasol.com/db/latest/sql/alter_system.htm). It  needs to be run just once,
-but it does require System Privileges. It may be executed by a database administrator. Please note, that changes 
-made at the system level only become effective in new sessions, as described
-[here](https://docs.exasol.com/db/latest/sql/alter_system.htm#microcontent1).
-
-It is also possible to activate the language without repeatedly uploading the container. If the container
-has already been uploaded one can use the `--no-upload-container` option to skip this step.
-
-By default, overriding language activation is not permitted. If a language with the same alias has already 
-been activated the command will result in an error. To override the activation, you can use the
-`--allow-override` option.
-
-#### Customized Installation
-In this installation, you can install the desired or customized language 
-container. In the following steps,  it is explained how to install the 
-language container file released in GitHub Releases section.
-
-
-##### Download Language Container
-   - Please download the language container archive (*.tar.gz) from the Releases section. 
-(see [the latest release](https://github.com/exasol/transformers-extension/releases/latest)).
-
-##### Install Language Container
-There are two ways to install the language container: (1) using a python script and (2) manual installation. See the next paragraphs for details.
-
-  1. *Installation with Python Script*
-
-     To install the language container, it is necessary to load the container 
-     into the BucketFS and activate it in the database. Run the language container deployment command described above,
-     but use the `container-file` option instead of the `version`. With this option, provide a path to the language
-     container file in the local file system.
-
-  2. *Manual Installation*
-
-     In the manual installation, the pre-built container should be
-     uploaded into BucketFS first. In order to do that, you can use 
-     either a [http(s) client](https://docs.exasol.com/database_concepts/bucketfs/file_access.htm) 
-     or the [bucketfs-client](https://github.com/exasol/bucketfs-client). 
-     The following command uploads a given container into BucketFS through 
-     the http(s) client curl (this can be done only with the On-Prem backend): 
-
-      ```shell
-      curl -vX PUT -T \ 
-          "<CONTAINER_FILE>" 
-          "http://w:<BUCKETFS_WRITE_PASSWORD>@<BUCKETFS_HOST>:<BUCKETFS_PORT>/<BUCKETFS_NAME>/<PATH_IN_BUCKET><CONTAINER_FILE>"
-      ```
-
-      Please note that specifying the password on command line will make your shell 
-      record the password in the history. To avoid leaking your password please 
-      consider to set an environment variable. The following examples sets
-      environment variable `BUCKETFS_WRITE_PASSWORD`:
-      
-      ```shell 
-        read -sp "password: " BUCKETFS_WRITE_PASSWORD
-      ```
-
-      The uploaded container should be secondly activated through adjusting 
-      the session parameter `SCRIPT_LANGUAGES`. As it was mentioned before, the activation can be scoped
-      either session-wide (`ALTER SESSION`) or system-wide (`ALTER SYSTEM`). 
-      The following example query activates the container session-wide:
-
-      ```sql
-      ALTER SESSION SET SCRIPT_LANGUAGES=\
-      PYTHON3_TE=localzmq+protobuf:///<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/?\
-              lang=_python_#buckets/<BUCKETFS_NAME>/<BUCKET_NAME>/<PATH_IN_BUCKET><CONTAINER_NAME>/\
-              exaudf/exaudfclient_py3
-      ```
-      For more details please check [Adding New Packages to Existing Script Languages](https://docs.exasol.com/database_concepts/udf_scripts/adding_new_packages_script_languages.htm).
-
-
-### Deployment
-
-Next you need to deploy all necessary scripts installed in the previous step to the specified 
-`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
-
-**On-Prem Database**
-
-```buildoutcfg
-python -m exasol_transformers_extension.deploy scripts \
-    --dsn <DB_HOST:DB_PORT> \
-    --db-user <DB_USER> \
-    --db-pass <DB_PASSWORD> \
-    --schema <SCHEMA> \
-    --language-alias PYTHON3_TE
-```
-
-**SaaS Database**
-
-```buildoutcfg
-python -m exasol_transformers_extension.deploy scripts \
-    --saas-url <SAAS_SERVICE_URL> \
-    --saas-account-id <SAAS_ACCOUNT_ID> \
-    --saas-database-id <SAAS_DATABASE_ID> \
-    --saas-token <SAA_PERSONAL_ACCESS_TOKEN> \
-    --schema <SCHEMA> \
-    --language-alias PYTHON3_TE
-```
-
-If the SaaS database id is unknown, the database name can be used instead, i.e.
-```buildoutcfg
-    --saas-database-name <SAAS_DATABASE_NAME>
-```
+The "server" certificate described above shall not be confused with the client's own certificate.
+In some cases, this certificate may be requested by a server. The client certificate may or may not include
+the private key. In the latter case, the key may be provided as a separate file.
 
 ## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
@@ -396,20 +284,33 @@ You can invoke the python script as below which allows to load the transformer
 models from the local filesystem into BucketFS:
 
   ```buildoutcfg
-  python -m exasol_transformers_extension.upload_model \
-      --bucketfs-name <BUCKETFS_NAME> \
-      --bucketfs-host <BUCKETFS_HOST> \
-      --bucketfs-port <BUCKETFS_PORT> \
-      --bucketfs-user <BUCKETFS_USER> \
-      --bucketfs-password <BUCKETFS_PASSWORD> \
-      --bucket <BUCKETFS_NAME> \
-      --path-in-bucket <PATH_IN_BUCKET> \
-      --model-name <MODEL_NAME> \
-      --subd-dir <SUB_DIRECTORY> \
-      --local-model-path <MODEL_PATH>     
+  python -m exasol_transformers_extension.upload_model <options>
   ```
 
-**Note:**  The `--path-in-bucket` can not be empty.
+#### List of options
+
+The table below lists all available options. It shows which ones are applicable for On-Prem and for SaaS backends.
+Unless stated otherwise in the comments column, the option is required for either or both backends.
+
+| Option name                  | On-Prem | SaaS | Comment                                         |
+|:-----------------------------|:-------:|:----:|:------------------------------------------------|
+| bucketfs-name                |   [x]   |      |                                                 |
+| bucketfs-host                |   [x]   |      |                                                 |
+| bucketfs-port                |   [x]   |      |                                                 |
+| bucketfs-user                |   [x]   |      |                                                 |
+| bucketfs-password            |   [x]   |      | Env. [BUCKETFS_PASSWORD]                        |
+| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to False             |
+| bucket                       |   [x]   |      |                                                 |
+| saas-url                     |         | [x]  |                                                 |
+| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                          |
+| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]               |
+| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown |
+| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                               |
+| model-name                   |   [x]   | [x]  |                                                 |
+| path-in-bucket               |   [x]   | [x]  | Root location in the bucket for all models      |
+| sub-dir                      |   [x]   | [x]  | Sub-directory where this model should be stored |
+| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True              |
+
 **Note**: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
 These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
 function to ensure proper loading by the Transformers Extension UDFs.
