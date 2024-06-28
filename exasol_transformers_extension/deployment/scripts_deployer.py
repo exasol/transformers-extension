@@ -23,14 +23,14 @@ class ScriptsDeployer:
 
     def _set_current_schema(self, schema: str | None):
         if schema:
-            self._pyexasol_conn.execute(f"OPEN SCHEMA {schema};")
+            self._pyexasol_conn.execute(f'OPEN SCHEMA "{schema}";')
         else:
             self._pyexasol_conn.execute("CLOSE SCHEMA;")
 
     def _open_schema(self) -> None:
         try:
             self._pyexasol_conn.execute(
-                f"CREATE SCHEMA IF NOT EXISTS {self._schema}")
+                f'CREATE SCHEMA IF NOT EXISTS "{self._schema}";')
         except pyexasol.ExaQueryError as e:
             logger.warning(
                 f"Could not create schema {self._schema}. Got error: {e}")
