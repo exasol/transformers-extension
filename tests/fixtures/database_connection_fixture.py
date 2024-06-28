@@ -23,7 +23,7 @@ def _env(var: str) -> str:
     raise RuntimeError(f"Environment variable {var} is empty.")
 
 
-@pytest.fixture(scope='session', params=[bfs.path.StorageBackend.onprem])
+@pytest.fixture(scope='session', params=[bfs.path.StorageBackend.onprem, bfs.path.StorageBackend.saas])
 def backend(request) -> bfs.path.StorageBackend:
     # Here we are going to add
     # pytest.skip()

@@ -29,9 +29,6 @@ def test_model_upload(upload_params,
                       tmp_path: Path,
                       bucketfs_location: bfs.path.PathLike):
 
-    # Debugging
-    assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]
-
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
     model_name = model_specification.model_name
@@ -81,6 +78,3 @@ def test_model_upload(upload_params,
         assert len(result) == 1 and result[0][-1] is None
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
-
-        # Debugging
-        assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == setup_database[1]

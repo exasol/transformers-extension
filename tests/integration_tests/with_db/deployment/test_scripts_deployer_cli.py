@@ -19,9 +19,6 @@ def test_scripts_deployer_cli(backend,
                               pyexasol_connection: ExaConnection,
                               upload_slc):
 
-    # Debugging
-    current_schema = pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
-
     with temp_schema(pyexasol_connection) as schema_name:
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
         args_list.insert(0, "scripts")
@@ -37,9 +34,6 @@ def test_scripts_deployer_cli(backend,
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
 
-    # Debugging
-    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == current_schema
-
 
 def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      deploy_params: dict[str, Any],
@@ -47,9 +41,6 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      upload_slc):
     if backend != bfs.path.StorageBackend.onprem:
         pytest.skip("We run this test only with the Docker-DB")
-
-    # Debugging
-    current_schema = pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
 
     with temp_schema(pyexasol_connection) as schema_name:
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
@@ -61,6 +52,3 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
         assert result.exit_code == 1
         assert expected_exception_message in result.exception.args[0].message
         assert isinstance(result.exception, ExaConnectionFailedError)
-
-    # Debugging
-    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == current_schema
