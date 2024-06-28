@@ -5,12 +5,12 @@ from tests.utils.db_queries import DBQueries
 
 
 def test_filling_mask_script(
-        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
+        setup_database, db_conn, upload_base_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
 
     # Debugging
-    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == schema_name
-    assert DBQueries.check_all_scripts_deployed(pyexasol_connection, schema_name)
+    assert db_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == schema_name
+    assert DBQueries.check_all_scripts_deployed(db_conn, schema_name)
 
     text_data = "Exasol is an analytics <mask> management software company."
     n_rows = 100
@@ -37,7 +37,7 @@ def test_filling_mask_script(
             f"model_name, text_data, top_k));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None
