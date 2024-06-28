@@ -41,8 +41,6 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
     if backend != bfs.path.StorageBackend.onprem:
         pytest.skip("We run this test only with the Docker-DB")
     with temp_schema(pyexasol_connection) as schema_name:
-        pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
-
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
         args_list.insert(0, "scripts")
         args_list.append("--use-ssl-cert-validation")

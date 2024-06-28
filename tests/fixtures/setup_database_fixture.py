@@ -3,7 +3,6 @@ import json
 
 from urllib.parse import urlparse
 
-import pyexasol
 import pytest
 from pyexasol import ExaConnection
 from pytest_itde import config
@@ -13,19 +12,22 @@ from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.parameters import bucketfs_params
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
+# Debugging
+from tests.utils.db_queries import DBQueries
 
-bucketfs_connection_name = "TEST_TE_BFS_CONNECTION"
-schema_name = "TEST_INTEGRATION"
+
+BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
+SCHEMA_NAME = "TEST_INTEGRATION"
 
 
 def _create_schema(pyexasol_connection: ExaConnection) -> None:
-    pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;")
-    pyexasol_connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name};")
-    pyexasol_connection.execute(f"OPEN SCHEMA {schema_name};")
+    pyexasol_connection.execute(f"DROP SCHEMA IF EXISTS {SCHEMA_NAME} CASCADE;")
+    pyexasol_connection.execute(f"CREATE SCHEMA {SCHEMA_NAME};")
+    pyexasol_connection.execute(f"OPEN SCHEMA {SCHEMA_NAME};")
 
 
 def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
-    scripts_deployer = ScriptsDeployer(schema=schema_name,
+    scripts_deployer = ScriptsDeployer(schema=SCHEMA_NAME,
                                        language_alias=LANGUAGE_ALIAS,
                                        pyexasol_conn=pyexasol_connection)
     scripts_deployer.deploy_scripts()
@@ -41,7 +43,7 @@ def _create_bucketfs_connection(pyexasol_connection: ExaConnection,
                                 conn_user: str,
                                 conn_password: str) -> None:
 
-    query = (f"CREATE OR REPLACE  CONNECTION {bucketfs_connection_name} "
+    query = (f"CREATE OR REPLACE  CONNECTION {BUCKETFS_CONNECTION_NAME} "
              f"TO '{conn_to}' "
              f"USER '{conn_user}' "
              f"IDENTIFIED BY '{conn_password}'")
@@ -101,4 +103,9 @@ def setup_database(backend: bfs.path.StorageBackend,
                                          pyexasol_connection)
     else:
         raise ValueError(f'No setup_database fixture for the backend {backend}')
-    return bucketfs_connection_name, schema_name
+
+    # Debugging
+    assert pyexasol_connection.execute(f"SELECT CURRENT_SCHEMA;").fetchval() == SCHEMA_NAME
+    assert DBQueries.check_all_scripts_deployed(pyexasol_connection, SCHEMA_NAME)
+
+    return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
