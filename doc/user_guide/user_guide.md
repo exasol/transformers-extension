@@ -57,8 +57,8 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 - DB connection information and credentials are needed.
 
 ### BucketFS Connection 
-An Exasol connection object must be created with Exasol BucketFS connection  information and credentials. 
-A format of the connection object is as following: 
+An Exasol connection object must be created with Exasol BucketFS connection information and credentials. 
+The format of the connection object is as following: 
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
@@ -182,8 +182,8 @@ Please refer to the [Language Container Deployment Guide] for details about this
 
 ### Scripts Deployment
 
-Next you need to deploy all necessary scripts installed in the previous step to the specified 
-`SCHEMA` in your Exasol DB with the same `LANGUAGE_ALIAS`  using the following Python CLI command:
+Next you need to deploy all necessary scripts to the specified `SCHEMA` in your Exasol DB with the same
+`LANGUAGE_ALIAS` using the following Python CLI command:
 
   ```buildoutcfg
   python -m exasol_transformers_extension.deploy scripts <options>
@@ -299,7 +299,7 @@ Unless stated otherwise in the comments column, the option is required for eithe
 | bucketfs-port                |   [x]   |      |                                                 |
 | bucketfs-user                |   [x]   |      |                                                 |
 | bucketfs-password            |   [x]   |      | Env. [BUCKETFS_PASSWORD]                        |
-| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to False             |
+| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to True              |
 | bucket                       |   [x]   |      |                                                 |
 | saas-url                     |         | [x]  |                                                 |
 | saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                          |
