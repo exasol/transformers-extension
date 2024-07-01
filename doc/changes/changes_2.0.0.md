@@ -15,7 +15,8 @@ Code name:
 
 ### Documentation
 
-- #210: Fixed typos in user guide
+- #210: Fixed typos in user guide.
+- #247: Updated documentation including the deployment options in SaaS.
 
 ### Refactorings
 
