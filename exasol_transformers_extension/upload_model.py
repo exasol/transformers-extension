@@ -20,7 +20,7 @@ from exasol_transformers_extension.utils.current_model_specification import Curr
 @click.option('--bucketfs-name', type=str)
 @click.option('--bucketfs-host', type=str)
 @click.option('--bucketfs-port', type=int)
-@click.option('--bucketfs-use-https', type=bool, default=False)
+@click.option('--bucketfs-use-https', type=bool, default=True)
 @click.option('--bucketfs-user', type=str, default="w")
 @click.option(f'--{SecretParams.BUCKETFS_PASSWORD.value}', type=str,
               prompt='BucketFS password', prompt_required=False,
