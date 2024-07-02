@@ -28,7 +28,7 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 
 
 @pytest.fixture(scope="session")
-def upload_slc(backend, bucketfs_location, pyexasol_connection, flavor_path: Path, export_slc: ExportInfo) -> None:
+def upload_slc(backend, bucketfs_location, pyexasol_connection, export_slc: ExportInfo) -> None:
     cleanup_images()
 
     container_file_path = Path(export_slc.cache_file)
@@ -44,7 +44,7 @@ def upload_slc(backend, bucketfs_location, pyexasol_connection, flavor_path: Pat
 
     # Let's see if this helps
     if backend == bfs.path.StorageBackend.saas:
-        time.sleep(180)
+        time.sleep(300)
 
 
 def cleanup_images():
