@@ -1,18 +1,14 @@
 from pathlib import Path, PosixPath
-from urllib.parse import urlparse
 
 from click.testing import CliRunner
-from pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension import upload_model
-from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
+from exasol_transformers_extension.utils.current_model_specification import \
     CurrentModelSpecificationFromModelSpecs
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
-from tests.utils.parameters import bucketfs_params, model_params
+from tests.utils.parameters import bucketfs_params, model_params, get_arg_list
 from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
 
@@ -27,8 +23,12 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
-def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
-                      bucketfs_location: bfs.path.PathLike, bucketfs_config: config.BucketFs):
+def test_model_upload(upload_params,
+                      setup_database,
+                      db_conn,
+                      tmp_path: Path,
+                      bucketfs_location: bfs.path.PathLike):
+
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
     model_name = model_specification.model_name
@@ -36,22 +36,11 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
     current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
                                                                               "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
-    parsed_url = urlparse(bucketfs_config.url)
-    host = parsed_url.netloc.split(":")[0]
-    port = parsed_url.netloc.split(":")[1]
-    args_list = [
-        "--bucketfs-name", bucketfs_params.name,
-        "--bucketfs-host", host,
-        "--bucketfs-port", port,
-        "--bucketfs-use-https", False,
-        "--bucketfs-user", bucketfs_config.username,
-        "--bucketfs-password", bucketfs_config.password,
-        "--bucket", bucketfs_params.bucket,
-        "--path-in-bucket", bucketfs_params.path_in_bucket,
-        "--model-name", model_name,
-        "--sub-dir", sub_dir,
-        "--local-model-path", str(download_path),
-    ]
+    args_list = get_arg_list(**upload_params,
+                             path_in_bucket=bucketfs_params.path_in_bucket,
+                             model_name=model_name,
+                             sub_dir=sub_dir,
+                             local_model_path=str(download_path))
 
     try:
         runner = CliRunner()
@@ -85,7 +74,7 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
                 f"model_name, text_data, top_k));"
 
         # execute sequence classification UDF
-        result = pyexasol_connection.execute(query).fetchall()
+        result = db_conn.execute(query).fetchall()
         assert len(result) == 1 and result[0][-1] is None
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)

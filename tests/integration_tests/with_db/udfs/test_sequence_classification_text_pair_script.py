@@ -3,8 +3,8 @@ from tests.utils.parameters import model_params
 
 
 def test_sequence_classification_text_pair_script(
-        setup_database, pyexasol_connection, upload_base_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+        setup_database, db_conn, upload_base_model_to_bucketfs):
+    bucketfs_conn_name, _ = setup_database
     n_labels = 2
     n_rows = 100
     input_data = []
@@ -29,7 +29,7 @@ def test_sequence_classification_text_pair_script(
             f"model_name, first_text, second_text));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None

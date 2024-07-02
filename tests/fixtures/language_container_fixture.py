@@ -1,19 +1,17 @@
-import contextlib
 import os
 import subprocess
 from pathlib import Path
+import time
 
 import pytest
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import LanguageDefinition
-from pytest_itde.config import TestConfig
-from exasol.python_extension_common.deployment.language_container_validator import (
-    wait_language_container, temp_schema)
+from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
+import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment import language_container
-from exasol_transformers_extension.utils.bucketfs_operations import create_bucketfs_location
-from tests.utils.parameters import bucketfs_params
-from tests.utils.revert_language_settings import revert_language_settings
+
+LANGUAGE_ALIAS = "PYTHON3_TE"
+CONTAINER_FILE_NAME = "exasol_transformers_extension_container.tar.gz"
 
 
 @pytest.fixture(scope="session")
@@ -30,50 +28,23 @@ def export_slc(flavor_path: Path) -> ExportInfo:
 
 
 @pytest.fixture(scope="session")
-def upload_slc(itde: TestConfig, flavor_path: Path, export_slc: ExportInfo) -> Path:
+def upload_slc(backend, bucketfs_location, pyexasol_connection, export_slc: ExportInfo) -> None:
     cleanup_images()
-    container_bucketfs_location = create_bucketfs_location(
-        path_in_bucket=bucketfs_params.path_in_bucket,
-        bucketfs_name=bucketfs_params.name,
-        bucketfs_url=itde.bucketfs.url,
-        bucketfs_user=itde.bucketfs.username,
-        bucketfs_password=itde.bucketfs.password,
-        bucket=bucketfs_params.bucket,
-        use_ssl_cert_validation=False)
+
     container_file_path = Path(export_slc.cache_file)
-    container_file_bfs_path = container_bucketfs_location / container_file_path.name
 
-    with open(export_slc.cache_file, "rb") as fileobj:
-        container_file_bfs_path.write(fileobj)
+    deployer = LanguageContainerDeployer(pyexasol_connection=pyexasol_connection,
+                                         language_alias=LANGUAGE_ALIAS,
+                                         bucketfs_path=bucketfs_location)
 
-    with set_language_alias(flavor_path, itde, container_file_path) as language_alias:
-        with temp_schema(itde.ctrl_connection) as schema:
-            wait_language_container(itde.ctrl_connection, language_alias, schema)
-    return container_file_path
+    deployer.run(container_file=container_file_path,
+                 bucket_file_path=CONTAINER_FILE_NAME,
+                 allow_override=True,
+                 wait_for_completion=True)
 
-
-@pytest.fixture(scope="session")
-def language_alias(itde: TestConfig, flavor_path: Path, upload_slc: Path) -> str:
-    with set_language_alias(flavor_path, itde, upload_slc) as language_alias:
-        yield language_alias
-
-
-@contextlib.contextmanager
-def set_language_alias(flavor_path: Path, itde: TestConfig, container_file_path: Path) -> str:
-    release_name = container_file_path.with_suffix('').with_suffix('').name
-    language_definition = LanguageDefinition(
-        flavor_path=str(flavor_path),
-        bucketfs_name=bucketfs_params.name,
-        bucket_name=bucketfs_params.bucket,
-        add_missing_builtin=False,
-        path_in_bucket=bucketfs_params.path_in_bucket,
-        release_name=release_name
-    )
-    with revert_language_settings(itde.ctrl_connection):
-        language_alias = language_definition.generate_definition().split("=")[0]
-        itde.ctrl_connection.execute(language_definition.generate_alter_session())
-        itde.ctrl_connection.execute(language_definition.generate_alter_system())
-        yield language_alias
+    # Let's see if this helps
+    if backend == bfs.path.StorageBackend.saas:
+        time.sleep(300)
 
 
 def cleanup_images():
