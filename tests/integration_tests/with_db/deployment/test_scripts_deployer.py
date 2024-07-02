@@ -14,13 +14,14 @@ from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 
 def test_scripts_deployer(
+        backend,
         deploy_params: dict[str, Any],
         pyexasol_connection: ExaConnection,
         upload_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
         # We validate the server certificate in SaaS, but not in the Docker DB
-        cert_validation = "saas_url" in deploy_params
+        cert_validation = backend == bfs.path.StorageBackend.saas
         ScriptsDeployer.run(**deploy_params,
                             schema=schema_name,
                             language_alias=LANGUAGE_ALIAS,
@@ -36,7 +37,8 @@ def test_scripts_deployer_no_schema_creation_permission(
         upload_slc):
 
     if backend != bfs.path.StorageBackend.onprem:
-        pytest.skip("We run this test only with the Docker-DB")
+        pytest.skip(("We run this test only with the Docker-DB, "
+                     "since the script deployer doesn't use the DB user login and password in SaaS."))
 
     with temp_schema(pyexasol_connection) as schema_name:
         limited_user = "limited_user"

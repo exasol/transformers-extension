@@ -39,6 +39,7 @@ def upload_slc(backend, bucketfs_location, pyexasol_connection, flavor_path: Pat
 
     deployer.run(container_file=container_file_path,
                  bucket_file_path=CONTAINER_FILE_NAME,
+                 allow_override=True,
                  wait_for_completion=True)
 
     # Let's see if this helps

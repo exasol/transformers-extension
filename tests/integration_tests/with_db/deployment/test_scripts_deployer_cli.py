@@ -29,7 +29,8 @@ def test_scripts_deployer_cli(backend,
             args_list.append("--no-use-ssl-cert-validation")
 
         runner = CliRunner()
-        result = runner.invoke(deploy.main, args_list, catch_exceptions=False)
+        result = runner.invoke(deploy.main, args_list)
+        assert not result.exception
         assert result.exit_code == 0
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
@@ -40,7 +41,8 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      pyexasol_connection: ExaConnection,
                                                      upload_slc):
     if backend != bfs.path.StorageBackend.onprem:
-        pytest.skip("We run this test only with the Docker-DB")
+        pytest.skip(("We run this test only with the Docker-DB "
+                     "because SaaS always verifies the SSL certificate"))
 
     with temp_schema(pyexasol_connection) as schema_name:
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
