@@ -46,7 +46,7 @@ def upload_model(bucketfs_location: bfs.path.PathLike,
         model_directory=str(model_dir),
         bucketfs_model_path=Path(model_path),
         bucketfs_location=bucketfs_location)
-    # time.sleep(30)
+    time.sleep(20)
     yield model_path
 
 

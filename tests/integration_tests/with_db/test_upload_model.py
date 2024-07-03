@@ -1,4 +1,5 @@
 from pathlib import Path, PosixPath
+import time
 
 from click.testing import CliRunner
 import exasol.bucketfs as bfs
@@ -46,6 +47,7 @@ def test_model_upload(upload_params,
         runner = CliRunner()
         result = runner.invoke(upload_model.main, args_list)
         assert result.exit_code == 0
+        time.sleep(20)
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")
         assert bucketfs_upload_location.is_file()
 
