@@ -6,8 +6,8 @@ MODEL_NAME = 'gaunernst/bert-tiny-uncased'
 
 
 def test_prediction_with_downloader_udf(
-        setup_database, pyexasol_connection, bucketfs_location):
-    bucketfs_conn_name, schema_name = setup_database
+        setup_database, db_conn, bucketfs_location):
+    bucketfs_conn_name, _ = setup_database
 
     try:
         # execute downloader UDF
@@ -27,7 +27,7 @@ def test_prediction_with_downloader_udf(
             t(model_name, sub_dir, bucketfs_conn_name, token_conn_name));
             """
 
-        pyexasol_connection.execute(query).fetchall()
+        db_conn.execute(query).fetchall()
         time.sleep(10)
 
         # execute the filling mask UDF
@@ -53,7 +53,7 @@ def test_prediction_with_downloader_udf(
                 f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
                 f"model_name, text_data, top_k));"
 
-        result = pyexasol_connection.execute(query).fetchall()
+        result = db_conn.execute(query).fetchall()
 
         # assertions
         assert len(result) == top_k

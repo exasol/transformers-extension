@@ -1,7 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from pathlib import Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
@@ -34,3 +33,11 @@ model_params = ModelParams(
     tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny"),
     text_data='The company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
+
+
+def get_arg_list(**kwargs) -> list[str]:
+    args_list: list[str] = []
+    for k, v in kwargs.items():
+        args_list.append(f'--{k.replace("_", "-")}')
+        args_list.append(str(v))
+    return args_list
