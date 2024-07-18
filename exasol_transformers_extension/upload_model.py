@@ -19,7 +19,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 @click.option('--task_type', type=str, required=True) #todo change docu (needed to know where to safe model)
 @click.option('--sub-dir', type=str, required=True,
               help="directory where the model is stored in the BucketFS")
-@click.option('--token', type=str, default=None, help="Hugging Face hub token for private models") #todo chnage docu
+@click.option('--token', type=str, help="Hugging Face hub token for private models") #todo chnage docu
 @click.option('--local-model-path', type=click.Path(exists=True, file_okay=True),
               required=True, help="local path where model is located")
 @click.option('--bucketfs-name', type=str)
@@ -50,7 +50,6 @@ def main(
         task_type: str,
         sub_dir: str,
         token: str | None,
-        #local_model_path: str,
         bucketfs_name: str,
         bucketfs_host: str,
         bucketfs_port: int,

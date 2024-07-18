@@ -12,7 +12,7 @@ from tests.fixtures.database_connection_fixture import *
 def test_question_answering_script(
         setup_database, pyexasol_connection, upload_question_answering_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
-    question = "How many syllables are in the word Syllable?"
+    question = "Where is Exasol based?"
     n_rows = 100
     top_k = 1
     input_data = []
@@ -21,9 +21,9 @@ def test_question_answering_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model_specs.model_name,
+            model_params.q_a_model_specs.model_name,
             question,
-            ' '.join((model_params.text_data, str(i))),
+            model_params.text_data,
             top_k
         ))
 
@@ -53,7 +53,7 @@ def test_question_answering_script(
     for i in range(5):
         print(result[i])
     results = [result[i][6] for i in range(len(result))]
-    acceptable_results = ["three", "3", "want", "need"]
+    acceptable_results = ["Nuremberg", "Germany"]
     number_accepted_results = 0
 
     def contains(string, list):

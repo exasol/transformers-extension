@@ -2,6 +2,7 @@ from tests.fixtures.model_fixture import upload_text_generation_model_to_bucketf
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
+#for debug
 from tests.fixtures.model_fixture import *
 from tests.fixtures.setup_database_fixture import *
 from tests.fixtures.language_container_fixture import *
@@ -13,7 +14,7 @@ def test_text_generation_script(
     bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics database management"
     n_rows = 100
-    max_length = 10
+    max_length = 12
     return_full_text = True
     input_data = []
     for i in range(n_rows):
@@ -21,7 +22,7 @@ def test_text_generation_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model_specs.model_name,
+            model_params.text_gen_model_specs.model_name,
             text_data,
             max_length,
             return_full_text
@@ -54,9 +55,8 @@ def test_text_generation_script(
     for i in range(5):
         print(result[i])
     results = [result[i][6] for i in range(len(result))]
-    acceptable_results = ["software", "system", "solution"]
+    acceptable_results = ["software", "system", "solution", "tool"]
     number_accepted_results = 0
-
     def contains(string,list):
         return any(map(lambda x: x in string, list))
 

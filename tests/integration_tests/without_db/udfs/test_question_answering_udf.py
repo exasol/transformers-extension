@@ -73,7 +73,7 @@ def test_question_answering_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model_specs.model_name,
+        model_params.q_a_model_specs.model_name,
         question,
         model_params.text_data,
         top_k

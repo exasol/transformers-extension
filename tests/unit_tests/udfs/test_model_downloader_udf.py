@@ -112,7 +112,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     ]
     for i in range(count):
         assert mock_cast(mock_model_downloaders[i].download_from_huggingface_hub).mock_calls == [
-            call(mock_cmss[i].get_model_factory()), #todo add to call transformers.taskthing #todo d dont match how mock corecctly?
+            call(mock_cmss[i].get_model_factory()),
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls

@@ -6,10 +6,6 @@ from pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension import upload_model
-from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
-    CurrentModelSpecificationFromModelSpecs
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params

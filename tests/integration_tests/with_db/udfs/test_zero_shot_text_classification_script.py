@@ -2,6 +2,12 @@ from tests.fixtures.model_fixture import upload_zero_shot_classification_model_t
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
+# debug
+from tests.fixtures.model_fixture import *
+from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.language_container_fixture import *
+from tests.fixtures.bucketfs_fixture import *
+from tests.fixtures.database_connection_fixture import *
 
 def test_zero_shot_classification_single_text_script(
         setup_database, pyexasol_connection, upload_zero_shot_classification_model_to_bucketfs):
@@ -15,7 +21,7 @@ def test_zero_shot_classification_single_text_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model_specs.model_name,
+            model_params.zero_shot_model_specs.model_name,
             model_params.text_data,
             candidate_labels
         ))
@@ -42,18 +48,17 @@ def test_zero_shot_classification_single_text_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    for i in range(10):
-        print(result[i])
-
     # lenient test for quality of results, will be replaced by deterministic test later
-    results = [result[i][5] for i in range(len(result))]
-    acceptable_results = ["love", "miss", "want", "need"]
-    number_accepted_results = 0
+    acceptable_results = ["Analytics", "Database", "Germany"]
 
-    def contains(string,list):
+    def contains(string, list):
         return any(map(lambda x: x in string, list))
 
-    for i in range(len(results)):
-        if contains(results[i], acceptable_results):
+    number_accepted_results = 0
+    for i in range(len(result)):
+        if (contains(result[i][5], acceptable_results) and
+                result[i][6] > 0.8):             #check if confidence resonably high
             number_accepted_results += 1
-    assert number_accepted_results > n_rows_result/2
+        elif result[i][6] < 0.2:
+            number_accepted_results += 1
+    assert number_accepted_results > n_rows_result / 1.5

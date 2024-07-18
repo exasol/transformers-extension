@@ -30,8 +30,9 @@ def test_prediction_with_downloader_udf(
             t(model_name, task_type, sub_dir, bucketfs_conn_name, token_conn_name));
             """
 
-        pyexasol_connection.execute(query).fetchall()
+        result = pyexasol_connection.execute(query).fetchall()
         time.sleep(10)
+        print(result)
 
         # execute the filling mask UDF
         text_data = "I <mask> you so much."

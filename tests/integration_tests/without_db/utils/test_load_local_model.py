@@ -54,7 +54,7 @@ def test_load_local_model(tmp_path):
     model_specification = test_setup.model_specification
     model_save_path = create_save_pretrained_model_path(tmp_path, model_specification)
     # download a model
-    model = AutoModel.from_pretrained(model_specification.model_name) #todo change?
+    model = AutoModel.from_pretrained(model_specification.model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
     model.save_pretrained(model_save_path)
     tokenizer.save_pretrained(model_save_path)
