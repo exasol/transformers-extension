@@ -20,7 +20,7 @@ def test_token_classification_script(
             bucketfs_conn_name,
             str(model_params.sub_dir),
             model_params.token_model_specs.model_name,
-            model_params.text_data,
+            'The database software company Exasol is based in Nuremberg',
             aggregation_strategy
         ))
 

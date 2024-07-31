@@ -7,8 +7,8 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
-    CurrentModelSpecificationFactory
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
+    BucketFSModelSpecificationFactory
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -18,7 +18,6 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
-#todo add tests?
 def create_mock_metadata() -> MockMetaData:
     def udf_wrapper():
         pass
@@ -68,15 +67,15 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
-    mock_cmss = [create_autospec(CurrentModelSpecification,
+    mock_cmss = [create_autospec(BucketFSModelSpecification,
                                  model_name=base_model_names[i],
                                  task_type=task_type[i],
                                  sub_dir=Path(sub_directory_names[i]),
-                                 get_model_factory=CurrentModelSpecification.get_model_factory) for i in range(count)]
+                                 get_model_factory=BucketFSModelSpecification.get_model_factory) for i in range(count)]
     for i in range(count):
         mock_cast(mock_cmss[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
-    mock_current_model_specification_factory: Union[CurrentModelSpecificationFactory, MagicMock] = (
-        create_autospec(CurrentModelSpecificationFactory))
+    mock_current_model_specification_factory: Union[BucketFSModelSpecificationFactory, MagicMock] = (
+        create_autospec(BucketFSModelSpecificationFactory))
     mock_cast(mock_current_model_specification_factory.create).side_effect = mock_cmss
 
     input_data = [

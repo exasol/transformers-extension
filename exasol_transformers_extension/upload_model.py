@@ -8,7 +8,7 @@ from exasol.python_extension_common.deployment.language_container_deployer_cli i
     SECRET_DISPLAY, SecretParams, secret_callback)
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.deployment import deployment_utils as utils
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSP
 
@@ -16,12 +16,10 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 @click.command()
 @click.option('--model-name', type=str, required=True,
               help="name of the model")
-@click.option('--task_type', type=str, required=True) #todo change docu (needed to know where to safe model)
+@click.option('--task_type', type=str, required=True)
 @click.option('--sub-dir', type=str, required=True,
               help="directory where the model is stored in the BucketFS")
-@click.option('--token', type=str, help="Hugging Face hub token for private models") #todo chnage docu
-@click.option('--local-model-path', type=click.Path(exists=True, file_okay=True),
-              required=True, help="local path where model is located")
+@click.option('--token', type=str, default=None, help="Hugging Face hub token for private models")
 @click.option('--bucketfs-name', type=str)
 @click.option('--bucketfs-host', type=str)
 @click.option('--bucketfs-port', type=int)
@@ -67,10 +65,10 @@ def main(
     """
     Downloads model from Huggingface hub and the transfers model to database
     """
-    # create CurrentModelSpecification for model to be loaded
-    current_model_specs = CurrentModelSpecification(model_name, task_type, "", Path(sub_dir))
+    # create BucketFSModelSpecification for model to be loaded
+    current_model_spec = BucketFSModelSpecification(model_name, task_type, "", Path(sub_dir))
     # upload the downloaded model files into bucketfs
-    upload_path = current_model_specs.get_bucketfs_model_save_path()
+    upload_path = current_model_spec.get_bucketfs_model_save_path()
 
     # create bucketfs location
     bucketfs_location = bucketfs_operations.create_bucketfs_location(
@@ -89,22 +87,18 @@ def main(
         path_in_bucket=path_in_bucket,
         use_ssl_cert_validation=use_ssl_cert_validation)
 
-    # upload the downloaded model files into bucketfs
-
-    #bucketfs_operations.upload_model_files_to_bucketfs(
-    #    local_model_path, upload_path, bucketfs_location)
-    model_factory = current_model_specs.get_model_factory()
+    model_factory = current_model_spec.get_model_factory()
 
     downloader = HuggingFaceHubBucketFSModelTransferSP(bucketfs_location=bucketfs_location,
-                                                     model_specification=current_model_specs,
+                                                     model_specification=current_model_spec,
                                                      bucketfs_model_path=upload_path,
                                                      token=token)
 
     for model in [model_factory, transformers.AutoTokenizer]:
         downloader.download_from_huggingface_hub(model)
         # upload model files to BucketFS
-        model_tar_file_path = downloader.upload_to_bucketfs()
-        print("your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
+    model_tar_file_path = downloader.upload_to_bucketfs()
+    print("your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
@@ -15,7 +15,7 @@ class BucketFSParams:
 
 @dataclass(frozen=True)
 class ModelParams:
-    base_model_specs: ModelSpecification        # this is used for other tests, task_type should be set per test
+    base_model_specs: ModelSpecification        # this is used for other tests, taks_name should be set per test
     seq2seq_model_specs: ModelSpecification     # this model is used for testing translation_udf
     q_a_model_specs: ModelSpecification         # this model is used for testing question answering
     text_gen_model_specs: ModelSpecification    # used for text generation tests

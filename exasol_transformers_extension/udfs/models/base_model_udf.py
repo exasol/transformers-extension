@@ -10,7 +10,7 @@ import transformers
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
@@ -40,13 +40,13 @@ class BaseModelUDF(ABC):
                  pipeline: transformers.Pipeline,
                  base_model: ModelFactoryProtocol,
                  tokenizer: ModelFactoryProtocol,
-                 task_name: str):
+                 task_type: str):
         self.exa = exa
         self.batch_size = batch_size
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
-        self.task_name = task_name
+        self.task_type = task_type
         self.device = None
         self.model_loader = None
         self.last_created_pipeline = None
@@ -74,7 +74,7 @@ class BaseModelUDF(ABC):
         self.model_loader = LoadLocalModel(pipeline_factory=self.pipeline,
                                            base_model_factory=self.base_model,
                                            tokenizer_factory=self.tokenizer,
-                                           task_name=self.task_name,
+                                           task_type=self.task_type,
                                            device=self.device)
 
     def get_predictions_from_batch(self, batch_df: pd.DataFrame) -> pd.DataFrame:
@@ -185,7 +185,7 @@ class BaseModelUDF(ABC):
         model_name = model_df["model_name"].iloc[0]
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
-        current_model_specification = CurrentModelSpecification(model_name, self.task_name, bucketfs_conn, sub_dir)
+        current_model_specification = BucketFSModelSpecification(model_name, self.task_type, bucketfs_conn, sub_dir)
 
         if self.model_loader.current_model_specification != current_model_specification:
             bucketfs_location = \

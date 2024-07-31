@@ -5,10 +5,12 @@ from click.testing import CliRunner
 from pytest_itde import config
 import exasol.bucketfs as bfs
 
-from exasol_transformers_extension import upload_model
+from exasol_transformers_extension import upload_model as upload_model_cli
+from exasol_transformers_extension.utils.bucketfs_model_specification import get_BucketFSModelSpecification_from_model_Specs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params
+
 from tests.fixtures.model_fixture import *
 from tests.fixtures.setup_database_fixture import *
 from tests.fixtures.language_container_fixture import *
@@ -32,13 +34,12 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
     model_specification = model_params.base_model_specs
     model_specification.task_type = "filling_mask"
     model_name = model_specification.model_name
-    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
-                                                                              "", Path(sub_dir))
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_specification, "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
     parsed_url = urlparse(bucketfs_config.url)
     host = parsed_url.netloc.split(":")[0]
     port = parsed_url.netloc.split(":")[1]
-    print("path in bucket: "+ bucketfs_params.path_in_bucket)
+    print("path in bucket: " + bucketfs_params.path_in_bucket)
     args_list = [
         "--bucketfs-name", bucketfs_params.name,
         "--bucketfs-host", host,
@@ -55,7 +56,7 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
 
     try:
         runner = CliRunner()
-        result = runner.invoke(upload_model.main, args_list)
+        result = runner.invoke(upload_model_cli.main, args_list)
         print(result)
         assert result.exit_code == 0
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")
@@ -90,4 +91,3 @@ def test_model_upload(setup_database, pyexasol_connection, tmp_path: Path,
         assert len(result) == 1 and result[0][-1] is None
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, sub_dir)
-#todo path is not corretc after upload?

@@ -3,7 +3,7 @@ import transformers.pipelines
 from typing import Optional
 from pathlib import Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
@@ -13,20 +13,20 @@ class LoadLocalModel:
     Class for loading locally saved models and tokenizers. Also stores information regarding the model and pipeline.
 
     :_pipeline_factory:      a function to create a transformers pipeline
-    :task_name:              name of the current task
+    :task_type:              name of the current task
     :device:                 device to be used for pipeline creation, i.e "CPU"
     :_base_model_factory:    a ModelFactoryProtocol for creating the loaded model
     :_tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
                  pipeline_factory,
-                 task_name: str,
+                 task_type: str,
                  device: str,
                  base_model_factory: ModelFactoryProtocol,
                  tokenizer_factory: ModelFactoryProtocol
                  ):
         self.pipeline_factory = pipeline_factory
-        self.task_name = task_name
+        self.task_type = task_type
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
@@ -40,7 +40,7 @@ class LoadLocalModel:
         """Get the current current_model_specification."""
         return self._current_model_specification
 
-    def set_current_model_specification(self, current_model_specification: CurrentModelSpecification):
+    def set_current_model_specification(self, current_model_specification: BucketFSModelSpecification):
         """Set the current_model_specification."""
         self._current_model_specification = current_model_specification
 
@@ -57,7 +57,7 @@ class LoadLocalModel:
         loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
 
         last_created_pipeline = self.pipeline_factory(
-            self.task_name,
+            self.task_type,
             model=loaded_model,
             tokenizer=loaded_tokenizer,
             device=self.device,

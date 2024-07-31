@@ -21,7 +21,7 @@ def test_sequence_classification_text_pair_script(
             bucketfs_conn_name,
             str(model_params.sub_dir),
             model_params.sequence_class_pair_model_specs.model_name,
-            model_params.text_data,
+            'The database software company Exasol is based in Nuremberg',
             'The main Exasol office is located in Flensburg'))
 
     query = f"SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(" \

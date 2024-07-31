@@ -14,7 +14,7 @@ class TranslationUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForSeq2SeqLM,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='translation')
+                         tokenizer, task_type='translation')
         self._translation_prefix = "translate {src_lang} to {target_lang}: "
         self.new_columns = ["translation_text", "error_message"]
 

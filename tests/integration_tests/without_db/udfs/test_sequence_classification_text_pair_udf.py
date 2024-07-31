@@ -11,6 +11,12 @@ from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
+from tests.fixtures.model_fixture import *
+from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.language_container_fixture import *
+from tests.fixtures.bucketfs_fixture import *
+from tests.fixtures.database_connection_fixture import *
+
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -90,7 +96,7 @@ def test_sequence_classification_text_pair_udf(
 
     grouped_by_inputs = result_df.groupby('first_text')
     n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
-    n_labels = 2
+    n_labels = 3
     n_labels_per_input_expected = [n_labels] * n_rows
 
     result = Result(result_df)

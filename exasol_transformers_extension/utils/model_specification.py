@@ -33,12 +33,6 @@ class ModelSpecification:
             task_type = text
         return task_type
 
-    def get_model_specs_for_download(self):#todo change usages?
-        """
-        returns all attributes necessary for downloading the model from Huggingface.
-        """
-        return self.model_name, self.task_type
-
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, ModelSpecification):
@@ -47,7 +41,7 @@ class ModelSpecification:
         return False
 
     def get_model_specific_path_suffix(self) -> PurePosixPath:
-        return PurePosixPath(self.model_name.replace(".", "_") + "_" + self.task_type) #model_name-version-task# todo change
+        return PurePosixPath(self.model_name.replace(".", "_") + "_" + self.task_type) #model_name-version-task#
 
     def get_model_factory(self):
         """

@@ -16,7 +16,7 @@ def test_translation_script(
             bucketfs_conn_name,
             str(model_params.sub_dir),
             model_params.seq2seq_model_specs.model_name,
-            model_params.text_data,
+            'The database software company Exasol is based in Nuremberg',
             src_lang,
             target_lang,
             max_length
@@ -49,7 +49,7 @@ def test_translation_script(
     print(result)
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [result[i][7] for i in range(len(result))]
-    acceptable_results = ["Die Firma Exasol hat ihren Sitz in Nürnberg"]
+    acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
     number_accepted_results = 0
 
     def contains(string,list):

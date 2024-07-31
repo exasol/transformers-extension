@@ -3,8 +3,8 @@ from typing import Tuple
 import transformers
 
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import \
-    CurrentModelSpecificationFactory
+from exasol_transformers_extension.utils.bucketfs_model_specification import \
+    BucketFSModelSpecificationFactory
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory
@@ -22,12 +22,12 @@ class ModelDownloaderUDF:
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """
-    def __init__(self, #todo change docu!
+    def __init__(self,
                  exa,
                  tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
                  huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory =
                  HuggingFaceHubBucketFSModelTransferSPFactory(),
-                 current_model_specification_factory: CurrentModelSpecificationFactory = CurrentModelSpecificationFactory()):
+                 current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory()):
         self._exa = exa
         self._tokenizer_factory = tokenizer_factory
         self._huggingface_hub_bucketfs_model_transfer = huggingface_hub_bucketfs_model_transfer

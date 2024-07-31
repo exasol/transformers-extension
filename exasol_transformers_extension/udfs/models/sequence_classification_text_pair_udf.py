@@ -13,7 +13,7 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForSequenceClassification,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='text-classification')
+                         tokenizer, task_type='text-classification')
         self.new_columns = ["label", "score", "error_message"]
 
     def extract_unique_param_based_dataframes(

@@ -23,7 +23,7 @@ def test_question_answering_script(
             str(model_params.sub_dir),
             model_params.q_a_model_specs.model_name,
             question,
-            model_params.text_data,
+            'The database software company Exasol is based in Nuremberg',
             top_k
         ))
 

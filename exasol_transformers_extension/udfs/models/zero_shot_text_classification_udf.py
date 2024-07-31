@@ -14,7 +14,7 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForSequenceClassification,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='zero-shot-classification')
+                         tokenizer, task_type='zero-shot-classification')
         self._desired_fields_in_prediction = ["labels", "scores"]
         self.new_columns = ["label", "score", "rank", "error_message"]
 

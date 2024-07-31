@@ -5,8 +5,8 @@ from pathlib import PurePosixPath, Path
 
 import exasol.bucketfs as bfs
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
-    CurrentModelSpecificationFromModelSpecs
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
+    get_BucketFSModelSpecification_from_model_Specs
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -38,7 +38,7 @@ def download_model_to_path(model_specification: ModelSpecification,
 
 @contextmanager
 def upload_model(bucketfs_location: bfs.path.PathLike,
-                 current_model_specification: CurrentModelSpecification,
+                 current_model_specification: BucketFSModelSpecification,
                  model_dir: Path) -> Path:
     model_path = current_model_specification.get_bucketfs_model_save_path()
     bucketfs_operations.upload_model_files_to_bucketfs(
@@ -50,9 +50,9 @@ def upload_model(bucketfs_location: bfs.path.PathLike,
 
 def prepare_model_for_local_bucketfs(model_specification: ModelSpecification,
                                      tmpdir_factory):
-    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
-                                                                              "",
-                                                                              model_params.sub_dir)
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_specification,
+                                                                          "",
+                                                                          model_params.sub_dir)
 
     tmpdir = tmpdir_factory.mktemp(current_model_specs.task_type)
     model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
@@ -122,14 +122,14 @@ def prepare_seq2seq_model_in_local_bucketfs(tmpdir_factory) -> PurePosixPath:
 @contextmanager
 def upload_model_to_bucketfs(
         model_specification: ModelSpecification,
-        download_tmpdir: Path,
+        local_model_save_path: Path,
         bucketfs_location: bfs.path.PathLike) -> str:
-    download_tmpdir = download_model_to_standard_local_save_path(model_specification, download_tmpdir)
-    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
-                                                                              "",
-                                                                              model_params.sub_dir)
+    local_model_save_path = download_model_to_standard_local_save_path(model_specification, local_model_save_path)
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_specification,
+                                                                          "",
+                                                                          model_params.sub_dir)
     with upload_model(
-            bucketfs_location, current_model_specs, download_tmpdir) as model_path:
+            bucketfs_location, current_model_specs, local_model_save_path) as model_path:
         try:
             yield model_path
         finally:
@@ -150,64 +150,64 @@ def upload_filling_mask_model_to_bucketfs(
 @pytest.fixture(scope="session")
 def upload_question_answering_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.q_a_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.q_a_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_sequence_classification_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.sequence_class_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.sequence_class_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_sequence_classification_pair_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.sequence_class_pair_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.sequence_class_pair_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_text_generation_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.text_gen_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.text_gen_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_token_classification_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.token_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.token_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_translation_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.seq2seq_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.seq2seq_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 @pytest.fixture(scope="session")
 def upload_zero_shot_classification_model_to_bucketfs(
         bucketfs_location: bfs.path.PathLike, tmpdir_factory) -> PurePosixPath:
-    base_model_specs = model_params.zero_shot_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
+    model_specs = model_params.zero_shot_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
-            base_model_specs, tmpdir, bucketfs_location) as path:
+            model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 

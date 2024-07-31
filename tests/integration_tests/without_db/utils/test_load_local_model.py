@@ -5,7 +5,7 @@ from pathlib import Path
 from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
@@ -26,11 +26,11 @@ class TestSetup:
         self.token = "token"
         self.model_specification = model_params.tiny_model_specs
 
-        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)
+        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = create_autospec(BucketFSModelSpecification)
         test_pipeline = pipeline
         self.loader = LoadLocalModel(
                                     test_pipeline,
-                                    task_name="token-classification",
+                                    task_type="token-classification",
                                     device="cpu",
                                     base_model_factory=self.base_model_factory,
                                     tokenizer_factory=self.tokenizer_factory

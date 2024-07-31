@@ -6,7 +6,7 @@ from unittest.mock import create_autospec, MagicMock, call, Mock
 import transformers
 
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
@@ -22,7 +22,7 @@ class TestSetup:
         self.token = "token"
         self.model_name = "model_name"
         self.model_task = "test_task"
-        self.mock_current_model_specification: Union[CurrentModelSpecification, MagicMock] = create_autospec(CurrentModelSpecification)
+        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = create_autospec(BucketFSModelSpecification)
         self.cache_dir = "test/Path"
 
         self.mock_pipeline = Mock()

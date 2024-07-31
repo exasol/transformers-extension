@@ -1,7 +1,7 @@
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from pathlib import PurePosixPath, Path
 
-class CurrentModelSpecification(ModelSpecification):
+class BucketFSModelSpecification(ModelSpecification):
     """
     Class describing a model with additional information about
     the bucketFS connection and the subdir in the bucketfs the model can be found at.
@@ -17,7 +17,7 @@ class CurrentModelSpecification(ModelSpecification):
 
     def __eq__(self, other):
         """Overrides the default implementation"""
-        if isinstance(other, CurrentModelSpecification):
+        if isinstance(other, BucketFSModelSpecification):
             return (super().__eq__(other)
                     and self.sub_dir == other.sub_dir and
                     self.bucketfs_conn_name == other.bucketfs_conn_name)
@@ -31,21 +31,20 @@ class CurrentModelSpecification(ModelSpecification):
         return Path(self.sub_dir, model_path_suffix)
 
 
-class CurrentModelSpecificationFactory:
+class BucketFSModelSpecificationFactory:
     def create(self,
                model_name: str,
                task_type: str,
                bucketfs_conn_name: str,
                sub_dir: Path):
-        return CurrentModelSpecification(model_name, task_type, bucketfs_conn_name, sub_dir)
+        return BucketFSModelSpecification(model_name, task_type, bucketfs_conn_name, sub_dir)
 
 
-class CurrentModelSpecificationFromModelSpecs:
-    def transform(self,
-                  model_specification: ModelSpecification,
-                  bucketfs_conn_name: str,
-                  sub_dir: Path):
-        return CurrentModelSpecification(model_name=model_specification.model_name,
-                                         task_type=model_specification.task_type,
-                                         bucketfs_conn_name=bucketfs_conn_name,
-                                         sub_dir=sub_dir)
+def get_BucketFSModelSpecification_from_model_Specs(
+        model_specification: ModelSpecification,
+        bucketfs_conn_name: str,
+        sub_dir: Path):
+    return BucketFSModelSpecification(model_name=model_specification.model_name,
+                                      task_type=model_specification.task_type,
+                                      bucketfs_conn_name=bucketfs_conn_name,
+                                      sub_dir=sub_dir)

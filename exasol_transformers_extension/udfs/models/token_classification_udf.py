@@ -14,7 +14,7 @@ class TokenClassificationUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForTokenClassification,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='token-classification')
+                         tokenizer, task_type='token-classification')
         self._default_aggregation_strategy = 'simple'
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]

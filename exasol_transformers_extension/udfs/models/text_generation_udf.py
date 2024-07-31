@@ -14,7 +14,7 @@ class TextGenerationUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForCausalLM,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='text-generation')
+                         tokenizer, task_type='text-generation')
         self.new_columns = ["generated_text", "error_message"]
 
     def extract_unique_param_based_dataframes(
