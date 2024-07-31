@@ -1,7 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from pathlib import Path
 
-from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
@@ -39,10 +38,18 @@ model_params = ModelParams(
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification("deepset/tinybert-6l-768d-squad2", "question-answering"),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
-    token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),#token-classification
+    token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),
     sequence_class_model_specs=ModelSpecification("mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis", "text-classification"),
-    sequence_class_pair_model_specs=ModelSpecification("MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli", "text-classification"),#Alireza1044/albert-base-v2-mnli
-    zero_shot_model_specs=ModelSpecification("MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33", "zero-shot-classification"),#text-class
+    sequence_class_pair_model_specs=ModelSpecification("MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli", "text-classification"),
+    zero_shot_model_specs=ModelSpecification("MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33", "zero-shot-classification"),
     tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "task"),
     text_data='The database software company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
+
+
+def get_arg_list(**kwargs) -> list[str]:
+    args_list: list[str] = []
+    for k, v in kwargs.items():
+        args_list.append(f'--{k.replace("_", "-")}')
+        args_list.append(str(v))
+    return args_list

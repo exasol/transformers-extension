@@ -10,8 +10,8 @@ from tests.fixtures.bucketfs_fixture import *
 from tests.fixtures.database_connection_fixture import *
 
 def test_sequence_classification_text_pair_script(
-        setup_database, pyexasol_connection, upload_sequence_classification_pair_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+        setup_database, db_conn, upload_sequence_classification_pair_model_to_bucketfs):
+    bucketfs_conn_name, _ = setup_database
     n_labels = 3
     n_rows = 100
     input_data = []
@@ -36,7 +36,7 @@ def test_sequence_classification_text_pair_script(
             f"model_name, first_text, second_text));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     for i in range(10):
         print(result[i])

@@ -8,9 +8,10 @@ from tests.utils.parameters import model_params
 
 
 def test_filling_mask_script(
-        setup_database, pyexasol_connection, upload_filling_mask_model_to_bucketfs):
+        setup_database, db_conn, upload_filling_mask_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "I <mask> you so much."
+
     n_rows = 100
     top_k = 3
     input_data = []
@@ -35,7 +36,7 @@ def test_filling_mask_script(
             f"model_name, text_data, top_k));"
 
     # execute sequence classification UDF
-    result = pyexasol_connection.execute(query).fetchall()
+    result = db_conn.execute(query).fetchall()
 
     # assertions
     assert result[0][-1] is None

@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+import logging
 import pyexasol
+from exasol.python_extension_common.connections.pyexasol_connection import open_pyexasol_connection
+
 from exasol_transformers_extension.deployment import constants, \
     deployment_utils as utils
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +18,24 @@ class ScriptsDeployer:
         self._pyexasol_conn = pyexasol_conn
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
+    def _get_current_schema(self) -> str | None:
+        return self._pyexasol_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
+
+    def _set_current_schema(self, schema: str | None):
+        if schema:
+            self._pyexasol_conn.execute(f'OPEN SCHEMA "{schema}";')
+        else:
+            self._pyexasol_conn.execute("CLOSE SCHEMA;")
+
     def _open_schema(self) -> None:
         try:
             self._pyexasol_conn.execute(
-                f"CREATE SCHEMA IF NOT EXISTS {self._schema}")
+                f'CREATE SCHEMA IF NOT EXISTS "{self._schema}";')
         except pyexasol.ExaQueryError as e:
             logger.warning(
                 f"Could not create schema {self._schema}. Got error: {e}")
             logger.info(f"Trying to open schema {self._schema} instead.")
-        self._pyexasol_conn.execute(f"OPEN SCHEMA {self._schema}")
+        self._set_current_schema(self._schema)
         logger.info(f"Schema {self._schema} is opened.")
 
     def _deploy_udf_scripts(self) -> None:
@@ -40,23 +53,20 @@ class ScriptsDeployer:
                          f"{template_src} is executed.")
 
     def deploy_scripts(self) -> None:
-        self._open_schema()
-        self._deploy_udf_scripts()
-        logger.debug(f"Scripts are deployed.")
+        current_schema = self._get_current_schema()
+        try:
+            self._open_schema()
+            self._deploy_udf_scripts()
+            logger.debug(f"Scripts are deployed.")
+        finally:
+            self._set_current_schema(current_schema)
 
     @classmethod
-    def run(cls, dsn: str, user: str, password: str,
-            schema: str, language_alias: str,
-            ssl_cert_path: str, use_ssl_cert_validation: bool = True):
-        websocket_sslopt = utils.get_websocket_ssl_options(use_ssl_cert_validation, ssl_cert_path)
+    def run(cls,
+            schema: str,
+            language_alias: str,
+            **kwargs):
 
-        pyexasol_conn = pyexasol.connect(
-            dsn=dsn,
-            user=user,
-            password=password,
-            encryption=True,
-            websocket_sslopt=websocket_sslopt
-        )
-
+        pyexasol_conn = open_pyexasol_connection(**kwargs)
         scripts_deployer = cls(language_alias, schema, pyexasol_conn)
         scripts_deployer.deploy_scripts()
