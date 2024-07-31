@@ -38,9 +38,6 @@ def test_sequence_classification_text_pair_script(
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
 
-    for i in range(10):
-        print(result[i])
-
     # assertions
     assert result[0][-1] is None
     added_columns = 3  # label,score,error_message

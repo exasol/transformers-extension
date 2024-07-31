@@ -52,8 +52,6 @@ def test_text_generation_script(
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
     # lenient test for quality of results, will be replaced by deterministic test later
-    for i in range(5):
-        print(result[i])
     results = [result[i][6] for i in range(len(result))]
     acceptable_results = ["software", "system", "solution", "tool"]
     number_accepted_results = 0

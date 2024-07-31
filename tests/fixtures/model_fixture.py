@@ -61,7 +61,6 @@ def prepare_model_for_local_bucketfs(model_specification: ModelSpecification,
     model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
 
     bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
-    print(bucketfs_path_for_model)
     download_model_to_path(current_model_specs, bucketfs_path_for_model)
     return tmpdir
 

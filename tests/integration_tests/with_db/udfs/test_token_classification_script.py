@@ -47,7 +47,6 @@ def test_token_classification_script(
 
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [[result[i][7], result[i][8]] for i in range(len(result))]
-    print(result)
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     number_accepted_results = 0
 

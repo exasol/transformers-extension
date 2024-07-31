@@ -51,8 +51,6 @@ def test_question_answering_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    for i in range(5):
-        print(result[i])
     results = [result[i][6] for i in range(len(result))]
     acceptable_results = ["Nuremberg", "Germany"]
     number_accepted_results = 0

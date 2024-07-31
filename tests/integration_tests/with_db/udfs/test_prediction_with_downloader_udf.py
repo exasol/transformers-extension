@@ -32,7 +32,6 @@ def test_prediction_with_downloader_udf(
 
         result = db_conn.execute(query).fetchall()
         time.sleep(10)
-        print(result)
 
         # execute the filling mask UDF
         text_data = "I <mask> you so much."
