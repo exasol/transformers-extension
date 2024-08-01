@@ -5,6 +5,7 @@ from tests.utils.parameters import model_params
 #for debug
 from tests.fixtures.model_fixture import *
 from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.script_deployment_fixture import *
 from tests.fixtures.language_container_fixture import *
 from tests.fixtures.bucketfs_fixture import *
 from tests.fixtures.database_connection_fixture import *

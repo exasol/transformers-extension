@@ -32,18 +32,21 @@ def backend(request) -> bfs.path.StorageBackend:
 
 
 @pytest.fixture(scope="session")
-def saas_url() -> str:
-    return _env("SAAS_HOST")
+def saas_url(backend) -> str:
+    if backend == bfs.path.StorageBackend.saas:
+        return _env("SAAS_HOST")
 
 
 @pytest.fixture(scope="session")
-def saas_account_id() -> str:
-    return _env("SAAS_ACCOUNT_ID")
+def saas_account_id(backend) -> str:
+    if backend == bfs.path.StorageBackend.saas:
+        return _env("SAAS_ACCOUNT_ID")
 
 
 @pytest.fixture(scope="session")
-def saas_token() -> str:
-    return _env("SAAS_PAT")
+def saas_token(backend) -> str:
+    if backend == bfs.path.StorageBackend.saas:
+        return _env("SAAS_PAT")
 
 
 @pytest.fixture(scope="session")
