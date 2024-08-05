@@ -291,7 +291,7 @@ severely. Available task_types are the same as the names of our available UDFs, 
 
 ### 2. Model Uploader Script
 You can invoke the python script as below which allows to download the transformer 
-models from The Hugging Face hub to the local filesystem, and then from there to the Bucketfs.
+models from The Hugging Face hub to the local filesystem, and then from there to the BucketFS.
 
 
 #### List of options

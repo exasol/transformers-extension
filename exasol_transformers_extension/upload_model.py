@@ -98,7 +98,7 @@ def main(
         downloader.download_from_huggingface_hub(model)
         # upload model files to BucketFS
     model_tar_file_path = downloader.upload_to_bucketfs()
-    print("your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
+    print("Your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
 
 
 if __name__ == '__main__':

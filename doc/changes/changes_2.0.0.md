@@ -4,7 +4,7 @@ Code name: Python update and fixed model saving
 
 ## Summary
 
-This release Fixes an error in the saving and loading of model metadata. It also adds Exasol Saas support and 
+This release Fixes an error in saving and loading of the model metadata. It also adds Exasol Saas support and 
 updated the project to python 3.10
 
 
