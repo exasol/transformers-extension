@@ -1,6 +1,6 @@
-# Transformers Extension 2.0.0, 2024-08-6
+# Transformers Extension 2.0.0, 2024-08-06
 
-Code name: Python update and fixed model saving
+Code name: Fixed model saving, added SaaS support and update to Python 3.10
 
 ## Summary
 
