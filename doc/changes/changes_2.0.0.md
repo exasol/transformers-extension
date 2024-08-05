@@ -1,8 +1,11 @@
-# Transformers Extension 2.0.0, t.b.d
+# Transformers Extension 2.0.0, 2024-08-6
 
-Code name: 
+Code name: Python update and fixed model saving
 
 ## Summary
+
+This release Fixes an error in the saving and loading of model metadata. It also adds Exasol Saas support and 
+updated the project to python 3.10
 
 
 ### Features
