@@ -16,7 +16,7 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
 @click.command()
 @click.option('--model-name', type=str, required=True,
               help="name of the model")
-@click.option('--task_type', type=str, required=True)
+@click.option('--task-type', type=str, required=True)
 @click.option('--sub-dir', type=str, required=True,
               help="directory where the model is stored in the BucketFS")
 @click.option('--token', type=str, default=None, help="Hugging Face hub token for private models")
@@ -90,9 +90,9 @@ def main(
     model_factory = current_model_spec.get_model_factory()
 
     downloader = HuggingFaceHubBucketFSModelTransferSP(bucketfs_location=bucketfs_location,
-                                                     model_specification=current_model_spec,
-                                                     bucketfs_model_path=upload_path,
-                                                     token=token)
+                                                       model_specification=current_model_spec,
+                                                       bucketfs_model_path=upload_path,
+                                                       token=token)
 
     for model in [model_factory, transformers.AutoTokenizer]:
         downloader.download_from_huggingface_hub(model)
