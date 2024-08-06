@@ -7,7 +7,7 @@ from pyexasol import ExaConnection, ExaConnectionFailedError
 import exasol.bucketfs as bfs
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
 
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 from exasol_transformers_extension import deploy
@@ -41,7 +41,7 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      deploy_params: dict[str, Any],
                                                      pyexasol_connection: ExaConnection,
                                                      upload_slc):
-    if backend != bfs.path.StorageBackend.onprem:
+    if backend != BACKEND_ONPREM:
         pytest.skip(("We run this test only with the Docker-DB "
                      "because SaaS always verifies the SSL certificate"))
 

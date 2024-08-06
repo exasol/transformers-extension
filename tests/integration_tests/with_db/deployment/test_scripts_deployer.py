@@ -9,6 +9,7 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
+from tests.fixtures.database_connection_fixture import BACKEND_ONPREM
 from tests.utils.db_queries import DBQueries
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
@@ -36,7 +37,7 @@ def test_scripts_deployer_no_schema_creation_permission(
         exasol_config: config.Exasol,
         upload_slc):
 
-    if backend != bfs.path.StorageBackend.onprem:
+    if backend != BACKEND_ONPREM:
         pytest.skip(("We run this test only with the Docker-DB, "
                      "since the script deployer doesn't use the DB user login and password in SaaS."))
 

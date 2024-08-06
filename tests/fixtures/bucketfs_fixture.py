@@ -5,7 +5,7 @@ from pytest_itde.config import TestConfig
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.utils.bucketfs_operations import create_bucketfs_location
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
 from tests.utils.parameters import bucketfs_params
 
 
@@ -13,7 +13,7 @@ from tests.utils.parameters import bucketfs_params
 def bucketfs_location_onprem(backend,
                              itde: TestConfig) -> bfs.path.PathLike | None:
 
-    if backend == bfs.path.StorageBackend.onprem:
+    if backend == BACKEND_ONPREM:
         return create_bucketfs_location(
             path_in_bucket=bucketfs_params.path_in_bucket,
             bucketfs_name=bucketfs_params.name,
@@ -46,7 +46,7 @@ def bucketfs_location(backend,
                       bucketfs_location_onprem,
                       bucketfs_location_saas) -> bfs.path.PathLike:
 
-    if backend == bfs.path.StorageBackend.onprem:
+    if backend == BACKEND_ONPREM:
         assert bucketfs_location_onprem is not None
         return bucketfs_location_onprem
     elif backend == BACKEND_SAAS:

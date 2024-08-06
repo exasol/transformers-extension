@@ -77,7 +77,7 @@ def saas_database_id(backend, saas_url, saas_account_id, saas_token) -> str:
 def pyexasol_connection_onprem(backend,
                                connection_factory,
                                exasol_config: config.Exasol) -> pyexasol.ExaConnection | None:
-    if backend == bfs.path.StorageBackend.onprem:
+    if backend == BACKEND_ONPREM:
         with connection_factory(exasol_config) as conn:
             yield conn
     else:
@@ -109,7 +109,7 @@ def pyexasol_connection_saas(backend,
 def pyexasol_connection(backend,
                         pyexasol_connection_onprem,
                         pyexasol_connection_saas) -> pyexasol.ExaConnection:
-    if backend == bfs.path.StorageBackend.onprem:
+    if backend == BACKEND_ONPREM:
         assert pyexasol_connection_onprem is not None
         yield pyexasol_connection_onprem
     elif backend == BACKEND_SAAS:
