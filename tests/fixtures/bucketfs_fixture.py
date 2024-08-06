@@ -11,15 +11,15 @@ from tests.utils.parameters import bucketfs_params
 
 @pytest.fixture(scope="session")
 def bucketfs_location_onprem(backend,
-                             itde: TestConfig) -> bfs.path.PathLike | None:
+                             itde_config: TestConfig) -> bfs.path.PathLike | None:
 
     if backend == BACKEND_ONPREM:
         return create_bucketfs_location(
             path_in_bucket=bucketfs_params.path_in_bucket,
             bucketfs_name=bucketfs_params.name,
-            bucketfs_url=itde.bucketfs.url,
-            bucketfs_user=itde.bucketfs.username,
-            bucketfs_password=itde.bucketfs.password,
+            bucketfs_url=itde_config.bucketfs.url,
+            bucketfs_user=itde_config.bucketfs.username,
+            bucketfs_password=itde_config.bucketfs.password,
             bucket=bucketfs_params.bucket)
     return None
 
