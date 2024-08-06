@@ -7,6 +7,7 @@ from pyexasol import ExaConnection, ExaConnectionFailedError
 import exasol.bucketfs as bfs
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
 
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 from exasol_transformers_extension import deploy
@@ -23,7 +24,7 @@ def test_scripts_deployer_cli(backend,
         args_list = get_arg_list(**deploy_params, schema=schema_name, language_alias=LANGUAGE_ALIAS)
         args_list.insert(0, "scripts")
         # We validate the server certificate in SaaS, but not in the Docker DB
-        if backend == bfs.path.StorageBackend.saas:
+        if backend == BACKEND_SAAS:
             args_list.append("--use-ssl-cert-validation")
         else:
             args_list.append("--no-use-ssl-cert-validation")

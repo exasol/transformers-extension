@@ -9,6 +9,7 @@ from exasol.python_extension_common.deployment.language_container_deployer impor
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment import language_container
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS
 
 LANGUAGE_ALIAS = "PYTHON3_TE"
 CONTAINER_FILE_NAME = "exasol_transformers_extension_container.tar.gz"
@@ -43,7 +44,7 @@ def upload_slc(backend, bucketfs_location, pyexasol_connection, export_slc: Expo
                  wait_for_completion=True)
 
     # Let's see if this helps
-    if backend == bfs.path.StorageBackend.saas:
+    if backend == BACKEND_SAAS:
         time.sleep(300)
 
 

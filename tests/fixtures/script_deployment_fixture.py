@@ -6,6 +6,7 @@ import pytest
 from pytest_itde import config
 import exasol.bucketfs as bfs
 
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
 
 
@@ -50,7 +51,7 @@ def deploy_params(backend,
                   deploy_params_saas) -> dict[str, Any]:
     if backend == bfs.path.StorageBackend.onprem:
         yield deploy_params_onprem
-    elif backend == bfs.path.StorageBackend.saas:
+    elif backend == BACKEND_SAAS:
         yield deploy_params_saas
     else:
         raise ValueError(f'No deploy_params fixture for the backend {backend}')
@@ -62,7 +63,7 @@ def upload_params(backend,
                   deploy_params_saas) -> dict[str, Any]:
     if backend == bfs.path.StorageBackend.onprem:
         yield upload_params_onprem
-    elif backend == bfs.path.StorageBackend.saas:
+    elif backend == BACKEND_SAAS:
         yield deploy_params_saas
     else:
         raise ValueError(f'No deploy_params fixture for the backend {backend}')
