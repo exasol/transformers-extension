@@ -1,0 +1,25 @@
+version: 0.2
+
+env:
+  shell: bash
+  secrets-manager:
+    DOCKER_USER: "Dockerhub:User"
+    DOCKER_PASSWORD: "Dockerhub:AccessToken"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.10
+    commands:
+      - curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.2 python3 -
+      - export PATH=$PATH:$HOME/.local/bin
+      - poetry env use $(command -v "python3.10")
+      - poetry --version
+      - poetry install
+      - poetry build
+  pre_build:
+    commands:
+      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
+  build:
+    commands:
+      - poetry run nox -s without_db_integration_tests

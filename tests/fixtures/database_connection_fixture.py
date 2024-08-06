@@ -23,11 +23,16 @@ def _env(var: str) -> str:
     raise RuntimeError(f"Environment variable {var} is empty.")
 
 
-@pytest.fixture(scope='session', params=[bfs.path.StorageBackend.onprem, bfs.path.StorageBackend.saas])
-def backend(request) -> bfs.path.StorageBackend:
-    # Here we are going to add
-    # pytest.skip()
-    # if there is an instruction to skip a particular backed in the command line or an envar.
+_BACKEND_OPTION = '--backend'
+_BACKEND_ONPREM = 'onprem'
+_BACKEND_SAAS = 'saas'
+
+
+@pytest.fixture(scope='session', params=[_BACKEND_ONPREM, _BACKEND_SAAS])
+def backend(request) -> str:
+    backend_options = request.config.getoption(_BACKEND_OPTION)
+    if backend_options and (request.param not in backend_options):
+        pytest.skip()
     return request.param
 
 
@@ -51,7 +56,6 @@ def saas_token(backend) -> str:
 
 @pytest.fixture(scope="session")
 def saas_database_id(backend, saas_url, saas_account_id, saas_token) -> str:
-
     if backend == bfs.path.StorageBackend.saas:
         with ExitStack() as stack:
             # Create and configure the SaaS client.
@@ -73,7 +77,6 @@ def saas_database_id(backend, saas_url, saas_account_id, saas_token) -> str:
 def pyexasol_connection_onprem(backend,
                                connection_factory,
                                exasol_config: config.Exasol) -> pyexasol.ExaConnection | None:
-
     if backend == bfs.path.StorageBackend.onprem:
         with connection_factory(exasol_config) as conn:
             yield conn
@@ -87,7 +90,6 @@ def pyexasol_connection_saas(backend,
                              saas_account_id,
                              saas_database_id,
                              saas_token) -> pyexasol.ExaConnection | None:
-
     if backend == bfs.path.StorageBackend.saas:
         # Create a connection to the database.
         conn_params = get_connection_params(host=saas_url,
@@ -107,7 +109,6 @@ def pyexasol_connection_saas(backend,
 def pyexasol_connection(backend,
                         pyexasol_connection_onprem,
                         pyexasol_connection_saas) -> pyexasol.ExaConnection:
-
     if backend == bfs.path.StorageBackend.onprem:
         assert pyexasol_connection_onprem is not None
         yield pyexasol_connection_onprem
