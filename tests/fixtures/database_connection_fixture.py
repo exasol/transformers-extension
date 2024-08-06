@@ -61,7 +61,7 @@ def saas_database_id(backend, saas_url, saas_account_id, saas_token) -> str:
 
             # Create a temporary database and waite till it becomes operational
             db = stack.enter_context(api_access.database(
-                name=timestamp_name('SME_CI'),
+                name=timestamp_name('TE_CI'),
                 idle_time=timedelta(hours=12)))
             api_access.wait_until_running(db.id)
             yield db.id

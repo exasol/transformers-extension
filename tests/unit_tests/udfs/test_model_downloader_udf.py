@@ -67,16 +67,16 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
-    mock_cmss = [create_autospec(BucketFSModelSpecification,
-                                 model_name=base_model_names[i],
-                                 task_type=task_type[i],
-                                 sub_dir=Path(sub_directory_names[i]),
-                                 get_model_factory=BucketFSModelSpecification.get_model_factory) for i in range(count)]
+    mock_bucketfs_model_specs = [create_autospec(BucketFSModelSpecification,
+                               model_name=base_model_names[i],
+                               task_type=task_type[i],
+                               sub_dir=Path(sub_directory_names[i]),
+                               get_model_factory=BucketFSModelSpecification.get_model_factory) for i in range(count)]
     for i in range(count):
-        mock_cast(mock_cmss[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
+        mock_cast(mock_bucketfs_model_specs[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
     mock_current_model_specification_factory: Union[BucketFSModelSpecificationFactory, MagicMock] = (
         create_autospec(BucketFSModelSpecificationFactory))
-    mock_cast(mock_current_model_specification_factory.create).side_effect = mock_cmss
+    mock_cast(mock_current_model_specification_factory.create).side_effect = mock_bucketfs_model_specs
 
     input_data = [
         (
@@ -104,14 +104,14 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     udf.run(mock_ctx)
     assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
         call(bucketfs_location=mock_bucketfs_locations[i],
-             model_specification=mock_cmss[i],
+             model_specification=mock_bucketfs_model_specs[i],
              model_path=f'{sub_directory_names[i]}/{base_model_names[i]}',
              token=expected_token)
         for i in range(count)
     ]
     for i in range(count):
         assert mock_cast(mock_model_downloaders[i].download_from_huggingface_hub).mock_calls == [
-            call(mock_cmss[i].get_model_factory()),
+            call(mock_bucketfs_model_specs[i].get_model_factory()),
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls
