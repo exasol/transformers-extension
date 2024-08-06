@@ -7,6 +7,7 @@ import ssl
 import pyexasol
 import pytest
 import exasol.bucketfs as bfs
+from _pytest.fixtures import FixtureRequest
 from exasol.saas.client.api_access import (
     OpenApiAccess,
     create_saas_client,
@@ -14,6 +15,8 @@ from exasol.saas.client.api_access import (
     get_connection_params
 )
 from pytest_itde import config
+
+CURRENT_SAAS_DATABASE_ID = pytest.StashKey[str]()
 
 
 def _env(var: str) -> str:
@@ -54,21 +57,26 @@ def saas_token(backend) -> str:
         return _env("SAAS_PAT")
 
 
-@pytest.fixture(scope="session")
-def saas_database_id(backend, saas_url, saas_account_id, saas_token) -> str:
-    if backend == BACKEND_SAAS:
-        with ExitStack() as stack:
-            # Create and configure the SaaS client.
-            client = create_saas_client(host=saas_url, pat=saas_token)
-            api_access = OpenApiAccess(client=client, account_id=saas_account_id)
-            stack.enter_context(api_access.allowed_ip())
 
-            # Create a temporary database and waite till it becomes operational
-            db = stack.enter_context(api_access.database(
-                name=timestamp_name('TE_CI'),
-                idle_time=timedelta(hours=12)))
-            api_access.wait_until_running(db.id)
-            yield db.id
+@pytest.fixture(scope="session")
+def saas_database_id(request: FixtureRequest, backend, saas_url, saas_account_id, saas_token) -> str:
+    if backend == BACKEND_SAAS:
+        if CURRENT_SAAS_DATABASE_ID in request.session.stash:
+            with ExitStack() as stack:
+                # Create and configure the SaaS client.
+                client = create_saas_client(host=saas_url, pat=saas_token)
+                api_access = OpenApiAccess(client=client, account_id=saas_account_id)
+                stack.enter_context(api_access.allowed_ip())
+
+                # Create a temporary database and waite till it becomes operational
+                db = stack.enter_context(api_access.database(
+                    name=timestamp_name('TE_CI'),
+                    idle_time=timedelta(hours=12)))
+                api_access.wait_until_running(db.id)
+                request.session.stash[CURRENT_SAAS_DATABASE_ID] = db.id
+                yield db.id
+        else:
+            yield request.session.stash[CURRENT_SAAS_DATABASE_ID]
     else:
         yield ''
 
