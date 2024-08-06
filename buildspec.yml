@@ -7,14 +7,14 @@ batch:
       env:
         compute-type: BUILD_GENERAL1_MEDIUM
         privileged-mode: true
-      buildspec: ./buildspec_without_db.yaml
+      buildspec: ./buildspec_without_db.yml
     - identifier: saas_tests
       env:
         compute-type: BUILD_GENERAL1_MEDIUM
         privileged-mode: true
-      buildspec: ./buildspec_saas.yaml
+      buildspec: ./buildspec_saas.yml
     - identifier: onprem_tests
       env:
         compute-type: BUILD_GENERAL1_MEDIUM
         privileged-mode: true
-      buildspec: ./buildspec_onprem.yaml
+      buildspec: ./buildspec_onprem.yml
