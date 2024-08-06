@@ -61,7 +61,7 @@ def saas_token(backend) -> str:
 @pytest.fixture(scope="session")
 def saas_database_id(request: FixtureRequest, backend, saas_url, saas_account_id, saas_token) -> str:
     if backend == BACKEND_SAAS:
-        if CURRENT_SAAS_DATABASE_ID in request.session.stash:
+        if CURRENT_SAAS_DATABASE_ID not in request.session.stash:
             with ExitStack() as stack:
                 # Create and configure the SaaS client.
                 client = create_saas_client(host=saas_url, pat=saas_token)
