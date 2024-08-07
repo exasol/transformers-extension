@@ -263,14 +263,17 @@ Once you have internet access, invoke the UDF like this:
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
     model_name,
+    task_type,
     sub_dir,
     bucketfs_conn,
     token_conn
 )
+
 ```
 - Parameters:
   - ```model_name```: The name of the model to use for prediction. You can find the 
   details of the models on the [huggingface models page](https://huggingface.co/models).
+  - ```task_type```: The Name of the task you want to use the model for.
   - ```sub_dir```: The directory where the model is stored in the BucketFS.
   - ```bucketfs_conn```: The BucketFS connection name.
   - ```token_conn```: The connection name containing the token required for 
@@ -278,14 +281,18 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   on how to create a connection object with token information, please check 
   [here](#getting-started).
   
-    
-### 2. Model Uploader Script
-You can invoke the python script as below which allows to load the transformer 
-models from the local filesystem into BucketFS:
+"task_type" is a variable for the type of task you plan to use the model for. 
+Some models can be used for multiple types of tasks, but transformers stores 
+different metadata depending on the task of the model, which affects how the model 
+is loaded later. Setting an Incorrect task_type, o leaving the task_type empty may affect the models performance 
+severely. Available task_types are the same as the names of our available UDFs, namely: 
+`filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, 
+`translation` and`zero_shot_classification`.    
 
-  ```buildoutcfg
-  python -m exasol_transformers_extension.upload_model <options>
-  ```
+### 2. Model Uploader Script
+You can invoke the python script as below which allows to download the transformer 
+models from The Hugging Face hub to the local filesystem, and then from there to the BucketFS.
+
 
 #### List of options
 
@@ -309,26 +316,19 @@ Unless stated otherwise in the comments column, the option is required for eithe
 | model-name                   |   [x]   | [x]  |                                                 |
 | path-in-bucket               |   [x]   | [x]  | Root location in the bucket for all models      |
 | sub-dir                      |   [x]   | [x]  | Sub-directory where this model should be stored |
+| task_type                    |   [x]   | [x]  | Name of the task you want to use the model for  |
+| token                        |   [x]   | [x]  | Huggingface token (needed for private models)   |
 | [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True              |
 
-**Note**: The options --local-model-path needs to point to a path which contains the model and its tokenizer. 
-These should have been saved using transformers [save_pretrained](https://huggingface.co/docs/transformers/v4.32.1/en/installation#fetch-models-and-tokenizers-to-use-offline) 
-function to ensure proper loading by the Transformers Extension UDFs.
-You can download the model using python like this:
 
-```python
-    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
-        # download the model and tokenizer from Hugging Face
-        model = model_factory.from_pretrained(model_name)
-        # save the downloaded model using the save_pretrained function
-        model_save_path = <your local model save path>
-        model.save_pretrained(model_save_path)
-```
-***Note:*** Hugging Face models consist of two parts, the model and the tokenizer. 
-Make sure to download and save both into the same save directory so the upload model script uploads them together.
-And then upload it using exasol_transformers_extension.upload_model script where ```--local-model-path = <your local model save path>```
-
-
+"task_type" is a variable for the type of task you plan to use the model for. 
+Some models can be used for multiple types of tasks, but transformers stores 
+different metadata depending on the task of the model, which affects how the model 
+is loaded later. Setting an Incorrect task_type, o leaving the task_type empty may affect the models performance 
+severely. Available task_types are the same as the names of our available UDFs, namely: 
+`filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, 
+`translation` and`zero_shot_classification`.
+ 
 ## Using Prediction UDFs
 We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP 
 task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 

@@ -1,11 +1,19 @@
+from tests.fixtures.model_fixture import upload_question_answering_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
+from tests.fixtures.model_fixture import *
+from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.language_container_fixture import *
+from tests.fixtures.bucketfs_fixture import *
+from tests.fixtures.database_connection_fixture import *
+
 
 def test_question_answering_script(
-        setup_database, db_conn, upload_base_model_to_bucketfs):
+        setup_database, db_conn, upload_question_answering_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
-    question = "Where is the Exasol?"
+    question = "Where is Exasol based?"
+
     n_rows = 100
     top_k = 1
     input_data = []
@@ -14,9 +22,9 @@ def test_question_answering_script(
             '',
             bucketfs_conn_name,
             str(model_params.sub_dir),
-            model_params.base_model_specs.model_name,
+            model_params.q_a_model_specs.model_name,
             question,
-            ' '.join((model_params.text_data, str(i))),
+            'The database software company Exasol is based in Nuremberg',
             top_k
         ))
 
@@ -42,3 +50,15 @@ def test_question_answering_script(
     n_rows_result = n_rows
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+
+    results = [result[i][6] for i in range(len(result))]
+    acceptable_results = ["Nuremberg", "Germany"]
+    number_accepted_results = 0
+
+    def contains(string, list):
+        return any(map(lambda x: x in string, list))
+
+    for i in range(len(results)):
+        if contains(results[i], acceptable_results):
+            number_accepted_results += 1
+    assert number_accepted_results > top_k / 2

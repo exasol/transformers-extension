@@ -3,6 +3,7 @@ import pytest
 import pandas as pd
 from typing import Dict
 
+from tests.fixtures.model_fixture import prepare_question_answering_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, ScoreMatcher, RankDTypeMatcher, NoErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
@@ -57,12 +58,12 @@ class Context:
     ])
 def test_question_answering_udf(
         description, device_id, n_rows,
-        top_k, prepare_base_model_for_local_bucketfs):
+        top_k, prepare_question_answering_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -72,7 +73,7 @@ def test_question_answering_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model_specs.model_name,
+        model_params.q_a_model_specs.model_name,
         question,
         model_params.text_data,
         top_k
@@ -121,12 +122,12 @@ def test_question_answering_udf(
     ])
 def test_question_answering_udf_on_error_handling(
         description, device_id, n_rows,
-        top_k, prepare_base_model_for_local_bucketfs):
+        top_k, prepare_question_answering_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

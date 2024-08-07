@@ -115,6 +115,6 @@ def create_save_pretrained_model_path(_tmpdir_name, model_specification: ModelSp
     before it is uploaded to the bucketfs
     """
     model_specific_path_suffix = model_specification.get_model_specific_path_suffix()
-    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix) #todo move to modespecstring eventually?
+    return Path(_tmpdir_name, "pretrained", model_specific_path_suffix)
 
 

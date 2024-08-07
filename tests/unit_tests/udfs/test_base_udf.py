@@ -113,7 +113,7 @@ def test_model_downloader_all_parameters(mock_local_path, mock_create_loc, descr
     ("sub_dir missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      None, "test_model"),
     ("model_name missing", "test_bucketfs_con_name", Connection(address=f"file:///test"),
-     "test_subdir", None)
+     "test_subdir", None),
 ])
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')

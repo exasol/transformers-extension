@@ -5,6 +5,7 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import \
     ZeroShotTextClassificationUDF
+from tests.fixtures.model_fixture import prepare_zero_shot_classification_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, NoErrorMessageMatcher, \
     ShapeMatcher, RankMonotonicMatcher, RankDTypeMatcher, ScoreMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, \
     ColumnsMatcher
@@ -49,13 +50,13 @@ class Context:
         ("on CPU", None),
         ("on GPU", 0)
     ])
-def test_sequence_classification_single_text_udf(
-        description, device_id, prepare_base_model_for_local_bucketfs):
+def test_zero_shot_classification_single_text_udf(
+        description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -66,7 +67,7 @@ def test_sequence_classification_single_text_udf(
         None,
         bucketfs_conn_name,
         model_params.sub_dir,
-        model_params.base_model_specs.model_name,
+        model_params.zero_shot_model_specs.model_name,
         model_params.text_data + str(i),
         candidate_labels + str(i)
     ) for i in range(n_rows)]
@@ -112,13 +113,13 @@ def test_sequence_classification_single_text_udf(
         ("on CPU", None),
         ("on GPU", 0)
     ])
-def test_sequence_classification_single_text_udf_on_error_handling(
-        description, device_id, prepare_base_model_for_local_bucketfs):
+def test_zero_shot_classification_single_text_udf_on_error_handling(
+        description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_base_model_for_local_bucketfs
+    bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
+
+from exasol_transformers_extension.utils.bucketfs_model_specification import get_BucketFSModelSpecification_from_model_Specs
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
 from tests.utils.bucketfs_file_list import get_bucketfs_file_list
@@ -18,11 +19,12 @@ def test_model_downloader_udf_script(
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
-        current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_params.tiny_model_specs,
-                                                                                  bucketfs_conn_name, Path(sub_dir))
+        current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_params.tiny_model_specs,
+                                                                              bucketfs_conn_name, Path(sub_dir))
         model_paths.append(current_model_specs.get_bucketfs_model_save_path())
         input_data.append((
             current_model_specs.model_name,
+            current_model_specs.task_type,
             sub_dir,
             bucketfs_conn_name,
             ''
@@ -33,11 +35,12 @@ def test_model_downloader_udf_script(
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
             t.model_name,
+            t.task_type,
             t.sub_dir,
             t.bucketfs_conn_name,
             t.token_conn_name
             ) FROM (VALUES {str(tuple(input_data))} AS
-            t(model_name, sub_dir, bucketfs_conn_name, token_conn_name));
+            t(model_name, task_type, sub_dir, bucketfs_conn_name, token_conn_name));
             """
 
         # execute downloader UDF

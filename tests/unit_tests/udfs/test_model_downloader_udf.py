@@ -7,8 +7,8 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecification, \
-    CurrentModelSpecificationFactory
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
+    BucketFSModelSpecificationFactory
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
@@ -17,7 +17,6 @@ from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer
     HuggingFaceHubBucketFSModelTransferSPFactory, HuggingFaceHubBucketFSModelTransferSP
 from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
-
 
 def create_mock_metadata() -> MockMetaData:
     def udf_wrapper():
@@ -29,6 +28,7 @@ def create_mock_metadata() -> MockMetaData:
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("task_type", str, "VARCHAR(2000000)"),
             Column("bfs_conn", str, "VARCHAR(2000000)"),
             Column("token_conn", str, "VARCHAR(2000000)"),
         ],
@@ -49,7 +49,6 @@ def create_mock_metadata() -> MockMetaData:
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 def test_model_downloader(mock_create_loc, description, count, token_conn_name, token_conn_obj, expected_token):
 
-    mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
 
     mock_model_downloader_factory: Union[HuggingFaceHubBucketFSModelTransferSPFactory, MagicMock] = create_autospec(
@@ -64,22 +63,26 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
+    task_type = [f"task_type_{i}" for i in range(count)]
     bucketfs_connections = [Connection(address=f"file:///test{i}") for i in range(count)]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
-    mock_cmss = [create_autospec(CurrentModelSpecification,
-                                 model_name=base_model_names[i],
-                                 sub_dir=Path(sub_directory_names[i])) for i in range(count)]
+    mock_bucketfs_model_specs = [create_autospec(BucketFSModelSpecification,
+                               model_name=base_model_names[i],
+                               task_type=task_type[i],
+                               sub_dir=Path(sub_directory_names[i]),
+                               get_model_factory=BucketFSModelSpecification.get_model_factory) for i in range(count)]
     for i in range(count):
-        mock_cast(mock_cmss[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
-    mock_current_model_specification_factory: Union[CurrentModelSpecificationFactory, MagicMock] = (
-        create_autospec(CurrentModelSpecificationFactory))
-    mock_cast(mock_current_model_specification_factory.create).side_effect = mock_cmss
+        mock_cast(mock_bucketfs_model_specs[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
+    mock_current_model_specification_factory: Union[BucketFSModelSpecificationFactory, MagicMock] = (
+        create_autospec(BucketFSModelSpecificationFactory))
+    mock_cast(mock_current_model_specification_factory.create).side_effect = mock_bucketfs_model_specs
 
     input_data = [
         (
             base_model_names[i],
             sub_directory_names[i],
+            task_type[i],
             bfs_conn_name[i],
             token_conn_name
         )
@@ -95,21 +98,20 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
     udf = ModelDownloaderUDF(exa=mock_exa,
-                             base_model_factory=mock_base_model_factory,
                              tokenizer_factory=mock_tokenizer_factory,
                              huggingface_hub_bucketfs_model_transfer=mock_model_downloader_factory,
                              current_model_specification_factory=mock_current_model_specification_factory)
     udf.run(mock_ctx)
     assert mock_cast(mock_model_downloader_factory.create).mock_calls == [
         call(bucketfs_location=mock_bucketfs_locations[i],
-             model_specification=mock_cmss[i],
+             model_specification=mock_bucketfs_model_specs[i],
              model_path=f'{sub_directory_names[i]}/{base_model_names[i]}',
              token=expected_token)
         for i in range(count)
     ]
     for i in range(count):
         assert mock_cast(mock_model_downloaders[i].download_from_huggingface_hub).mock_calls == [
-            call(mock_base_model_factory),
+            call(mock_bucketfs_model_specs[i].get_model_factory()),
             call(mock_tokenizer_factory)
         ]
         assert call() in mock_cast(mock_model_downloaders[i].upload_to_bucketfs).mock_calls

@@ -14,7 +14,7 @@ class FillingMaskUDF(BaseModelUDF):
                  base_model=transformers.AutoModelForMaskedLM,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_name='fill-mask')
+                         tokenizer, task_type='fill-mask')
         self._mask_token = "<mask>"
         self._desired_fields_in_prediction = ["sequence", "score"]
         self.new_columns = ["filled_text", "score", "rank", "error_message"]

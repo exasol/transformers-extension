@@ -51,9 +51,9 @@ class SingleTopkMultipleModelNameMultipleBatch:
     }
 
     mock_factory = MockFillingMaskFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_fill-mask"):
             MockFillingMaskModel(sequence="text valid 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model2"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model2_fill-mask"):
             MockFillingMaskModel(sequence="text valid 2", score=0.2, rank=1)
     })
 

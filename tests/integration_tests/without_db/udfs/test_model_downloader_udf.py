@@ -7,12 +7,11 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.current_model_specification import CurrentModelSpecificationFromModelSpecs
+from exasol_transformers_extension.utils.bucketfs_model_specification import get_BucketFSModelSpecification_from_model_Specs
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
 from tests.utils.bucketfs_file_list import get_bucketfs_file_list
-
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -39,6 +38,10 @@ class Context:
         return self.ctx_data[self.index]['sub_dir']
 
     @property
+    def task_type(self):
+        return self.ctx_data[self.index]['task_type']
+
+    @property
     def bfs_conn(self):
         return self.ctx_data[self.index]['bucketfs_conn_name']
 
@@ -63,11 +66,12 @@ class TestEnvironmentSetup:
     def __init__(self, id: str, tmp_dir: Path, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
-        current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_params.tiny_model_specs,
-                                                                                  self.bucketfs_conn_name, Path(self.sub_dir))
+        current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_params.tiny_model_specs,
+                                                                              self.bucketfs_conn_name, Path(self.sub_dir))
         self.token_conn_name = token_conn_name
         self.ctx_data = {
             'tiny_model': current_model_specs.model_name,
+            'task_type': current_model_specs.task_type,
             'sub_dir': self.sub_dir,
             'bucketfs_conn_name': self.bucketfs_conn_name,
             'token_conn_name': self.token_conn_name

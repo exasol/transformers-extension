@@ -11,6 +11,7 @@ import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
+from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
 from tests.utils.parameters import bucketfs_params
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
@@ -94,9 +95,9 @@ def setup_database(backend: bfs.path.StorageBackend,
 
     _create_schema(pyexasol_connection)
     _deploy_scripts(pyexasol_connection)
-    if backend == bfs.path.StorageBackend.onprem:
+    if backend == BACKEND_ONPREM:
         _create_bucketfs_connection_onprem(bucketfs_config, pyexasol_connection)
-    elif backend == bfs.path.StorageBackend.saas:
+    elif backend == BACKEND_SAAS:
         _create_bucketfs_connection_saas(saas_url, saas_account_id, saas_database_id, saas_token,
                                          pyexasol_connection)
     else:
@@ -105,7 +106,7 @@ def setup_database(backend: bfs.path.StorageBackend,
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def db_conn(setup_database, pyexasol_connection) -> pyexasol.ExaConnection:
     """
     Per-test fixture that returns the same session-wide pyexasol connection,

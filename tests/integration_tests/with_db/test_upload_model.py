@@ -4,13 +4,20 @@ import time
 from click.testing import CliRunner
 import exasol.bucketfs as bfs
 
-from exasol_transformers_extension import upload_model
-from exasol_transformers_extension.utils.current_model_specification import \
-    CurrentModelSpecificationFromModelSpecs
+from exasol_transformers_extension import upload_model as upload_model_cli
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    get_BucketFSModelSpecification_from_model_Specs)
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params, get_arg_list
 from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
+
+from tests.fixtures.script_deployment_fixture import *
+from tests.fixtures.model_fixture import *
+from tests.fixtures.setup_database_fixture import *
+from tests.fixtures.language_container_fixture import *
+from tests.fixtures.bucketfs_fixture import *
+from tests.fixtures.database_connection_fixture import *
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -32,20 +39,23 @@ def test_model_upload(upload_params,
 
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
+    model_specification.task_type = "filling_mask"
     model_name = model_specification.model_name
-    download_path = download_model_to_standard_local_save_path(model_specification, tmp_path)
-    current_model_specs = CurrentModelSpecificationFromModelSpecs().transform(model_specification,
-                                                                              "", Path(sub_dir))
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_specification, "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
+
     args_list = get_arg_list(**upload_params,
                              path_in_bucket=bucketfs_params.path_in_bucket,
                              model_name=model_name,
                              sub_dir=sub_dir,
-                             local_model_path=str(download_path))
+                             task_type="filling_mask")
+
 
     try:
         runner = CliRunner()
-        result = runner.invoke(upload_model.main, args_list)
+        print(args_list)
+        result = runner.invoke(upload_model_cli.main, args_list)
+        print(result)
         assert result.exit_code == 0
         time.sleep(20)
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")
