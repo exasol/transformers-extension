@@ -65,5 +65,5 @@ def start_database(session):
                 '--environment-name', 'test',
                 '--database-port-forward', '8888',
                 '--bucketfs-port-forward', '6666',
-                '--db-mem-size', '4GB',
+                '--db-mem-size', '8GB',
                 '--nameserver', '8.8.8.8')
