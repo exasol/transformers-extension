@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 import time
+from typing import Dict
 
 import pytest
 from _pytest.fixtures import FixtureRequest
@@ -16,7 +17,7 @@ LANGUAGE_ALIAS = "PYTHON3_TE"
 CONTAINER_FILE_NAME = "exasol_transformers_extension_container.tar.gz"
 
 SLC_EXPORT = pytest.StashKey[ExportInfo]()
-SLC_UPLOADED = pytest.StashKey[bool]()
+SLC_UPLOADED = pytest.StashKey[Dict[str, bool]]()
 
 
 @pytest.fixture(scope="session")
@@ -37,7 +38,7 @@ def export_slc(request: FixtureRequest, flavor_path: Path) -> ExportInfo:
 @pytest.fixture(scope="session")
 def upload_slc(request: FixtureRequest, backend, bucketfs_location, pyexasol_connection,
                export_slc: ExportInfo) -> None:
-    if SLC_UPLOADED not in request.session.stash:
+    if SLC_UPLOADED not in request.session.stash or backend not in request.session.stash[SLC_UPLOADED]:
         cleanup_images()
 
         container_file_path = Path(export_slc.cache_file)
@@ -54,8 +55,7 @@ def upload_slc(request: FixtureRequest, backend, bucketfs_location, pyexasol_con
         # Let's see if this helps
         if backend == BACKEND_SAAS:
             time.sleep(300)
-        request.session.stash[SLC_UPLOADED] = True
-
+        request.session.stash[SLC_UPLOADED][backend] = True
 
 
 def cleanup_images():
