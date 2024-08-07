@@ -38,7 +38,9 @@ def export_slc(request: FixtureRequest, flavor_path: Path) -> ExportInfo:
 @pytest.fixture(scope="session")
 def upload_slc(request: FixtureRequest, backend, bucketfs_location, pyexasol_connection,
                export_slc: ExportInfo) -> None:
-    if SLC_UPLOADED not in request.session.stash or backend not in request.session.stash[SLC_UPLOADED]:
+    if SLC_UPLOADED not in request.session.stash:
+        request.session.stash[SLC_UPLOADED] = dict()
+    if backend not in request.session.stash[SLC_UPLOADED]:
         cleanup_images()
 
         container_file_path = Path(export_slc.cache_file)
