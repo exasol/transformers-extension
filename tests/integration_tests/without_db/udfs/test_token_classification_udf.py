@@ -1,18 +1,16 @@
-import torch
-import pytest
-import pandas as pd
 from typing import Dict
 
-from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
-    ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
-from tests.utils.parameters import model_params
-from tests.utils.mock_connections import create_mounted_bucketfs_connection
+import pandas as pd
+import pytest
+import torch
 from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
     TokenClassificationUDF
-
-# debugging
-from tests.fixtures.model_fixture import prepare_token_classification_model_for_local_bucketfs
+from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
+    ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:
@@ -158,7 +156,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     assert (result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NoErrorMessageMatcher()
             and set(result_df['aggregation_strategy'].unique()) == {"none", "simple", "max", "average"}
-    )
+            )
 
 
 @pytest.mark.parametrize(

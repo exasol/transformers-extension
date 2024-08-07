@@ -1,16 +1,17 @@
-import pandas as pd
 from typing import Dict
+
+import pandas as pd
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import \
     ZeroShotTextClassificationUDF
-from tests.fixtures.model_fixture import prepare_zero_shot_classification_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, NoErrorMessageMatcher, \
     ShapeMatcher, RankMonotonicMatcher, RankDTypeMatcher, ScoreMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, \
     ColumnsMatcher
-from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:

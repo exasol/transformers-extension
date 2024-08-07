@@ -5,7 +5,7 @@ import pytest
 import pytest_itde
 
 from exasol_transformers_extension.utils.bucketfs_operations import create_bucketfs_location
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
 
 

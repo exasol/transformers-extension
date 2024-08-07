@@ -1,4 +1,3 @@
-from tests.fixtures.model_fixture import upload_question_answering_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 

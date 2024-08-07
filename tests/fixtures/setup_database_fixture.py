@@ -11,9 +11,9 @@ import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
-from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
+from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"

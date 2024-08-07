@@ -1,21 +1,16 @@
-import pandas as pd
 from typing import Dict
+
+import pandas as pd
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import \
     SequenceClassificationTextPairUDF
-from tests.fixtures.model_fixture import prepare_sequence_classification_pair_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, ColumnsMatcher, NoErrorMessageMatcher
-from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
-
-
-
-
-
-
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:

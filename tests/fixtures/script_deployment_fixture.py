@@ -6,7 +6,7 @@ import pytest
 from pytest_itde import config
 import exasol.bucketfs as bfs
 
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
 
 

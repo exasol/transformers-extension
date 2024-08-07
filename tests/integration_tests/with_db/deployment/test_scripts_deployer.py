@@ -9,9 +9,9 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.fixtures.database_connection_fixture import BACKEND_ONPREM
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM
 from tests.utils.db_queries import DBQueries
-from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
+from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 
 def test_scripts_deployer(

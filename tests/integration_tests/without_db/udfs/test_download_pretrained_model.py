@@ -3,7 +3,6 @@ import tempfile
 from pathlib import Path
 
 from tests.utils.parameters import model_params
-from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
 
 
 def test_download_pretrained_model():
@@ -22,4 +21,3 @@ def test_download_pretrained_model():
 
         assert Path(download_tmpdir).is_dir() \
                and all(model_params.tiny_model_specs.model_name in url_ for url_ in url_fields)
-

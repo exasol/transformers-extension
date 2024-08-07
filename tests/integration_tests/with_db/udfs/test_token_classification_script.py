@@ -1,11 +1,5 @@
-from tests.fixtures.model_fixture import upload_token_classification_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
-
-
-
-
-
 
 
 def test_token_classification_script(
@@ -53,4 +47,4 @@ def test_token_classification_script(
     for i in range(len(results)):
         if results[i] in acceptable_result_sets:
             number_accepted_results += 1
-    assert number_accepted_results > len(result)/1.5
+    assert number_accepted_results > len(result) / 1.5
