@@ -3,11 +3,11 @@ from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_
 from tests.utils.parameters import model_params
 
 # debug
-from tests.fixtures.model_fixture import *
-from tests.fixtures.setup_database_fixture import *
-from tests.fixtures.language_container_fixture import *
-from tests.fixtures.bucketfs_fixture import *
-from tests.fixtures.database_connection_fixture import *
+
+
+
+
+
 
 def test_zero_shot_classification_single_text_script(
         setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs):

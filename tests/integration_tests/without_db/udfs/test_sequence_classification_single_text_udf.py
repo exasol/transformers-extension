@@ -11,11 +11,11 @@ from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
-from tests.fixtures.model_fixture import *
-from tests.fixtures.setup_database_fixture import *
-from tests.fixtures.language_container_fixture import *
-from tests.fixtures.bucketfs_fixture import *
-from tests.fixtures.database_connection_fixture import *
+
+
+
+
+
 
 
 class ExaEnvironment:
