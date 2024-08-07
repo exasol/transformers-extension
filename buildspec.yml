@@ -15,6 +15,6 @@ batch:
       buildspec: ./buildspec_saas.yml
     - identifier: onprem_tests
       env:
-        compute-type: BUILD_GENERAL1_MEDIUM
+        compute-type: BUILD_GENERAL1_LARGE
         privileged-mode: true
       buildspec: ./buildspec_onprem.yml
