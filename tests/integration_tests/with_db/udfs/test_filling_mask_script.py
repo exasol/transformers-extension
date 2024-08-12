@@ -5,6 +5,9 @@ from tests.utils.parameters import model_params
 def test_filling_mask_script(
         setup_database, db_conn, upload_filling_mask_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
+    print("test_filling_mask_script CURRENT_SESSION:", db_conn.execute("SELECT CURRENT_SESSION"))
+    print("test_filling_mask_script CURRENT_SCHEMA:", db_conn.execute("SELECT CURRENT_SCHEMA"))
+    print("test_filling_mask_script schema:", schema_name)
     text_data = "I <mask> you so much."
 
     n_rows = 100

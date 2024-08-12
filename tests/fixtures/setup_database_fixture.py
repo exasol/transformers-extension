@@ -30,6 +30,9 @@ def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
                                        language_alias=LANGUAGE_ALIAS,
                                        pyexasol_conn=pyexasol_connection)
     scripts_deployer.deploy_scripts()
+    print("_deploy_scripts CURRENT_SESSION:", pyexasol_connection.execute("SELECT CURRENT_SESSION"))
+    print("_deploy_scripts CURRENT_SCHEMA:", pyexasol_connection.execute("SELECT CURRENT_SCHEMA"))
+    print("_deploy_scripts schema:", SCHEMA_NAME)
 
 
 def _to_json_str(**kwargs) -> str:
