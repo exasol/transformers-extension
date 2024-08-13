@@ -23,8 +23,10 @@ class ScriptsDeployer:
 
     def _set_current_schema(self, schema: str | None):
         if schema:
+            print("scripts_deployer _set_current_schema open schema", schema)
             self._pyexasol_conn.execute(f'OPEN SCHEMA "{schema}";')
         else:
+            print("scripts_deployer _set_current_schema close schema", schema)
             self._pyexasol_conn.execute("CLOSE SCHEMA;")
 
     def _open_schema(self) -> None:
