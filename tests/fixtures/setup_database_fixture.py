@@ -109,7 +109,7 @@ def setup_database(backend: bfs.path.StorageBackend,
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def db_conn(setup_database, pyexasol_connection) -> pyexasol.ExaConnection:
     """
     Per-test fixture that returns the same session-wide pyexasol connection,
