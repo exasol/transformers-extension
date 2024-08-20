@@ -56,6 +56,9 @@ class HuggingFaceHubBucketFSModelTransferSP:
         model_name = self._model_specification.model_name
         model = model_factory.from_pretrained(model_name, cache_dir=self._tmpdir_name / "cache",
                                               use_auth_token=self._token)
+        # Fix for ValueError: You are trying to save a non contiguous tensor
+        for param in model.parameters():
+            param.data = param.data.contiguous()
         model.save_pretrained(self._save_pretrained_model_path)
 
 
