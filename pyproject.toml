@@ -34,6 +34,7 @@ pytest = "^7.2.0"
 exasol-udf-mock-python = "^0.1.0"
 exasol-script-languages-container-tool = ">=0.21.0"
 toml = "^0.10.2"
+pytest-exasol-itde = ">=0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 nox = "^2023.4.22"
