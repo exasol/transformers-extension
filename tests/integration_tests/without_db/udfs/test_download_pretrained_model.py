@@ -2,6 +2,7 @@ import json
 import tempfile
 from pathlib import Path
 
+from tests.fixtures.model_fixture_utils import download_model_to_standard_local_save_path
 from tests.utils.parameters import model_params
 
 
