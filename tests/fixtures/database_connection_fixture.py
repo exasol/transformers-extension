@@ -13,7 +13,7 @@ from exasol.saas.client.api_access import (
     timestamp_name,
     get_connection_params
 )
-from pytest_itde import config
+from exasol.pytest_itde import config
 
 from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 

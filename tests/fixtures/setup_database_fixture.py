@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import pyexasol
 import pytest
 from pyexasol import ExaConnection
-from pytest_itde import config
+from exasol.pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \

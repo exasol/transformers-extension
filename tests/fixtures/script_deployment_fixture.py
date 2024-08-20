@@ -4,7 +4,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 import pytest
-from pytest_itde import config
+from exasol.pytest_itde import config
 
 from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
