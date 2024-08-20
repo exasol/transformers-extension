@@ -2,12 +2,6 @@ from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_
 from tests.utils.parameters import model_params
 
 
-
-
-
-
-
-
 def test_question_answering_script(
         setup_database, db_conn, upload_question_answering_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
