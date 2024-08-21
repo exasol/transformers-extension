@@ -63,7 +63,7 @@ def without_db_integration_tests(session):
 def start_database(session):
     session.run('itde', 'spawn-test-environment',
                 '--environment-name', 'test',
-                '--database-port-forward', '8888',
-                '--bucketfs-port-forward', '6666',
+                '--database-port-forward', '8563',
+                '--bucketfs-port-forward', '2580',
                 '--db-mem-size', '8GB',
                 '--nameserver', '8.8.8.8')
