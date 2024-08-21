@@ -8,6 +8,8 @@ from exasol import bucketfs as bfs
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import \
     get_BucketFSModelSpecification_from_model_Specs, BucketFSModelSpecification
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
+    make_parameters_of_model_contiguous_tensors
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from tests.utils import postprocessing
 from tests.utils.parameters import model_params
@@ -22,6 +24,7 @@ def download_model_to_standard_local_save_path(model_specification: ModelSpecifi
     model_factory = model_specification.get_model_factory()
     for model in [model_factory, transformers.AutoTokenizer]:
         downloaded_model = model.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
+        make_parameters_of_model_contiguous_tensors(downloaded_model)
         downloaded_model.save_pretrained(local_model_save_path)
     return local_model_save_path
 

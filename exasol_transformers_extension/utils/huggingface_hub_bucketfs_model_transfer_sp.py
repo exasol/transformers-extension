@@ -9,6 +9,13 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFS
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 
 
+def make_parameters_of_model_contiguous_tensors(model):
+    # Fix for "ValueError: You are trying to save a non contiguous tensor" when calling save_pretrained
+    if hasattr(model, "parameters"):
+        for param in model.parameters():
+            param.data = param.data.contiguous()
+
+
 class HuggingFaceHubBucketFSModelTransferSP:
     """
     Class for downloading a model using the Huggingface Transformers API, saving it locally using
@@ -56,12 +63,8 @@ class HuggingFaceHubBucketFSModelTransferSP:
         model_name = self._model_specification.model_name
         model = model_factory.from_pretrained(model_name, cache_dir=self._tmpdir_name / "cache",
                                               use_auth_token=self._token)
-        # Fix for ValueError: You are trying to save a non contiguous tensor
-        if hasattr(model, "parameters"):
-            for param in model.parameters():
-                param.data = param.data.contiguous()
+        make_parameters_of_model_contiguous_tensors(model)
         model.save_pretrained(self._save_pretrained_model_path)
-
 
     def upload_to_bucketfs(self) -> Path:
         """
