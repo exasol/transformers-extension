@@ -51,12 +51,8 @@ def _create_bucketfs_connection(pyexasol_connection: ExaConnection,
 
 def _create_bucketfs_connection_onprem(bucketfs_config: config.BucketFs,
                                        pyexasol_connection: ExaConnection) -> None:
-
-    parsed_url = urlparse(bucketfs_config.url)
-    host = parsed_url.netloc.split(":")[0]
-    url = f"{parsed_url.scheme}://{host}:{bucketfs_params.real_port}"
     conn_to = _to_json_str(backend=bfs.path.StorageBackend.onprem.name,
-                           url=url,
+                           url=bucketfs_config.url,
                            service_name=bucketfs_params.name,
                            bucket_name=bucketfs_params.bucket,
                            path=bucketfs_params.path_in_bucket,
