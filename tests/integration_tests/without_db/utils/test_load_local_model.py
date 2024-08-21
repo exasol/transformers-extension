@@ -56,8 +56,8 @@ def test_load_local_model(tmp_path):
     # download a model
     model = AutoModel.from_pretrained(model_specification.model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
-    model.save_pretrained(model_save_path)
     make_parameters_of_model_contiguous_tensors(model)
+    model.save_pretrained(model_save_path)
     tokenizer.save_pretrained(model_save_path)
 
     test_setup.loader.set_current_model_specification(current_model_specification=
