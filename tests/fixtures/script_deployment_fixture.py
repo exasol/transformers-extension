@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 from typing import Any
-
 from urllib.parse import urlparse
-import pytest
-from pytest_itde import config
-import exasol.bucketfs as bfs
 
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
+import pytest
+from exasol.pytest_itde import config
+
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
 
 
@@ -21,7 +21,6 @@ def deploy_params_onprem(exasol_config: config.Exasol) -> dict[str, Any]:
 
 @pytest.fixture(scope="session")
 def upload_params_onprem(bucketfs_config: config.BucketFs):
-
     parsed_url = urlparse(bucketfs_config.url)
     host, port = parsed_url.netloc.split(":")
     return {

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "exasol-transformers-extension"
-version = "2.0.0"
+version = "2.1.0"
 description = "An Exasol extension for using state-of-the-art pretrained machine learning models via the Hugging Face Transformers API."
 
 authors = [
@@ -32,8 +32,9 @@ exasol-python-extension-common = ">=0.3.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
 exasol-udf-mock-python = "^0.1.0"
-exasol-script-languages-container-tool = "^0.18.2"
+exasol-script-languages-container-tool = ">=0.21.0"
 toml = "^0.10.2"
+pytest-exasol-itde = ">=0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 nox = "^2023.4.22"

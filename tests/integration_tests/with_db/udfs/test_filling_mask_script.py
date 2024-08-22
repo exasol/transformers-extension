@@ -1,9 +1,4 @@
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
-from tests.fixtures.model_fixture import upload_filling_mask_model_to_bucketfs
-from tests.fixtures.bucketfs_fixture import bucketfs_location
-from tests.fixtures.database_connection_fixture import pyexasol_connection
-from tests.fixtures.setup_database_fixture import setup_database
-from tests.fixtures.language_container_fixture import flavor_path, upload_slc, export_slc
 from tests.utils.parameters import model_params
 
 
@@ -51,10 +46,10 @@ def test_filling_mask_script(
     acceptable_results = ["love", "miss", "want", "need"]
     number_accepted_results = 0
 
-    def contains(string,list):
+    def contains(string, list):
         return any(map(lambda x: x in string, list))
 
     for i in range(len(results)):
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
-    assert number_accepted_results > n_rows_result/2
+    assert number_accepted_results > n_rows_result / 2

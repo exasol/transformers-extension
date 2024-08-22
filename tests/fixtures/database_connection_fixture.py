@@ -6,7 +6,6 @@ from contextlib import ExitStack
 import ssl
 import pyexasol
 import pytest
-import exasol.bucketfs as bfs
 from _pytest.fixtures import FixtureRequest
 from exasol.saas.client.api_access import (
     OpenApiAccess,
@@ -14,7 +13,9 @@ from exasol.saas.client.api_access import (
     timestamp_name,
     get_connection_params
 )
-from pytest_itde import config
+from exasol.pytest_itde import config
+
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 
 CURRENT_SAAS_DATABASE_ID = pytest.StashKey[str]()
 
@@ -27,8 +28,6 @@ def _env(var: str) -> str:
 
 
 _BACKEND_OPTION = '--backend'
-BACKEND_ONPREM = 'onprem'
-BACKEND_SAAS = 'saas'
 
 
 @pytest.fixture(scope='session', params=[BACKEND_ONPREM, BACKEND_SAAS])

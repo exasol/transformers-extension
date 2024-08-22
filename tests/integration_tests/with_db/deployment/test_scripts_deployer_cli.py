@@ -7,8 +7,8 @@ from pyexasol import ExaConnection, ExaConnectionFailedError
 import exasol.bucketfs as bfs
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
 
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
-from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
+from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 from exasol_transformers_extension import deploy
 from tests.utils.db_queries import DBQueries

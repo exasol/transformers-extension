@@ -6,14 +6,14 @@ from urllib.parse import urlparse
 import pyexasol
 import pytest
 from pyexasol import ExaConnection
-from pytest_itde import config
+from exasol.pytest_itde import config
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONPREM
+from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.utils.parameters import bucketfs_params
-from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
+from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"
@@ -51,12 +51,8 @@ def _create_bucketfs_connection(pyexasol_connection: ExaConnection,
 
 def _create_bucketfs_connection_onprem(bucketfs_config: config.BucketFs,
                                        pyexasol_connection: ExaConnection) -> None:
-
-    parsed_url = urlparse(bucketfs_config.url)
-    host = parsed_url.netloc.split(":")[0]
-    url = f"{parsed_url.scheme}://{host}:{bucketfs_params.real_port}"
     conn_to = _to_json_str(backend=bfs.path.StorageBackend.onprem.name,
-                           url=url,
+                           url=bucketfs_config.url,
                            service_name=bucketfs_params.name,
                            bucket_name=bucketfs_params.bucket,
                            path=bucketfs_params.path_in_bucket,
@@ -106,7 +102,7 @@ def setup_database(backend: bfs.path.StorageBackend,
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def db_conn(setup_database, pyexasol_connection) -> pyexasol.ExaConnection:
     """
     Per-test fixture that returns the same session-wide pyexasol connection,

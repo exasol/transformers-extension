@@ -1,8 +1,8 @@
-from pathlib import Path, PosixPath
 import time
+from pathlib import Path, PosixPath
 
-from click.testing import CliRunner
 import exasol.bucketfs as bfs
+from click.testing import CliRunner
 
 from exasol_transformers_extension import upload_model as upload_model_cli
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
@@ -10,14 +10,6 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
 from tests.utils.parameters import bucketfs_params, model_params, get_arg_list
-from tests.fixtures.model_fixture import download_model_to_standard_local_save_path
-
-from tests.fixtures.script_deployment_fixture import *
-from tests.fixtures.model_fixture import *
-from tests.fixtures.setup_database_fixture import *
-from tests.fixtures.language_container_fixture import *
-from tests.fixtures.bucketfs_fixture import *
-from tests.fixtures.database_connection_fixture import *
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -36,7 +28,6 @@ def test_model_upload(upload_params,
                       db_conn,
                       tmp_path: Path,
                       bucketfs_location: bfs.path.PathLike):
-
     sub_dir = 'sub_dir'
     model_specification = model_params.base_model_specs
     model_specification.task_type = "filling_mask"
@@ -49,7 +40,6 @@ def test_model_upload(upload_params,
                              model_name=model_name,
                              sub_dir=sub_dir,
                              task_type="filling_mask")
-
 
     try:
         runner = CliRunner()

@@ -1,20 +1,17 @@
 import os
 import subprocess
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Dict
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
-import exasol.bucketfs as bfs
+from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 
 from exasol_transformers_extension.deployment import language_container
-from tests.fixtures.database_connection_fixture import BACKEND_SAAS
-
-LANGUAGE_ALIAS = "PYTHON3_TE"
-CONTAINER_FILE_NAME = "exasol_transformers_extension_container.tar.gz"
+from tests.fixtures.database_connection_fixture_constants import BACKEND_SAAS
+from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS, CONTAINER_FILE_NAME
 
 SLC_EXPORT = pytest.StashKey[ExportInfo]()
 SLC_UPLOADED = pytest.StashKey[Dict[str, bool]]()
