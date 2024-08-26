@@ -51,6 +51,7 @@ class BaseModelUDF(ABC):
         self.model_loader = None
         self.last_created_pipeline = None
         self.new_columns = []
+        self.work_with_spans = False
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -86,7 +87,7 @@ class BaseModelUDF(ABC):
         :return: Prediction results of the corresponding batched dataframe
         """
         result_df_list = []
-
+        self.set_work_with_spans(batch_df)
         unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(self, batch_df)
         for model_df in unique_model_dataframes:
             if "error_message" in model_df:
@@ -136,6 +137,10 @@ class BaseModelUDF(ABC):
             error_message = f"For each model model_name, bucketfs_conn and sub_dir need to be provided. " \
                             f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
             raise ValueError(error_message)
+
+    def set_work_with_spans(self, model_df: pd.DataFrame):
+        if "span" in model_df.columns:
+            self.work_with_spans = True
 
     @staticmethod
     def extract_unique_model_dataframes_from_batch(self,

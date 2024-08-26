@@ -27,7 +27,8 @@ def _create_schema(pyexasol_connection: ExaConnection) -> None:
 
 def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
     scripts_deployer = ScriptsDeployer(schema=SCHEMA_NAME,
-                                       language_alias=LANGUAGE_ALIAS,
+                                       language_alias=LANGUAGE_ALIAS, #todo when to set use_spans?
+                                       use_spans=True,
                                        pyexasol_conn=pyexasol_connection)
     scripts_deployer.deploy_scripts()
 

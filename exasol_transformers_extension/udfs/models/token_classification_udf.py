@@ -15,6 +15,8 @@ class TokenClassificationUDF(BaseModelUDF):
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_type='token-classification')
+        #self.work_with_spans = False#True  # todo get value from where exactly?
+        #todo make spans optional
         self._default_aggregation_strategy = 'simple'
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
@@ -37,10 +39,10 @@ class TokenClassificationUDF(BaseModelUDF):
 
         unique_params = dataframe_operations.get_unique_values(
             model_df, ['aggregation_strategy'])
-        for aggregation_strategy in unique_params:
-            current_strategy = aggregation_strategy[0]
+        for unique_param in unique_params: #todo does this even change anything? they are allready in model_df..
+            current_aggregation_strategy = unique_param[0]
             param_based_model_df = model_df[
-                model_df['aggregation_strategy'] == current_strategy]
+                model_df['aggregation_strategy'] == current_aggregation_strategy]
 
             yield param_based_model_df
 
@@ -55,6 +57,7 @@ class TokenClassificationUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         text_data = list(model_df['text_data'])
+        #todo  pull relevant part of text data?
         aggregation_strategy = model_df['aggregation_strategy'].iloc[0]
         results = self.last_created_pipeline(
             text_data, aggregation_strategy=aggregation_strategy)
@@ -69,6 +72,11 @@ class TokenClassificationUDF(BaseModelUDF):
 
         return results
 
+    def make_toke_span(self, df_row): #todo does not need to be class func
+          # todo remove superfluous results
+        token_span = (df_row["start_pos"] + df_row['span'][0], df_row["end_pos"] + df_row['span'][0])
+        return token_span
+
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
@@ -81,6 +89,7 @@ class TokenClassificationUDF(BaseModelUDF):
 
         :return: Prepared dataframe including input data and predictions
         """
+
         # Repeat each row consecutively as the number of entities. At the end,
         # the dataframe is expanded from (m, n) to (m*n_entities, n)
         n_entities = list(map(lambda x: x.shape[0], pred_df_list))
@@ -90,7 +99,9 @@ class TokenClassificationUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-
+        model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
+        if self.work_with_spans:
+            model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
         return model_df
 
     def create_dataframes_from_predictions(

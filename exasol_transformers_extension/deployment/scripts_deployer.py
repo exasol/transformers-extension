@@ -4,17 +4,18 @@ import logging
 import pyexasol
 from exasol.python_extension_common.connections.pyexasol_connection import open_pyexasol_connection
 
-from exasol_transformers_extension.deployment import constants, \
+from exasol_transformers_extension.deployment import constants, work_with_spans_constants, \
     deployment_utils as utils
 
 logger = logging.getLogger(__name__)
 
 
-class ScriptsDeployer:
-    def __init__(self, language_alias: str, schema: str,
+class ScriptsDeployer: #todo check usages
+    def __init__(self, language_alias: str, schema: str, use_spans: bool,
                  pyexasol_conn: pyexasol.ExaConnection):
         self._language_alias = language_alias
         self._schema = schema
+        self._use_spans = use_spans
         self._pyexasol_conn = pyexasol_conn
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
@@ -38,19 +39,30 @@ class ScriptsDeployer:
         self._set_current_schema(self._schema)
         logger.info(f"Schema {self._schema} is opened.")
 
-    def _deploy_udf_scripts(self) -> None:
-        for udf_call_src, template_src in constants.UDF_CALL_TEMPLATES.items():
-            udf_content = constants.UDF_CALLERS_DIR.joinpath(
+    def  _deploy_udf_scripts_from_constant_file(self, constant_file) -> None:
+        for udf_call_src, template_src in constant_file.UDF_CALL_TEMPLATES.items():
+            udf_content = constant_file.UDF_CALLERS_DIR.joinpath(
                 udf_call_src).read_text()
             udf_query = utils.load_and_render_statement(
                 template_src,
                 script_content=udf_content,
                 language_alias=self._language_alias,
-                ordered_columns=constants.ORDERED_COLUMNS)
+                ordered_columns=constant_file.ORDERED_COLUMNS)
 
             self._pyexasol_conn.execute(udf_query)
             logger.debug(f"The UDF statement of the template "
                          f"{template_src} is executed.")
+
+    def _deploy_udf_scripts(self) -> None:
+        """
+        only deploy UDFs using spans if _use_spans is set to true
+        """
+        constant_files = [constants]
+        if self._use_spans:
+            constant_files.append(work_with_spans_constants)
+        for constant_file in constant_files:
+            self._deploy_udf_scripts_from_constant_file(constant_file)
+
 
     def deploy_scripts(self) -> None:
         current_schema = self._get_current_schema()
@@ -65,8 +77,9 @@ class ScriptsDeployer:
     def run(cls,
             schema: str,
             language_alias: str,
+            use_spans: bool,
             **kwargs):
 
         pyexasol_conn = open_pyexasol_connection(**kwargs)
-        scripts_deployer = cls(language_alias, schema, pyexasol_conn)
+        scripts_deployer = cls(language_alias, schema, use_spans, pyexasol_conn)
         scripts_deployer.deploy_scripts()

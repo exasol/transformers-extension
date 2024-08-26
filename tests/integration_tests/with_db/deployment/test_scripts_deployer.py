@@ -26,6 +26,8 @@ def test_scripts_deployer(
         ScriptsDeployer.run(**deploy_params,
                             schema=schema_name,
                             language_alias=LANGUAGE_ALIAS,
+                            # todo when to set use_spans?
+                            use_spans=True,
                             use_ssl_cert_validation=cert_validation)
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
@@ -56,7 +58,8 @@ def test_scripts_deployer_no_schema_creation_permission(
             db_user=limited_user,
             db_pass=limited_user_password,
             schema=schema_name,
-            language_alias=LANGUAGE_ALIAS,
+            language_alias=LANGUAGE_ALIAS,#todo when to set use_spans?
+            use_spans=True,
             ssl_trusted_ca="",
             use_ssl_cert_validation=False
         )

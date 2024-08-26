@@ -32,6 +32,7 @@ from exasol_transformers_extension.deployment.scripts_deployer import \
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 @click.option('--schema', type=str, required=True, help="schema name")
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
+@click.option('--use-spans', type=bool, default=False)
 def scripts_deployer_main(
         dsn: str | None,
         db_user: str | None,
@@ -46,11 +47,13 @@ def scripts_deployer_main(
         ssl_client_private_key: str,
         use_ssl_cert_validation: bool,
         schema: str,
-        language_alias: str):
+        language_alias: str,
+        use_spans: bool): #todo do we even want to offer it via the cli?
 
     ScriptsDeployer.run(
         language_alias=language_alias,
         schema=schema,
+        use_spans=use_spans,
         dsn=dsn,
         db_user=db_user,
         db_pass=db_pass,

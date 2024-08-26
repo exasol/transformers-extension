@@ -15,6 +15,7 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_type='zero-shot-classification')
+        self.work_with_spans = True  # todo get value from where exactly?
         self._desired_fields_in_prediction = ["labels", "scores"]
         self.new_columns = ["label", "score", "rank", "error_message"]
 

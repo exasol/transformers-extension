@@ -73,7 +73,8 @@ def create_mock_metadata(udf_wrapper):
             Column("word", str, "VARCHAR(2000000)"),
             Column("entity", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
-            Column("error_message", str, "VARCHAR(2000000)")
+            Column("error_message", str, "VARCHAR(2000000)"),
+            Column("span",str, "VARCHAR(2000000)") #todo test only for when feature flag set
         ],
     )
     return meta
@@ -115,10 +116,10 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
+    print(result)
     result_output = Output(result[0].rows)
     expected_output = Output(params.output_data)
     n_input_columns = len(meta.input_columns) - 1
-
     try:
         assert (
             OutputMatcher(result_output, n_input_columns) == expected_output,

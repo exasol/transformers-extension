@@ -42,12 +42,17 @@ Run unit tests:
 ```bash
       poetry run nox -s unit_tests
 ```
-Start a test database and run integration tests:
+Start a test database and run integration all tests:
 ```bash
       poetry run nox -s start_database
       poetry run nox -s integration_tests
 ```
-
+run parts of the integration tests:
+```bash
+      poetry run nox -s onprem_integration_tests
+      poetry run nox -s saas_integration_tests
+      poetry run nox -s without_db_integration_tests
+```
 You can find more information regarding the tests in the [Tests](#tests) section below
 
 ## Add Transformer Tasks
