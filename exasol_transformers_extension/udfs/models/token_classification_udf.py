@@ -1,5 +1,6 @@
 import pandas as pd
 import transformers
+from ast import literal_eval
 from typing import List, Iterator, Any, Union, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
@@ -72,9 +73,13 @@ class TokenClassificationUDF(BaseModelUDF):
 
         return results
 
-    def make_toke_span(self, df_row): #todo does not need to be class func
-          # todo remove superfluous results
-        token_span = (df_row["start_pos"] + df_row['span'][0], df_row["end_pos"] + df_row['span'][0])
+    def make_toke_span(self, df_row):
+        #todo does not need to be class func # todo remove superfluous results
+        span  = literal_eval(df_row['span']) #todo is this to broad? should we check the type of the resulting span?
+        s = df_row["start_pos"] + span[0]
+        e = df_row["end_pos"] + span[0]
+        print(str((s, e)))
+        token_span = str((s, e))
         return token_span
 
     def append_predictions_to_input_dataframe(
@@ -99,7 +104,7 @@ class TokenClassificationUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-        model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
+        #model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
         if self.work_with_spans:
             model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
         return model_df

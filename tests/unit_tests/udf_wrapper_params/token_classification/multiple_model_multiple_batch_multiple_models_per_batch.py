@@ -75,28 +75,32 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
                 ends=[6] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
-                scores=[0.1] * n_entities),
+                scores=[0.1] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,
                 words=["text2"] * n_entities,
                 entities=["label2"] * n_entities,
-                scores=[0.2] * n_entities),
+                scores=[0.2] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
         PurePosixPath(base_cache_dir3, "sub_dir3", "model3"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,
                 words=["text3"] * n_entities,
                 entities=["label3"] * n_entities,
-                scores=[0.3] * n_entities),
+                scores=[0.3] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
         PurePosixPath(base_cache_dir4, "sub_dir4", "model4"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,
                 words=["text4"] * n_entities,
                 entities=["label4"] * n_entities,
-                scores=[0.4] * n_entities)
+                scores=[0.4] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
     })
 
     mock_pipeline = MockPipeline

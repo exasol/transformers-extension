@@ -140,6 +140,10 @@ class BaseModelUDF(ABC):
 
     def set_work_with_spans(self, model_df: pd.DataFrame):
         if "span" in model_df.columns:
+            # todo this only gets set after some other things have already happened in udf.
+            #   which means if udf fails before the returned table does not include "token_span" column.
+            #   this results in the return shape of the table potentially being inconsistent.
+            #   do we want an input column specifying "work with spans instead?
             self.work_with_spans = True
 
     @staticmethod

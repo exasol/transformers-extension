@@ -80,7 +80,7 @@ def test_token_classification_udf_with_span( #todo make param for span usage
         model_params.sub_dir,
         model_params.token_model_specs.model_name,
         model_params.text_data * (i + 1),
-        (0, len(model_params.text_data * (i + 1))),
+        str((0, len(model_params.text_data))),
         agg
     ) for i in range(n_rows)]
     columns = [
@@ -103,11 +103,8 @@ def test_token_classification_udf_with_span( #todo make param for span usage
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'token_span', 'error_message']
-    print(result_df.columns)
-    print(result_df)
 
     result = Result(result_df)
-
     assert (
             result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NoErrorMessageMatcher()
@@ -137,6 +134,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         model_params.sub_dir,
         model_params.token_model_specs.model_name,
         model_params.text_data * (i + 1),
+        str((0, len(model_params.text_data))),
         agg_strategy
     ) for i, agg_strategy in enumerate(agg_strategies)]
     columns = [
@@ -145,6 +143,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         'sub_dir',
         'model_name',
         'text_data',
+        'span',
         'aggregation_strategy'
     ]
 
@@ -157,7 +156,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
-        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message', 'span']
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'token_span', 'error_message']
 
     result = Result(result_df)
     assert (result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
@@ -199,6 +198,7 @@ def test_token_classification_udf_on_error_handling(
         model_params.sub_dir,
         "not existing model",
         model_params.text_data * (i + 1),
+        str((0, len(model_params.text_data))),
         agg
     ) for i in range(n_rows)]
     columns = [
@@ -207,6 +207,7 @@ def test_token_classification_udf_on_error_handling(
         'sub_dir',
         'model_name',
         'text_data',
+        'span',
         'aggregation_strategy'
     ]
 
@@ -219,15 +220,11 @@ def test_token_classification_udf_on_error_handling(
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
-        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message', 'span']
-    print(result_df["span"])
-    print(result_df[0])
-    print(result_df)
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
     result = Result(result_df)
-
     assert (
             result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
             and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NewColumnsEmptyMatcher(new_columns=new_columns)
-            #and result == ErrorMessageMatcher()
+            and result == ErrorMessageMatcher()
     )

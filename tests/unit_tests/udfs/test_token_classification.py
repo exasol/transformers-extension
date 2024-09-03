@@ -59,6 +59,7 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
+            Column("span", str, "VARCHAR(2000000)"),
             Column("aggregation_strategy", str, "VARCHAR(2000000)")
         ],
         output_type="EMITS",
@@ -67,14 +68,15 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
+            Column("span", str, "VARCHAR(2000000)"),
             Column("aggregation_strategy", str, "VARCHAR(2000000)"),
             Column("start_pos", int, "INTEGER"),
             Column("end_pos", int, "INTEGER"),
             Column("word", str, "VARCHAR(2000000)"),
             Column("entity", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
-            Column("error_message", str, "VARCHAR(2000000)"),
-            Column("span",str, "VARCHAR(2000000)") #todo test only for when feature flag set
+            Column("token_span", str, "VARCHAR(2000000)"),
+            Column("error_message", str, "VARCHAR(2000000)") #todo test only for when feature flag set
         ],
     )
     return meta

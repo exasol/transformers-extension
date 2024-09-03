@@ -51,7 +51,8 @@ def test_token_classification_script(
     assert len(result) >= n_rows and len(result[0]) == n_cols_result
 
     # lenient test for quality of results, will be replaced by deterministic test later
-    results = [[result[i][7], result[i][8]] for i in range(len(result))]
+    results = [[result[i][8], result[i][9]] for i in range(len(result))]
+    print(results)
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     number_accepted_results = 0
 

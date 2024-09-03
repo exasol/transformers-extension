@@ -1,17 +1,17 @@
 import copy
 from pathlib import PurePosixPath
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 from tests.unit_tests.udf_wrapper_params.token_classification.\
     mock_sequence_tokenizer import MockSequenceTokenizer
 
 
 class MockTokenClassificationModel:
     def __init__(self, starts: List[int], ends: List[int], words: List[str],
-                 entities: List[str], scores: List[float]):
+                 entities: List[str], scores: List[float], token_spans: List[str],):
         self.result = [{"start": start, "end": end, "word": word,
-                        "entity_group": entity, "score": score}
-                       for start, end, word, entity, score
-                       in zip(starts, ends, words, entities, scores)]
+                        "entity_group": entity, "score": score, "token_span": token_span}
+                       for start, end, word, entity, score, token_span
+                       in zip(starts, ends, words, entities, scores, token_spans)]
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir, use_auth_token):

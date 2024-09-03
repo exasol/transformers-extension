@@ -61,14 +61,16 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
                 ends=[6] * n_entities,
                 words=["text1"] * n_entities,
                 entities=["label1"] * n_entities,
-                scores=[0.1] * n_entities),
+                scores=[0.1] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
         PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,
                 words=["text2"] * n_entities,
                 entities=["label2"] * n_entities,
-                scores=[0.2] * n_entities)
+                scores=[0.2] * n_entities,
+                token_spans=["(0,6)"] * n_entities),
     })
 
     mock_pipeline = MockPipeline

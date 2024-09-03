@@ -37,9 +37,9 @@ class SingleModelSingleBatchIncomplete:
     agg_strategy = "simple"
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "text", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
-                    0, 6, "text", "label1", 0.1, None)] * n_entities * data_size
+                   "text","(0,3)", agg_strategy)] * data_size
+    output_data = [("bfs_conn1", "sub_dir1", "model1", "text","(0,3)", agg_strategy,
+                    0, 6, "text", "label1", 0.1, "(0,3)", None)] * n_entities * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -54,7 +54,8 @@ class SingleModelSingleBatchIncomplete:
                 ends=[6] * n_entities,
                 words=["text"]*n_entities,
                 entities=["label1"]*n_entities,
-                scores=[0.1]*n_entities)
+                scores=[0.1]*n_entities,
+                token_spans=["(0,6)"]*n_entities),
     })
 
     mock_pipeline = MockPipeline
