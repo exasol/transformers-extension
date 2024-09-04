@@ -118,7 +118,6 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
         connections=params.bfs_connections)
 
     result = executor.run([Group(params.input_data)], exa)
-    print(result)
     result_output = Output(result[0].rows)
     expected_output = Output(params.output_data)
     n_input_columns = len(meta.input_columns) - 1

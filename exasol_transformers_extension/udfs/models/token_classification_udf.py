@@ -13,12 +13,13 @@ class TokenClassificationUDF(BaseModelUDF):
                  batch_size=100,
                  pipeline=transformers.pipeline,
                  base_model=transformers.AutoModelForTokenClassification,
-                 tokenizer=transformers.AutoTokenizer):
+                 tokenizer=transformers.AutoTokenizer,
+                 work_with_spans: bool = False
+                 ):
         super().__init__(exa, batch_size, pipeline, base_model,
                          tokenizer, task_type='token-classification')
-        #self.work_with_spans = False#True  # todo get value from where exactly?
-        #todo make spans optional
         self._default_aggregation_strategy = 'simple'
+        self.work_with_spans = work_with_spans
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
         self.new_columns = [
@@ -40,7 +41,7 @@ class TokenClassificationUDF(BaseModelUDF):
 
         unique_params = dataframe_operations.get_unique_values(
             model_df, ['aggregation_strategy'])
-        for unique_param in unique_params: #todo does this even change anything? they are allready in model_df..
+        for unique_param in unique_params:
             current_aggregation_strategy = unique_param[0]
             param_based_model_df = model_df[
                 model_df['aggregation_strategy'] == current_aggregation_strategy]
@@ -74,11 +75,10 @@ class TokenClassificationUDF(BaseModelUDF):
         return results
 
     def make_toke_span(self, df_row):
-        #todo does not need to be class func # todo remove superfluous results
-        span  = literal_eval(df_row['span']) #todo is this to broad? should we check the type of the resulting span?
+        # todo remove superfluous results
+        span  = literal_eval(df_row['span']) #todo change input to two int instead
         s = df_row["start_pos"] + span[0]
         e = df_row["end_pos"] + span[0]
-        print(str((s, e)))
         token_span = str((s, e))
         return token_span
 

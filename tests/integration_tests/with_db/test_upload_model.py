@@ -53,9 +53,7 @@ def test_model_upload(upload_params,
 
     try:
         runner = CliRunner()
-        print(args_list)
         result = runner.invoke(upload_model_cli.main, args_list)
-        print(result)
         assert result.exit_code == 0
         time.sleep(20)
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")

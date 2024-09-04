@@ -40,9 +40,6 @@ def test_token_classification_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
-    print(result) #should:['bucketfs_conn', 'sub_dir', 'model_name', 'text_data', 'span',
-      # 'aggregation_strategy', 'start_pos', 'end_pos', 'word', 'entity',
-      # 'score', 'token_span', 'error_message'],
     # assertions
     assert result[0][-1] is None
     added_columns = 7  # start_pos,end_pos,word,entity,score,token_span,error_message
@@ -52,7 +49,6 @@ def test_token_classification_script(
 
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [[result[i][8], result[i][9]] for i in range(len(result))]
-    print(results)
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     number_accepted_results = 0
 

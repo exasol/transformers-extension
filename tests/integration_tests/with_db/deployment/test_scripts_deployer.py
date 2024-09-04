@@ -13,7 +13,7 @@ from tests.fixtures.database_connection_fixture import BACKEND_ONPREM
 from tests.utils.db_queries import DBQueries
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
-
+# todo add tests for use_spans_parameter
 def test_scripts_deployer(
         backend,
         deploy_params: dict[str, Any],

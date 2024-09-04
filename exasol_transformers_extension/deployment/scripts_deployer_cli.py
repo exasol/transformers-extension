@@ -32,7 +32,7 @@ from exasol_transformers_extension.deployment.scripts_deployer import \
 @click.option('--use-ssl-cert-validation/--no-use-ssl-cert-validation', type=bool, default=True)
 @click.option('--schema', type=str, required=True, help="schema name")
 @click.option('--language-alias', type=str, default="PYTHON3_TE")
-@click.option('--use-spans', type=bool, default=False)
+@click.option('--use-spans', type=bool, default=False, hidden=True)
 def scripts_deployer_main(
         dsn: str | None,
         db_user: str | None,

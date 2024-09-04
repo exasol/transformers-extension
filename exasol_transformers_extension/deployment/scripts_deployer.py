@@ -5,7 +5,7 @@ import pyexasol
 from exasol.python_extension_common.connections.pyexasol_connection import open_pyexasol_connection
 
 from exasol_transformers_extension.deployment import constants, work_with_spans_constants, \
-    deployment_utils as utils
+    work_without_spans_constants, deployment_utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,8 @@ class ScriptsDeployer: #todo check usages
                 template_src,
                 script_content=udf_content,
                 language_alias=self._language_alias,
-                ordered_columns=constant_file.ORDERED_COLUMNS)
+                ordered_columns=constant_file.ORDERED_COLUMNS,
+                work_with_spans=self._use_spans)
 
             self._pyexasol_conn.execute(udf_query)
             logger.debug(f"The UDF statement of the template "
@@ -60,6 +61,8 @@ class ScriptsDeployer: #todo check usages
         constant_files = [constants]
         if self._use_spans:
             constant_files.append(work_with_spans_constants)
+        else:
+            constant_files.append(work_without_spans_constants)
         for constant_file in constant_files:
             self._deploy_udf_scripts_from_constant_file(constant_file)
 
