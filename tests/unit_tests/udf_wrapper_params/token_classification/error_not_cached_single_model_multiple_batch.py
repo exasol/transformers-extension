@@ -55,8 +55,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
                 ends=[6] * n_entities,
                 words=["text"] * n_entities,
                 entities=["label1"] * n_entities,
-                scores=[0.1] * n_entities,
-                token_spans=["(0,6)"] * n_entities),
+                scores=[0.1] * n_entities),
     })
 
     mock_pipeline = MockPipeline

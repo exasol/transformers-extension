@@ -11,9 +11,6 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.token_classification_udf import \
     TokenClassificationUDF
 
-# debugging
-from tests.fixtures.model_fixture import prepare_token_classification_model_for_local_bucketfs
-
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -62,7 +59,7 @@ class Context:
         ("on GPU with single input with NULL aggregation", 0, 1, None),
         ("on GPU with single input with max aggregation", 0, 1, "max")
     ])
-def test_token_classification_udf_with_span( #todo make param for span usage
+def test_token_classification_udf(
         description, device_id, n_rows, agg,
         prepare_token_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
@@ -80,7 +77,6 @@ def test_token_classification_udf_with_span( #todo make param for span usage
         model_params.sub_dir,
         model_params.token_model_specs.model_name,
         model_params.text_data * (i + 1),
-        str((0, len(model_params.text_data))),
         agg
     ) for i in range(n_rows)]
     columns = [
@@ -89,7 +85,6 @@ def test_token_classification_udf_with_span( #todo make param for span usage
         'sub_dir',
         'model_name',
         'text_data',
-        'span',
         'aggregation_strategy'
     ]
 
@@ -102,7 +97,77 @@ def test_token_classification_udf_with_span( #todo make param for span usage
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
-        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'token_span', 'error_message']
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
+
+    result = Result(result_df)
+    assert (
+            result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+    )
+
+
+
+@pytest.mark.parametrize(
+    "description,  device_id, n_rows, agg", [
+        ("on CPU with batch input with none aggregation", None, 3, "none"),
+        ("on CPU with batch input with NULL aggregation", None, 3, None),
+        ("on CPU with batch input with max aggregation", None, 3, "max"),
+        ("on CPU with single input with none aggregation", None, 1, "none"),
+        ("on CPU with single input with NULL aggregation", None, 1, None),
+        ("on CPU with single input with max aggregation", None, 1, "max"),
+        ("on GPU with batch input with none aggregation", 0, 3, "none"),
+        ("on GPU with batch input with NULL aggregation", 0, 3, None),
+        ("on GPU with batch input with max aggregation", 0, 3, "max"),
+        ("on GPU with single input with none aggregation", 0, 1, "none"),
+        ("on GPU with single input with NULL aggregation", 0, 1, None),
+        ("on GPU with single input with max aggregation", 0, 1, "max")
+    ])
+def test_token_classification_udf_with_span( #todo do we want to test al param combinations here? seems expensive
+        description, device_id, n_rows, agg,
+        prepare_token_classification_model_for_local_bucketfs):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
+
+    bucketfs_base_path = prepare_token_classification_model_for_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
+
+    batch_size = 2
+    sample_data = [(
+        None,
+        bucketfs_conn_name,
+        model_params.sub_dir,
+        model_params.token_model_specs.model_name,
+        model_params.text_data * (i + 1),
+        i,
+        0,
+        len(model_params.text_data),
+        agg
+    ) for i in range(n_rows)]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        "docid",
+        "text_data_char_begin",
+        "text_data_char_end",
+        'aggregation_strategy'
+    ]
+
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+    ctx = Context(input_df=sample_df)
+    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = TokenClassificationUDF(exa, batch_size=batch_size, work_with_spans=True)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = \
+        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'token_docid',
+         'token_char_begin', 'token_char_end', 'error_message']
 
     result = Result(result_df)
     assert (

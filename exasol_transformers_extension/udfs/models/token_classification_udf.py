@@ -70,17 +70,15 @@ class TokenClassificationUDF(BaseModelUDF):
                 "start", "end", "word", "entity", "score"]
         else:
             self._desired_fields_in_prediction = [
-                "start", "end", "word", "entity_group", "score"]
+                "start", "end", "word", "entity_group", "score"] #odo add here
 
         return results
 
     def make_toke_span(self, df_row):
-        # todo remove superfluous results
-        span  = literal_eval(df_row['span']) #todo change input to two int instead
-        s = df_row["start_pos"] + span[0]
-        e = df_row["end_pos"] + span[0]
-        token_span = str((s, e))
-        return token_span
+        token_docid = df_row["docid"]
+        token_char_begin = df_row["start_pos"] + df_row['text_data_char_begin']
+        token_char_end = df_row["end_pos"] + df_row['text_data_char_begin']
+        return pd.Series([token_docid, token_char_begin, token_char_end])
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
@@ -104,9 +102,10 @@ class TokenClassificationUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-        #model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
         if self.work_with_spans:
-            model_df["token_span"] = model_df.apply(self.make_toke_span, axis=1)
+            # todo remove superfluous results ?
+            model_df[["token_docid", "token_char_begin", "token_char_end"]] =\
+                model_df.apply(self.make_toke_span, axis=1)
         return model_df
 
     def create_dataframes_from_predictions(

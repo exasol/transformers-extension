@@ -18,8 +18,6 @@ UDF_CALL_TEMPLATES = {
         "filling_mask_udf.jinja.sql",
     "text_generation_udf_call.py":
         "text_generation_udf.jinja.sql",
-    "token_classification_udf_call.py":
-        "token_classification_udf.jinja.sql",
     "translation_udf_call.py":
         "translation_udf.jinja.sql",
     "zero_shot_text_classification_udf.py":

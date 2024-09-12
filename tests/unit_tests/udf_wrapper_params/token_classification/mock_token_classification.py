@@ -7,11 +7,11 @@ from tests.unit_tests.udf_wrapper_params.token_classification.\
 
 class MockTokenClassificationModel:
     def __init__(self, starts: List[int], ends: List[int], words: List[str],
-                 entities: List[str], scores: List[float], token_spans: List[str],):
+                 entities: List[str], scores: List[float]):
         self.result = [{"start": start, "end": end, "word": word,
-                        "entity_group": entity, "score": score, "token_span": token_span}
-                       for start, end, word, entity, score, token_span
-                       in zip(starts, ends, words, entities, scores, token_spans)]
+                        "entity_group": entity, "score": score}
+                       for start, end, word, entity, score
+                       in zip(starts, ends, words, entities, scores)]
 
     @classmethod
     def from_pretrained(cls, model_name, cache_dir, use_auth_token):
@@ -27,9 +27,9 @@ class MockTokenClassificationFactory:
                                          MockTokenClassificationModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
+    def from_pretrained(self, cache_dir):
         # the cache_dir path already has model_name
-        return self.mock_models[cache_dir]
+        return self.mock_models[PurePosixPath(cache_dir)] #todo why is not already PurePosixPath?
 
 
 class MockPipeline:
@@ -56,6 +56,7 @@ class MockPipeline:
         result_list = self._get_result_list(aggregation_strategy)
         return [result_list] * len(text_data) \
             if len(text_data) > 1 else result_list
+
 
     def _get_result_list(self, aggregation_strategy: str):
         result_list = copy.deepcopy(self.model.result)

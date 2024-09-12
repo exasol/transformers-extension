@@ -16,21 +16,17 @@ DB_PASSWORD_ENVIRONMENT_VARIABLE = f"TE_DB_PASSWORD" #todo should these move to 
 BUCKETFS_PASSWORD_ENVIRONMENT_VARIABLE = f"TE_BUCKETFS_PASSWORD"
 
 
-def load_and_render_statement(template_name, work_with_spans, **kwargs) -> str:
-    if work_with_spans:
-        env = Environment(
-            loader=ChoiceLoader([
-                PackageLoader(constants.BASE_DIR, constants.TEMPLATES_DIR),
-                PackageLoader(work_with_spans_constants.BASE_DIR, work_with_spans_constants.TEMPLATES_DIR)
-            ]),
-            autoescape=select_autoescape())
-    else:
-        env = Environment(
-            loader=ChoiceLoader([
-                PackageLoader(constants.BASE_DIR, constants.TEMPLATES_DIR),
-                PackageLoader(work_without_spans_constants.BASE_DIR, work_without_spans_constants.TEMPLATES_DIR)
-            ]),
-            autoescape=select_autoescape())
+def load_and_render_statement(template_name, work_with_spans, install_all_scripts, **kwargs) -> str:
+    package_loaders = [PackageLoader(constants.BASE_DIR, constants.TEMPLATES_DIR)]
+    if work_with_spans or install_all_scripts:
+        package_loaders.append(PackageLoader(work_with_spans_constants.BASE_DIR, work_with_spans_constants.TEMPLATES_DIR))
+    if install_all_scripts or not work_with_spans:
+        package_loaders.append(PackageLoader(work_without_spans_constants.BASE_DIR, work_without_spans_constants.TEMPLATES_DIR))
+
+    env = Environment(
+        loader=ChoiceLoader(package_loaders),
+        autoescape=select_autoescape())
+
     template = env.get_template(template_name)
     statement = template.render(**kwargs)
     return statement

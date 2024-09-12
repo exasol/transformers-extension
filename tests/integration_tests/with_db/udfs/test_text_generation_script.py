@@ -1,14 +1,6 @@
-from tests.fixtures.model_fixture import upload_text_generation_model_to_bucketfs
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils.parameters import model_params
 
-#for debug
-from tests.fixtures.model_fixture import *
-from tests.fixtures.setup_database_fixture import *
-from tests.fixtures.script_deployment_fixture import *
-from tests.fixtures.language_container_fixture import *
-from tests.fixtures.bucketfs_fixture import *
-from tests.fixtures.database_connection_fixture import *
 
 def test_text_generation_script(
         setup_database, db_conn, upload_text_generation_model_to_bucketfs):

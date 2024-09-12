@@ -11,11 +11,13 @@ logger = logging.getLogger(__name__)
 
 
 class ScriptsDeployer: #todo check usages
-    def __init__(self, language_alias: str, schema: str, use_spans: bool,
-                 pyexasol_conn: pyexasol.ExaConnection):
+    def __init__(self, language_alias: str, schema: str,
+                 pyexasol_conn: pyexasol.ExaConnection,
+                 use_spans: bool = False, install_all_scripts: bool = False):
         self._language_alias = language_alias
         self._schema = schema
         self._use_spans = use_spans
+        self._install_all_scripts = install_all_scripts
         self._pyexasol_conn = pyexasol_conn
         logger.debug(f"Init {ScriptsDeployer.__name__}.")
 
@@ -43,12 +45,15 @@ class ScriptsDeployer: #todo check usages
         for udf_call_src, template_src in constant_file.UDF_CALL_TEMPLATES.items():
             udf_content = constant_file.UDF_CALLERS_DIR.joinpath(
                 udf_call_src).read_text()
+
             udf_query = utils.load_and_render_statement(
                 template_src,
                 script_content=udf_content,
                 language_alias=self._language_alias,
                 ordered_columns=constant_file.ORDERED_COLUMNS,
-                work_with_spans=self._use_spans)
+                work_with_spans=self._use_spans,
+                install_all_scripts=self._install_all_scripts
+            )
 
             self._pyexasol_conn.execute(udf_query)
             logger.debug(f"The UDF statement of the template "
@@ -56,12 +61,14 @@ class ScriptsDeployer: #todo check usages
 
     def _deploy_udf_scripts(self) -> None:
         """
-        only deploy UDFs using spans if _use_spans is set to true
+        deploy udf acording to use_spans and install_all_scripts.
+        normaly udfs with and without spans are installed mutualy exclusive.
+        but setting install_all_scripts to true overrides this and installs all for testig
         """
         constant_files = [constants]
-        if self._use_spans:
+        if self._use_spans or self._install_all_scripts:
             constant_files.append(work_with_spans_constants)
-        else:
+        if self._install_all_scripts or not self._use_spans:
             constant_files.append(work_without_spans_constants)
         for constant_file in constant_files:
             self._deploy_udf_scripts_from_constant_file(constant_file)

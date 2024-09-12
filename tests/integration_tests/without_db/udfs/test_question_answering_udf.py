@@ -3,7 +3,6 @@ import pytest
 import pandas as pd
 from typing import Dict
 
-from tests.fixtures.model_fixture import prepare_question_answering_model_for_local_bucketfs
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, ScoreMatcher, RankDTypeMatcher, NoErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params

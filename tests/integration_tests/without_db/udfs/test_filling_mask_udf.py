@@ -11,7 +11,6 @@ from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher
     NoErrorMessageMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
-from tests.fixtures.model_fixture import prepare_filling_mask_model_for_local_bucketfs
 
 
 class ExaEnvironment:
