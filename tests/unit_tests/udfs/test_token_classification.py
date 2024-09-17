@@ -120,9 +120,9 @@ def create_mock_metadata(udf_wrapper):
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
     SingleModelSingleBatchComplete,
-    #todo are we ok with changing thhe tests like i did in these two cases?
+    #todo are we ok with changing the tests like i did in these two cases?
     # if yes i will add the changes to all the other param files as well
-   # SingleModelMultipleBatchIncomplete,
+    #SingleModelMultipleBatchIncomplete,
    # SingleModelMultipleBatchComplete,
    # MultipleModelSingleBatchIncomplete,
    # MultipleModelSingleBatchComplete,

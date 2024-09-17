@@ -10,10 +10,11 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.fixtures.database_connection_fixture import BACKEND_ONPREM
-from tests.utils.db_queries import DBQueries
+from tests.utils.db_queries import (DBQueries, expected_script_list_with_span,
+                                    expected_script_list_without_span, expected_script_list_all)
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
-# todo add tests for use_spans_parameter
+
 def test_scripts_deployer(
         backend,
         deploy_params: dict[str, Any],
@@ -26,11 +27,43 @@ def test_scripts_deployer(
         ScriptsDeployer.run(**deploy_params,
                             schema=schema_name,
                             language_alias=LANGUAGE_ALIAS,
-                            # todo when to set use_spans?
-                            use_spans=True,
                             use_ssl_cert_validation=cert_validation)
         assert DBQueries.check_all_scripts_deployed(
-            pyexasol_connection, schema_name)
+            pyexasol_connection, schema_name, expected_script_list_without_span)
+
+def test_scripts_deployer_all_scripts(
+        backend,
+        deploy_params: dict[str, Any],
+        pyexasol_connection: ExaConnection,
+        upload_slc):
+
+    with temp_schema(pyexasol_connection) as schema_name:
+        # We validate the server certificate in SaaS, but not in the Docker DB
+        cert_validation = backend == bfs.path.StorageBackend.saas
+        ScriptsDeployer.run(**deploy_params,
+                            schema=schema_name,
+                            language_alias=LANGUAGE_ALIAS,
+                            use_ssl_cert_validation=cert_validation,
+                            install_all_scripts=True)
+        assert DBQueries.check_all_scripts_deployed(
+            pyexasol_connection, schema_name, expected_script_list_all)
+
+def test_scripts_deployer_with_span(
+        backend,
+        deploy_params: dict[str, Any],
+        pyexasol_connection: ExaConnection,
+        upload_slc):
+
+    with temp_schema(pyexasol_connection) as schema_name:
+        # We validate the server certificate in SaaS, but not in the Docker DB
+        cert_validation = backend == bfs.path.StorageBackend.saas
+        ScriptsDeployer.run(**deploy_params,
+                            schema=schema_name,
+                            language_alias=LANGUAGE_ALIAS,
+                            use_ssl_cert_validation=cert_validation,
+                            use_spans=True)
+        assert DBQueries.check_all_scripts_deployed(
+            pyexasol_connection, schema_name, expected_script_list_with_span)
 
 
 def test_scripts_deployer_no_schema_creation_permission(
@@ -58,10 +91,9 @@ def test_scripts_deployer_no_schema_creation_permission(
             db_user=limited_user,
             db_pass=limited_user_password,
             schema=schema_name,
-            language_alias=LANGUAGE_ALIAS,#todo when to set use_spans?
-            use_spans=True,
+            language_alias=LANGUAGE_ALIAS,
             ssl_trusted_ca="",
             use_ssl_cert_validation=False
         )
         assert DBQueries.check_all_scripts_deployed(
-            pyexasol_connection, schema_name)
+            pyexasol_connection, schema_name, expected_script_list_without_span)

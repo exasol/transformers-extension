@@ -11,7 +11,7 @@ from tests.fixtures.database_connection_fixture import BACKEND_SAAS, BACKEND_ONP
 from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 from exasol_transformers_extension import deploy
-from tests.utils.db_queries import DBQueries
+from tests.utils.db_queries import DBQueries, expected_script_list_without_span
 from tests.utils.parameters import get_arg_list
 
 
@@ -34,7 +34,8 @@ def test_scripts_deployer_cli(backend,
         assert not result.exception
         assert result.exit_code == 0
         assert DBQueries.check_all_scripts_deployed(
-            pyexasol_connection, schema_name)
+            pyexasol_connection, schema_name, expected_script_list_without_span)
+
 
 
 def test_scripts_deployer_cli_with_encryption_verify(backend,

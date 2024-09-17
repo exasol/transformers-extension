@@ -1,13 +1,39 @@
 import dataclasses
 from typing import List
 
-deployed_script_list = [
+expected_script_list_without_span = [
     "TE_MODEL_DOWNLOADER_UDF",
     "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
     "TE_QUESTION_ANSWERING_UDF",
     "TE_FILLING_MASK_UDF",
     "TE_TEXT_GENERATION_UDF",
     "TE_TOKEN_CLASSIFICATION_UDF",
+    "TE_TRANSLATION_UDF",
+    "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF"
+]
+
+expected_script_list_with_span = [
+    "TE_MODEL_DOWNLOADER_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
+    "TE_QUESTION_ANSWERING_UDF",
+    "TE_FILLING_MASK_UDF",
+    "TE_TEXT_GENERATION_UDF",
+    "TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN",
+    "TE_TRANSLATION_UDF",
+    "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF"
+]
+
+expected_script_list_all = [
+    "TE_MODEL_DOWNLOADER_UDF",
+    "TE_TOKEN_CLASSIFICATION_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
+    "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
+    "TE_QUESTION_ANSWERING_UDF",
+    "TE_FILLING_MASK_UDF",
+    "TE_TEXT_GENERATION_UDF",
+    "TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN",
     "TE_TRANSLATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF"
 ]
@@ -32,10 +58,10 @@ class DBQueries:
         return list(map(lambda x: x[0], all_scripts))
 
     @staticmethod
-    def check_all_scripts_deployed(db_conn, schema_name) -> bool:
+    def check_all_scripts_deployed(db_conn, schema_name, expected_script_list) -> bool:
         all_scripts = DBQueries.get_all_scripts(
             db_conn, schema_name)
-        return all(script in all_scripts for script in deployed_script_list)
+        return set(all_scripts) == set(expected_script_list)
 
     @staticmethod
     def get_language_settings(db_conn) -> ExaParameter:

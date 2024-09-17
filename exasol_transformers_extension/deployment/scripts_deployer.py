@@ -10,7 +10,7 @@ from exasol_transformers_extension.deployment import constants, work_with_spans_
 logger = logging.getLogger(__name__)
 
 
-class ScriptsDeployer: #todo check usages
+class ScriptsDeployer:
     def __init__(self, language_alias: str, schema: str,
                  pyexasol_conn: pyexasol.ExaConnection,
                  use_spans: bool = False, install_all_scripts: bool = False):
@@ -87,9 +87,11 @@ class ScriptsDeployer: #todo check usages
     def run(cls,
             schema: str,
             language_alias: str,
-            use_spans: bool,
+            use_spans: bool = False,
+            install_all_scripts: bool = False,
             **kwargs):
 
         pyexasol_conn = open_pyexasol_connection(**kwargs)
-        scripts_deployer = cls(language_alias, schema, use_spans, pyexasol_conn)
+        scripts_deployer = cls(language_alias, schema,  pyexasol_conn,
+                               use_spans, install_all_scripts)
         scripts_deployer.deploy_scripts()
