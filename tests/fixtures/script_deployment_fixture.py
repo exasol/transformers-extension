@@ -1,68 +1,65 @@
-from __future__ import annotations
+"""
+This is rather ugly workaround for the problem with incompatible names of the DB and
+BucketFS parameters, used in different scenarios.
 
+In the ideal world the parameters returned by the backend_aware_database_params and
+backend_aware_bucketfs_params fixtures would be suitable for both creating respectively
+a DB or BFS connection and using them in a command line (or more precisely, simulating
+the command line in the context of tests). Unfortunately, the names and even the meanings
+of some of the parameters in those two scenarios do not match.
+
+At some point we will standardise the names and replace the deploy_params and upload_params
+fixtures with backend_aware_database_params and backend_aware_bucketfs_params.
+"""
+from __future__ import annotations
 from typing import Any
 from urllib.parse import urlparse
-
 import pytest
-from exasol.pytest_itde import config
-
-from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
-from tests.utils.parameters import bucketfs_params
+from exasol.pytest_backend import BACKEND_ONPREM
 
 
-@pytest.fixture(scope="session")
-def deploy_params_onprem(exasol_config: config.Exasol) -> dict[str, Any]:
-    return {
-        'dsn': f"{exasol_config.host}:{exasol_config.port}",
-        'db_user': exasol_config.username,
-        'db_pass': exasol_config.password
-    }
+_deploy_param_map = {
+    'dsn': 'dsn',
+    'user': 'db_user',
+    'password': 'db_pass'
+}
+
+_upload_param_map = {
+    'username': 'bucketfs-user',
+    'password': 'bucketfs-password',
+    'service_name': 'bucketfs-name',
+    'bucket_name': 'bucket',
+    'url': 'saas_url',
+    'account_id': 'saas_account_id',
+    'database_id': 'saas_database_id',
+    'pat': 'saas_token'
+}
 
 
-@pytest.fixture(scope="session")
-def upload_params_onprem(bucketfs_config: config.BucketFs):
-    parsed_url = urlparse(bucketfs_config.url)
+def _parse_bucketfs_url(url: str) -> dict[str, Any]:
+    parsed_url = urlparse(url)
     host, port = parsed_url.netloc.split(":")
     return {
-        "bucketfs-name": bucketfs_params.name,
         "bucketfs-host": host,
         "bucketfs-port": port,
-        "bucketfs-use-https": False,
-        "bucketfs-user": bucketfs_config.username,
-        "bucketfs-password": bucketfs_config.password,
-        "bucket": bucketfs_params.bucket
+        "bucketfs-use-https": parsed_url.scheme.lower() == 'https',
     }
 
 
-@pytest.fixture(scope="session")
-def deploy_params_saas(saas_url, saas_account_id, saas_database_id, saas_token) -> dict[str, Any]:
-    yield {
-        'saas_url': saas_url,
-        'saas_account_id': saas_account_id,
-        'saas_database_id': saas_database_id,
-        'saas_token': saas_token
-    }
+def _translate_params(source: dict[str, Any], param_map: dict[str, str]) -> dict[str, Any]:
+    return {param_map[k]: v for k, v in source.items() if k in param_map}
 
 
 @pytest.fixture(scope="session")
-def deploy_params(backend,
-                  deploy_params_onprem,
-                  deploy_params_saas) -> dict[str, Any]:
+def deploy_params(backend_aware_database_params) -> dict[str, Any]:
+    return _translate_params(backend_aware_database_params, _deploy_param_map)
+
+
+@pytest.fixture(scope="session")
+def upload_params(backend, backend_aware_bucketfs_params) -> dict[str, Any]:
     if backend == BACKEND_ONPREM:
-        yield deploy_params_onprem
-    elif backend == BACKEND_SAAS:
-        yield deploy_params_saas
-    else:
-        raise ValueError(f'No deploy_params fixture for the backend {backend}')
-
-
-@pytest.fixture(scope="session")
-def upload_params(backend,
-                  upload_params_onprem,
-                  deploy_params_saas) -> dict[str, Any]:
-    if backend == BACKEND_ONPREM:
-        yield upload_params_onprem
-    elif backend == BACKEND_SAAS:
-        yield deploy_params_saas
-    else:
-        raise ValueError(f'No deploy_params fixture for the backend {backend}')
+        mapped_params = _translate_params(backend_aware_bucketfs_params, _upload_param_map)
+        mapped_params.pop(_upload_param_map['url'])
+        mapped_params.update(_parse_bucketfs_url(backend_aware_bucketfs_params['url']))
+        return mapped_params
+    return _translate_params(backend_aware_bucketfs_params, _upload_param_map)

@@ -3,13 +3,12 @@ from typing import Any
 
 import pytest
 from pyexasol import ExaConnection
-from exasol.pytest_itde import config
 import exasol.bucketfs as bfs
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
+from exasol.pytest_backend import BACKEND_ONPREM
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM
 from tests.utils.db_queries import DBQueries
 from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
@@ -33,8 +32,8 @@ def test_scripts_deployer(
 
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
+        deploy_params,
         pyexasol_connection,
-        exasol_config: config.Exasol,
         upload_slc):
 
     if backend != BACKEND_ONPREM:
@@ -52,7 +51,7 @@ def test_scripts_deployer_no_schema_creation_permission(
             pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
         ScriptsDeployer.run(
-            dsn=f"{exasol_config.host}:{exasol_config.port}",
+            dsn=deploy_params['dsn'],
             db_user=limited_user,
             db_pass=limited_user_password,
             schema=schema_name,

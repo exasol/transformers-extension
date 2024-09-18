@@ -4,10 +4,9 @@ from typing import Any
 import pytest
 from click.testing import CliRunner
 from pyexasol import ExaConnection, ExaConnectionFailedError
-import exasol.bucketfs as bfs
+from exasol.pytest_backend import BACKEND_ONPREM, BACKEND_SAAS
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
 
-from tests.fixtures.database_connection_fixture_constants import BACKEND_ONPREM, BACKEND_SAAS
 from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 from exasol_transformers_extension import deploy

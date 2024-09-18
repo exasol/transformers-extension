@@ -9,7 +9,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs)
 from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from tests.utils import postprocessing
-from tests.utils.parameters import bucketfs_params, model_params, get_arg_list
+from tests.utils.parameters import PATH_IN_BUCKET, model_params, get_arg_list
 
 
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
@@ -36,7 +36,7 @@ def test_model_upload(upload_params,
     upload_path = current_model_specs.get_bucketfs_model_save_path()
 
     args_list = get_arg_list(**upload_params,
-                             path_in_bucket=bucketfs_params.path_in_bucket,
+                             path_in_bucket=PATH_IN_BUCKET,
                              model_name=model_name,
                              sub_dir=sub_dir,
                              task_type="filling_mask")
