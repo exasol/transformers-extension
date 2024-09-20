@@ -575,8 +575,8 @@ tenacity = "^8.3.0"
 [package.source]
 type = "git"
 url = "https://github.com/exasol/python-extension-common.git"
-reference = "bug/60-missing-requirements"
-resolved_reference = "703e3ebae7bd4dc8e6d1e64855ae85e268791a31"
+reference = "main"
+resolved_reference = "72fdec4671175e18f6f19848ed9ad9df0c27939b"
 
 [[package]]
 name = "exasol-saas-api"
@@ -2871,4 +2871,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "04f97c4954ee3f44dcf9bf9956f18a38a4cebe3f1c1e78e6052cca4c75735ba5"
+content-hash = "85b84ce2cf3bca2107910be8d04b1204d870900ca587399cc291fb5e8c84e4a1"
