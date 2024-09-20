@@ -6,7 +6,6 @@ def test_filling_mask_script(
         setup_database, db_conn, upload_filling_mask_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "I <mask> you so much."
-
     n_rows = 100
     top_k = 3
     input_data = []
@@ -18,7 +17,7 @@ def test_filling_mask_script(
             model_params.base_model_specs.model_name,
             text_data,
             top_k))
-
+ #{schema_name}.
     query = f"SELECT TE_FILLING_MASK_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
@@ -32,7 +31,6 @@ def test_filling_mask_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
-
     # assertions
     assert result[0][-1] is None
     added_columns = 4  # filled_text,score,rank,error_message

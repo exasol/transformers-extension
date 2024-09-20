@@ -96,7 +96,7 @@ def setup_database(backend: bfs.path.StorageBackend,
                    ) -> Tuple[str, str]:
 
     _create_schema(pyexasol_connection)
-    _deploy_scripts(pyexasol_connection, False)
+    _deploy_scripts(pyexasol_connection, True)
     if backend == BACKEND_ONPREM:
         _create_bucketfs_connection_onprem(bucketfs_config, pyexasol_connection)
     elif backend == BACKEND_SAAS:
