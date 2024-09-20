@@ -33,13 +33,13 @@ testing = ["bitsandbytes", "datasets", "diffusers", "evaluate", "parameterized",
 
 [[package]]
 name = "anyio"
-version = "4.4.0"
+version = "4.5.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "anyio-4.4.0-py3-none-any.whl", hash = "sha256:c1b2d8f46a8a812513012e1107cb0e68c17159a7a594208005a57dc776e1bdc7"},
-    {file = "anyio-4.4.0.tar.gz", hash = "sha256:5aadc6a1bbb7cdb0bede386cac5e2940f5e2ff3aa20277e991cf028e0585ce94"},
+    {file = "anyio-4.5.0-py3-none-any.whl", hash = "sha256:fdeb095b7cc5a5563175eedd926ec4ae55413bb4be5770c424af0ba46ccb4a78"},
+    {file = "anyio-4.5.0.tar.gz", hash = "sha256:c5a275fe5ca0afd788001f58fca1e69e29ce706d746e317d660e21f70c530ef9"},
 ]
 
 [package.dependencies]
@@ -49,9 +49,9 @@ sniffio = ">=1.1"
 typing-extensions = {version = ">=4.1", markers = "python_version < \"3.11\""}
 
 [package.extras]
-doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypothesis (>=4.0)", "psutil (>=5.9)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (>=0.17)"]
-trio = ["trio (>=0.23)"]
+doc = ["Sphinx (>=7.4,<8.0)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypothesis (>=4.0)", "psutil (>=5.9)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (>=0.21.0b1)"]
+trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "argcomplete"
@@ -524,13 +524,13 @@ files = [
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "3.1.0"
+version = "3.2.0"
 description = "Integration Test Docker Environment for Exasol"
 optional = false
 python-versions = "<4,>=3.8"
 files = [
-    {file = "exasol_integration_test_docker_environment-3.1.0-py3-none-any.whl", hash = "sha256:ce3cf917bd660ef5e1c59281ba0c1ea7c7dc3c43c9454040a6e1a3d90124a1e4"},
-    {file = "exasol_integration_test_docker_environment-3.1.0.tar.gz", hash = "sha256:dbcbb967bb3458f74c8764a1cfc4f62ab215b79ee754bb4d17d4ef54c74f7f0a"},
+    {file = "exasol_integration_test_docker_environment-3.2.0-py3-none-any.whl", hash = "sha256:b0fc41a70b73ec5ad43171e2c8fcf76a54a1eb31befa09e6a3214af55f1c93fc"},
+    {file = "exasol_integration_test_docker_environment-3.2.0.tar.gz", hash = "sha256:47b11dde66be0149d54cfa6d7eebc4665bd996fccb22f64ce6489a07cec7b331"},
 ]
 
 [package.dependencies]
@@ -556,23 +556,27 @@ simplejson = ">=3.16.0"
 
 [[package]]
 name = "exasol-python-extension-common"
-version = "0.4.0"
+version = "0.5.0"
 description = "A collection of common utilities for Exasol extensions."
 optional = false
-python-versions = "<4.0.0,>=3.10.0"
-files = [
-    {file = "exasol_python_extension_common-0.4.0-py3-none-any.whl", hash = "sha256:561120c634569edec3b5b0e02fed5a9826d5c8093ce8312ae33dedf88dcdbe34"},
-    {file = "exasol_python_extension_common-0.4.0.tar.gz", hash = "sha256:3d6a58018e78d0fa3de22b83a2857a8889460fd43ba4b3b8d19ac7e3c103d70e"},
-]
+python-versions = "^3.10.0"
+files = []
+develop = false
 
 [package.dependencies]
-click = ">=8.1.7,<9.0.0"
+click = "^8.1.7"
 exasol-bucketfs = ">=0.10.0"
 exasol-saas-api = ">=0.7.0,<1.0.0"
 exasol-script-languages-container-tool = ">=0.20.0"
 pyexasol = ">=0.25.0,<1.0.0"
 requests = ">=2.32.0"
-tenacity = ">=8.3.0,<9.0.0"
+tenacity = "^8.3.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/exasol/python-extension-common.git"
+reference = "bug/60-missing-requirements"
+resolved_reference = "703e3ebae7bd4dc8e6d1e64855ae85e268791a31"
 
 [[package]]
 name = "exasol-saas-api"
@@ -1626,13 +1630,13 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pyreadline3"
-version = "3.5.3"
+version = "3.5.4"
 description = "A python implementation of GNU readline."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pyreadline3-3.5.3-py3-none-any.whl", hash = "sha256:ddede153a92e5aad9c1fe63d692efd6a3e478f686adcd4938a051ffb63ec4f52"},
-    {file = "pyreadline3-3.5.3.tar.gz", hash = "sha256:9234684ca75a00a702fda42b17cc26ca665bc9d7c2da06af450468253099ff61"},
+    {file = "pyreadline3-3.5.4-py3-none-any.whl", hash = "sha256:eaf8e6cc3c49bcccf145fc6067ba8643d1df34d604a1ec0eccbf7a18e6d3fae6"},
+    {file = "pyreadline3-3.5.4.tar.gz", hash = "sha256:8d57d53039a1c75adba8e50dd3d992b28143480816187ea5efbd5c78e6c885b7"},
 ]
 
 [package.extras]
@@ -1662,13 +1666,13 @@ testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "no
 
 [[package]]
 name = "pytest-exasol-backend"
-version = "0.2.1"
+version = "0.3.0"
 description = ""
 optional = false
 python-versions = "<4,>=3.9"
 files = [
-    {file = "pytest_exasol_backend-0.2.1-py3-none-any.whl", hash = "sha256:dba4925f60ffe7306b7494aaef52d86e1c36d26e542eb52ba114f940970804dd"},
-    {file = "pytest_exasol_backend-0.2.1.tar.gz", hash = "sha256:176439cb59732e4b1f03c290c66c8b6799914615c8089dc4e901bdbbf50bf140"},
+    {file = "pytest_exasol_backend-0.3.0-py3-none-any.whl", hash = "sha256:57701d24fa963e08e742938440cdf87840f57d04d096f2cbff0fa0a0f95c75af"},
+    {file = "pytest_exasol_backend-0.3.0.tar.gz", hash = "sha256:165a3d47b309a1385d37e4b7908eaba832139e9683d7b30cbaaa7decd1052302"},
 ]
 
 [package.dependencies]
@@ -2310,13 +2314,13 @@ files = [
 
 [[package]]
 name = "sympy"
-version = "1.13.2"
+version = "1.13.3"
 description = "Computer algebra system (CAS) in Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "sympy-1.13.2-py3-none-any.whl", hash = "sha256:c51d75517712f1aed280d4ce58506a4a88d635d6b5dd48b39102a7ae1f3fcfe9"},
-    {file = "sympy-1.13.2.tar.gz", hash = "sha256:401449d84d07be9d0c7a46a64bd54fe097667d5e7181bfe67ec777be9e01cb13"},
+    {file = "sympy-1.13.3-py3-none-any.whl", hash = "sha256:54612cf55a62755ee71824ce692986f23c88ffa77207b30c1368eda4a7060f73"},
+    {file = "sympy-1.13.3.tar.gz", hash = "sha256:b27fd2c6530e0ab39e275fc9b683895367e51d5da91baa8d3d64db2565fec4d9"},
 ]
 
 [package.dependencies]
@@ -2867,4 +2871,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "c670c6d21c035927dcf7dfd35d1d5d7cbe84926e8bce5ec49052d33ebc39cc35"
+content-hash = "04f97c4954ee3f44dcf9bf9956f18a38a4cebe3f1c1e78e6052cca4c75735ba5"
