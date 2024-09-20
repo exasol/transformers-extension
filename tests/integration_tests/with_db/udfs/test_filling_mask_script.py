@@ -17,8 +17,8 @@ def test_filling_mask_script(
             model_params.base_model_specs.model_name,
             text_data,
             top_k))
- #{schema_name}.
-    query = f"SELECT TE_FILLING_MASK_UDF(" \
+
+    query = f"SELECT {schema_name}.TE_FILLING_MASK_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

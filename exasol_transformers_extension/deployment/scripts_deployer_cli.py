@@ -47,13 +47,11 @@ def scripts_deployer_main(
         ssl_client_private_key: str,
         use_ssl_cert_validation: bool,
         schema: str,
-        language_alias: str,
-        use_spans: bool): #todo do we even want to offer it via the cli?
+        language_alias: str):
 
     ScriptsDeployer.run(
         language_alias=language_alias,
         schema=schema,
-        use_spans=use_spans,
         dsn=dsn,
         db_user=db_user,
         db_pass=db_pass,

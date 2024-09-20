@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_token_classification_script(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, _ = setup_database
+    bucketfs_conn_name, schema_name = setup_database
     aggregation_strategy = "simple"
     n_rows = 100
     input_data = []
@@ -19,7 +19,7 @@ def test_token_classification_script(
             aggregation_strategy
         ))
 
-    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF(" \
+    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -52,7 +52,7 @@ def test_token_classification_script(
 #todo exract duplicate stuff to function?
 def test_token_classification_script_with_span(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, _ = setup_database
+    bucketfs_conn_name, schema_name = setup_database
     aggregation_strategy = "simple"
     n_rows = 100
     input_data = []
@@ -70,7 +70,7 @@ def test_token_classification_script_with_span(
             aggregation_strategy
         ))
 
-    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
+    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
