@@ -6,7 +6,6 @@ from exasol.python_extension_common.deployment.language_container_builder import
 
 
 CONTAINER_NAME = "exasol_transformers_extension_container"
-LANGUAGE_ALIAS = "PYTHON3_TE"
 
 
 def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> None:
@@ -21,7 +20,7 @@ def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> 
 
 @contextmanager
 def language_container_factory():
-    with LanguageContainerBuilder(CONTAINER_NAME, LANGUAGE_ALIAS) as container_builder:
+    with LanguageContainerBuilder(CONTAINER_NAME) as container_builder:
         add_pytorch_to_requirements(container_builder)
         project_directory = find_path_backwards("pyproject.toml", __file__).parent
         container_builder.prepare_flavor(project_directory, requirement_filter=exclude_cuda)
