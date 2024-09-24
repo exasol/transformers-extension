@@ -5,10 +5,10 @@ from pyexasol import ExaConnection
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from tests.utils.parameters import PATH_IN_BUCKET
-from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"
+LANGUAGE_ALIAS = "TEST_PYTHON3_TE"
 
 
 def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
@@ -23,10 +23,15 @@ def db_schema_name() -> str:
     return SCHEMA_NAME
 
 
+@pytest.fixture(scope='session')
+def language_alias(project_short_tag):
+    return LANGUAGE_ALIAS
+
+
 @pytest.fixture(scope="session")
 def setup_database(pyexasol_connection,
                    bucketfs_connection_factory,
-                   upload_slc) -> Tuple[str, str]:
+                   deployed_slc) -> Tuple[str, str]:
     bucketfs_connection_factory(BUCKETFS_CONNECTION_NAME, PATH_IN_BUCKET)
     _deploy_scripts(pyexasol_connection)
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
