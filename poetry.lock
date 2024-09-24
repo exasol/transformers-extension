@@ -556,27 +556,23 @@ simplejson = ">=3.16.0"
 
 [[package]]
 name = "exasol-python-extension-common"
-version = "0.5.0"
+version = "0.6.0"
 description = "A collection of common utilities for Exasol extensions."
 optional = false
-python-versions = "^3.10.0"
-files = []
-develop = false
+python-versions = "<4.0.0,>=3.10.0"
+files = [
+    {file = "exasol_python_extension_common-0.6.0-py3-none-any.whl", hash = "sha256:434c01936ab67ab00b1fc8f218d2eb90c415a93e9cef9fb9910fdbde6e02bc81"},
+    {file = "exasol_python_extension_common-0.6.0.tar.gz", hash = "sha256:c121153f6605601e22ddcd3f9afa9a24cb4f05c1de030c7871a594a419f17575"},
+]
 
 [package.dependencies]
-click = "^8.1.7"
+click = ">=8.1.7,<9.0.0"
 exasol-bucketfs = ">=0.10.0"
 exasol-saas-api = ">=0.7.0,<1.0.0"
-exasol-script-languages-container-tool = "^1.0.0"
+exasol-script-languages-container-tool = ">=1.0.0,<2.0.0"
 pyexasol = ">=0.25.0,<1.0.0"
 requests = ">=2.32.0"
-tenacity = "^8.3.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/exasol/python-extension-common.git"
-reference = "main"
-resolved_reference = "50385b5d08f286f7926c57fb882c772803e11fc0"
+tenacity = ">=8.3.0,<9.0.0"
 
 [[package]]
 name = "exasol-saas-api"
@@ -2876,4 +2872,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "7212c81306727ed6a99af4a7ddfa8c95ff2bc6794f3308228b20951ff9e3b0cd"
+content-hash = "6d5d26689fa1af63fbe57ff3380a17dd8299a22e0c94aaefe3670a31e6902b89"
