@@ -29,9 +29,16 @@ def language_alias(project_short_tag):
 
 
 @pytest.fixture(scope="session")
-def setup_database(pyexasol_connection,
+def setup_database(backend,
+                   pyexasol_connection,
                    bucketfs_connection_factory,
                    deployed_slc) -> Tuple[str, str]:
+    # This is a temporary workaround for the problem with slow slc file extraction
+    # at a SaaS database. To be removed when a proper completion check is in place.
+    if backend == 'saas':
+        import time
+        time.sleep(30)
+
     bucketfs_connection_factory(BUCKETFS_CONNECTION_NAME, PATH_IN_BUCKET)
     _deploy_scripts(pyexasol_connection)
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME

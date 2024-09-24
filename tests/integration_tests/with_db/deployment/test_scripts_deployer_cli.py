@@ -39,7 +39,7 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      deploy_params: dict[str, Any],
                                                      pyexasol_connection: ExaConnection,
                                                      language_alias,
-                                                     deployed_slc_slc):
+                                                     deployed_slc):
     if backend != BACKEND_ONPREM:
         pytest.skip(("We run this test only with the Docker-DB "
                      "because SaaS always verifies the SSL certificate"))
