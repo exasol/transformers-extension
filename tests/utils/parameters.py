@@ -3,13 +3,7 @@ from dataclasses import dataclass
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
-
-@dataclass(frozen=True)
-class BucketFSParams:
-    real_port: str
-    name: str
-    bucket: str
-    path_in_bucket: str
+PATH_IN_BUCKET = "container"
 
 
 @dataclass(frozen=True)
@@ -26,12 +20,6 @@ class ModelParams:
     text_data: str
     sub_dir: str
 
-
-bucketfs_params = BucketFSParams(
-    real_port="6583",
-    name="bfsdefault",
-    bucket="default",
-    path_in_bucket="container")
 
 model_params = ModelParams(
     base_model_specs=ModelSpecification('bert-base-uncased', "need to set this task_type"), #fill mask

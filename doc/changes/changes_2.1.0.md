@@ -19,6 +19,8 @@ n/a
 
 ### Refactorings
 
+- #252: Use the pytest plugins for in the integration tests.
+
 n/a
 
 ### Security 

@@ -1,66 +1,12 @@
-import os
-import subprocess
-import time
-from pathlib import Path
-from typing import Dict
-
 import pytest
-from _pytest.fixtures import FixtureRequest
-from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
-from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 
-from exasol_transformers_extension.deployment import language_container
-from tests.fixtures.database_connection_fixture_constants import BACKEND_SAAS
-from tests.fixtures.language_container_fixture_constants import LANGUAGE_ALIAS, CONTAINER_FILE_NAME
-
-SLC_EXPORT = pytest.StashKey[ExportInfo]()
-SLC_UPLOADED = pytest.StashKey[Dict[str, bool]]()
+from exasol_transformers_extension.deployment.language_container import language_container_factory
 
 
-@pytest.fixture(scope="session")
-def flavor_path() -> Path:
-    return language_container.find_flavor_path()
-
-
-@pytest.fixture(scope="session")
-def export_slc(request: FixtureRequest, flavor_path: Path) -> ExportInfo:
-    if SLC_EXPORT not in request.session.stash:
-        language_container.prepare_flavor(flavor_path=flavor_path)
-        export_result = language_container.export(flavor_path=flavor_path)
-        export_info = export_result.export_infos[str(flavor_path)]["release"]
-        request.session.stash[SLC_EXPORT] = export_info
-    return request.session.stash[SLC_EXPORT]
-
-
-@pytest.fixture(scope="session")
-def upload_slc(request: FixtureRequest, backend, bucketfs_location, pyexasol_connection,
-               export_slc: ExportInfo) -> None:
-    if SLC_UPLOADED not in request.session.stash:
-        request.session.stash[SLC_UPLOADED] = dict()
-    if backend not in request.session.stash[SLC_UPLOADED]:
-        cleanup_images()
-
-        container_file_path = Path(export_slc.cache_file)
-
-        deployer = LanguageContainerDeployer(pyexasol_connection=pyexasol_connection,
-                                             language_alias=LANGUAGE_ALIAS,
-                                             bucketfs_path=bucketfs_location)
-
-        deployer.run(container_file=container_file_path,
-                     bucket_file_path=CONTAINER_FILE_NAME,
-                     allow_override=True,
-                     wait_for_completion=True)
-
-        # Let's see if this helps
-        if backend == BACKEND_SAAS:
-            time.sleep(300)
-        request.session.stash[SLC_UPLOADED][backend] = True
-
-
-def cleanup_images():
-    if "GITHUB_ACTIONS" in os.environ:
-        # Remove image and build output to reduce the disk usage in CI.
-        # We currently use Github Actions as the CI and its disk is limited to 14 GB.
-        # TODO: This code can be removed when we move to a CI with larger disks.
-        rm_docker_image = """docker images -a | grep 'transformers' | awk '{print $3}' | xargs docker rmi"""
-        subprocess.run(rm_docker_image, shell=True)
+@pytest.fixture(scope='session')
+def slc_builder(use_onprem, use_saas):
+    if use_onprem or use_saas:
+        with language_container_factory() as container_builder:
+            yield container_builder
+    else:
+        yield None
