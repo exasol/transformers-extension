@@ -35,6 +35,7 @@ _upload_param_map = {
     'pat': 'saas_token'
 }
 
+
 def _parse_bucketfs_url(url: str) -> dict[str, Any]:
     parsed_url = urlparse(url)
     host, port = parsed_url.netloc.split(":")
