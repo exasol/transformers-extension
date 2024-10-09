@@ -151,9 +151,16 @@ def test_token_classification_udf_with_span( #todo do we want to test al param c
         'sub_dir',
         'model_name',
         'text_data',
-        "docid",
+        "text_data_docid",
         "text_data_char_begin",
         "text_data_char_end",
+        'aggregation_strategy'
+    ]
+
+    old_columns = [
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
         'aggregation_strategy'
     ]
 
@@ -166,12 +173,12 @@ def test_token_classification_udf_with_span( #todo do we want to test al param c
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
-        ['start_pos', 'end_pos', 'word', 'entity', 'score', 'token_docid',
-         'token_char_begin', 'token_char_end', 'error_message']
+        ['entity_covered_text', 'entity_type', 'score', 'entity_docid',
+         'entity_char_begin', 'entity_char_end', 'error_message']
 
     result = Result(result_df)
     assert (
-            result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            result == ColumnsMatcher(columns=old_columns, new_columns=new_columns)
             and result == NoErrorMessageMatcher()
     )
 

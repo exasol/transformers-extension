@@ -61,6 +61,9 @@ class SingleModelSingleBatchComplete:
     start = 0
     end = 6
 
+    token_start = 2
+    token_end = 4
+
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text", agg_strategy)] * data_size
     output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
@@ -69,9 +72,8 @@ class SingleModelSingleBatchComplete:
 
     work_with_span_input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text", 1, 0, 6, agg_strategy)] * data_size
-    work_with_span_output_data = [("bfs_conn1", "sub_dir1", "model1", "text",token_docid,start,end, agg_strategy,
-                    start, end, "text", "label1", 0.1, token_docid, None)] * n_entities * data_size
-
+    work_with_span_output_data = [("bfs_conn1", "sub_dir1", "model1", agg_strategy,
+                    "text", "label1", 0.1, token_docid, start+token_start, start+token_end, None)]  * n_entities * data_size
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {

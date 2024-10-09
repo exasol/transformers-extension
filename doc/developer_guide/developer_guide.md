@@ -42,7 +42,7 @@ Run unit tests:
 ```bash
       poetry run nox -s unit_tests
 ```
-Start a test database and run integration all tests:
+Start a test database and run all integration tests:
 ```bash
       poetry run nox -s start_database
       poetry run nox -s integration_tests

@@ -1,6 +1,5 @@
 import pandas as pd
 import transformers
-from ast import literal_eval
 from typing import List, Iterator, Any, Union, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
@@ -8,6 +7,11 @@ from exasol_transformers_extension.udfs.models.base_model_udf import \
 
 
 class TokenClassificationUDF(BaseModelUDF):
+    """
+    UDF for finding and classifying a token/entity in a given text.
+    If given an input span, text_data_char_begin and text_data_char_end should
+    represent the entire input text and not indicate a substring.
+    """
     def __init__(self,
                  exa,
                  batch_size=100,
@@ -59,7 +63,6 @@ class TokenClassificationUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         text_data = list(model_df['text_data'])
-        #todo  pull relevant part of text data?
         aggregation_strategy = model_df['aggregation_strategy'].iloc[0]
         results = self.last_created_pipeline(
             text_data, aggregation_strategy=aggregation_strategy)
@@ -75,7 +78,7 @@ class TokenClassificationUDF(BaseModelUDF):
         return results
 
     def make_toke_span(self, df_row):
-        token_docid = df_row["docid"]
+        token_docid = df_row["text_data_docid"]
         token_char_begin = df_row["start_pos"] + df_row['text_data_char_begin']
         token_char_end = df_row["end_pos"] + df_row['text_data_char_begin']
         return pd.Series([token_docid, token_char_begin, token_char_end])
@@ -86,7 +89,6 @@ class TokenClassificationUDF(BaseModelUDF):
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
-
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
 
@@ -103,9 +105,19 @@ class TokenClassificationUDF(BaseModelUDF):
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
         if self.work_with_spans:
-            # todo remove superfluous results ?
-            model_df[["token_docid", "token_char_begin", "token_char_end"]] =\
+            model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] =\
                 model_df.apply(self.make_toke_span, axis=1)
+            # we use different names in udf with span and without, so need to rename
+            # this decision was made as to improve the naming of the columns without
+            # breaking the interface of the existing udf
+            model_df = model_df.rename(
+                columns={
+                    "word": "entity_covered_text",
+                    "entity": "entity_type"})
+            # drop columns which are made superfluous by the spans to save data transfer
+            model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
+                                   "text_data_char_end", "start_pos", "end_pos"])
+
         return model_df
 
     def create_dataframes_from_predictions(
