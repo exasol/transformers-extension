@@ -25,7 +25,7 @@ def _create_schema(pyexasol_connection: ExaConnection) -> None:
     pyexasol_connection.execute(f"OPEN SCHEMA {SCHEMA_NAME};")
 
 
-def _deploy_scripts(pyexasol_connection: ExaConnection, install_all_scripts) -> None:
+def _deploy_scripts(pyexasol_connection: ExaConnection, install_all_scripts: bool) -> None:
     scripts_deployer = ScriptsDeployer(schema=SCHEMA_NAME,
                                        language_alias=LANGUAGE_ALIAS,
                                        install_all_scripts=install_all_scripts,
@@ -96,7 +96,7 @@ def setup_database(backend: bfs.path.StorageBackend,
                    ) -> Tuple[str, str]:
 
     _create_schema(pyexasol_connection)
-    _deploy_scripts(pyexasol_connection, True)
+    _deploy_scripts(pyexasol_connection, install_all_scripts=True)
     if backend == BACKEND_ONPREM:
         _create_bucketfs_connection_onprem(bucketfs_config, pyexasol_connection)
     elif backend == BACKEND_SAAS:

@@ -73,11 +73,11 @@ class TokenClassificationUDF(BaseModelUDF):
                 "start", "end", "word", "entity", "score"]
         else:
             self._desired_fields_in_prediction = [
-                "start", "end", "word", "entity_group", "score"] #odo add here
+                "start", "end", "word", "entity_group", "score"]
 
         return results
 
-    def make_toke_span(self, df_row):
+    def make_entity_span(self, df_row):
         token_docid = df_row["text_data_docid"]
         token_char_begin = df_row["start_pos"] + df_row['text_data_char_begin']
         token_char_end = df_row["end_pos"] + df_row['text_data_char_begin']
@@ -106,7 +106,7 @@ class TokenClassificationUDF(BaseModelUDF):
         model_df = pd.concat([model_df, pred_df], axis=1)
         if self.work_with_spans:
             model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] =\
-                model_df.apply(self.make_toke_span, axis=1)
+                model_df.apply(self.make_entity_span, axis=1)
             # we use different names in udf with span and without, so need to rename
             # this decision was made as to improve the naming of the columns without
             # breaking the interface of the existing udf

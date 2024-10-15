@@ -27,9 +27,9 @@ class MockTokenClassificationFactory:
                                          MockTokenClassificationModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, cache_dir):
-        # the cache_dir path already has model_name
-        return self.mock_models[PurePosixPath(cache_dir)] #todo why is not already PurePosixPath?
+    def from_pretrained(self,  model_path):
+        # the model_path path already has model_name
+        return self.mock_models[PurePosixPath(model_path)] #todo why is not already PurePosixPath?
 
 
 class MockPipeline:

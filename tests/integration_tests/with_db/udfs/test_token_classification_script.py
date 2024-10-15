@@ -2,7 +2,7 @@ from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_
 from tests.utils.parameters import model_params
 
 
-def test_token_classification_script(
+def test_token_classification_script_without_spans(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
     bucketfs_conn_name, schema_name = setup_database
     aggregation_strategy = "simple"

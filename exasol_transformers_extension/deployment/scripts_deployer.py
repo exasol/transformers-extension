@@ -4,8 +4,11 @@ import logging
 import pyexasol
 from exasol.python_extension_common.connections.pyexasol_connection import open_pyexasol_connection
 
-from exasol_transformers_extension.deployment import constants, work_with_spans_constants, \
-    work_without_spans_constants, deployment_utils as utils
+from exasol_transformers_extension.deployment.install_scripts_constants import InstallScriptsConstants
+from exasol_transformers_extension.deployment.constants import constants
+from exasol_transformers_extension.deployment.work_with_spans_constants import work_with_spans_constants
+from exasol_transformers_extension.deployment.work_without_spans_constants import work_without_spans_constants
+from exasol_transformers_extension.deployment import deployment_utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -41,16 +44,16 @@ class ScriptsDeployer:
         self._set_current_schema(self._schema)
         logger.info(f"Schema {self._schema} is opened.")
 
-    def  _deploy_udf_scripts_from_constant_file(self, constant_file) -> None:
-        for udf_call_src, template_src in constant_file.UDF_CALL_TEMPLATES.items():
-            udf_content = constant_file.UDF_CALLERS_DIR.joinpath(
+    def  _deploy_udf_scripts_from_constants(self, constants_set: InstallScriptsConstants) -> None:
+        for udf_call_src, template_src in constants_set.udf_callers_templates.items():
+            udf_content = constants_set.udf_callers_dir.joinpath(
                 udf_call_src).read_text()
 
             udf_query = utils.load_and_render_statement(
                 template_src,
                 script_content=udf_content,
                 language_alias=self._language_alias,
-                ordered_columns=constant_file.ORDERED_COLUMNS,
+                ordered_columns=constants_set.ordered_columns,
                 work_with_spans=self._use_spans,
                 install_all_scripts=self._install_all_scripts
             )
@@ -65,13 +68,13 @@ class ScriptsDeployer:
         Per default UDFs with and without spans are installed mutually exclusive.
         but setting install_all_scripts to true overrides this and installs all. This can be useful for testing.
         """
-        constant_files = [constants]
+        install_scripts_constants = [constants]
         if self._use_spans or self._install_all_scripts:
-            constant_files.append(work_with_spans_constants)
+            install_scripts_constants.append(work_with_spans_constants)
         if self._install_all_scripts or not self._use_spans:
-            constant_files.append(work_without_spans_constants)
-        for constant_file in constant_files:
-            self._deploy_udf_scripts_from_constant_file(constant_file)
+            install_scripts_constants.append(work_without_spans_constants)
+        for constant_set in install_scripts_constants:
+            self._deploy_udf_scripts_from_constants(constant_set)
 
 
     def deploy_scripts(self) -> None:
