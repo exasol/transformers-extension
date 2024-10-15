@@ -23,7 +23,7 @@ def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     return PosixPath(path)
 
 
-def test_model_upload(upload_params,
+def test_model_upload(bucketfs_std_params,
                       setup_database,
                       db_conn,
                       tmp_path: Path,
@@ -35,7 +35,7 @@ def test_model_upload(upload_params,
     current_model_specs = get_BucketFSModelSpecification_from_model_Specs(model_specification, "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
 
-    args_list = get_arg_list(**upload_params,
+    args_list = get_arg_list(**bucketfs_std_params,
                              path_in_bucket=PATH_IN_BUCKET,
                              model_name=model_name,
                              sub_dir=sub_dir,

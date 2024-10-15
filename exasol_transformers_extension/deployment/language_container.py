@@ -1,3 +1,4 @@
+import os
 from contextlib import contextmanager
 import re
 
@@ -25,3 +26,13 @@ def language_container_factory():
         project_directory = find_path_backwards("pyproject.toml", __file__).parent
         container_builder.prepare_flavor(project_directory, requirement_filter=exclude_cuda)
         yield container_builder
+
+
+@contextmanager
+def export_slc(export_dir: str | None = None):
+    if export_dir and (not os.path.isdir(export_dir)):
+        os.makedirs(export_dir)
+    with language_container_factory() as container_builder:
+        export_result = container_builder.export(export_dir)
+        export_info = export_result.export_infos[str(container_builder.flavor_path)]["release"]
+        yield export_info.cache_file
