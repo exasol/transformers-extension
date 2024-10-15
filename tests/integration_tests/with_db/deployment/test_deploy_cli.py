@@ -43,7 +43,7 @@ def test_scripts_deployer_cli_with_encryption_verify(backend,
                                 get_cli_arg(DEPLOY_SLC_ARG, False),
                                 get_cli_arg(StdParams.language_alias, language_alias)])
         runner = CliRunner()
-        result = runner.invoke(deploy_command, args=args_string, catch_exceptions=False)
+        result = runner.invoke(deploy_command, args=args_string, catch_exceptions=True)
         expected_exception_message = '[SSL: CERTIFICATE_VERIFY_FAILED]'
         assert result.exit_code == 1
         assert expected_exception_message in result.exception.args[0].message
