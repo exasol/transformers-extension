@@ -40,7 +40,6 @@ def test_deploy_cli(pyexasol_connection,
             run_model_upload_test(bucketfs_cli_args, db_conn, bfs_path, BUCKETFS_CONN_NAME)
 
 
-@pytest.mark.skip('Need to sort out the model upload test first')
 def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      pyexasol_connection,
                                                      language_alias,
