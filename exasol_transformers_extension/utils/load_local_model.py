@@ -57,7 +57,7 @@ class LoadLocalModel:
         loaded_tokenizer = self._tokenizer_factory.from_pretrained(str(self._bucketfs_model_cache_dir))
 
         last_created_pipeline = self.pipeline_factory(
-            self.task_type,
+            task = self.task_type,
             model=loaded_model,
             tokenizer=loaded_tokenizer,
             device=self.device,
