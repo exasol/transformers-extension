@@ -47,6 +47,11 @@ def run_model_upload_test(bucketfs_cli_args,
     try:
         runner = CliRunner()
         result = runner.invoke(upload_model_command, args=args_string, catch_exceptions=False)
+        if result.exit_code != 0:
+            print('Exception:', result.exception)
+            print('ExcInfo:', result.exc_info)
+            print('STDERR:', result.stderr_bytes)
+            print('STDOUT:', result.stdout_bytes)
         assert result.exit_code == 0
         time.sleep(20)
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")

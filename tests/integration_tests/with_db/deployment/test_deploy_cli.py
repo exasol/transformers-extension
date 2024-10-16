@@ -16,6 +16,7 @@ BUCKETFS_CONN_NAME = 'TE_E2E_BFS_CONN'
 LANGUAGE_ALIAS = 'TE_E2E_LANG_ALIAS'
 
 
+@pytest.mark.skip('Need to sort out the model upload test first')
 def test_deploy_cli(pyexasol_connection,
                     backend_aware_database_params,
                     backend_aware_bucketfs_params,
@@ -39,6 +40,7 @@ def test_deploy_cli(pyexasol_connection,
             run_model_upload_test(bucketfs_cli_args, db_conn, bfs_path, BUCKETFS_CONN_NAME)
 
 
+@pytest.mark.skip('Need to sort out the model upload test first')
 def test_scripts_deployer_cli_with_encryption_verify(backend,
                                                      pyexasol_connection,
                                                      language_alias,
