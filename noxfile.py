@@ -26,21 +26,21 @@ def unit_tests(session):
 def integration_tests(session):
     # We need to use a external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
-    session.run('pytest', '--setup-show', '-s', '--backend=onprem', '--itde-db-version=external', 'tests/integration_tests/with_db/deployment')
+    session.run('pytest', '--setup-show', '-s', '--backend=all', '--itde-db-version=external', 'tests/integration_tests')
 
 
 @nox.session(python=False)
 def saas_integration_tests(session):
     # We need to use a external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
-    session.run('pytest', '--setup-show', '-s', 'tests/integration_tests/with_db/deployment')
+    session.run('pytest', '--setup-show', '-s', '--backend=saas', 'tests/integration_tests/with_db')
 
 
 @nox.session(python=False)
 def onprem_integration_tests(session):
     # We need to use a external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
-    session.run('pytest', '--setup-show', '-s', '--backend=onprem', '--itde-db-version=external', 'tests/integration_tests/with_db/deployment')
+    session.run('pytest', '--setup-show', '-s', '--backend=onprem', '--itde-db-version=external', 'tests/integration_tests/with_db')
 
 
 @nox.session(python=False)

@@ -1,19 +1,17 @@
-import os
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
-import torch
 import traceback
 import pandas as pd
 import numpy as np
 import transformers
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location_from_conn_object)
 
 from exasol_transformers_extension.deployment import constants
-from exasol_transformers_extension.utils import device_management, \
-    bucketfs_operations, dataframe_operations
+from exasol_transformers_extension.utils import device_management, dataframe_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 class BaseModelUDF(ABC):
@@ -189,8 +187,7 @@ class BaseModelUDF(ABC):
 
         if self.model_loader.current_model_specification != current_model_specification:
             bucketfs_location = \
-                bucketfs_operations.create_bucketfs_location_from_conn_object(
-                    self.exa.get_connection(bucketfs_conn))
+                create_bucketfs_location_from_conn_object(self.exa.get_connection(bucketfs_conn))
 
             self.model_loader.clear_device_memory()
             self.model_loader.set_current_model_specification(current_model_specification)

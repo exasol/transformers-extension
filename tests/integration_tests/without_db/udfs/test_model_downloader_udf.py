@@ -3,15 +3,18 @@ from pathlib import Path
 from typing import Dict, List
 
 from exasol_udf_mock_python.connection import Connection
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location_from_conn_object)
 
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
-from exasol_transformers_extension.utils import bucketfs_operations
-from exasol_transformers_extension.utils.bucketfs_model_specification import get_BucketFSModelSpecification_from_model_Specs
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    get_BucketFSModelSpecification_from_model_Specs)
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import (
     create_mounted_bucketfs_connection, create_hf_token_connection)
 from tests.utils.bucketfs_file_list import get_bucketfs_file_list
+
 
 class ExaEnvironment:
     def __init__(self, connections: Dict[str, Connection] = None):
@@ -83,8 +86,7 @@ class TestEnvironmentSetup:
             else create_hf_token_connection("valid")
 
     def list_files_in_bucketfs(self):
-        bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(
-            self.bucketfs_connection)
+        bucketfs_location = create_bucketfs_location_from_conn_object(self.bucketfs_connection)
         return get_bucketfs_file_list(bucketfs_location)
 
 

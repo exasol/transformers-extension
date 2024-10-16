@@ -4,6 +4,8 @@ from unittest.mock import MagicMock, create_autospec
 from pathlib import Path
 from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location_from_conn_object)
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
@@ -11,7 +13,7 @@ from exasol_transformers_extension.utils.model_factory_protocol import ModelFact
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory, make_parameters_of_model_contiguous_tensors
 from exasol_transformers_extension.utils.bucketfs_operations import (
-    create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
+    create_save_pretrained_model_path)
 
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection

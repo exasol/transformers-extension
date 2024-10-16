@@ -9,7 +9,7 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 from exasol_transformers_extension.deploy import (
     deploy_command, DEPLOY_SLC_ARG, BUCKETFS_CONN_NAME_ARG, get_bool_opt_name)
 from exasol_transformers_extension.deployment.language_container import export_slc
-from tests.integration_tests.with_db.deployment.test_upload_model import run_model_upload_test
+from tests.integration_tests.with_db.test_upload_model import run_model_upload_test
 
 PATH_IN_BUCKET = 'te_end2end'
 BUCKETFS_CONN_NAME = 'TE_E2E_BFS_CONN'
