@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import transformers
 
-from exasol_transformers_extension.deployment import constants
+from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
@@ -150,7 +150,7 @@ class BaseModelUDF(ABC):
         """
 
         unique_values = dataframe_operations.get_unique_values(
-            batch_df, constants.ORDERED_COLUMNS, sort=True)
+            batch_df, constants.ordered_columns, sort=True)
 
         for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
