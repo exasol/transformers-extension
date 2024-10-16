@@ -4,8 +4,7 @@ import traceback
 import pandas as pd
 import numpy as np
 import transformers
-from exasol.python_extension_common.connections.bucketfs_location import (
-    create_bucketfs_location_from_conn_object)
+import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 
 from exasol_transformers_extension.deployment import constants
 from exasol_transformers_extension.utils import device_management, dataframe_operations
@@ -186,8 +185,8 @@ class BaseModelUDF(ABC):
         current_model_specification = BucketFSModelSpecification(model_name, self.task_type, bucketfs_conn, sub_dir)
 
         if self.model_loader.current_model_specification != current_model_specification:
-            bucketfs_location = \
-                create_bucketfs_location_from_conn_object(self.exa.get_connection(bucketfs_conn))
+            bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
+                self.exa.get_connection(bucketfs_conn))
 
             self.model_loader.clear_device_memory()
             self.model_loader.set_current_model_specification(current_model_specification)

@@ -90,7 +90,7 @@ def setup_tests_and_run(bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):
     ("all given", "test_bucketfs_con_name", Connection(address=f"file:///test"),
      "test_subdir", "test_model")
 ])
-@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_model_downloader_all_parameters(mock_local_path, mock_create_loc, description,
                                          bucketfs_conn_name, bucketfs_conn, sub_dir, model_name):

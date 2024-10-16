@@ -86,7 +86,7 @@ def create_mock_metadata(udf_wrapper):
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch
 ])
-@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_sequence_classification_text_pair(mock_local_path, mock_create_loc, params):
 
