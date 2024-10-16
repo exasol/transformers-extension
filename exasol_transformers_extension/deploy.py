@@ -18,7 +18,7 @@ CONTAINER_URL_ARG = 'container_url'
 CONTAINER_NAME_ARG = 'container_name'
 BUCKETFS_CONN_NAME_ARG = 'bucketfs_conn_name'
 TOKEN_CONN_NAME_ARG = 'token_conn_name'
-TOKEN_ARG = 'model-token'
+TOKEN_ARG = 'token'
 
 ver_formatter = ParameterFormatters()
 ver_formatter.set_formatter(CONTAINER_URL_ARG, TeLanguageContainerDeployer.SLC_URL_FORMATTER)
