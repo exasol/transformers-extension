@@ -38,7 +38,7 @@ def run_model_upload_test(bucketfs_cli_args,
         model_specification, "", Path(sub_dir))
     upload_path = current_model_specs.get_bucketfs_model_save_path()
 
-    args_string = ''.join([bucketfs_cli_args,
+    args_string = ' '.join([bucketfs_cli_args,
                            get_cli_arg(StdParams.path_in_bucket, str(bucketfs_location)),
                            get_cli_arg(MODEL_NAME_ARG, model_name),
                            get_cli_arg(SUBDIR_ARG, sub_dir),
