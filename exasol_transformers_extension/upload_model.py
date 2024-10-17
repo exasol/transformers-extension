@@ -16,7 +16,7 @@ MODEL_NAME_ARG = 'model_name'
 TASK_TYPE_ARG = 'task_type'
 SUBDIR_ARG = 'sub_dir'
 
-opt_token = {'type': str, help: 'Huggingface token for private models'}
+opt_token = {'type': str, 'help': 'Huggingface token for private models'}
 make_option_secret(opt_token, prompt='Huggingface token')
 opts = select_std_options([StdTags.BFS])
 opts.append(click.Option([get_opt_name(MODEL_NAME_ARG)], type=str, required=True,
