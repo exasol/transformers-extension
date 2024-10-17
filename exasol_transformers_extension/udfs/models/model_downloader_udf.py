@@ -1,8 +1,8 @@
 from typing import Tuple
 
 import transformers
+import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 
-from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import \
     BucketFSModelSpecificationFactory
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
@@ -63,7 +63,7 @@ class ModelDownloaderUDF:
 
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)
-        bucketfs_location = bucketfs_operations.create_bucketfs_location_from_conn_object(bfs_conn_obj)
+        bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(bfs_conn_obj)
 
         # download base model and tokenizer into the model path
         with self._huggingface_hub_bucketfs_model_transfer.create(

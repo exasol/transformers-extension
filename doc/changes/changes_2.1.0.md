@@ -20,6 +20,7 @@ n/a
 ### Refactorings
 
 - #252: Use the pytest plugins for in the integration tests.
+- #264: Created a single deployment CLI command.
 
 n/a
 

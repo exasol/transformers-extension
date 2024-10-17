@@ -13,26 +13,22 @@ from tests.utils.db_queries import DBQueries
 
 
 def test_scripts_deployer(
-        backend,
-        deploy_params: dict[str, Any],
+        database_std_params,
         pyexasol_connection: ExaConnection,
         language_alias,
         deployed_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
-        # We validate the server certificate in SaaS, but not in the Docker DB
-        cert_validation = backend == bfs.path.StorageBackend.saas
-        ScriptsDeployer.run(**deploy_params,
+        ScriptsDeployer.run(**database_std_params,
                             schema=schema_name,
-                            language_alias=language_alias,
-                            use_ssl_cert_validation=cert_validation)
+                            language_alias=language_alias)
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name)
 
 
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
-        deploy_params,
+        database_std_params,
         pyexasol_connection,
         language_alias,
         deployed_slc):
@@ -52,7 +48,7 @@ def test_scripts_deployer_no_schema_creation_permission(
             pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
         ScriptsDeployer.run(
-            dsn=deploy_params['dsn'],
+            dsn=database_std_params['dsn'],
             db_user=limited_user,
             db_pass=limited_user_password,
             schema=schema_name,

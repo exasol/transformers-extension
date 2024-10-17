@@ -33,11 +33,3 @@ model_params = ModelParams(
     tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "task"),
     text_data='The database software company Exasol is based in Nuremberg',
     sub_dir='model_sub_dir')
-
-
-def get_arg_list(**kwargs) -> list[str]:
-    args_list: list[str] = []
-    for k, v in kwargs.items():
-        args_list.append(f'--{k.replace("_", "-")}')
-        args_list.append(str(v))
-    return args_list
