@@ -37,8 +37,8 @@ def get_bool_opt_name(arg_name: str) -> str:
 
 
 opt_lang_alias = {'type': str, 'default': 'PYTHON3_TE'}
-opt_token = {'type': str, help: 'Huggingface hub token'}
-make_option_secret(opt_token)
+opt_token = {'type': str, help: 'Huggingface token for private models'}
+make_option_secret(opt_token, prompt='Huggingface token')
 opts = select_std_options([StdTags.DB, StdTags.BFS, StdTags.SLC],
                           formatters=formatters, override={StdParams.language_alias: opt_lang_alias})
 opts.append(click.Option([get_bool_opt_name(DEPLOY_SLC_ARG)], type=bool, default=True,

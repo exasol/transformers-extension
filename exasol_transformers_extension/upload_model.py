@@ -5,7 +5,7 @@ import click
 import transformers
 
 from exasol.python_extension_common.cli.std_options import (
-    StdTags, select_std_options)
+    StdTags, select_std_options, make_option_secret)
 from exasol.python_extension_common.connections.bucketfs_location import create_bucketfs_location
 from exasol_transformers_extension.deploy import get_opt_name, TOKEN_ARG
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
@@ -16,6 +16,8 @@ MODEL_NAME_ARG = 'model_name'
 TASK_TYPE_ARG = 'task_type'
 SUBDIR_ARG = 'sub_dir'
 
+opt_token = {'type': str, help: 'Huggingface token for private models'}
+make_option_secret(opt_token, prompt='Huggingface token')
 opts = select_std_options([StdTags.BFS])
 opts.append(click.Option([get_opt_name(MODEL_NAME_ARG)], type=str, required=True,
                          help="name of the model"))
@@ -23,8 +25,7 @@ opts.append(click.Option([get_opt_name(TASK_TYPE_ARG)], type=str, required=True,
                          help="the name of the task the model is used for"))
 opts.append(click.Option([get_opt_name(SUBDIR_ARG)], type=str, required=True,
                          help="directory where the model is stored in the BucketFS"))
-opts.append(click.Option([get_opt_name(TOKEN_ARG)], type=str,
-                         help="Huggingface hub token for private models"))
+opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))
 
 
 def upload_model(**kwargs) -> None:
