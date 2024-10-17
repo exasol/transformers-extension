@@ -1,7 +1,7 @@
 import logging
 import click
 from exasol.python_extension_common.cli.std_options import (
-    StdParams, StdTags, select_std_options, ParameterFormatters)
+    StdParams, StdTags, select_std_options, ParameterFormatters, make_option_secret)
 from exasol.python_extension_common.cli.language_container_deployer_cli import (
     LanguageContainerDeployerCli)
 from exasol.python_extension_common.cli.bucketfs_conn_object_cli import BucketfsConnObjectCli
@@ -36,19 +36,23 @@ def get_bool_opt_name(arg_name: str) -> str:
     return f'--{opt_name}/--no-{opt_name}'
 
 
-opts = select_std_options([StdTags.DB, StdTags.BFS, StdTags.SLC], formatters=formatters)
-opts.append(click.Option([get_bool_opt_name(DEPLOY_SLC_ARG)], type=bool, default=True))
-opts.append(click.Option([get_bool_opt_name(DEPLOY_SCRIPTS_ARG)], type=bool, default=True))
-opts.append(click.Option([get_opt_name(BUCKETFS_CONN_NAME_ARG)], type=str))
-opts.append(click.Option([get_opt_name(TOKEN_CONN_NAME_ARG)], type=str))
-opts.append(click.Option([get_opt_name(TOKEN_ARG)], type=str))
+opt_lang_alias = {'type': str, 'default': 'PYTHON3_TE'}
+opt_token = {'type': str, help: 'Huggingface hub token'}
+make_option_secret(opt_token)
+opts = select_std_options([StdTags.DB, StdTags.BFS, StdTags.SLC],
+                          formatters=formatters, override={StdParams.language_alias: opt_lang_alias})
+opts.append(click.Option([get_bool_opt_name(DEPLOY_SLC_ARG)], type=bool, default=True,
+                         help='Deploy SLC'))
+opts.append(click.Option([get_bool_opt_name(DEPLOY_SCRIPTS_ARG)], type=bool, default=True,
+                         help='Deploy scripts'))
+opts.append(click.Option([get_opt_name(BUCKETFS_CONN_NAME_ARG)], type=str,
+                         help='Create BucketFS connection object with this name'))
+opts.append(click.Option([get_opt_name(TOKEN_CONN_NAME_ARG)], type=str,
+                         help='Create token connection object with this name'))
+opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))
 
 
 def deploy(**kwargs):
-
-    # Make sure there is a valid language_alias
-    if not kwargs.get(StdParams.language_alias.name):
-        kwargs[StdParams.language_alias.name] = 'PYTHON3_TE'
 
     # Deploy the SLC
     if kwargs[DEPLOY_SLC_ARG]:
