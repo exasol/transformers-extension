@@ -1,3 +1,5 @@
+[pec-user-guide]: https://github.com/exasol/python-extension-common/blob/0.8.0/doc/user_guide/user-guide.md
+<!-- Please check that the version in this reference matches the version of PEC being used by the extension  -->
 
 # User Guide
 
@@ -127,7 +129,6 @@ It can also be created manually by running the following SQL command.
   
 ## Setup
 ### Install the Python Package
-
 There are multiple ways to install the Python Package. You can use Pip install, 
 Download the Wheel from GitHub or build the project yourself.
 Additionally, you will need a Script Language Container. Find the how-to below.
@@ -185,7 +186,7 @@ See [the latest release](https://github.com/exasol/transformers-extension/releas
 ### List of options
 
 For information about the available options common to all Exasol extensions please refer to the
-[documentation](https://github.com/exasol/python-extension-common/blob/0.8.0/doc/user_guide/user-guide.md) in the Exasol Python Extension Common package. 
+[documentation][pec-user-guide] in the Exasol Python Extension Common package. 
 
 In addition, this extension provides the following installation options:
 
@@ -265,7 +266,7 @@ python -m exasol_transformers_extension.upload_model <options>
 ```
 
 For information about the available options common to all Exasol extensions please refer to the
-[documentation](https://github.com/exasol/python-extension-common/blob/0.8.0/doc/user_guide/user-guide.md) in the Exasol Python Extension Common package. 
+[documentation][pec-user-guide] in the Exasol Python Extension Common package. 
 
 In addition, this command provides the following options:
 

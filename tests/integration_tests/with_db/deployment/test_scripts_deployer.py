@@ -13,14 +13,12 @@ from tests.utils.db_queries import DBQueries
 
 
 def test_scripts_deployer(
-        backend,
         database_std_params,
         pyexasol_connection: ExaConnection,
         language_alias,
         deployed_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
-        # We validate the server certificate in SaaS, but not in the Docker DB
         ScriptsDeployer.run(**database_std_params,
                             schema=schema_name,
                             language_alias=language_alias)

@@ -1,4 +1,3 @@
-import pytest
 from click.testing import CliRunner
 import pyexasol
 import exasol.bucketfs as bfs
@@ -6,7 +5,7 @@ from exasol.python_extension_common.cli.std_options import StdParams, get_cli_ar
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
 
 from exasol_transformers_extension.deploy import (
-    deploy_command, DEPLOY_SLC_ARG, BUCKETFS_CONN_NAME_ARG, get_bool_opt_name)
+    deploy_command, BUCKETFS_CONN_NAME_ARG)
 from exasol_transformers_extension.deployment.language_container import export_slc
 from tests.integration_tests.with_db.test_upload_model import run_model_upload_test
 
@@ -15,13 +14,16 @@ BUCKETFS_CONN_NAME = 'TE_E2E_BFS_CONN'
 LANGUAGE_ALIAS = 'TE_E2E_LANG_ALIAS'
 
 
-def test_deploy_cli(pyexasol_connection,
+def test_deploy_cli(backend,
+                    pyexasol_connection,
                     backend_aware_database_params,
                     backend_aware_bucketfs_params,
                     bucketfs_cli_args,
                     cli_args):
     """
-    This is an end-to-end test that should be moved into a separate group of tests.
+    This test performs an installation of the extension.
+    It then runs the model upload test to verify that the installation
+    has brought the system into a ready-to-use state.
     """
 
     with temp_schema(pyexasol_connection) as schema_name:
@@ -35,6 +37,12 @@ def test_deploy_cli(pyexasol_connection,
             runner = CliRunner()
             result = runner.invoke(deploy_command, args=args_string, catch_exceptions=False)
             assert result.exit_code == 0
+
+            # This is a temporary workaround for the problem with slow slc file extraction
+            # at a SaaS database. To be removed when a proper completion check is in place.
+            if backend == 'saas':
+                import time
+                time.sleep(30)
 
             db_conn = pyexasol.connect(**backend_aware_database_params, schema=schema_name)
             bfs_path = bfs.path.build_path(**backend_aware_bucketfs_params, path=PATH_IN_BUCKET)
