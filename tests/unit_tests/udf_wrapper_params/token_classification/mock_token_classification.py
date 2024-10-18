@@ -36,12 +36,12 @@ class MockPipeline:
     counter = 0
 
     def __init__(self,
-                 task_type: str,
+                 task: str,
                  model: MockTokenClassificationModel,
                  tokenizer: MockSequenceTokenizer,
                  device : str,
                  framework: str):
-        self.task_type = task_type
+        self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device

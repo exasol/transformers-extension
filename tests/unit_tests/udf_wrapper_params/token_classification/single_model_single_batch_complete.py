@@ -51,46 +51,51 @@ class SingleModelSingleBatchComplete:
     """
     single model, single batch, batch complete
     """
-    expected_model_counter = 1
-    batch_size = 1
+    #expected_model_counter = 1
+    #batch_size = 1
+
+    # currently only params used for the new test are set up here.
     data_size = 1
     n_entities = 3
     agg_strategy = "simple"
 
     token_docid = 1
-    start = 0
-    end = 6
+    #start = 0
+    #end = 6
 
-    token_start = 2
-    token_end = 4
+    #token_start = 2
+    #token_end = 4
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "text", agg_strategy)] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
-                    start, end, "text", "label1", 0.1, None)] * n_entities * data_size
-
+    #input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+    #               "text", agg_strategy)] * data_size
+    #output_data = [("bfs_conn1", "sub_dir1", "model1", "text", agg_strategy,
+    #                start, end, "text", "label1", 0.1, None)] * n_entities * data_size
 
     work_with_span_input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text", 1, 0, 6, agg_strategy)] * data_size
-    work_with_span_output_data = [("bfs_conn1", "sub_dir1", "model1", agg_strategy,
-                    "text", "label1", 0.1, token_docid, start+token_start, start+token_end, None)]  * n_entities * data_size
+     # todo make generic
+    tokenizer_model_output_df = \
+        [[{'entity_group': 'ORG', 'score': 0.24475445, 'word': 'The', 'start': 0, 'end': 3},
+          {'entity_group': 'ORG', 'score': 0.23895912, 'word': 'database', 'start': 4, 'end': 12},
+          {'entity_group': 'ORG', 'score': 0.25196797, 'word': 'software', 'start': 13, 'end': 21}]]
+
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
     }
 
-    mock_factory = MockTokenClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_token-classification"):
-            MockTokenClassificationModel(
-                starts=[0] * n_entities,
-                ends=[6] * n_entities,
-                words=["text"]*n_entities,
-                entities=["label1"]*n_entities,
-                scores=[0.1]*n_entities),
-    })
+    #mock_factory = MockTokenClassificationFactory({
+    #    PurePosixPath(base_cache_dir1, "sub_dir1", "model1_token-classification"):
+    #        MockTokenClassificationModel(
+    #            starts=[0] * n_entities,
+    #            ends=[6] * n_entities,
+    #            words=["text"]*n_entities,
+    #            entities=["label1"]*n_entities,
+    #            scores=[0.1]*n_entities),
+    #})
 
-    mock_pipeline = MockPipeline
-    udf_wrapper = udf_wrapper
+    #mock_pipeline = MockPipeline
+    #udf_wrapper = udf_wrapper
     work_with_span_udf_wrapper = work_with_span_udf_wrapper
 

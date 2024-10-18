@@ -66,6 +66,7 @@ class TokenClassificationUDF(BaseModelUDF):
         aggregation_strategy = model_df['aggregation_strategy'].iloc[0]
         results = self.last_created_pipeline(
             text_data, aggregation_strategy=aggregation_strategy)
+        print("results pipeline: " + str(results))
         results = results if type(results[0]) == list else [results]
 
         if aggregation_strategy == "none":
@@ -103,10 +104,17 @@ class TokenClassificationUDF(BaseModelUDF):
 
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
+        print("pred_def:")
+        print(pred_df.columns)
         model_df = pd.concat([model_df, pred_df], axis=1)
+        print("model_df:")
+        print(model_df)
+        print(self.work_with_spans)
         if self.work_with_spans:
             model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] =\
                 model_df.apply(self.make_entity_span, axis=1)
+            print("model_df:")
+            print(model_df)
             # we use different names in udf with span and without, so need to rename
             # this decision was made as to improve the naming of the columns without
             # breaking the interface of the existing udf
@@ -114,9 +122,13 @@ class TokenClassificationUDF(BaseModelUDF):
                 columns={
                     "word": "entity_covered_text",
                     "entity": "entity_type"})
+            print("model_df:")
+            print(model_df)
             # drop columns which are made superfluous by the spans to save data transfer
             model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
                                    "text_data_char_end", "start_pos", "end_pos"])
+            print("model_df:")
+            print(model_df)
 
         return model_df
 
@@ -133,12 +145,18 @@ class TokenClassificationUDF(BaseModelUDF):
         """
         results_df_list = []
         for result in predictions:
+            print("result: ")
+            print(result)
             result_df = pd.DataFrame(result)
+            print("result_df:")
+            print(result_df.columns)
             result_df = result_df[self._desired_fields_in_prediction].rename(
                 columns={
                     "start": "start_pos",
                     "end": "end_pos",
                     "entity_group": "entity"})
+            print("result_df:")
+            print(result_df.columns)
             results_df_list.append(result_df)
 
         return results_df_list
