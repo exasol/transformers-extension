@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from exasol_transformers_extension.deployment.install_scripts_constants import InstallScriptsConstants
-# todo change in docu
 UDF_CALL_TEMPLATES = {
     "model_downloader_udf_call.py":
         "model_downloader_udf.jinja.sql",

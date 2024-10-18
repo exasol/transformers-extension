@@ -21,9 +21,10 @@ class TokenClassificationUDF(BaseModelUDF):
                  work_with_spans: bool = False
                  ):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_type='token-classification')
+                         tokenizer, task_type='token-classification',
+                         work_with_spans=work_with_spans)
         self._default_aggregation_strategy = 'simple'
-        self.work_with_spans = work_with_spans
+        #self.work_with_spans = work_with_spans
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
         self.new_columns = [
@@ -105,19 +106,10 @@ class TokenClassificationUDF(BaseModelUDF):
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
         if self.work_with_spans:
+            model_df = self.create_new_span_columns(model_df)
             model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] =\
                 model_df.apply(self.make_entity_span, axis=1)
-            # we use different names in udf with span and without, so need to rename
-            # this decision was made as to improve the naming of the columns without
-            # breaking the interface of the existing udf
-            model_df = model_df.rename(
-                columns={
-                    "word": "entity_covered_text",
-                    "entity": "entity_type"})
-            # drop columns which are made superfluous by the spans to save data transfer
-            model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
-                                   "text_data_char_end", "start_pos", "end_pos"])
-
+            model_df = self.drop_old_data_for_span_execution(model_df)
         return model_df
 
     def create_dataframes_from_predictions(

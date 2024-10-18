@@ -25,6 +25,27 @@ def udf_wrapper():
     def run(ctx: UDFContext):
         udf.run(ctx)
 
+def work_with_span_udf_wrapper():
+    from exasol_udf_mock_python.udf_context import UDFContext
+    from exasol_transformers_extension.udfs.models.token_classification_udf import \
+        TokenClassificationUDF
+    from tests.unit_tests.udf_wrapper_params.token_classification. \
+        mock_sequence_tokenizer import MockSequenceTokenizer
+    from tests.unit_tests.udf_wrapper_params.token_classification.\
+        multiple_strategy_single_model_multiple_batch import \
+        MultipleStrategySingleModelNameMultipleBatch as params
+
+    udf = TokenClassificationUDF(
+        exa,
+        work_with_spans=True,
+        batch_size=params.batch_size,
+        pipeline=params.mock_pipeline,
+        base_model=params.mock_factory,
+        tokenizer=MockSequenceTokenizer)
+
+    def run(ctx: UDFContext):
+        udf.run(ctx)
+
 
 class MultipleStrategySingleModelNameMultipleBatch:
     """
@@ -37,6 +58,13 @@ class MultipleStrategySingleModelNameMultipleBatch:
     agg_strategy_none = "none"
     agg_strategy_simple = "simple"
     n_entities = 3
+
+    token_docid = 1
+    start = 0
+    end = 20
+
+    token_start = 2
+    token_end = 4
 
     input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
                    "text1", agg_strategy_null)] * data_size + \
@@ -54,6 +82,23 @@ class MultipleStrategySingleModelNameMultipleBatch:
                     agg_strategy_simple, 0, 6, "text1", "label1", 0.1, None
                     )] * n_entities * data_size
 
+
+    work_with_span_input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
+                                  "text", 1, 0, 6, agg_strategy_null)] * data_size + \
+                                [(None, "bfs_conn1", "sub_dir1", "model1",
+                                  "text", 1, 0, 6, agg_strategy_none)] * data_size + \
+                                [(None, "bfs_conn1", "sub_dir1", "model1",
+                                  "text", 1, 0, 6, agg_strategy_simple)] * data_size
+
+    work_with_span_output_data = [("bfs_conn1", "sub_dir1", "model1", agg_strategy_simple,
+                                    "text", "label1", 0.1, token_docid, start+token_start, start+token_end, None)] * n_entities * data_size + \
+                                 [("bfs_conn1", "sub_dir1", "model1", agg_strategy_none,
+                                   "text", "label1", 0.1, token_docid, start + token_start, start + token_end,
+                                   None)] * n_entities * data_size + \
+                                  [("bfs_conn1", "sub_dir1", "model1", agg_strategy_simple,
+                                    "text", "label1", 0.1, token_docid, start + token_start, start + token_end,
+                                    None)] * n_entities * data_size
+
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
     bfs_connections = {
@@ -61,7 +106,7 @@ class MultipleStrategySingleModelNameMultipleBatch:
     }
 
     mock_factory = MockTokenClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_token-classification"):
             MockTokenClassificationModel(
                 starts=[0] * n_entities,
                 ends=[6] * n_entities,
@@ -72,4 +117,4 @@ class MultipleStrategySingleModelNameMultipleBatch:
 
     mock_pipeline = MockPipeline
     udf_wrapper = udf_wrapper
-
+    work_with_span_udf_wrapper = work_with_span_udf_wrapper

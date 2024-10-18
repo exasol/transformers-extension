@@ -122,7 +122,7 @@ def test_token_classification_udf(
         ("on GPU with single input with NULL aggregation", 0, 1, None),
         ("on GPU with single input with max aggregation", 0, 1, "max")
     ])
-def test_token_classification_udf_with_span( #todo do we want to test al param combinations here? seems expensive
+def test_token_classification_udf_with_span(
         description, device_id, n_rows, agg,
         prepare_token_classification_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():

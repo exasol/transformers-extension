@@ -1,13 +1,15 @@
 import os
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
+
+import pandas
 import torch
 import traceback
 import pandas as pd
 import numpy as np
 import transformers
 
-from exasol_transformers_extension.deployment import constants
+from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.utils import device_management, \
     bucketfs_operations, dataframe_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
@@ -40,7 +42,8 @@ class BaseModelUDF(ABC):
                  pipeline: transformers.Pipeline,
                  base_model: ModelFactoryProtocol,
                  tokenizer: ModelFactoryProtocol,
-                 task_type: str):
+                 task_type: str,
+                 work_with_spans: bool = False):
         self.exa = exa
         self.batch_size = batch_size
         self.pipeline = pipeline
@@ -51,6 +54,7 @@ class BaseModelUDF(ABC):
         self.model_loader = None
         self.last_created_pipeline = None
         self.new_columns = []
+        self.work_with_spans = work_with_spans
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -150,7 +154,7 @@ class BaseModelUDF(ABC):
         """
 
         unique_values = dataframe_operations.get_unique_values(
-            batch_df, constants.ORDERED_COLUMNS, sort=True)
+            batch_df, constants.ordered_columns, sort=True)
 
         for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
@@ -224,6 +228,24 @@ class BaseModelUDF(ABC):
         pred_df['error_message'] = None
         return pred_df
 
+    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        # create new columns for use with spans
+        model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] = None, None, None
+        # we use different names in udf with span and without, so need to rename
+        # this decision was made as to improve the naming of the columns without
+        # breaking the interface of the existing udf
+        model_df = model_df.rename(
+            columns={
+                "word": "entity_covered_text",
+                "entity": "entity_type"})
+        return model_df
+
+    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        # drop columns which are made superfluous by the spans to save data transfer
+        model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
+                                          "text_data_char_end", "start_pos", "end_pos"])
+        return model_df
+
     def get_result_with_error(self, model_df: pd.DataFrame, stack_trace: str) \
             -> pd.DataFrame:
         """
@@ -235,6 +257,17 @@ class BaseModelUDF(ABC):
         """
         for col in self.new_columns:
             model_df[col] = None
+        if self.work_with_spans:
+            # we need to change the df format to match the output columns
+            model_df = self.create_new_span_columns(model_df)
+            model_df = self.drop_old_data_for_span_execution(model_df)
+            #move error message column to the end of the df
+            cols = model_df.columns.tolist()
+            cols.remove("error_message")
+            cols.append("error_message")
+            model_df = model_df[cols]
+            pandas.set_option('display.max_columns', None)
+            print(model_df)
         model_df["error_message"] = stack_trace
         return model_df
 

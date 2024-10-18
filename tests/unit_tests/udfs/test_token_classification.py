@@ -114,25 +114,23 @@ def create_mock_metadata(udf_wrapper):
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
     SingleModelSingleBatchComplete,
-    #todo are we ok with changing the tests like i did in these two cases?
-    # if yes i will add the changes to all the other param files as well
-    #SingleModelMultipleBatchIncomplete,
-   # SingleModelMultipleBatchComplete,
-   # MultipleModelSingleBatchIncomplete,
-   # MultipleModelSingleBatchComplete,
-    #MultipleModelMultipleBatchIncomplete,
-    #MultipleModelMultipleBatchComplete,
-    #MultipleModelMultipleBatchMultipleModelsPerBatch,
-    #SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    #SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    #MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    #MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
-   # MultipleStrategySingleModelNameSingleBatch,
-    #MultipleStrategySingleModelNameMultipleBatch,
-    #ErrorNotCachedSingleModelMultipleBatch,
-    #ErrorNotCachedMultipleModelMultipleBatch,
-    #ErrorOnPredictionMultipleModelMultipleBatch,
-    #ErrorOnPredictionSingleModelMultipleBatch
+    SingleModelMultipleBatchIncomplete,
+    SingleModelMultipleBatchComplete,
+    MultipleModelSingleBatchIncomplete,
+    MultipleModelSingleBatchComplete,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    MultipleStrategySingleModelNameSingleBatch,
+    MultipleStrategySingleModelNameMultipleBatch,
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorNotCachedMultipleModelMultipleBatch,
+    ErrorOnPredictionMultipleModelMultipleBatch,
+    ErrorOnPredictionSingleModelMultipleBatch
 ])
 @patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')

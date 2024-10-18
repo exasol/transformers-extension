@@ -29,7 +29,7 @@ class MockTokenClassificationFactory:
 
     def from_pretrained(self,  model_path):
         # the model_path path already has model_name
-        return self.mock_models[PurePosixPath(model_path)] #todo why is not already PurePosixPath?
+        return self.mock_models[PurePosixPath(model_path)]
 
 
 class MockPipeline:
