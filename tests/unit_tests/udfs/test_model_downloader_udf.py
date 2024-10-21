@@ -46,7 +46,7 @@ def create_mock_metadata() -> MockMetaData:
     ('without token', '', None, False),
     ('with token', 'conn_name', Connection(address="", password="valid"), "valid"),
 ])
-@patch('exasol_transformers_extension.utils.bucketfs_operations.create_bucketfs_location_from_conn_object')
+@patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 def test_model_downloader(mock_create_loc, description, count, token_conn_name, token_conn_obj, expected_token):
 
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)

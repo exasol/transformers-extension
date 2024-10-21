@@ -1,21 +1,16 @@
-import os
 from abc import abstractmethod, ABC
 from typing import Iterator, List, Any
-
-import pandas
-import torch
 import traceback
 import pandas as pd
 import numpy as np
 import transformers
+import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 
 from exasol_transformers_extension.deployment.constants import constants
-from exasol_transformers_extension.utils import device_management, \
-    bucketfs_operations, dataframe_operations
+from exasol_transformers_extension.utils import device_management, dataframe_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 class BaseModelUDF(ABC):
@@ -96,6 +91,7 @@ class BaseModelUDF(ABC):
         :return: Prediction results of the corresponding batched dataframe
         """
         result_df_list = []
+
         unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(self, batch_df)
         for model_df in unique_model_dataframes:
             if "error_message" in model_df:
@@ -197,9 +193,8 @@ class BaseModelUDF(ABC):
         current_model_specification = BucketFSModelSpecification(model_name, self.task_type, bucketfs_conn, sub_dir)
 
         if self.model_loader.current_model_specification != current_model_specification:
-            bucketfs_location = \
-                bucketfs_operations.create_bucketfs_location_from_conn_object(
-                    self.exa.get_connection(bucketfs_conn))
+            bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
+                self.exa.get_connection(bucketfs_conn))
 
             self.model_loader.clear_device_memory()
             self.model_loader.set_current_model_specification(current_model_specification)
@@ -233,8 +228,6 @@ class BaseModelUDF(ABC):
             model_df, pred_df_list)
         pred_df['error_message'] = None
         return pred_df
-
-
 
     def get_result_with_error(self, model_df: pd.DataFrame, stack_trace: str) \
             -> pd.DataFrame:

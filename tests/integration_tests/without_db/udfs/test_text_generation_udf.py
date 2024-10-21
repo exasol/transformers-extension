@@ -8,9 +8,9 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.text_generation_udf import \
     TextGenerationUDF
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
-    ErrorMessageMatcher, ScoreMatcher, ColumnsMatcher, NoErrorMessageMatcher
-from tests.utils.parameters import model_params
+    ErrorMessageMatcher, ColumnsMatcher, NoErrorMessageMatcher
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:

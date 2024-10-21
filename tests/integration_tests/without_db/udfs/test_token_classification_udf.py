@@ -1,15 +1,17 @@
-import torch
-import pytest
-import pandas as pd
 from typing import Dict
+
+import pandas as pd
+import pytest
+import torch
+from exasol_udf_mock_python.connection import Connection
+
+from exasol_transformers_extension.udfs.models.token_classification_udf import \
+    TokenClassificationUDF
 
 from tests.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NewColumnsEmptyMatcher, \
     ErrorMessageMatcher, NoErrorMessageMatcher, ColumnsMatcher
-from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
-from exasol_udf_mock_python.connection import Connection
-from exasol_transformers_extension.udfs.models.token_classification_udf import \
-    TokenClassificationUDF
+from tests.utils.parameters import model_params
 
 
 class ExaEnvironment:
@@ -232,7 +234,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     assert (result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
             and result == NoErrorMessageMatcher()
             and set(result_df['aggregation_strategy'].unique()) == {"none", "simple", "max", "average"}
-    )
+            )
 
 
 @pytest.mark.parametrize(
@@ -289,6 +291,7 @@ def test_token_classification_udf_on_error_handling(
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
         ['start_pos', 'end_pos', 'word', 'entity', 'score', 'error_message']
+
     result = Result(result_df)
     assert (
             result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)

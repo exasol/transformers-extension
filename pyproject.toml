@@ -21,22 +21,23 @@ pandas = ">=1.4.2,<2.0.0"
 torch = "^2.0.1"
 transformers = {extras = ["torch"], version = "^4.36.2"}
 Jinja2 = "^3.0.3"
-importlib-resources = "^5.4.0"
+importlib-resources = "^6.4.0"
 click = "^8.0.4"
-pyexasol = "^0.25.0"
+pyexasol = ">=0.25.0"
 exasol-bucketfs = ">=0.11.0,<1.0.0"
 tenacity = "^8.2.2"
 sacremoses = ">=0.0.53"
-exasol-python-extension-common = ">=0.3.0"
+exasol-python-extension-common = ">=0.8.0,<1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
 exasol-udf-mock-python = "^0.1.0"
-exasol-script-languages-container-tool = "^0.18.2"
 toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 nox = "^2023.4.22"
+pytest-exasol-slc = ">=0.3.0"
+pytest-exasol-extension = ">=0.2.1,<1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

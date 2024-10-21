@@ -39,12 +39,11 @@ def test_sequence_classification_text_pair_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-
     # lenient test for quality of results, will be replaced by deterministic test later
     number_accepted_results = 0
     for i in range(len(result)):
-        if (result[i][5] == "contradiction" and # possible labels: contradiction, entailment, neutral
-                result[i][6] > 0.8):             #check if confidence resonably high
+        if (result[i][5] == "contradiction" and  # possible labels: contradiction, entailment, neutral
+                result[i][6] > 0.8):  # check if confidence resonably high
             number_accepted_results += 1
         elif result[i][6] < 0.2:
             number_accepted_results += 1

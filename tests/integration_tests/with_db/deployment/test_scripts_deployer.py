@@ -3,64 +3,53 @@ from typing import Any
 
 import pytest
 from pyexasol import ExaConnection
-from pytest_itde import config
 import exasol.bucketfs as bfs
 from exasol.python_extension_common.deployment.language_container_validator import temp_schema
+from exasol.pytest_backend import BACKEND_ONPREM
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
-from tests.fixtures.database_connection_fixture import BACKEND_ONPREM
-from tests.utils.db_queries import (DBQueries, expected_script_list_with_span,
+from tests.utils.db_queries import  (DBQueries, expected_script_list_with_span,
                                     expected_script_list_without_span, expected_script_list_all)
-from tests.fixtures.language_container_fixture import LANGUAGE_ALIAS
 
 
 def test_scripts_deployer(
-        backend,
-        deploy_params: dict[str, Any],
+        database_std_params,
         pyexasol_connection: ExaConnection,
-        upload_slc):
+        language_alias,
+        deployed_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
-        # We validate the server certificate in SaaS, but not in the Docker DB
-        cert_validation = backend == bfs.path.StorageBackend.saas
-        ScriptsDeployer.run(**deploy_params,
+        ScriptsDeployer.run(**database_std_params,
                             schema=schema_name,
-                            language_alias=LANGUAGE_ALIAS,
-                            use_ssl_cert_validation=cert_validation)
+                            language_alias=language_alias)
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name, expected_script_list_without_span)
 
 def test_scripts_deployer_all_scripts(
-        backend,
-        deploy_params: dict[str, Any],
+        database_std_params,
         pyexasol_connection: ExaConnection,
-        upload_slc):
+        language_alias,
+        deployed_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
-        # We validate the server certificate in SaaS, but not in the Docker DB
-        cert_validation = backend == bfs.path.StorageBackend.saas
-        ScriptsDeployer.run(**deploy_params,
+        ScriptsDeployer.run(**database_std_params,
                             schema=schema_name,
-                            language_alias=LANGUAGE_ALIAS,
-                            use_ssl_cert_validation=cert_validation,
+                            language_alias=language_alias,
                             install_all_scripts=True)
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name, expected_script_list_all)
 
 def test_scripts_deployer_with_span(
-        backend,
-        deploy_params: dict[str, Any],
+        database_std_params,
         pyexasol_connection: ExaConnection,
-        upload_slc):
+        language_alias,
+        deployed_slc):
 
     with temp_schema(pyexasol_connection) as schema_name:
-        # We validate the server certificate in SaaS, but not in the Docker DB
-        cert_validation = backend == bfs.path.StorageBackend.saas
-        ScriptsDeployer.run(**deploy_params,
+        ScriptsDeployer.run(**database_std_params,
                             schema=schema_name,
-                            language_alias=LANGUAGE_ALIAS,
-                            use_ssl_cert_validation=cert_validation,
+                            language_alias=language_alias,
                             use_spans=True)
         assert DBQueries.check_all_scripts_deployed(
             pyexasol_connection, schema_name, expected_script_list_with_span)
@@ -68,9 +57,10 @@ def test_scripts_deployer_with_span(
 
 def test_scripts_deployer_no_schema_creation_permission(
         backend,
+        database_std_params,
         pyexasol_connection,
-        exasol_config: config.Exasol,
-        upload_slc):
+        language_alias,
+        deployed_slc):
 
     if backend != BACKEND_ONPREM:
         pytest.skip(("We run this test only with the Docker-DB, "
@@ -87,11 +77,11 @@ def test_scripts_deployer_no_schema_creation_permission(
             pyexasol_connection.execute(f"GRANT {permission} TO {limited_user}; ")
 
         ScriptsDeployer.run(
-            dsn=f"{exasol_config.host}:{exasol_config.port}",
+            dsn=database_std_params['dsn'],
             db_user=limited_user,
             db_pass=limited_user_password,
             schema=schema_name,
-            language_alias=LANGUAGE_ALIAS,
+            language_alias=language_alias,
             ssl_trusted_ca="",
             use_ssl_cert_validation=False
         )

@@ -43,7 +43,7 @@ def test_sequence_classification_single_text_script(
     number_accepted_results = 0
     for i in range(len(result)):
         if (result[i][4] == "positive" and
-                result[i][5] > 0.8): #check if confidence resonably high
+                result[i][5] > 0.8):  # check if confidence reasonably high
             number_accepted_results += 1
         elif result[i][5] < 0.2:
             number_accepted_results += 1

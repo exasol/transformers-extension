@@ -1,7 +1,5 @@
 
 import logging
-import ssl
-
 from jinja2 import Environment, PackageLoader, select_autoescape, ChoiceLoader
 from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.deployment.work_with_spans_constants import work_with_spans_constants
@@ -24,15 +22,3 @@ def load_and_render_statement(template_name, work_with_spans, install_all_script
     template = env.get_template(template_name)
     statement = template.render(**kwargs)
     return statement
-
-
-def get_websocket_ssl_options(use_ssl_cert_validation: bool, ssl_cert_path: str):
-    websocket_sslopt = {
-        "cert_reqs": ssl.CERT_REQUIRED,
-    }
-    if not use_ssl_cert_validation:
-        websocket_sslopt["cert_reqs"] = ssl.CERT_NONE
-
-    if ssl_cert_path is not None:
-        websocket_sslopt["ca_certs"] = ssl_cert_path
-    return websocket_sslopt

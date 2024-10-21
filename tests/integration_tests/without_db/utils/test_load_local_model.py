@@ -4,14 +4,16 @@ from unittest.mock import MagicMock, create_autospec
 from pathlib import Path
 from transformers import AutoModel, AutoTokenizer, pipeline
 import tarfile
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location_from_conn_object)
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
-    HuggingFaceHubBucketFSModelTransferSPFactory
+    HuggingFaceHubBucketFSModelTransferSPFactory, make_parameters_of_model_contiguous_tensors
 from exasol_transformers_extension.utils.bucketfs_operations import (
-    create_save_pretrained_model_path, create_bucketfs_location_from_conn_object)
+    create_save_pretrained_model_path)
 
 from tests.utils.parameters import model_params
 from tests.utils.mock_connections import create_mounted_bucketfs_connection
@@ -19,22 +21,22 @@ from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 class TestSetup:
     def __init__(self):
-
         self.base_model_factory: ModelFactoryProtocol = AutoModel
         self.tokenizer_factory: ModelFactoryProtocol = AutoTokenizer
 
         self.token = "token"
         self.model_specification = model_params.tiny_model_specs
 
-        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = create_autospec(BucketFSModelSpecification)
+        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = create_autospec(
+            BucketFSModelSpecification)
         test_pipeline = pipeline
         self.loader = LoadLocalModel(
-                                    test_pipeline,
-                                    task_type="token-classification",
-                                    device="cpu",
-                                    base_model_factory=self.base_model_factory,
-                                    tokenizer_factory=self.tokenizer_factory
-                                    )
+            test_pipeline,
+            task_type="token-classification",
+            device="cpu",
+            base_model_factory=self.base_model_factory,
+            tokenizer_factory=self.tokenizer_factory
+        )
 
 
 def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location):
@@ -56,6 +58,7 @@ def test_load_local_model(tmp_path):
     # download a model
     model = AutoModel.from_pretrained(model_specification.model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
+    make_parameters_of_model_contiguous_tensors(model)
     model.save_pretrained(model_save_path)
     tokenizer.save_pretrained(model_save_path)
 

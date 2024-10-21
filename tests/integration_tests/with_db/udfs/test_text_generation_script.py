@@ -48,10 +48,11 @@ def test_text_generation_script(
     results = [result[i][6] for i in range(len(result))]
     acceptable_results = ["software", "system", "solution", "tool"]
     number_accepted_results = 0
-    def contains(string,list):
+
+    def contains(string, list):
         return any(map(lambda x: x in string, list))
 
     for i in range(len(results)):
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
-    assert number_accepted_results > n_rows_result/2
+    assert number_accepted_results > n_rows_result / 2

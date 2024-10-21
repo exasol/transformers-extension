@@ -44,10 +44,10 @@ def test_filling_mask_script(
     acceptable_results = ["love", "miss", "want", "need"]
     number_accepted_results = 0
 
-    def contains(string,list):
+    def contains(string, list):
         return any(map(lambda x: x in string, list))
 
     for i in range(len(results)):
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
-    assert number_accepted_results > n_rows_result/2
+    assert number_accepted_results > n_rows_result / 2

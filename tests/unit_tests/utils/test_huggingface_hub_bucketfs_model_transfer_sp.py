@@ -6,13 +6,11 @@ import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploader, \
     BucketFSModelUploaderFactory
+from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import ModelFactoryProtocol, \
     HuggingFaceHubBucketFSModelTransferSP
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
 from tests.utils.mock_cast import mock_cast
-from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
-
 from tests.utils.parameters import model_params
 
 
@@ -69,6 +67,8 @@ def test_download_function_call():
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(test_setup.model_name, cache_dir=Path(cache_dir)/"cache",
                              use_auth_token=test_setup.token),
+        call.from_pretrained().parameters(),
+        call.from_pretrained().parameters().__iter__(),
         call.from_pretrained().save_pretrained(model_save_path)]
 
 

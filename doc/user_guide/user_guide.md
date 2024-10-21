@@ -1,3 +1,5 @@
+[pec-user-guide]: https://github.com/exasol/python-extension-common/blob/0.8.0/doc/user_guide/user-guide.md
+<!-- Please check that the version in this reference matches the version of PEC being used by the extension  -->
 
 # User Guide
 
@@ -56,8 +58,12 @@ models on the Exasol Cluster. More information on The BucketFS can be found
 - The Exasol cluster must already be running with version 7.1 or later.
 - DB connection information and credentials are needed.
 
-### BucketFS Connection 
-An Exasol connection object must be created with Exasol BucketFS connection information and credentials. 
+### BucketFS Connection
+An Exasol connection object must be created with Exasol BucketFS connection information and credentials.
+Normally, the connection object is created as part of the Transformers Extension deployment 
+(see the [Setup section](#deploy-the-extension-to-the-database) below). This section describes how this object
+can be created manually.
+
 The format of the connection object is as following: 
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
@@ -111,9 +117,10 @@ For more information please check the [Create Connection in Exasol](https://docs
 
 ### Huggingface token
 A valid token is required to download private models from the Huggingface hub and run prediction on them. 
-To avoid exposing such sensitive information, you can use Exasol Connection 
-objects. As seen in the example below, a token can be specified in the 
-password part of the Exasol connection object:
+This token is considered sensitive information, hence it should be stored in an Exasol Connection 
+object. The easiest way to do this is to provide the token as an option during the extension deployment
+(see the [Setup section](#deploy-the-extension-to-the-database) below). 
+It can also be created manually by running the following SQL command.
   ```sql
   CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
       TO ''
@@ -122,7 +129,6 @@ password part of the Exasol connection object:
   
 ## Setup
 ### Install the Python Package
-
 There are multiple ways to install the Python Package. You can use Pip install, 
 Download the Wheel from GitHub or build the project yourself.
 Additionally, you will need a Script Language Container. Find the how-to below.
@@ -164,73 +170,35 @@ poetry install
 poetry build
 ```
 
+### Deploy the Extension to the Database
+The Transformers Extension must be deployed to the database using the following command:
+```shell
+python -m exasol_transformers_extension.deploy <options>
+```
+
 ### The Pre-built Language Container
 
-This extension requires the installation of a Language Container in the Exasol Database. 
-The Script Language Container is a way to install the required programming language and 
-necessary dependencies in the Exasol Database so the UDF scripts can be executed.
-
-The Language Container is downloaded and installed by executing the 
-deployment script below. Please make sure that the version of the Language Container matches the
-installed version of the Transformers Extension Package. See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
-
-  ```buildoutcfg
-  python -m exasol_transformers_extension.deploy language-container <options>
-  ```
-
-Please refer to the [Language Container Deployment Guide] for details about this command. 
-
-### Scripts Deployment
-
-Next you need to deploy all necessary scripts to the specified `SCHEMA` in your Exasol DB with the same
-`LANGUAGE_ALIAS` using the following Python CLI command:
-
-  ```buildoutcfg
-  python -m exasol_transformers_extension.deploy scripts <options>
-  ```
-
-The choice of options is primarily determined by the storage backend being used - On-Prem or SaaS.
+The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install
+the required programming language and necessary dependencies in the Exasol Database so that UDF scripts can be
+executed. The version of the installed SLC must match the version of the Transformers Extension Package. 
+See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
 
 ### List of options
 
-The table below lists all available options. It shows which ones are applicable for On-Prem and for SaaS backends.
-Unless stated otherwise in the comments column, the option is required for either or both backends.
+For information about the available options common to all Exasol extensions please refer to the
+[documentation][pec-user-guide] in the Exasol Python Extension Common package. 
 
-Some of the values, like passwords, are considered confidential. For security reasons, it is recommended to store
-those values in environment variables instead of providing them in the command line. The names of the environment
-variables are given in the comments column, where applicable. Alternatively, it is possible to put just the name of
-an option in the command line, without providing its value. In this case, the command will prompt to enter the value
-interactively. For long values, such as the SaaS account id, it is more practical to copy/paste the value from
-another source.
+In addition, this extension provides the following installation options:
 
-| Option name                  | On-Prem | SaaS | Comment                                         |
-|:-----------------------------|:-------:|:----:|:------------------------------------------------|
-| dsn                          |   [x]   |      | i.e. <db_host:db_port>                          |
-| db-user                      |   [x]   |      |                                                 |
-| db-pass                      |   [x]   |      | Env. [DB_PASSWORD]                              |
-| saas-url                     |         | [x]  | Optional, Env. [SAAS_HOST]                      |
-| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                          |
-| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]               |
-| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown |
-| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                               |
-| language-alias               |   [x]   | [x]  | Optional                                        |
-| schema                       |   [x]   | [x]  | DB schema to deploy the scripts in              |
-| ssl-cert-path                |   [x]   | [x]  | Optional                                        |
-| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True              |
-| ssl-client-cert-path         |   [x]   |      | Optional                                        |
-| ssl-client-private-key       |   [x]   |      | Optional                                        |
+| Option name         | Default | Comment                                                               |
+|:--------------------|:-------:|:----------------------------------------------------------------------|
+| [no-]deploy-slc     |  True   | Install SLC as part of the deployment                                 |
+| [no-]deploy-scripts |  True   | Install scripts as part of the deployment                             |
+| bucketfs-conn-name  |         | Name of the [BucketFS connection object](#bucketfs-connection)        |
+| token-conn-name     |         | Name of the [token connection object](#huggingface-token) if required |
+| token               |         | The [Huggingface token](#huggingface-token) if required               |
 
-### TLS/SSL options
-
-The `--ssl-cert-path` is needed if the TLS/SSL certificate is not in the OS truststore.
-Generally speaking, this certificate is a list of trusted CA. It is needed for the server's certificate
-validation by the client.
-The option `--use-ssl-cert-validation`is the default, it can be disabled with `--no-use-ssl-cert-validation`.
-One needs to exercise caution when turning the certificate validation off as it potentially lowers the security of the
-Database connection.
-The "server" certificate described above shall not be confused with the client's own certificate.
-In some cases, this certificate may be requested by a server. The client certificate may or may not include
-the private key. In the latter case, the key may be provided as a separate file.
+The connection objects will not be created if their names are not provided.
 
 ## Store Models in BucketFS
 Before you can use pre-trained models, the models must be stored in the 
@@ -290,36 +258,24 @@ severely. Available task_types are the same as the names of our available UDFs, 
 `translation` and`zero_shot_classification`.    
 
 ### 2. Model Uploader Script
-You can invoke the python script as below which allows to download the transformer 
-models from The Hugging Face hub to the local filesystem, and then from there to the BucketFS.
+You can invoke the Python script below which downloads the transformer 
+models from The Hugging Face hub to the local filesystem, then to the BucketFS.
 
+```shell
+python -m exasol_transformers_extension.upload_model <options>
+```
 
-#### List of options
+For information about the available options common to all Exasol extensions please refer to the
+[documentation][pec-user-guide] in the Exasol Python Extension Common package. 
 
-The table below lists all available options. It shows which ones are applicable for On-Prem and for SaaS backends.
-Unless stated otherwise in the comments column, the option is required for either or both backends.
+In addition, this command provides the following options:
 
-| Option name                  | On-Prem | SaaS | Comment                                         |
-|:-----------------------------|:-------:|:----:|:------------------------------------------------|
-| bucketfs-name                |   [x]   |      |                                                 |
-| bucketfs-host                |   [x]   |      |                                                 |
-| bucketfs-port                |   [x]   |      |                                                 |
-| bucketfs-user                |   [x]   |      |                                                 |
-| bucketfs-password            |   [x]   |      | Env. [BUCKETFS_PASSWORD]                        |
-| bucketfs-use-https           |   [x]   |      | Optional boolean, defaults to True              |
-| bucket                       |   [x]   |      |                                                 |
-| saas-url                     |         | [x]  |                                                 |
-| saas-account-id              |         | [x]  | Env. [SAAS_ACCOUNT_ID]                          |
-| saas-database-id             |         | [x]  | Optional, Env. [SAAS_DATABASE_ID]               |
-| saas-database-name           |         | [x]  | Optional, provide if the database_id is unknown |
-| saas-token                   |         | [x]  | Env. [SAAS_TOKEN]                               |
-| model-name                   |   [x]   | [x]  |                                                 |
-| path-in-bucket               |   [x]   | [x]  | Root location in the bucket for all models      |
-| sub-dir                      |   [x]   | [x]  | Sub-directory where this model should be stored |
-| task_type                    |   [x]   | [x]  | Name of the task you want to use the model for  |
-| token                        |   [x]   | [x]  | Huggingface token (needed for private models)   |
-| [no_]use-ssl-cert-validation |   [x]   | [x]  | Optional boolean, defaults to True              |
-
+| Option name    | Comment                                                         |
+|:---------------|:----------------------------------------------------------------|
+| model-name     | Name of the model, as it's seen in the Huggingface hub          |
+| task-type      | See the explanations below                                      |
+| sub-dir        | Sub-directory in the BucketFS where this model should be stored |
+| token          | The [Huggingface token](#huggingface-token) if required         |
 
 "task_type" is a variable for the type of task you plan to use the model for. 
 Some models can be used for multiple types of tasks, but transformers stores 
