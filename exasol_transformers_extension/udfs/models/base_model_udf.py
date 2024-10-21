@@ -282,8 +282,8 @@ class BaseModelUDF(ABC):
 
     def create_new_span_columns(self, model_df: pd.DataFrame) \
             -> pd.DataFrame:
-        pass
+        return model_df
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame)\
             -> pd.DataFrame:
-        pass
+        return model_df
