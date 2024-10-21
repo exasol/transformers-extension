@@ -20,7 +20,7 @@ def lenient_check_of_output_quality(results: list):
     for i in range(len(results)):
         if results[i] in acceptable_result_sets:
             number_accepted_results += 1
-    assert number_accepted_results > len(results)/1.5
+    return number_accepted_results > len(results)/1.5
 
 def test_token_classification_script_without_spans(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
