@@ -78,6 +78,24 @@ class TokenClassificationUDF(BaseModelUDF):
 
         return results
 
+    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        # create new columns for use with spans
+        model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] = None, None, None
+        # we use different names in udf with span and without, so need to rename
+        # this decision was made as to improve the naming of the columns without
+        # breaking the interface of the existing udf
+        model_df = model_df.rename(
+            columns={
+                "word": "entity_covered_text",
+                "entity": "entity_type"})
+        return model_df
+
+    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        # drop columns which are made superfluous by the spans to save data transfer
+        model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
+                                          "text_data_char_end", "start_pos", "end_pos"])
+        return model_df
+
     def make_entity_span(self, df_row):
         token_docid = df_row["text_data_docid"]
         token_char_begin = df_row["start_pos"] + df_row['text_data_char_begin']
