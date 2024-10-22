@@ -57,7 +57,6 @@ def run_model_upload_test(bucketfs_cli_args,
         bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar.gz")
         assert bucketfs_upload_location.is_file()
 
-        bucketfs_conn_name, schema_name = setup_database
         text_data = "Exasol is an analytics <mask> management software company."
         input_data = [
             (
