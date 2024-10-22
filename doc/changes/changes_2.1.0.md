@@ -1,9 +1,11 @@
-# Transformers Extension 2.1.0, t.b.d
+# Transformers Extension 2.1.0, 2024-10.22
 
-Code name: 
+Code name: Added new deploy command
 
 ## Summary
 
+This release features a new CLI command for deploying the Transformers Extension,
+additionally improvements where made for the tests.
 
 ### Features
 
