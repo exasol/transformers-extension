@@ -4,8 +4,8 @@ from tests.utils.parameters import model_params
 
 def test_sequence_classification_single_text_script(
         setup_database, db_conn, upload_sequence_classification_model_to_bucketfs):
-    bucketfs_conn_name, _ = setup_database
-    n_labels = 3  # negative, neutral, positive
+    bucketfs_conn_name, schema_name = setup_database
+    n_labels = 3 # negative, neutral, positive
 
     n_rows = 100
     input_data = []
@@ -17,7 +17,7 @@ def test_sequence_classification_single_text_script(
             model_params.sequence_class_model_specs.model_name,
             "I am so happy to be working on the Transformers Extension."))
 
-    query = f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
+    query = f"SELECT {schema_name}.TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -43,7 +43,7 @@ def test_sequence_classification_single_text_script(
     number_accepted_results = 0
     for i in range(len(result)):
         if (result[i][4] == "positive" and
-                result[i][5] > 0.8):  # check if confidence resonably high
+                result[i][5] > 0.8):  # check if confidence reasonably high
             number_accepted_results += 1
         elif result[i][5] < 0.2:
             number_accepted_results += 1

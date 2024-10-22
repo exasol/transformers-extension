@@ -9,8 +9,8 @@ from exasol_transformers_extension.udfs.models.filling_mask_udf import \
     FillingMaskUDF
 from tests.integration_tests.without_db.udfs.matcher import Result, ScoreMatcher, RankDTypeMatcher, ShapeMatcher, \
     NoErrorMessageMatcher, NewColumnsEmptyMatcher, ErrorMessageMatcher, RankMonotonicMatcher, ColumnsMatcher
-from tests.utils.mock_connections import create_mounted_bucketfs_connection
 from tests.utils.parameters import model_params
+from tests.utils.mock_connections import create_mounted_bucketfs_connection
 
 
 class ExaEnvironment:

@@ -1,10 +1,6 @@
-import pathlib
-from importlib_resources import files
+from pathlib import Path
 
-BASE_DIR = "exasol_transformers_extension"
-TEMPLATES_DIR = pathlib.Path("resources", "templates")
-UDF_CALLERS_DIR = files(f"{BASE_DIR}.udfs.callers")
-
+from exasol_transformers_extension.deployment.install_scripts_constants import InstallScriptsConstants
 UDF_CALL_TEMPLATES = {
     "model_downloader_udf_call.py":
         "model_downloader_udf.jinja.sql",
@@ -18,12 +14,16 @@ UDF_CALL_TEMPLATES = {
         "filling_mask_udf.jinja.sql",
     "text_generation_udf_call.py":
         "text_generation_udf.jinja.sql",
-    "token_classification_udf_call.py":
-        "token_classification_udf.jinja.sql",
     "translation_udf_call.py":
         "translation_udf.jinja.sql",
     "zero_shot_text_classification_udf.py":
         "zero_shot_text_classification_udf.jinja.sql"
 }
 
-ORDERED_COLUMNS = ['model_name', 'bucketfs_conn', 'sub_dir']
+constants = InstallScriptsConstants(
+    base_dir="exasol_transformers_extension",
+    templates_dir=Path("resources", "templates"),
+    udf_callers_dir_suffix="udfs.callers",
+    udf_callers_templates=UDF_CALL_TEMPLATES,
+    ordered_columns=['model_name', 'bucketfs_conn', 'sub_dir']
+)

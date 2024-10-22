@@ -49,6 +49,38 @@ from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 
 
+def create_mock_metadata_with_span(udf_wrapper):
+    meta = MockMetaData(
+        script_code_wrapper_function=udf_wrapper,
+        input_type="SET",
+        input_columns=[
+            Column("device_id", int, "INTEGER"),
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("model_name", str, "VARCHAR(2000000)"),
+            Column("text_data", str, "VARCHAR(2000000)"),
+            Column("text_data_docid", int, "INTEGER"),
+            Column("text_data_char_begin", int, "INTEGER"),
+            Column("text_data_char_end", int, "INTEGER"),
+            Column("aggregation_strategy", str, "VARCHAR(2000000)")
+        ],
+        output_type="EMITS",
+        output_columns=[
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("model_name", str, "VARCHAR(2000000)"),
+            Column("aggregation_strategy", str, "VARCHAR(2000000)"),
+            Column("entity_covered_text", str, "VARCHAR(2000000)"),
+            Column("entity_type", str, "VARCHAR(2000000)"),
+            Column("score", float, "DOUBLE"),
+            Column("entity_docid", int, "INTEGER"),
+            Column("entity_char_begin", int, "INTEGER"),
+            Column("entity_char_end", int, "INTEGER"),
+            Column("error_message", str, "VARCHAR(2000000)")
+        ],
+    )
+    return meta
+
 def create_mock_metadata(udf_wrapper):
     meta = MockMetaData(
         script_code_wrapper_function=udf_wrapper,
@@ -102,6 +134,53 @@ def create_mock_metadata(udf_wrapper):
 ])
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
+def test_token_classification_with_span(mock_local_path, mock_create_loc, params):
+
+    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
+    mock_local_path.side_effect = fake_local_bucketfs_path
+
+    executor = UDFMockExecutor()
+    meta = create_mock_metadata_with_span(params.work_with_span_udf_wrapper)
+
+    exa = MockExaEnvironment(
+        metadata=meta,
+        connections=params.bfs_connections)
+
+    result = executor.run([Group(params.work_with_span_input_data)], exa)
+    result_output = Output(result[0].rows)
+    expected_output = Output(params.work_with_span_output_data)
+    n_input_columns = len(meta.input_columns) - 1
+    try:
+        assert (
+            OutputMatcher(result_output, n_input_columns) == expected_output,
+            params.mock_pipeline.counter == params.expected_model_counter)
+    finally:
+        params.mock_pipeline.counter = 0
+
+
+@pytest.mark.parametrize("params", [
+    SingleModelSingleBatchIncomplete,
+    SingleModelSingleBatchComplete,
+    SingleModelMultipleBatchIncomplete,
+    SingleModelMultipleBatchComplete,
+    MultipleModelSingleBatchIncomplete,
+    MultipleModelSingleBatchComplete,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    MultipleStrategySingleModelNameSingleBatch,
+    MultipleStrategySingleModelNameMultipleBatch,
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorNotCachedMultipleModelMultipleBatch,
+    ErrorOnPredictionMultipleModelMultipleBatch,
+    ErrorOnPredictionSingleModelMultipleBatch
+])
+@patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
+@patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_token_classification(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
@@ -118,7 +197,6 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
     result_output = Output(result[0].rows)
     expected_output = Output(params.output_data)
     n_input_columns = len(meta.input_columns) - 1
-
     try:
         assert (
             OutputMatcher(result_output, n_input_columns) == expected_output,

@@ -1,6 +1,6 @@
 import copy
 from pathlib import PurePosixPath
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 from tests.unit_tests.udf_wrapper_params.token_classification.\
     mock_sequence_tokenizer import MockSequenceTokenizer
 
@@ -27,9 +27,9 @@ class MockTokenClassificationFactory:
                                          MockTokenClassificationModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
-        # the cache_dir path already has model_name
-        return self.mock_models[cache_dir]
+    def from_pretrained(self,  model_path):
+        # the model_path path already has model_name
+        return self.mock_models[PurePosixPath(model_path)]
 
 
 class MockPipeline:
@@ -56,6 +56,7 @@ class MockPipeline:
         result_list = self._get_result_list(aggregation_strategy)
         return [result_list] * len(text_data) \
             if len(text_data) > 1 else result_list
+
 
     def _get_result_list(self, aggregation_strategy: str):
         result_list = copy.deepcopy(self.model.result)

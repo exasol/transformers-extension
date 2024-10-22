@@ -2,9 +2,10 @@ from tests.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_
 from tests.utils.parameters import model_params
 
 
+
 def test_question_answering_script(
         setup_database, db_conn, upload_question_answering_model_to_bucketfs):
-    bucketfs_conn_name, _ = setup_database
+    bucketfs_conn_name, schema_name = setup_database
     question = "Where is Exasol based?"
 
     n_rows = 100
@@ -21,7 +22,7 @@ def test_question_answering_script(
             top_k
         ))
 
-    query = f"SELECT TE_QUESTION_ANSWERING_UDF(" \
+    query = f"SELECT {schema_name}.TE_QUESTION_ANSWERING_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

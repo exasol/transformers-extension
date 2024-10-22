@@ -6,7 +6,7 @@ import numpy as np
 import transformers
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 
-from exasol_transformers_extension.deployment import constants
+from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.utils import device_management, dataframe_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
@@ -30,6 +30,12 @@ class BaseModelUDF(ABC):
         - execute_prediction
         - append_predictions_to_input_dataframe
 
+    If your UDF changes output format depending on work_with_spans, consider also implementing:
+        - drop_old_data_for_span_execution
+        - create_new_span_columns
+    These can be used to help making sure df output format is correct even if an error
+    occurs before the format is changed in the UDF itself
+
     """
     def __init__(self,
                  exa,
@@ -37,7 +43,8 @@ class BaseModelUDF(ABC):
                  pipeline: transformers.Pipeline,
                  base_model: ModelFactoryProtocol,
                  tokenizer: ModelFactoryProtocol,
-                 task_type: str):
+                 task_type: str,
+                 work_with_spans: bool = False):
         self.exa = exa
         self.batch_size = batch_size
         self.pipeline = pipeline
@@ -48,6 +55,7 @@ class BaseModelUDF(ABC):
         self.model_loader = None
         self.last_created_pipeline = None
         self.new_columns = []
+        self.work_with_spans = work_with_spans
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]['device_id']
@@ -148,7 +156,7 @@ class BaseModelUDF(ABC):
         """
 
         unique_values = dataframe_operations.get_unique_values(
-            batch_df, constants.ORDERED_COLUMNS, sort=True)
+            batch_df, constants.ordered_columns, sort=True)
 
         for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
@@ -232,6 +240,15 @@ class BaseModelUDF(ABC):
         """
         for col in self.new_columns:
             model_df[col] = None
+        if self.work_with_spans:
+            # we need to change the df format to match the output columns
+            model_df = self.create_new_span_columns(model_df)
+            model_df = self.drop_old_data_for_span_execution(model_df)
+            #move error message column to the end of the df
+            cols = model_df.columns.tolist()
+            cols.remove("error_message")
+            cols.append("error_message")
+            model_df = model_df[cols]
         model_df["error_message"] = stack_trace
         return model_df
 
@@ -255,3 +272,11 @@ class BaseModelUDF(ABC):
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
         pass
+
+    def create_new_span_columns(self, model_df: pd.DataFrame) \
+            -> pd.DataFrame:
+        return model_df
+
+    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame)\
+            -> pd.DataFrame:
+        return model_df

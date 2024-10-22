@@ -11,7 +11,7 @@ SUB_DIR = "test_downloader_udf_sub_dir{id}"
 
 def test_model_downloader_udf_script(
         setup_database, db_conn, bucketfs_location):
-    bucketfs_conn_name, _ = setup_database
+    bucketfs_conn_name, schema_name = setup_database
     n_rows = 2
     sub_dirs = []
     model_paths = []
@@ -33,7 +33,7 @@ def test_model_downloader_udf_script(
     bucketfs_files = []
     try:
         query = f"""
-            SELECT TE_MODEL_DOWNLOADER_UDF(
+            SELECT {schema_name}.TE_MODEL_DOWNLOADER_UDF(
             t.model_name,
             t.task_type,
             t.sub_dir,

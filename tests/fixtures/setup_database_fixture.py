@@ -11,9 +11,10 @@ SCHEMA_NAME = "TEST_INTEGRATION"
 LANGUAGE_ALIAS = "TEST_PYTHON3_TE"
 
 
-def _deploy_scripts(pyexasol_connection: ExaConnection) -> None:
+def _deploy_scripts(pyexasol_connection: ExaConnection, install_all_scripts: bool) -> None:
     scripts_deployer = ScriptsDeployer(schema=SCHEMA_NAME,
                                        language_alias=LANGUAGE_ALIAS,
+                                       install_all_scripts=install_all_scripts,
                                        pyexasol_conn=pyexasol_connection)
     scripts_deployer.deploy_scripts()
 
@@ -40,7 +41,7 @@ def setup_database(backend,
         time.sleep(30)
 
     bucketfs_connection_factory(BUCKETFS_CONNECTION_NAME, PATH_IN_BUCKET)
-    _deploy_scripts(pyexasol_connection)
+    _deploy_scripts(pyexasol_connection, install_all_scripts=True)
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 
 

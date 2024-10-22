@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_text_generation_script(
         setup_database, db_conn, upload_text_generation_model_to_bucketfs):
-    bucketfs_conn_name, _ = setup_database
+    bucketfs_conn_name, schema_name = setup_database
     text_data = "Exasol is an analytics database management"
     n_rows = 100
     max_length = 12
@@ -21,7 +21,7 @@ def test_text_generation_script(
             return_full_text
         ))
 
-    query = f"SELECT TE_TEXT_GENERATION_UDF(" \
+    query = f"SELECT {schema_name}.TE_TEXT_GENERATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
