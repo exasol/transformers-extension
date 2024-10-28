@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_sequence_classification_single_text_script(
         setup_database, db_conn, upload_sequence_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     n_labels = 3 # negative, neutral, positive
 
     n_rows = 100
@@ -17,7 +17,7 @@ def test_sequence_classification_single_text_script(
             model_params.sequence_class_model_specs.model_name,
             "I am so happy to be working on the Transformers Extension."))
 
-    query = f"SELECT {schema_name}.TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
+    query = f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

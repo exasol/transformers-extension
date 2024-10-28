@@ -26,7 +26,7 @@ def assert_lenient_check_of_output_quality(results: list):
 
 def test_token_classification_script_without_spans(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
     for i in range(n_rows):
@@ -39,7 +39,7 @@ def test_token_classification_script_without_spans(
             aggregation_strategy
         ))
 
-    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF(" \
+    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -65,7 +65,7 @@ def test_token_classification_script_without_spans(
 
 def test_token_classification_script_with_span(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
     for i in range(n_rows):
@@ -81,7 +81,7 @@ def test_token_classification_script_with_span(
             aggregation_strategy
         ))
 
-    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
+    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

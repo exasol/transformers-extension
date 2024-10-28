@@ -8,7 +8,7 @@ MODEL_NAME = 'gaunernst/bert-tiny-uncased'
 
 def test_prediction_with_downloader_udf(
         setup_database, db_conn, bucketfs_location):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
 
     try:
         # execute downloader UDF
@@ -20,7 +20,7 @@ def test_prediction_with_downloader_udf(
             ''
         )
         query = f"""
-            SELECT {schema_name}.TE_MODEL_DOWNLOADER_UDF(
+            SELECT TE_MODEL_DOWNLOADER_UDF(
             t.model_name,
             t.task_type,
             t.sub_dir,
@@ -45,7 +45,7 @@ def test_prediction_with_downloader_udf(
             top_k
         )
 
-        query = f"SELECT {schema_name}.TE_FILLING_MASK_UDF(" \
+        query = f"SELECT TE_FILLING_MASK_UDF(" \
                 f"t.device_id, " \
                 f"t.bucketfs_conn_name, " \
                 f"t.sub_dir, " \
