@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_zero_shot_classification_single_text_script(
         setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     n_rows = 100
     input_data = []
     candidate_labels = "Database,Analytics,Germany,Food,Party"
@@ -19,7 +19,7 @@ def test_zero_shot_classification_single_text_script(
             candidate_labels
         ))
 
-    query = f"SELECT {schema_name}.TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(" \
+    query = f"SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -50,7 +50,7 @@ def test_zero_shot_classification_single_text_script(
     number_accepted_results = 0
     for i in range(len(result)):
         if (contains(result[i][5], acceptable_results) and
-                result[i][6] > 0.8):  # check if confidence resonably high
+                result[i][6] > 0.8):  # check if confidence reasonably high
             number_accepted_results += 1
         elif result[i][6] < 0.2:
             number_accepted_results += 1
