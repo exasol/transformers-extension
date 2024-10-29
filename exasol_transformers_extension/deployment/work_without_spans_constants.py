@@ -5,6 +5,8 @@ from exasol_transformers_extension.deployment.install_scripts_constants import I
 UDF_CALL_TEMPLATES = {
     "token_classification_udf_call.py":
         "token_classification_udf.jinja.sql",
+    "zero_shot_text_classification_udf.py":
+        "zero_shot_text_classification_udf.jinja.sql"
 }
 
 work_without_spans_constants = InstallScriptsConstants(

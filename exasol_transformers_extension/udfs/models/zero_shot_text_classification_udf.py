@@ -7,14 +7,17 @@ from exasol_transformers_extension.utils import dataframe_operations
 
 
 class ZeroShotTextClassificationUDF(BaseModelUDF):
+    # todo commetn class
     def __init__(self,
                  exa,
                  batch_size=100,
                  pipeline=transformers.pipeline,
                  base_model=transformers.AutoModelForSequenceClassification,
-                 tokenizer=transformers.AutoTokenizer):
+                 tokenizer=transformers.AutoTokenizer,
+                 work_with_spans: bool = False):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_type='zero-shot-classification')
+                         tokenizer, task_type='zero-shot-classification',
+                         work_with_spans=work_with_spans)
         self._desired_fields_in_prediction = ["labels", "scores"]
         self.new_columns = ["label", "score", "rank", "error_message"]
 
@@ -54,6 +57,20 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
         candidate_labels = model_df['candidate_labels'].iloc[0].split(",")
         results = self.last_created_pipeline(sequences, candidate_labels)
         return results
+
+    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        #todo if the names stay this way we dont really need these, just dont drop them from input
+        #model_df[["text_docid", "text_entity_char_begin", "text_entity_char_end"]] = None, None, None
+        # reorder columns to have them in same output oder as other udfs ##todo does this matter to us?
+        cols = model_df.columns.tolist()
+        cols.remove(cols[5::7])
+        cols.append("text_docid", "text_entity_char_begin", "text_entity_char_end")
+        return model_df[cols]
+
+    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        # drop columns which are made superfluous by the spans to save data transfer
+        model_df = model_df.drop(columns=["text_data", "candidate_labels"])
+        return model_df
 
     def create_dataframes_from_predictions(
             self, predictions:  List[List[Dict[str, Any]]]) \
@@ -96,5 +113,10 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
             merged_df = pd.merge(
                 model_df.iloc[[ix], :], pred_df, how='cross')
             merged_df_list.append(merged_df)
+        output_df = pd.concat(merged_df_list)
 
-        return pd.concat(merged_df_list)
+        if self.work_with_spans:
+            output_df = self.create_new_span_columns(output_df)
+            output_df = self.drop_old_data_for_span_execution(output_df)
+
+        return output_df

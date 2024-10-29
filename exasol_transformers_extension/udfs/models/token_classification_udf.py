@@ -24,7 +24,6 @@ class TokenClassificationUDF(BaseModelUDF):
                          tokenizer, task_type='token-classification',
                          work_with_spans=work_with_spans)
         self._default_aggregation_strategy = 'simple'
-        #self.work_with_spans = work_with_spans
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
         self.new_columns = [
