@@ -101,9 +101,9 @@ def test_token_classification_script_with_span(
     # assertions
     assert result[0][-1] is None
     # added_columns: entity_covered_text, entity_type, score, entity_docid, entity_char_begin, entity_char_end, error_message
-    # removed_columns: # device_id, text_data, text_data_docid, text_data_char_begin, text_data_char_end
-    assert_correct_number_of_results(7, 5,
+    # removed_columns: # device_id, text_data
+    assert_correct_number_of_results(7, 2,
                                      input_data[0], result, n_rows)
     # lenient test for quality of results, will be replaced by deterministic test later
-    results = [[result[i][4], result[i][5]] for i in range(len(result))]
+    results = [[result[i][7], result[i][8]] for i in range(len(result))]
     assert_lenient_check_of_output_quality(results)
