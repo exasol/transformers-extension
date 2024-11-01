@@ -1,6 +1,6 @@
 # base params
 device_id=None
-bucketfs_conn="bfs_conn1"
+bucketfs_conn="bfs_conn"
 sub_dir="sub_dir"
 model_name="model"
 
@@ -18,6 +18,7 @@ entity_type="ENTITY_TYPE"
 score=0.1
 error_msg = None
 
+#todo comment explain entity/token naming mess
 def make_input_row(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                    model_name=model_name, text_data=text_data, aggregation_strategy=agg_strategy_simple):
     return [(device_id, bucketfs_conn, sub_dir, model_name,text_data, aggregation_strategy)]
@@ -25,7 +26,7 @@ def make_input_row(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub
 def make_output_row(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                     model_name=model_name, text_data=text_data, aggregation_strategy=agg_strategy_simple,
                     start=token_start, end=token_end, word=token,
-                    entity=entity_type,score=score, error_msg = error_msg):
+                    entity=entity_type,score=score, error_msg=error_msg):
     return [(bucketfs_conn, sub_dir, model_name,text_data, aggregation_strategy,
              start,end,word, entity,score, error_msg)]
 
@@ -53,3 +54,8 @@ def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
              text_data_docid, text_data_char_begin, text_data_char_end, aggregation_strategy,
              entity_covered_text, entity_type, score, entity_docid, entity_char_begin, entity_char_end,
              error_msg)]
+
+#todo if use in all tests
+def make_number_of_strings(input_str: str, desired_number: int):
+    return (input_str + f"{i}" for i in range(desired_number))
+

@@ -13,8 +13,14 @@ from transformers import Pipeline
 
 from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_single_batch_complete import \
+    MultipleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_single_batch import \
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.single_model_multiple_batch_complete import \
+    SingleModelMultipleBatchComplete
+from tests.unit_tests.udf_wrapper_params.token_classification.single_model_multiple_batch_incomplete import \
+    SingleModelMultipleBatchIncomplete
 from tests.unit_tests.udf_wrapper_params.token_classification.single_model_single_batch_complete import \
     SingleModelSingleBatchComplete
 from tests.unit_tests.udf_wrapper_params.token_classification.single_model_single_batch_incomplete import \
@@ -96,10 +102,10 @@ def create_mock_metadata():
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
     SingleModelSingleBatchComplete,
-    #SingleModelMultipleBatchIncomplete,
-    #SingleModelMultipleBatchComplete,
+    SingleModelMultipleBatchIncomplete,
+    SingleModelMultipleBatchComplete,
     #MultipleModelSingleBatchIncomplete,
-    #MultipleModelSingleBatchComplete,
+    MultipleModelSingleBatchComplete,
     #MultipleModelMultipleBatchIncomplete,
     #MultipleModelMultipleBatchComplete,
     #MultipleModelMultipleBatchMultipleModelsPerBatch,
@@ -167,10 +173,10 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
     SingleModelSingleBatchComplete,
-    # SingleModelMultipleBatchIncomplete,
-    # SingleModelMultipleBatchComplete,
+    SingleModelMultipleBatchIncomplete,
+    SingleModelMultipleBatchComplete,
     # MultipleModelSingleBatchIncomplete,
-    # MultipleModelSingleBatchComplete,
+    MultipleModelSingleBatchComplete,
     # MultipleModelMultipleBatchIncomplete,
     # MultipleModelMultipleBatchComplete,
     # MultipleModelMultipleBatchMultipleModelsPerBatch,

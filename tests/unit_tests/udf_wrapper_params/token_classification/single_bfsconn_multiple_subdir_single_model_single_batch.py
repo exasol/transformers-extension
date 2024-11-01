@@ -2,7 +2,7 @@ from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
-    sub_dir, token, score, make_model_output_for_one_input_row
+    sub_dir, token, score, make_model_output_for_one_input_row, make_number_of_strings
 
 
 class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
@@ -14,11 +14,8 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
     data_size = 2
     n_entities = 3
 
-    sub_dir1 = sub_dir + "1"
-    sub_dir2 = sub_dir + "2"
-
-    token1 = token + "1"
-    token2 = token + "2"
+    sub_dir1, sub_dir2 = make_number_of_strings(sub_dir, 2)
+    token1, token2 = make_number_of_strings(token, 2)
 
     input_data = make_input_row(sub_dir=sub_dir1) * data_size + \
                  make_input_row(sub_dir=sub_dir2) * data_size
