@@ -25,7 +25,7 @@ class SingleModelSingleBatchComplete:
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
+        bucketfs_conn: Connection(address=f"file://{base_cache_dir1}")
     }
 
 

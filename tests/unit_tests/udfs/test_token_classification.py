@@ -15,6 +15,10 @@ from exasol_transformers_extension.udfs.models.token_classification_udf import T
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_single_batch_complete import \
     MultipleModelSingleBatchComplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import \
+    MultipleStrategySingleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_single_batch import \
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.single_model_multiple_batch_complete import \
@@ -110,10 +114,10 @@ def create_mock_metadata():
     #MultipleModelMultipleBatchComplete,
     #MultipleModelMultipleBatchMultipleModelsPerBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    #SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
     #MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
     #MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
-    #MultipleStrategySingleModelNameSingleBatch,
+    MultipleStrategySingleModelNameSingleBatch,
     #MultipleStrategySingleModelNameMultipleBatch,
     #ErrorNotCachedSingleModelMultipleBatch,
     #ErrorNotCachedMultipleModelMultipleBatch,
@@ -138,14 +142,15 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 
     mock_base_model_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol,
                                                                                       _name="mock_base_model_factory")
+    number_of_intendet_used_models = params.expected_model_counter  # todo is this always same?
     mock_models: List[Union[transformers.AutoModel, MagicMock]] = [
-        create_autospec(transformers.AutoModel)
+        create_autospec(transformers.AutoModel) for i in range (0,number_of_intendet_used_models)
         ]
     mock_cast(mock_base_model_factory.from_pretrained).side_effect = mock_models
 
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_pipeline:  List[Union[transformers.AutoModel, MagicMock]] = [
-        create_autospec(Pipeline, side_effect=[params.tokenizer_model_output_df])
+        create_autospec(Pipeline, side_effect=[params.tokenizer_model_output_df[i]]) for i in range (0,number_of_intendet_used_models)
         ]
     mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(Pipeline,
                                                                         side_effect=mock_pipeline)
@@ -181,10 +186,10 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     # MultipleModelMultipleBatchComplete,
     # MultipleModelMultipleBatchMultipleModelsPerBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    # SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
+    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
     # MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
     # MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
-    # MultipleStrategySingleModelNameSingleBatch,
+    MultipleStrategySingleModelNameSingleBatch,
     # MultipleStrategySingleModelNameMultipleBatch,
     # ErrorNotCachedSingleModelMultipleBatch,
     # ErrorNotCachedMultipleModelMultipleBatch,

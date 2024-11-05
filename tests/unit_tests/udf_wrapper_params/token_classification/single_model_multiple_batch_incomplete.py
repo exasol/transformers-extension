@@ -28,8 +28,8 @@ class SingleModelMultipleBatchIncomplete:
                                 [make_model_output_for_one_input_row(number_entities=n_entities) * number_remaining_data_entries_in_last_batch]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
+        bucketfs_conn: Connection(address=f"file://{base_cache_dir1}")
     }
 
