@@ -56,8 +56,6 @@ class MultipleModelSingleBatchComplete:
     base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)
     base_cache_dir2 = PurePosixPath(tmpdir_name, bfs_conn2)
     bfs_connections = {
-        "bfs_conn0": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir2}")
-    } #todo replace names of connections with vars instead in each tests
-
-
+        bfs_conn1: Connection(address=f"file://{base_cache_dir1}"),
+        bfs_conn2: Connection(address=f"file://{base_cache_dir2}")
+    }
