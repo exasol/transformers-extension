@@ -55,9 +55,9 @@ class MultipleModelSingleBatchIncomplete:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_translation"):
             MockTranslationModel(text_data="text 1"),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_translation"):
             MockTranslationModel(text_data="text 2")
     })
 

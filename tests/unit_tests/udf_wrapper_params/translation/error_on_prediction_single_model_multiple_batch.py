@@ -49,7 +49,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     }
 
     mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_translation"):
             MockTranslationModel(text_data="text 1")
     })
 

@@ -71,7 +71,7 @@ class SingleModelMultipleBatchIncomplete:
     }
 
     mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 

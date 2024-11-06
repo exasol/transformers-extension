@@ -70,13 +70,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
     }
 
     mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_translation"):
             MockTranslationModel(text_data="text 1"),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_translation"):
             MockTranslationModel(text_data="text 2"),
-        PurePosixPath(base_cache_dir3, "sub_dir3", "model3"):
+        PurePosixPath(base_cache_dir3, "sub_dir3", "model3_translation"):
             MockTranslationModel(text_data="text 3"),
-        PurePosixPath(base_cache_dir4, "sub_dir4", "model4"):
+        PurePosixPath(base_cache_dir4, "sub_dir4", "model4_translation"):
             MockTranslationModel(text_data="text 4")
     })
 

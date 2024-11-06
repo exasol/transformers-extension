@@ -48,7 +48,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
     }
 
     mock_factory = MockQuestionAnsweringFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_question-answering"):
             MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1)
     })
 

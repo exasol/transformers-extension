@@ -121,9 +121,9 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
     }
 
     mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores1),
-        PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir2", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores2),
     })
 

@@ -50,9 +50,9 @@ class MultipleModelMultipleBatchIncomplete:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockZeroShotFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_zero-shot-classification"):
             MockZeroShotModel([{"labels": "label1", "scores": 0.1}]),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_zero-shot-classification"):
             MockZeroShotModel([{"labels": "label2", "scores": 0.2}])
     })
 

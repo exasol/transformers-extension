@@ -72,9 +72,9 @@ class MultipleModelMultipleBatchIncomplete:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 
