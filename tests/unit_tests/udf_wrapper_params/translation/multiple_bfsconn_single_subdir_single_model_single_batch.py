@@ -29,7 +29,7 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
     """
     multiple bucketfs connection, single subdir, single model, single batch
     """
-    expected_model_counter = 1
+    expected_model_counter = 2
     batch_size = 4
     data_size = 2
     src_lang = "English"
@@ -55,9 +55,9 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockTranslationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_translation"):
             MockTranslationModel(text_data="text 1"),
-        PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir2, "sub_dir1", "model1_translation"):
             MockTranslationModel(text_data="text 2")
     })
 

@@ -13,8 +13,8 @@ def udf_wrapper_single_text():
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
         mock_sequence_tokenizer import MockSequenceTokenizer
     from tests.unit_tests.udf_wrapper_params.sequence_classification. \
-        single_model_multiple_batch_incomplete import \
-        SingleModelMultipleBatchIncomplete as params
+        error_on_prediction_single_model_multiple_batch import \
+        ErrorOnPredictionSingleModelMultipleBatch as params
 
     udf = SequenceClassificationSingleTextUDF(
         exa,
@@ -52,8 +52,8 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     """
     error on prediction, single model, multiple batch,
     """
-    expected_single_text_model_counter = 0
-    expected_text_pair_model_counter = 0
+    expected_single_text_model_counter = 1
+    expected_text_pair_model_counter = 1
     batch_size = 2
     data_size = 5
 
@@ -71,7 +71,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     }
 
     mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 
