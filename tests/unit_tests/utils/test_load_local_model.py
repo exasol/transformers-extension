@@ -49,7 +49,7 @@ def test_load_function_call():
     assert test_setup.tokenizer_factory_mock.mock_calls == [
         call.from_pretrained(str(model_save_path))]
     assert test_setup.mock_pipeline.mock_calls == [
-        call('test_task',
+        call(task = 'test_task',
              model=mock_cast(test_setup.model_factory_mock.from_pretrained).return_value,
              tokenizer=mock_cast(test_setup.tokenizer_factory_mock.from_pretrained).return_value,
              device='cpu', framework='pt')]

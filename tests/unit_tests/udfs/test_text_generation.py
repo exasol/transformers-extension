@@ -125,7 +125,7 @@ def test_text_generation(mock_local_path, mock_create_loc, params):
 
     try:
         assert (
-            OutputMatcher(result_output, n_input_columns) == expected_output,
+            OutputMatcher(result_output, n_input_columns) == expected_output and
             params.mock_pipeline.counter == params.expected_model_counter)
     finally:
         params.mock_pipeline.counter = 0
