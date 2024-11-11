@@ -22,8 +22,10 @@ class SingleModelMultipleBatchComplete:
     # this is what the mock model returns to the udf
     #todo make function for whole output?
     number_complete_batches = data_size // batch_size
-    tokenizer_model_output_df = [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size] * \
-                                number_complete_batches
+    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size] + \
+                                       [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size]
+    tokenizer_models_output_df = [tokenizer_model_output_df_model1]
+
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {

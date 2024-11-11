@@ -32,10 +32,10 @@ class MultipleStrategySingleModelNameMultipleBatch:
                                  make_output_row_with_span(aggregation_strategy=agg_strategy_none) * n_entities * data_size + \
                                  make_output_row_with_span(aggregation_strategy=agg_strategy_simple) * n_entities * data_size
     # data gets divided into 3 batches
-    tokenizer_model_output_df = [make_model_output_for_one_input_row(number_entities=n_entities) * data_size] + \
-                                [make_model_output_for_one_input_row(number_entities=n_entities) * data_size] + \
-                                [make_model_output_for_one_input_row(number_entities=n_entities) * data_size]
-
+    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities, aggregation_strategy=agg_strategy_null) * data_size] + \
+                                       [make_model_output_for_one_input_row(number_entities=n_entities, aggregation_strategy=agg_strategy_none) * data_size] + \
+                                       [make_model_output_for_one_input_row(number_entities=n_entities, aggregation_strategy=agg_strategy_simple) * data_size]
+    tokenizer_models_output_df = [tokenizer_model_output_df_model1]
 
 
 

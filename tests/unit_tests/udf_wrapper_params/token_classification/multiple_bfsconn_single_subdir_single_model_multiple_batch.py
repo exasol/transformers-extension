@@ -30,8 +30,10 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
     work_with_span_output_data =  make_output_row_with_span(bucketfs_conn=bfs_conn1, entity_covered_text=token1, score=score) * n_entities * data_size + \
                                   make_output_row_with_span(bucketfs_conn=bfs_conn2, entity_covered_text=token2, score=score+0.1) * n_entities * data_size
 
-    tokenizer_model_output_df = [make_model_output_for_one_input_row(word=token1, score=score, number_entities=n_entities) * data_size] + \
-                                [make_model_output_for_one_input_row(word=token2, score=score, number_entities=n_entities) * data_size]
+    tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(word=token1, score=score, number_entities=n_entities) * data_size]
+    tokenizer_model_output_df_model2 =  [make_model_output_for_one_input_row(word=token2, score=score+0.1, number_entities=n_entities) * data_size]
+
+    tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2]
 
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

@@ -23,9 +23,10 @@ class SingleModelMultipleBatchIncomplete:
     #todo make function for whole output?
     number_complete_batches = data_size // batch_size
     number_remaining_data_entries_in_last_batch = data_size % batch_size
-    tokenizer_model_output_df = [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size] * \
+    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size] * \
                                 number_complete_batches + \
                                 [make_model_output_for_one_input_row(number_entities=n_entities) * number_remaining_data_entries_in_last_batch]
+    tokenizer_models_output_df = [tokenizer_model_output_df_model1]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)

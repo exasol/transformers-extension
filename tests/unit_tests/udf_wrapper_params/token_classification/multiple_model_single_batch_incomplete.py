@@ -43,11 +43,13 @@ class MultipleModelSingleBatchIncomplete:
                                                            model_name=model_name2, entity_covered_text=token2,
                                                            entity_type=entity_type2, score=score+0.1) * n_entities * data_size
 
-    tokenizer_model_output_df = [make_model_output_for_one_input_row(number_entities=n_entities, word=token1,
+    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities, word=token1,
                                                                      entity_group=entity_type1, score=score) * \
-                                                                     data_size] + \
-                                [make_model_output_for_one_input_row(number_entities=n_entities, word=token2,
+                                                                     data_size]
+    tokenizer_model_output_df_model2 = [make_model_output_for_one_input_row(number_entities=n_entities, word=token2,
                                                                      entity_group=entity_type2, score=score+0.1) * data_size]
+
+    tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2]
 
 
 

@@ -13,8 +13,22 @@ from transformers import Pipeline
 
 from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_bfsconn_single_subdir_single_model_single_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_multiple_batch_complete import \
+    MultipleModelMultipleBatchComplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_multiple_batch_incomplete import \
+    MultipleModelMultipleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_multiple_batch_multiple_models_per_batch import \
+    MultipleModelMultipleBatchMultipleModelsPerBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_single_batch_complete import \
     MultipleModelSingleBatchComplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_single_batch_incomplete import \
+    MultipleModelSingleBatchIncomplete
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_multiple_batch import \
+    MultipleStrategySingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import \
     MultipleStrategySingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
@@ -36,6 +50,7 @@ from tests.utils.mock_cast import mock_cast
 
 def udf_wrapper_empty():
     # placeholder to use for MockMetaData creation.
+    # todo replace with newer version and then delete this
     pass
 
 def create_mock_metadata_with_span():
@@ -108,17 +123,17 @@ def create_mock_metadata():
     SingleModelSingleBatchComplete,
     SingleModelMultipleBatchIncomplete,
     SingleModelMultipleBatchComplete,
-    #MultipleModelSingleBatchIncomplete,
+    MultipleModelSingleBatchIncomplete,
     MultipleModelSingleBatchComplete,
-    #MultipleModelMultipleBatchIncomplete,
-    #MultipleModelMultipleBatchComplete,
-    #MultipleModelMultipleBatchMultipleModelsPerBatch,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    #MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    #MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     MultipleStrategySingleModelNameSingleBatch,
-    #MultipleStrategySingleModelNameMultipleBatch,
+    MultipleStrategySingleModelNameMultipleBatch,
     #ErrorNotCachedSingleModelMultipleBatch,
     #ErrorNotCachedMultipleModelMultipleBatch,
     #ErrorOnPredictionMultipleModelMultipleBatch,
@@ -150,7 +165,8 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 
     mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(ModelFactoryProtocol)
     mock_pipeline:  List[Union[transformers.AutoModel, MagicMock]] = [
-        create_autospec(Pipeline, side_effect=[params.tokenizer_model_output_df[i]]) for i in range (0,number_of_intendet_used_models)
+        create_autospec(Pipeline, side_effect=params.tokenizer_models_output_df[i])
+        for i in range (0,number_of_intendet_used_models)
         ]
     mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(Pipeline,
                                                                         side_effect=mock_pipeline)
@@ -170,8 +186,8 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     actual_output = Output(result)
     n_input_columns = len(mock_meta.input_columns) - 1
     assert (
-            OutputMatcher(actual_output, n_input_columns) == expected_output,
-            mock_pipeline_factory.mock_calls == params.expected_model_counter)
+            OutputMatcher(actual_output, n_input_columns) == expected_output and
+            len(mock_pipeline_factory.mock_calls) == params.expected_model_counter)
 
 
 
@@ -180,17 +196,17 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     SingleModelSingleBatchComplete,
     SingleModelMultipleBatchIncomplete,
     SingleModelMultipleBatchComplete,
-    # MultipleModelSingleBatchIncomplete,
+    MultipleModelSingleBatchIncomplete,
     MultipleModelSingleBatchComplete,
-    # MultipleModelMultipleBatchIncomplete,
-    # MultipleModelMultipleBatchComplete,
-    # MultipleModelMultipleBatchMultipleModelsPerBatch,
+    MultipleModelMultipleBatchIncomplete,
+    MultipleModelMultipleBatchComplete,
+    MultipleModelMultipleBatchMultipleModelsPerBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
     SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    # MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    # MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     MultipleStrategySingleModelNameSingleBatch,
-    # MultipleStrategySingleModelNameMultipleBatch,
+    MultipleStrategySingleModelNameMultipleBatch,
     # ErrorNotCachedSingleModelMultipleBatch,
     # ErrorNotCachedMultipleModelMultipleBatch,
     # ErrorOnPredictionMultipleModelMultipleBatch,
@@ -225,9 +241,11 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
     print(params.work_with_span_input_data)
     print(len(params.work_with_span_output_data))
     print("tokenizer_model_output_df")
-    print(params.tokenizer_model_output_df)
+    print(params.tokenizer_models_output_df)
+    for i in range(0, number_of_intendet_used_models):
+        print(params.tokenizer_models_output_df[i])
     mock_pipeline:  List[Union[transformers.AutoModel, MagicMock]] = [
-        create_autospec(Pipeline, side_effect=[params.tokenizer_model_output_df[i]]) for i in range (0,number_of_intendet_used_models)
+        create_autospec(Pipeline, side_effect=params.tokenizer_models_output_df[i]) for i in range (0,number_of_intendet_used_models)
         ]
     mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(Pipeline,
                                                                         side_effect=mock_pipeline)
@@ -239,12 +257,13 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
 
     udf.run(mock_ctx)
     result = mock_ctx.output
+    print("result_____________________________________________")
     print(result)
+    print("_____________________________________________")
     assert result[0][-1] is None and len(result[0]) == len(mock_meta.output_columns)
 
     expected_output = Output(params.output_data)
     actual_output = Output(result)
     n_input_columns = len(mock_meta.input_columns) - 1
-    assert (
-            OutputMatcher(actual_output, n_input_columns) == expected_output,
-            mock_pipeline_factory.mock_calls == params.expected_model_counter)
+    assert (OutputMatcher(actual_output, n_input_columns) == expected_output )#and
+            #len(mock_pipeline_factory.mock_calls) == params.expected_model_counter)

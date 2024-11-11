@@ -30,11 +30,16 @@ def make_output_row(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
     return [(bucketfs_conn, sub_dir, model_name,text_data, aggregation_strategy,
              start,end,word, entity,score, error_msg)]
 
-def make_model_output_for_one_input_row(number_entities:int, entity_group=entity_type, score=score, word=token, start=token_start, end=token_end):
-    model_output_single_entities = {'entity_group': entity_group, 'score': score, 'word': word, 'start': start, 'end': end}
+def make_model_output_for_one_input_row(number_entities:int, aggregation_strategy=agg_strategy_simple,
+                                        entity_group=entity_type, score=score, word=token, start=token_start, end=token_end):
+    if aggregation_strategy == "none":
+        model_output_single_entities = {'entity': entity_group, 'score': score, 'word': word, 'start': start, 'end': end}
+    else:
+        model_output_single_entities = {'entity_group': entity_group, 'score': score, 'word': word, 'start': start,
+                                        'end': end}
     return [[model_output_single_entities] * number_entities]
 
-def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir="sub_dir1",
+def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                              model_name=model_name, text_data=text_data, text_data_docid=text_docid,
                              text_data_char_begin=text_start, text_data_char_end=text_end,
                              aggregation_strategy=agg_strategy_simple):
