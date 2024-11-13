@@ -26,7 +26,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
                   make_output_row(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
                                   model_name="non_existing_model",text_data=text2,
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * n_entities * data_size
+                                  error_msg="Traceback") * 1 * data_size#error on load_model -> only one output per input
 
     work_with_span_input_data = make_input_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1,text_data=text1) * data_size + \
                                 make_input_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
@@ -34,8 +34,8 @@ class ErrorNotCachedMultipleModelMultipleBatch:
 
     work_with_span_output_data1 = make_output_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * n_entities * data_size
     work_with_span_output_data2 = [(bfs_conn2, subdir2, "non_existing_model", text_docid, text_start, text_end, agg_strategy_simple,
-                                   None, None, None, text_docid, None, None,"Traceback")] * n_entities * data_size
-    work_with_span_output_data = work_with_span_output_data2 + work_with_span_output_data2
+                                   None, None, None, text_docid, None, None,"Traceback")] * 1 * data_size#error on load_model -> only one output per input
+    work_with_span_output_data = work_with_span_output_data1 + work_with_span_output_data2
 
     tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(number_entities=n_entities) * data_size]
     tokenizer_model_output_df_model2_batch1 = [] # no model loaded so no model to output anything

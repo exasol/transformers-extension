@@ -17,21 +17,21 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     input_data = make_input_row(text_data="error on pred") * data_size
     output_data = make_output_row(text_data="error on pred",
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * n_entities * data_size
+                                  error_msg="Traceback") * 1 * data_size #error on pred -> only one output per input
 
     work_with_span_input_data = make_input_row_with_span(text_data="error on pred") * data_size
     work_with_span_output_data =  [(bucketfs_conn, sub_dir, model_name,
                                 text_docid, text_start, text_end, agg_strategy_simple,
                                 None, None, None, text_docid, None, None,
-                                "Traceback")] * n_entities * data_size
+                                "Traceback")] * 1 * data_size #error on pred -> only one output per input
 
 
     number_complete_batches = data_size // batch_size
     number_remaining_data_entries_in_last_batch = data_size % batch_size
-    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities,
-                                  score=None, start=None, end=None, word=None, entity_group=None,) * batch_size] * \
+    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
+                                  score=None, start=None, end=None, word=None, entity_group=None) * batch_size] * \
                                 number_complete_batches + \
-                                [make_model_output_for_one_input_row(number_entities=n_entities,
+                                [make_model_output_for_one_input_row(number_entities=1,
                                   score=None, start=None, end=None, word=None, entity_group=None,
                                   ) * number_remaining_data_entries_in_last_batch]
     tokenizer_models_output_df = [tokenizer_model_output_df_model1]

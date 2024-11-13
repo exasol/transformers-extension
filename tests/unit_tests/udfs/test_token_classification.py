@@ -172,7 +172,7 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 
     mock_pipeline: List[Union[transformers.AutoModel, MagicMock]] = [
         create_autospec(Pipeline, side_effect=params.tokenizer_models_output_df[i]) if params.tokenizer_models_output_df[i][0][0][0]["word"]
-        else Exception("Traceback mock_pipeline is throwing an error intentionally")
+        else [Exception("Traceback mock_pipeline is throwing an error intentionally")]
     for i in range(0, number_of_intended_used_models)
     ]
 
@@ -189,6 +189,7 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     result = mock_ctx.output
 
     assert len(result[0]) == len(mock_meta.output_columns)
+    assert len(result) == len(params.work_with_span_output_data)
 
     expected_output = Output(params.work_with_span_output_data)
     actual_output = Output(result)
@@ -244,7 +245,7 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
 
     mock_pipeline: List[Union[transformers.AutoModel, MagicMock]] = [
         create_autospec(Pipeline, side_effect=params.tokenizer_models_output_df[i]) if params.tokenizer_models_output_df[i][0][0][0]["word"]
-        else Exception("Traceback mock_pipeline is throwing an error intentionally")
+        else [Exception("Traceback mock_pipeline is throwing an error intentionally")]
     for i in range(0, number_of_intended_used_models)
     ]
     mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(Pipeline,
@@ -259,6 +260,7 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
     result = mock_ctx.output
 
     assert len(result[0]) == len(mock_meta.output_columns)
+    assert len(result) == len(params.work_with_span_output_data)
 
     expected_output = Output(params.output_data)
     actual_output = Output(result)

@@ -26,7 +26,7 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
                   make_output_row(bucketfs_conn=bfs_conn2, sub_dir=subdir2, model_name=model2,
                                   text_data="error on pred",
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * n_entities * data_size
+                                  error_msg="Traceback") * 1 * data_size  #error on pred -> only one output per input
 
     work_with_span_input_data = make_input_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1, model_name=model1) * data_size + \
                                 make_input_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=subdir2, model_name=model2,
@@ -34,16 +34,16 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
 
     work_with_span_output_data1 = make_output_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1, model_name=model1) * n_entities * data_size
     work_with_span_output_data2 = [(bfs_conn2, subdir2, model2, text_docid, text_start, text_end, agg_strategy_simple,
-                                   None, None, None, text_docid, None, None,"Traceback")] * n_entities * data_size
-    work_with_span_output_data = work_with_span_output_data2 + work_with_span_output_data2
+                                   None, None, None, None, None, None,"Traceback")] * 1 * data_size #error on pred -> only one output per input
+    work_with_span_output_data = work_with_span_output_data1 + work_with_span_output_data2
 
     tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(number_entities=n_entities) * data_size]
-    tokenizer_model_output_df_model2_batch1 =  [make_model_output_for_one_input_row(number_entities=n_entities,
+    tokenizer_model_output_df_model2_batch1 =  [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
                                   score=None, start=None, end=None, word=None, entity_group=None,
                                   )]
-    tokenizer_model_output_df_model2_batch2 =  [make_model_output_for_one_input_row(number_entities=n_entities,
+    tokenizer_model_output_df_model2_batch2 =  [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
                                   score=None, start=None, end=None, word=None, entity_group=None,
-                                  )]
+                                  )] # do we expect error on prediction to happen once per input or once per entity? per input makes more sense right?
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2_batch1, tokenizer_model_output_df_model2_batch2]
 

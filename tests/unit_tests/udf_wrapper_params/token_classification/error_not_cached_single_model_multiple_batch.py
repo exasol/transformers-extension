@@ -17,13 +17,13 @@ class ErrorNotCachedSingleModelMultipleBatch:
     input_data = make_input_row(model_name="non_existing_model") * data_size
     output_data = make_output_row(model_name="non_existing_model",
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * n_entities * data_size
+                                  error_msg="Traceback") * 1 * data_size#error on load_model -> only one output per input
 
     work_with_span_input_data = make_input_row_with_span(model_name="non_existing_model") * data_size
     work_with_span_output_data =  [(bucketfs_conn, sub_dir, "non_existing_model",
                                 text_docid, text_start, text_end, agg_strategy_simple,
                                 None, None, None, text_docid, None, None,
-                                "Traceback")] * n_entities * data_size
+                                "Traceback")] * 1 * data_size #error on load_model -> only one output per input
 
     tokenizer_models_output_df = [] # no model loaded so no model to output anything
 
