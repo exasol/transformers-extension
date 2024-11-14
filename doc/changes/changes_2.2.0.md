@@ -20,7 +20,7 @@ n/a
 
 ### Refactorings
 
-n/a
+- #273: refactored unit tests for token_classification_udf to use StandAloneUDFMock, made params files more maintainable
 
 ### Security
 
