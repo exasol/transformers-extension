@@ -20,7 +20,6 @@ class SingleModelMultipleBatchComplete:
     work_with_span_output_data = make_output_row_with_span()  * n_entities * data_size
 
     # this is what the mock model returns to the udf
-    #todo make function for whole output?
     number_complete_batches = data_size // batch_size
     tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size] + \
                                        [make_model_output_for_one_input_row(number_entities=n_entities) * batch_size]
