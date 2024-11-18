@@ -57,6 +57,7 @@ from tests.unit_tests.udf_wrapper_params.token_classification.single_model_singl
 
 def create_mock_metadata_with_span():
     meta = MockMetaData(
+        script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
@@ -91,6 +92,7 @@ def create_mock_metadata_with_span():
 
 def create_mock_metadata():
     meta = MockMetaData(
+        script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
