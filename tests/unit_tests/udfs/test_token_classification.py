@@ -55,14 +55,8 @@ from tests.unit_tests.udf_wrapper_params.token_classification.single_model_singl
     SingleModelSingleBatchIncomplete
 
 
-def udf_wrapper_empty():
-    # placeholder to use for MockMetaData creation.
-    # todo replace with newer version and then delete this
-    pass
-
 def create_mock_metadata_with_span():
     meta = MockMetaData(
-        script_code_wrapper_function=udf_wrapper_empty,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
@@ -97,7 +91,6 @@ def create_mock_metadata_with_span():
 
 def create_mock_metadata():
     meta = MockMetaData(
-        script_code_wrapper_function=udf_wrapper_empty,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
