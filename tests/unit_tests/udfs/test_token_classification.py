@@ -10,6 +10,14 @@ from transformers import Pipeline, AutoModel
 
 from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from tests.unit_tests.udf_wrapper_params.token_classification.error_prediction_containing_only_unknown_fields import \
+    ErrorPredictionOnlyContainsUnknownFields
+from tests.unit_tests.udf_wrapper_params.token_classification.error_prediction_missing_expected_field import \
+    ErrorPredictionMissingExpectedFields
+from tests.unit_tests.udf_wrapper_params.token_classification.prediction_returns_empty_result import \
+    PredictionReturnsEmptyResult
+from tests.unit_tests.udf_wrapper_params.token_classification.result_contains_additional_keys import \
+    ErrorPredictionContainsAdditionalFields
 from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
 from tests.utils.mock_cast import mock_cast
@@ -198,7 +206,11 @@ def assert_result_matches_expected_output(result, expected_output_data, input_co
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch,
-    ErrorOnPredictionSingleModelMultipleBatch
+    ErrorOnPredictionSingleModelMultipleBatch,
+    PredictionReturnsEmptyResult,
+    ErrorPredictionMissingExpectedFields,
+    ErrorPredictionOnlyContainsUnknownFields,
+    ErrorPredictionContainsAdditionalFields
 ])
 
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
@@ -258,7 +270,11 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     ErrorNotCachedSingleModelMultipleBatch,
     ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch,
-    ErrorOnPredictionSingleModelMultipleBatch
+    ErrorOnPredictionSingleModelMultipleBatch,
+    PredictionReturnsEmptyResult,
+    ErrorPredictionMissingExpectedFields,
+    ErrorPredictionOnlyContainsUnknownFields,
+    ErrorPredictionContainsAdditionalFields
 ])
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
