@@ -43,7 +43,7 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
                                   )]
     tokenizer_model_output_df_model2_batch2 =  [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
                                   score=None, start=None, end=None, word=None, entity_group=None,
-                                  )] # do we expect error on prediction to happen once per input or once per entity? per input makes more sense right?
+                                  )]
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2_batch1, tokenizer_model_output_df_model2_batch2]
 

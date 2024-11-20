@@ -119,7 +119,6 @@ def create_mock_metadata():
     )
     return meta
 
-# todo these functions should be reusable for the other unit tests. should we move them to a utils file or something?
 def create_db_mocks(bfs_connection, model_input_data, mock_meta):
     mock_ctx = StandaloneMockContext(inp=model_input_data, metadata=mock_meta)
     mock_exa = MockExaEnvironment(
@@ -155,7 +154,7 @@ def create_mock_pipeline_factory(tokenizer_models_output_df, number_of_intended_
     """
     mock_pipeline: List[Union[AutoModel, MagicMock]] = [
         create_autospec(Pipeline, side_effect=tokenizer_models_output_df[i]) if tokenizer_models_output_df[i][0][0][0]["word"]
-        else [Exception("Traceback mock_pipeline is throwing an error intentionally")] # todo we could probably put this exception into the tokenizer_models_output_df in the params files instead
+        else [Exception("Traceback mock_pipeline is throwing an error intentionally")]
     for i in range(0, number_of_intended_used_models)
     ]
 

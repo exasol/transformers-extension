@@ -17,7 +17,7 @@ class ErrorNotCachedSingleModelMultipleBatch:
     input_data = make_input_row(model_name="non_existing_model") * data_size
     output_data = make_output_row(model_name="non_existing_model",
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * 1 * data_size#error on load_model -> only one output per input
+                                  error_msg="Traceback") * 1 * data_size #error on load_model -> only one output per input
 
     work_with_span_input_data = make_input_row_with_span(model_name="non_existing_model") * data_size
     work_with_span_output_data =  [(bucketfs_conn, sub_dir, "non_existing_model",

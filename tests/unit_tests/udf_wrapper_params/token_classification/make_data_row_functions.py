@@ -62,7 +62,7 @@ def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, s
                              text_data_char_begin=text_start, text_data_char_end=text_end,
                              aggregation_strategy=agg_strategy_simple):
     """
-    creates an input row for token classification with span usage as a list,
+    Creates an input row for token classification with span usage as a list,
     using base params for all params that are not specified.
     """
     return [(device_id, bucketfs_conn, sub_dir, model_name,text_data,text_data_docid,
@@ -75,9 +75,9 @@ def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                               entity_covered_text=token, entity_type=entity_type, score=score,
                               error_msg = error_msg):
     """
-    creates an output row for token classification with span usage as a list,
+    Creates an output row for token classification with span usage as a list,
     using base params for all params that are not specified.
-    the found token is called "entity_covered_text" in our non span udf output.
+    The found token is called "entity_covered_text" in our non span udf output.
     """
     entity_char_begin = text_start + token_start
     entity_char_end = text_start + token_end
@@ -89,7 +89,7 @@ def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
 
 def make_number_of_strings(input_str: str, desired_number: int):
     """
-    returns desired number of "input_strX", where X is counting up to desired_number.
+    Returns desired number of "input_strX", where X is counting up to desired_number.
     """
     return (input_str + f"{i}" for i in range(desired_number))
 
