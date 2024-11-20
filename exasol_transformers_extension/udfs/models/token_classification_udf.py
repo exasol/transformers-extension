@@ -120,7 +120,8 @@ class TokenClassificationUDF(BaseModelUDF):
 
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
-        model_df = pd.concat([model_df, pred_df], axis=1)
+        model_df = pd.concat([model_df, pred_df], axis=1, join='inner') # join='inner' -> drop rows where results are empty
+
         if self.work_with_spans:
             model_df = self.create_new_span_columns(model_df)
             model_df[["entity_docid", "entity_char_begin", "entity_char_end"]] =\
@@ -141,12 +142,24 @@ class TokenClassificationUDF(BaseModelUDF):
         """
         results_df_list = []
         for result in predictions:
-            result_df = pd.DataFrame(result)
-            result_df = result_df[self._desired_fields_in_prediction].rename(
-                columns={
-                    "start": "start_pos",
-                    "end": "end_pos",
-                    "entity_group": "entity"})
+            if result:
+                result_df = pd.DataFrame(result)
+                # need to save before trying to rename, otherwise they get lost and cant be printed in error message
+                result_df_column_names = result_df.columns
+                try:
+                    result_df = result_df[self._desired_fields_in_prediction].rename(
+                        columns={
+                            "start": "start_pos",
+                            "end": "end_pos",
+                            "entity_group": "entity"})
+                except KeyError as e:
+                    # adding more detailed error message
+                    raise KeyError(f"Some expected column was not found in prediction results. "
+                                   f"Expected columns are: {self._desired_fields_in_prediction}. "
+                                   f"Prediction results contain columns: {result_df_column_names}") from e
+            else:
+                # if the result for an input is empty, just append an empty result df, and the input will be dropped during concatenation
+                result_df = pd.DataFrame(result)
             results_df_list.append(result_df)
 
         return results_df_list

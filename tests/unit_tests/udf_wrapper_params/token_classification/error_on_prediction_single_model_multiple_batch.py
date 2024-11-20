@@ -28,12 +28,10 @@ class ErrorOnPredictionSingleModelMultipleBatch:
 
     number_complete_batches = data_size // batch_size
     number_remaining_data_entries_in_last_batch = data_size % batch_size
-    tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
-                                  score=None, start=None, end=None, word=None, entity_group=None) * batch_size] * \
+    tokenizer_model_output_df_model1 = [[Exception("Traceback mock_pipeline is throwing an error intentionally")] #error on pred -> only one output per input
+                                   * batch_size] * \
                                 number_complete_batches + \
-                                [make_model_output_for_one_input_row(number_entities=1,
-                                  score=None, start=None, end=None, word=None, entity_group=None,
-                                  ) * number_remaining_data_entries_in_last_batch]
+                                [[Exception("Traceback mock_pipeline is throwing an error intentionally")] * number_remaining_data_entries_in_last_batch]
     tokenizer_models_output_df = [tokenizer_model_output_df_model1]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

@@ -38,12 +38,9 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     work_with_span_output_data = work_with_span_output_data1 + work_with_span_output_data2
 
     tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(number_entities=n_entities) * data_size]
-    tokenizer_model_output_df_model2_batch1 =  [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
-                                  score=None, start=None, end=None, word=None, entity_group=None,
-                                  )]
-    tokenizer_model_output_df_model2_batch2 =  [make_model_output_for_one_input_row(number_entities=1, #error on pred -> only one output per input
-                                  score=None, start=None, end=None, word=None, entity_group=None,
-                                  )]
+    tokenizer_model_output_df_model2_batch1 =  [[Exception("Traceback mock_pipeline is throwing an error intentionally")]] #error on pred -> only one output per input
+
+    tokenizer_model_output_df_model2_batch2 =  [[Exception("Traceback mock_pipeline is throwing an error intentionally")]]#error on pred -> only one output per input
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2_batch1, tokenizer_model_output_df_model2_batch2]
 

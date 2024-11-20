@@ -16,21 +16,29 @@ class ErrorPredictionMissingExpectedFields:
 
     text_data = "error_result_missing_field_'word'" #todo do we want tests for different combinations? seems like a lot of work
     # todo do we want tests for multiple models? multiple inputs where one works and one does not? how many test cases are to many test cases?
-    # todo these should be moved to the base model tests together with the others
+
+    #todo currently we fail and dont return the partial results, only the error message. is this what we want?
 
     input_data = make_input_row(text_data=text_data) * data_size
-    output_data = make_output_row(text_data=text_data, score=None, error_msg="Traceback") * n_entities * data_size
+    output_data = make_output_row(text_data=text_data, score=None,
+                                  start=None, end=None, word=None, entity=None,
+                                  error_msg="Traceback") * data_size # only one output per input
 
     work_with_span_input_data = make_input_row_with_span(text_data=text_data) * data_size
-    work_with_span_output_data =  make_output_row_with_span(score=None,
-                                                            error_msg="Traceback") * n_entities * data_size
+    work_with_span_output_data = [(bucketfs_conn, sub_dir, model_name,
+                                text_docid, text_start, text_end, agg_strategy_simple,
+                                None, None, None, text_docid, None, None,
+                                "Traceback")] * data_size # only one output per input
 
 
     number_complete_batches = data_size // batch_size
     number_remaining_data_entries_in_last_batch = data_size % batch_size
 
-    model_output_row_missing_key = [[model_output_row[0].pop("score")]
-                                    for model_output_row in make_model_output_for_one_input_row(number_entities=n_entities)]
+    model_output_rows = make_model_output_for_one_input_row(number_entities=n_entities)
+    model_output_row_missing_key = []
+    for model_output_row in model_output_rows:
+        removed = model_output_row[0].pop("score")
+        model_output_row_missing_key.append(model_output_row)
 
     tokenizer_model_output_df_model1 = [model_output_row_missing_key * batch_size] * \
                                 number_complete_batches + \

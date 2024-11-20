@@ -19,13 +19,13 @@ class ErrorPredictionOnlyContainsUnknownFields:
     input_data = make_input_row(text_data=text_data) * data_size
     output_data = make_output_row(text_data=text_data,
                                   score=None, start=None, end=None, word=None, entity=None,
-                                  error_msg="Traceback") * n_entities * data_size
+                                  error_msg="Traceback") * data_size # only one output per input
 
     work_with_span_input_data = make_input_row_with_span(text_data=text_data) * data_size
     work_with_span_output_data =  [(bucketfs_conn, sub_dir, model_name,
                                 text_docid, text_start, text_end, agg_strategy_simple,
                                 None, None, None, None, None, None,
-                                "Traceback")] * n_entities * data_size
+                                "Traceback")] * data_size # only one output per input
 
 
     number_complete_batches = data_size // batch_size
