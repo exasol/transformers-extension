@@ -1,4 +1,4 @@
-# base params, used for input/output rows if no other params are given
+# default values, used for input/output rows if no other params are given
 device_id=None
 bucketfs_conn="bfs_conn"
 sub_dir="sub_dir"
@@ -21,8 +21,8 @@ error_msg = None
 def make_input_row(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                    model_name=model_name, text_data=text_data, aggregation_strategy=agg_strategy_simple):
     """
-    creates an input row for token classification without span usage as a list,
-    using base params for all params that are not specified.
+    Creates an input row for token classification without span usage as a list,
+    using default values for all parameters that are not specified.
     """
     return [(device_id, bucketfs_conn, sub_dir, model_name,text_data, aggregation_strategy)]
 
@@ -31,9 +31,9 @@ def make_output_row(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                     start=token_start, end=token_end, word=token,
                     entity=entity_type, score=score, error_msg=error_msg):
     """
-    creates an output row for token classification without span usage as a list,
-    using base params for all params that are not specified.
-    the found token is called "word" in our non span udf output,
+    Creates an output row for token classification without span usage as a list,
+    using default values for all parameters that are not specified.
+    The found token is called "word" in our non span udf output,
     while the type/class of the found token is called "entity".
     """
     return [(bucketfs_conn, sub_dir, model_name,text_data, aggregation_strategy,
@@ -42,10 +42,10 @@ def make_output_row(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
 def make_model_output_for_one_input_row(number_entities:int, aggregation_strategy=agg_strategy_simple,
                                         entity_group=entity_type, score=score, word=token, start=token_start, end=token_end):
     """
-    makes the output the model returns to the udf for one input row.
-    the found token is called "word" in the model output,
+    Makes the output the model returns to the udf for one input row.
+    The found token is called "word" in the model output,
     while the type/class of the found token is called "entity_group".
-    unless aggregation_strategy == "none", then the type/class of the found
+    Unless aggregation_strategy == "none", then the type/class of the found
     token is called "entity" in the model output.
     returns a list of number_entities times the model output row.
     each model output row is a dictionary.
