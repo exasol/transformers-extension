@@ -52,7 +52,7 @@ class RankMonotonicMatcher:
         return (
             score_rank_df[row * self._results_per_row: self._results_per_row + row * self._results_per_row]
             .sort_values(by='score', ascending=False)['rank']
-            .is_monotonic
+            .is_monotonic_increasing
         )
 
     def __eq__(self, other) -> bool:
