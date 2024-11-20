@@ -14,7 +14,6 @@ class MultipleModelMultipleBatchIncomplete:
     data_size = 2
     n_entities = 3
 
-    bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2) # todo why two in this test case? multiple model could still be same bfs con right?
     sub_dir1, sub_dir2 = make_number_of_strings(sub_dir, 2)
     model_name1, model_name2 = make_number_of_strings(model_name, 2)
     text_data1, text_data2 = make_number_of_strings(text_data, 2)
@@ -22,26 +21,26 @@ class MultipleModelMultipleBatchIncomplete:
     entity_type1, entity_type2 = make_number_of_strings(entity_type, 2)
 
 
-    input_data = make_input_row(bucketfs_conn=bfs_conn1, sub_dir=sub_dir1,
+    input_data = make_input_row(sub_dir=sub_dir1,
                             model_name=model_name1, text_data=text_data1) * data_size + \
-                 make_input_row(bucketfs_conn=bfs_conn2, sub_dir=sub_dir2,
+                 make_input_row(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir2,
                             model_name=model_name2, text_data=text_data2) * data_size
-    output_data = make_output_row(bucketfs_conn=bfs_conn1, sub_dir=sub_dir1,
+    output_data = make_output_row(sub_dir=sub_dir1,
                               model_name=model_name1, text_data=text_data1,
                               word=token1, entity=entity_type1, score=score) * n_entities * data_size + \
-                  make_output_row(bucketfs_conn=bfs_conn2, sub_dir=sub_dir2,
+                  make_output_row(sub_dir=sub_dir2,
                               model_name=model_name2, text_data=text_data2,
                               word=token2, entity=entity_type2, score=score + 0.1) * n_entities * data_size
 
 
-    work_with_span_input_data = make_input_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=sub_dir1,
+    work_with_span_input_data = make_input_row_with_span(sub_dir=sub_dir1,
                                                          model_name=model_name1, text_data=text_data1) * data_size + \
-                                make_input_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=sub_dir2,
+                                make_input_row_with_span(sub_dir=sub_dir2,
                                                          model_name=model_name2, text_data=text_data2) * data_size
-    work_with_span_output_data = make_output_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=sub_dir1,
+    work_with_span_output_data = make_output_row_with_span(sub_dir=sub_dir1,
                                                            model_name=model_name1, entity_covered_text=token1,
                                                            entity_type=entity_type1, score=score) * n_entities * data_size + \
-                                 make_output_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=sub_dir2,
+                                 make_output_row_with_span(sub_dir=sub_dir2,
                                                            model_name=model_name2, entity_covered_text=token2,
                                                            entity_type=entity_type2, score=score+0.1) * n_entities * data_size
 
@@ -57,10 +56,8 @@ class MultipleModelMultipleBatchIncomplete:
 
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)
-    base_cache_dir2 = PurePosixPath(tmpdir_name, bfs_conn2)
+    base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
-        bfs_conn1: Connection(address=f"file://{base_cache_dir1}"),
-        bfs_conn2: Connection(address=f"file://{base_cache_dir2}")
+        bucketfs_conn: Connection(address=f"file://{base_cache_dir1}")
     }
 
