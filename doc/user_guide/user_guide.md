@@ -498,6 +498,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 The inference results are presented with _START_POS_ indicating the index of the starting character of the token, 
 _END_POS_ indicating the index of the ending character of the token, _WORD_ indicating the token, predicted _ENTITY_, and 
 confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
+In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 In case of any error during model loading or prediction, these new 
 columns are set to `null`, and column _ERROR_MESSAGE_ is set 
 to the stacktrace of the error. For example:

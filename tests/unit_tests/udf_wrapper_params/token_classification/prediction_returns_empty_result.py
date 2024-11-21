@@ -15,12 +15,11 @@ class PredictionReturnsEmptyResult:
     n_entities = 3
 
     text_data = "error_result_empty"
-    # TODO mention in docu if result is empty row not in output
     input_data = make_input_row() * data_size  + \
                  make_input_row(text_data=text_data) * data_size  + \
                  make_input_row() * data_size
     output_data = make_output_row() * n_entities * data_size + \
-                  make_output_row() * n_entities * data_size# Result of input #2 is empty, so the row does not appear in the output
+                  make_output_row() * n_entities * data_size # Result of input #2 is empty, so the row does not appear in the output
 
     work_with_span_input_data = make_input_row_with_span() * data_size  + \
                                 make_input_row_with_span(text_data=text_data) * data_size  + \
