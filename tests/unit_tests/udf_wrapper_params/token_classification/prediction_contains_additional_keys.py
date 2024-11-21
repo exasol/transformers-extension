@@ -4,11 +4,9 @@ from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_func
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
     text_docid, text_start, text_end, agg_strategy_simple, make_model_output_for_one_input_row, sub_dir, model_name
 
-# todo do we wan to throw in this case? or just ignore additional results? currently we just ignore
-
 class PredictionContainsAdditionalFields:
     """
-
+    Output from model contains additional unrecognized columns. These are ignored and expected columns returned as normal.
     """
     expected_model_counter = 1
     batch_size = 2

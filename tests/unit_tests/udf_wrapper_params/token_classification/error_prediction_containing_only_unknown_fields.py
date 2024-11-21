@@ -7,7 +7,7 @@ from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_func
 
 class ErrorPredictionOnlyContainsUnknownFields:
     """
-
+    Model returns only not expected output columns. Udf returns error message and empty results.
     """
     expected_model_counter = 1
     batch_size = 2

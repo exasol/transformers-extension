@@ -7,17 +7,15 @@ from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_func
 
 class ErrorPredictionMissingExpectedFields:
     """
-
+    Model Outputs is missing column "score", error message about missing column is returned, with empty output columns.
+    Existing output columns are dropped for all rows where one output column is missing.
     """
     expected_model_counter = 1
     batch_size = 2
     data_size = 5
     n_entities = 3
 
-    text_data = "error_result_missing_field_'word'" #todo do we want tests for different combinations? seems like a lot of work
-    # todo do we want tests for multiple models? multiple inputs where one works and one does not? how many test cases are to many test cases?
-
-    #todo currently we fail and dont return the partial results, only the error message. is this what we want?
+    text_data = "error_result_missing_field_'word'"
 
     input_data = make_input_row(text_data=text_data) * data_size
     output_data = make_output_row(text_data=text_data, score=None,

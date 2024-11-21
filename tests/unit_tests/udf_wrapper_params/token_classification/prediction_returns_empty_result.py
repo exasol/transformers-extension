@@ -7,7 +7,7 @@ from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_func
 
 class PredictionReturnsEmptyResult:
     """
-
+    Output from model is empty. Respective input row should be dropped and remaining output returned normally.
     """
     expected_model_counter = 1
     batch_size = 6
