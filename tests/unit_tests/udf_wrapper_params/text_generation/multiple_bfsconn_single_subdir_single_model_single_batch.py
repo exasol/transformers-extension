@@ -54,9 +54,9 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch:
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}")
     }
     mock_factory = MockTextGenerationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-generation"):
             MockTextGenerationModel(text_data="text 1"),
-        PurePosixPath(base_cache_dir2, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir2, "sub_dir1", "model1_text-generation"):
             MockTextGenerationModel(text_data="text 2"),
     })
 

@@ -24,7 +24,6 @@ class TokenClassificationUDF(BaseModelUDF):
                          tokenizer, task_type='token-classification',
                          work_with_spans=work_with_spans)
         self._default_aggregation_strategy = 'simple'
-        #self.work_with_spans = work_with_spans
         self._desired_fields_in_prediction = [
             "start", "end", "word", "entity", "score"]
         self.new_columns = [
@@ -92,8 +91,7 @@ class TokenClassificationUDF(BaseModelUDF):
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(columns=["text_data", "text_data_docid", "text_data_char_begin",
-                                          "text_data_char_end", "start_pos", "end_pos"])
+        model_df = model_df.drop(columns=["text_data", "start_pos", "end_pos"])
         return model_df
 
     def make_entity_span(self, df_row):

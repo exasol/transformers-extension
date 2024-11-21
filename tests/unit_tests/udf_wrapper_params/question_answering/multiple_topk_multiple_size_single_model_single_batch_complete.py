@@ -68,13 +68,13 @@ class MultipleTopkMultipleSizeSingleModelNameSingleBatch:
     }
 
     mock_factory = MockQuestionAnsweringFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_question-answering"):
             MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model2"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model2_question-answering"):
             MockQuestionAnsweringModel(answer="answer 2", score=0.2, rank=1),
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model3"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model3_question-answering"):
             MockQuestionAnsweringModel(answer="answer 3", score=0.3, rank=1),
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model4"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model4_question-answering"):
             MockQuestionAnsweringModel(answer="answer 4", score=0.4, rank=1),
     })
 

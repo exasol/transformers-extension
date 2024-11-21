@@ -163,6 +163,9 @@ def test_token_classification_udf_with_span(
         'bucketfs_conn',
         'sub_dir',
         'model_name',
+        "text_data_docid",
+        "text_data_char_begin",
+        "text_data_char_end",
         'aggregation_strategy'
     ]
 

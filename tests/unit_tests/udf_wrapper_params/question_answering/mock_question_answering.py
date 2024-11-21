@@ -9,7 +9,7 @@ class MockQuestionAnsweringModel:
         self.result = {"answer": answer, "score": score, "rank": rank}
 
     @classmethod
-    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
+    def from_pretrained(cls, model_path):
         return cls
 
 
@@ -18,9 +18,8 @@ class MockQuestionAnsweringFactory:
                                          MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
-        # the cache_dir path already has model_name
-        return self.mock_models[cache_dir]
+    def from_pretrained(self, model_path):
+        return self.mock_models[PurePosixPath(model_path)]
 
 
 class MockPipeline:
@@ -28,12 +27,12 @@ class MockPipeline:
     counter = 0
 
     def __init__(self,
-                 task_type: str,
+                 task: str,
                  model: MockQuestionAnsweringModel,
                  tokenizer: MockSequenceTokenizer,
                  device: str,
                  framework: str):
-        self.task_type = task_type
+        self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device

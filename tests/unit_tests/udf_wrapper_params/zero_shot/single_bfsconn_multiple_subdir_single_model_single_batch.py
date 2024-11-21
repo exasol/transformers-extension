@@ -49,9 +49,9 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch:
     }
 
     mock_factory = MockZeroShotFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_zero-shot-classification"):
             MockZeroShotModel([{"labels": "label1", "scores": 0.1}]),
-        PurePosixPath(base_cache_dir1, "sub_dir2", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir2", "model1_zero-shot-classification"):
             MockZeroShotModel([{"labels": "label2", "scores": 0.2}]),
     })
 

@@ -77,13 +77,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn4": Connection(address=f"file://{cache_dir4}")}
 
     mock_factory = MockSequenceClassificationFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
-        PurePosixPath(cache_dir3, "sub_dir3", "model3"):
+        PurePosixPath(cache_dir3, "sub_dir3", "model3_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
-        PurePosixPath(cache_dir4, "sub_dir4", "model4"):
+        PurePosixPath(cache_dir4, "sub_dir4", "model4_text-classification"):
             MockSequenceClassificationModel(label_scores=label_scores),
     })
 

@@ -65,13 +65,13 @@ class MultipleModelMultipleBatchMultipleModelsPerBatch:
         "bfs_conn4": Connection(address=f"file://{cache_dir4}")}
 
     mock_factory = MockQuestionAnsweringFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1"):
+        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_question-answering"):
             MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1),
-        PurePosixPath(base_cache_dir2, "sub_dir2", "model2"):
+        PurePosixPath(base_cache_dir2, "sub_dir2", "model2_question-answering"):
             MockQuestionAnsweringModel(answer="answer 2", score=0.2, rank=1),
-        PurePosixPath(cache_dir3, "sub_dir3", "model3"):
+        PurePosixPath(cache_dir3, "sub_dir3", "model3_question-answering"):
             MockQuestionAnsweringModel(answer="answer 3", score=0.3, rank=1),
-        PurePosixPath(cache_dir4, "sub_dir4", "model4"):
+        PurePosixPath(cache_dir4, "sub_dir4", "model4_question-answering"):
             MockQuestionAnsweringModel(answer="answer 4", score=0.4, rank=1),
     })
 

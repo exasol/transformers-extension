@@ -8,7 +8,7 @@ class MockZeroShotModel:
         self.result = result
 
     @classmethod
-    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
+    def from_pretrained(cls, model_path):
         return cls
 
     def to(self, device):
@@ -20,21 +20,21 @@ class MockZeroShotFactory:
     def __init__(self, mock_models: Dict[PurePosixPath, MockZeroShotModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_name, cache_dir):
+    def from_pretrained(self, model_path):
         # the cache_dir path already has model_name
-        return self.mock_models[cache_dir]
+        return self.mock_models[PurePosixPath(model_path)]
 
 
 class MockPipeline:
     counter = 0
 
     def __init__(self,
-                 task_type: str,
+                 task: str,
                  model: MockZeroShotModel,
                  tokenizer: MockSequenceTokenizer,
                  device : str,
                  framework: str):
-        self.task_type = task_type
+        self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
