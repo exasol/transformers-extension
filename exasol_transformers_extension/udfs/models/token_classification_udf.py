@@ -52,8 +52,7 @@ class TokenClassificationUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[Union[
-                Dict[str, Any], List[Dict[str, Any]]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> List[List[Dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores, entities and associated words
@@ -66,6 +65,7 @@ class TokenClassificationUDF(BaseModelUDF):
         aggregation_strategy = model_df['aggregation_strategy'].iloc[0]
         results = self.last_created_pipeline(
             text_data, aggregation_strategy=aggregation_strategy)
+
         results = results if type(results[0]) == list else [results]
 
         if aggregation_strategy == "none":
@@ -130,8 +130,7 @@ class TokenClassificationUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, predictions:  List[Union[
-                Dict[str, Any], List[Dict[str, Any]]]]) -> List[pd.DataFrame]:
+            self, predictions:  List[List[Dict[str, Any]]]) -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe. Only score and answer fields are
         presented.
@@ -142,7 +141,7 @@ class TokenClassificationUDF(BaseModelUDF):
         """
         results_df_list = []
         for result in predictions:
-            if result:
+            if result and result[0]:
                 result_df = pd.DataFrame(result)
                 # need to save before trying to rename, otherwise they get lost and cant be printed in error message
                 result_df_column_names = result_df.columns
@@ -159,7 +158,7 @@ class TokenClassificationUDF(BaseModelUDF):
                                    f"Prediction results contain columns: {result_df_column_names}") from e
             else:
                 # if the result for an input is empty, just append an empty result df, and the input will be dropped during concatenation
-                result_df = pd.DataFrame(result)
+                result_df = pd.DataFrame({})
             results_df_list.append(result_df)
 
         return results_df_list
