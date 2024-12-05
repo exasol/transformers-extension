@@ -13,6 +13,7 @@ n/a
 ### Bugs
 
 - #272: Fixed unit tests assertions not working correctly
+- #275: Fixed a bug where models returning unexpected results was not handled correctly
 
 ### Documentation
 
