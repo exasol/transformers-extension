@@ -157,7 +157,11 @@ class TokenClassificationUDF(BaseModelUDF):
                                    f"Expected columns are: {self._desired_fields_in_prediction}. "
                                    f"Prediction results contain columns: {result_df_column_names}") from e
             else:
-                # if the result for an input is empty, just append an empty result df, and the input will be dropped during concatenation
+                # if the result for an input is empty, just append an empty result df,
+                # and the input will be dropped during concatenation
+                # we need to keep an empty dataframe, to make sure we have the same
+                # amount of resul_df's in our list as we have input rows.
+                # this way merging the df's later works smoothly.
                 result_df = pd.DataFrame({})
             results_df_list.append(result_df)
 
