@@ -14,7 +14,7 @@ class DummyImplementationUDF(BaseModelUDF):
                  base_model=transformers.AutoModel,
                  tokenizer=transformers.AutoTokenizer):
         super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, 'dummy_task')
+                         tokenizer, task_type='dummy_task')
         self._desired_fields_in_prediction = ["answer", "score"]
         self.new_columns = ["answer", "score", "error_message"]
 
@@ -24,8 +24,9 @@ class DummyImplementationUDF(BaseModelUDF):
 
     def execute_prediction(self, model_df: pd.DataFrame) -> \
             List[Union[Dict[str, Any], List[Dict[str, Any]]]]:
-        dummy_result = [{"answer": True, "score": "1"}]
-        return dummy_result
+        dummy_result = [{"answer": True, "score": "1"}]#todo this should return model.frompretrained
+        results = self.last_created_pipeline()
+        return results
 
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \

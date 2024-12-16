@@ -7,6 +7,12 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from tests.unit_tests.udf_wrapper_params.base_udf.error_not_cached_multiple_model_multiple_batch import \
+    ErrorNotCachedMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.base_udf.error_not_cached_single_model_multiple_batch import \
+    ErrorNotCachedSingleModelMultipleBatch
+from tests.unit_tests.udfs.test_token_classification import assert_result_matches_expected_output, \
+    assert_correct_number_of_results
 from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context, \
     create_mock_exa_environment_with_token_con, create_base_mock_model_factories, \
     create_mock_model_factories_with_models, create_mock_pipeline_factory
@@ -29,6 +35,7 @@ class regex_matcher:
 
 def create_mock_metadata() -> MockMetaData:
     meta = MockMetaData(
+        script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
@@ -77,10 +84,9 @@ def setup_base_udf_tests_and_run(bfs_connections, input_data, number_of_intended
     mock_base_model_factory, mock_tokenizer_factory = create_mock_model_factories_with_models(number_of_intended_used_models)
     mock_meta = create_mock_metadata()
     mock_exa = create_mock_exa_environment(mock_meta, bfs_connections)
-
-    mock_pipeline = create_mock_pipeline_factory(tokenizer_models_output_df, number_of_intended_used_models)
+    mock_pipeline_factory = create_mock_pipeline_factory(tokenizer_models_output_df, number_of_intended_used_models)
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
-    res = run_test(mock_exa, mock_base_model_factory, mock_tokenizer_factory, mock_pipeline, mock_ctx)
+    res = run_test(mock_exa, mock_base_model_factory, mock_tokenizer_factory, mock_pipeline_factory, mock_ctx)
     return res, mock_meta
 
 def setup_model_loader_tests_and_run(bucketfs_conn_name, bucketfs_conn, input_data):#todo do we need?
@@ -98,7 +104,10 @@ def setup_model_loader_tests_and_run(bucketfs_conn_name, bucketfs_conn, input_da
     res = run_test(mock_exa, mock_base_model_factory, mock_tokenizer_factory, mock_pipeline, mock_ctx)
     return res, mock_meta
 
-
+@pytest.mark.parametrize("params", [
+    ErrorNotCachedSingleModelMultipleBatch,
+    ErrorNotCachedMultipleModelMultipleBatch
+])
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')
 def test_base_model_udf(mock_local_path, mock_create_loc, params):
@@ -110,15 +119,22 @@ def test_base_model_udf(mock_local_path, mock_create_loc, params):
     bfs_connections = params.bfs_connections
     expected_model_counter = params.expected_model_counter
     tokenizer_models_output_df = params.tokenizer_models_output_df
+    tokenizer_model_output_df_model1 = params.tokenizer_model_output_df_model1
+    print(tokenizer_model_output_df_model1)
+    print("___________________________")
     #batch_size = params.batch_size
     expected_output_data = params.output_data
 
     res, mock_meta = setup_base_udf_tests_and_run(bfs_connections, input_data,
                                                   expected_model_counter,
                                                   tokenizer_models_output_df)
-    # check if no errors
-    # todo better asserts
-    assert res[0][-1] is None and len(res[0]) == len(mock_meta.output_columns)
+    print(res)
+
+    #todo moce these out of token class tests
+    assert_correct_number_of_results(res, mock_meta.output_columns, expected_output_data)
+    assert_result_matches_expected_output(res, expected_output_data,  mock_meta.input_columns)
+    #assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
+
 
 @pytest.mark.parametrize(["description", "bucketfs_conn_name", "bucketfs_conn",
                          "sub_dir", "model_name"], [
