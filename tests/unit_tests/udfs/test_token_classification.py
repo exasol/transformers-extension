@@ -5,6 +5,20 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
+from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
+from tests.unit_tests.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
+    create_mock_pipeline_factory, create_mock_model_factories_with_models
+from tests.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
+
+# test params:
+from tests.unit_tests.udf_wrapper_params.token_classification.error_on_prediction_multiple_model_multiple_batch import \
+    ErrorOnPredictionMultipleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.error_on_prediction_single_model_multiple_batch import \
+    ErrorOnPredictionSingleModelMultipleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_multiple_batch import \
+    MultipleStrategySingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import \
+    MultipleStrategySingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.token_classification.error_prediction_containing_only_unknown_fields import \
     ErrorPredictionOnlyContainsUnknownFields
 from tests.unit_tests.udf_wrapper_params.token_classification.error_prediction_missing_expected_field import \
@@ -13,50 +27,6 @@ from tests.unit_tests.udf_wrapper_params.token_classification.prediction_returns
     PredictionReturnsEmptyResult
 from tests.unit_tests.udf_wrapper_params.token_classification.prediction_contains_additional_keys import \
     PredictionContainsAdditionalFields
-from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
-from tests.unit_tests.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
-    create_mock_pipeline_factory, create_mock_model_factories_with_models
-from tests.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
-
-# test params:
-from tests.unit_tests.udf_wrapper_params.base_udf.error_not_cached_multiple_model_multiple_batch import \
-    ErrorNotCachedMultipleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.error_not_cached_single_model_multiple_batch import \
-    ErrorNotCachedSingleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.token_classification.error_on_prediction_multiple_model_multiple_batch import \
-    ErrorOnPredictionMultipleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.token_classification.error_on_prediction_single_model_multiple_batch import \
-    ErrorOnPredictionSingleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_bfsconn_single_subdir_single_model_single_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_model_multiple_batch_complete import \
-    MultipleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_model_multiple_batch_incomplete import \
-    MultipleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_model_multiple_batch_multiple_models_per_batch import \
-    MultipleModelMultipleBatchMultipleModelsPerBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_model_single_batch_complete import \
-    MultipleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.base_udf.multiple_model_single_batch_incomplete import \
-    MultipleModelSingleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_multiple_batch import \
-    MultipleStrategySingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import \
-    MultipleStrategySingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.single_bfsconn_multiple_subdir_single_model_single_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.base_udf.single_model_multiple_batch_complete import \
-    SingleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.base_udf.single_model_multiple_batch_incomplete import \
-    SingleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.base_udf.single_model_single_batch_complete import \
-    SingleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.base_udf.single_model_single_batch_incomplete import \
-    SingleModelSingleBatchIncomplete
 
 
 
@@ -143,23 +113,8 @@ def assert_result_matches_expected_output(result, expected_output_data, input_co
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchIncomplete,
-    SingleModelSingleBatchComplete,
-    SingleModelMultipleBatchIncomplete,
-    SingleModelMultipleBatchComplete,
-    MultipleModelSingleBatchIncomplete,
-    MultipleModelSingleBatchComplete,
-    MultipleModelMultipleBatchIncomplete,
-    MultipleModelMultipleBatchComplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     MultipleStrategySingleModelNameSingleBatch,
     MultipleStrategySingleModelNameMultipleBatch,
-    ErrorNotCachedSingleModelMultipleBatch,
-    ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch,
     PredictionReturnsEmptyResult,
@@ -208,23 +163,8 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchIncomplete,
-    SingleModelSingleBatchComplete,
-    SingleModelMultipleBatchIncomplete,
-    SingleModelMultipleBatchComplete,
-    MultipleModelSingleBatchIncomplete,
-    MultipleModelSingleBatchComplete,
-    MultipleModelMultipleBatchIncomplete,
-    MultipleModelMultipleBatchComplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     MultipleStrategySingleModelNameSingleBatch,
     MultipleStrategySingleModelNameMultipleBatch,
-    ErrorNotCachedSingleModelMultipleBatch,
-    ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch,
     PredictionReturnsEmptyResult,

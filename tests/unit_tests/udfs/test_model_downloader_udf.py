@@ -20,8 +20,8 @@ from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
 def create_mock_metadata() -> MockMetaData:
-
     meta = MockMetaData(
+    script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
