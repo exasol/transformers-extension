@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock, create_autospec
 
 from transformers import Pipeline, AutoModel
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
+from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils.mock_cast import mock_cast
 
 from exasol_udf_mock_python.mock_context import StandaloneMockContext
@@ -84,3 +85,19 @@ def create_mock_pipeline_factory(tokenizer_models_output_df, number_of_intended_
     mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(Pipeline,
                                                                         side_effect=mock_pipeline)
     return mock_pipeline_factory
+
+def assert_correct_number_of_results(result, output_columns, output_data):
+    assert len(result[0]) == len(output_columns), (f"Number of columns in result is {len(result[0])},"
+                                                             f"not as expected {len(output_columns)}")
+    assert len(result) == len(output_data), (f"Number of lines in result is {len(result)}, "
+                                             f"not as expected {len(output_data)}")
+
+def assert_result_matches_expected_output(result, expected_output_data, input_columns):
+    expected_output = Output(expected_output_data)
+    actual_output = Output(result)
+    n_input_columns = len(input_columns) - 1
+    assert OutputMatcher(actual_output, n_input_columns) == expected_output, ("OutputMatcher found expected_output_data and reult not matching:"
+                                                                              f"expected_output_data: \n"
+                                                                              f"{expected_output_data}\n"
+                                                                              f"actual_output_data: \n"
+                                                                              f"{actual_output}")

@@ -7,12 +7,11 @@ from tests.unit_tests.udf_wrapper_params.base_udf.make_data_row_functions import
 
 class ErrorNotCachedSingleModelMultipleBatch:
     """
-    not cached error, single model, multiple batch#todo
+    not cached error, single model, multiple batch
     """
     expected_model_counter = 0
     batch_size = 2
     data_size = 5
-    n_entities = 1
 
     input_data = make_input_row(model_name="non_existing_model") * data_size
     output_data = make_output_row(model_name="non_existing_model",

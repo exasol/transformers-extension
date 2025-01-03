@@ -5,9 +5,11 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
-from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
-from tests.unit_tests.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
-    create_mock_pipeline_factory, create_mock_model_factories_with_models
+from tests.unit_tests.udf_wrapper_params.token_classification.multiple_model_multiple_batch_complete_multiple_entities import \
+    MultipleModelMultipleBatchCompleteMultipleEntities
+from tests.unit_tests.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
+    create_mock_pipeline_factory, create_mock_model_factories_with_models, assert_correct_number_of_results, \
+    assert_result_matches_expected_output
 from tests.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
 
 # test params:
@@ -95,23 +97,6 @@ def create_mock_metadata():
     return meta
 
 
-def assert_correct_number_of_results(result, output_columns, output_data):
-    assert len(result[0]) == len(output_columns), (f"Number of columns in result is {len(result[0])},"
-                                                             f"not as expected {len(output_columns)}")
-    assert len(result) == len(output_data), (f"Number of lines in result is {len(result)}, "
-                                             f"not as expected {len(output_data)}")
-
-def assert_result_matches_expected_output(result, expected_output_data, input_columns):
-    expected_output = Output(expected_output_data)
-    actual_output = Output(result)
-    n_input_columns = len(input_columns) - 1
-    assert OutputMatcher(actual_output, n_input_columns) == expected_output, ("OutputMatcher found expected_output_data and reult not matching:"
-                                                                              f"expected_output_data: \n"
-                                                                              f"{expected_output_data}\n"
-                                                                              f"actual_output_data: \n"
-                                                                              f"{actual_output}")
-
-
 @pytest.mark.parametrize("params", [
     MultipleStrategySingleModelNameSingleBatch,
     MultipleStrategySingleModelNameMultipleBatch,
@@ -120,7 +105,8 @@ def assert_result_matches_expected_output(result, expected_output_data, input_co
     PredictionReturnsEmptyResult,
     ErrorPredictionMissingExpectedFields,
     ErrorPredictionOnlyContainsUnknownFields,
-    PredictionContainsAdditionalFields
+    PredictionContainsAdditionalFields,
+    MultipleModelMultipleBatchCompleteMultipleEntities
 ])
 
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
@@ -170,7 +156,8 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
     PredictionReturnsEmptyResult,
     ErrorPredictionMissingExpectedFields,
     ErrorPredictionOnlyContainsUnknownFields,
-    PredictionContainsAdditionalFields
+    PredictionContainsAdditionalFields,
+    MultipleModelMultipleBatchCompleteMultipleEntities
 ])
 @patch('exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object')
 @patch('exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path')

@@ -5,7 +5,6 @@ from typing import List, Iterator, Any, Dict, Union
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
-
 class DummyImplementationUDF(BaseModelUDF):
     def __init__(self,
                  exa,
@@ -34,18 +33,11 @@ class DummyImplementationUDF(BaseModelUDF):
     def append_predictions_to_input_dataframe(
             self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
             -> pd.DataFrame:
-        print("'''''''''''''''''''''''")
-        print(pred_df_list)
-        model_df = model_df.reset_index(drop=True)
-        print("'''''''''''''''''''''''")
-        print(model_df)
-        print("'''''''''''''''''''''''")
 
+        model_df = model_df.reset_index(drop=True)
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-        print("'''''''''''''''''''''''")
-        print(model_df)
-        print("'''''''''''''''''''''''")
+
         if self.work_with_spans:
             model_df = self.create_new_span_columns(model_df)
             model_df = self.drop_old_data_for_span_execution(model_df)
@@ -56,18 +48,14 @@ class DummyImplementationUDF(BaseModelUDF):
                 Dict[str, Any], List[Dict[str, Any]]]]) -> List[pd.DataFrame]:
         results_df_list = []
         for result in predictions:
-            print(result)
-            result_df = pd.DataFrame(result)#, index=[0])
+            result_df = pd.DataFrame(result)
             results_df_list.append(result_df)
-            print("____")
-        print(results_df_list)
         return results_df_list
 
     def create_new_span_columns(self, model_df: pd.DataFrame) \
-            -> pd.DataFrame: #todo add back span test cases for all tests
+            -> pd.DataFrame:
         model_df[["test_span_column_add"]] = 'add_this',
-        return model_df#todo or do we not do these, and keep all test cases but
-        #todo only for with spans for the relevant udfs?
+        return model_df
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame)\
             -> pd.DataFrame:

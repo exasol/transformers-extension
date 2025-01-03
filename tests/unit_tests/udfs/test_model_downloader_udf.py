@@ -9,7 +9,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
     BucketFSModelSpecificationFactory
-from tests.unit_tests.utils_for_udf_tests import create_mock_udf_context, \
+from tests.unit_tests.utils.utils_for_udf_tests import create_mock_udf_context, \
     create_mock_exa_environment_with_token_con
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF

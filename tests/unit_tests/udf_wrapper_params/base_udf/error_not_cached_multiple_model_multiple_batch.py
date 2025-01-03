@@ -7,12 +7,11 @@ from tests.unit_tests.udf_wrapper_params.base_udf.make_data_row_functions import
 
 class ErrorNotCachedMultipleModelMultipleBatch:
     """
-    not cached error, multiple model, multiple batch todo
+    not cached error, multiple model, multiple batch
     """
     expected_model_counter = 1
     batch_size = 3
     data_size = 2
-    n_entities = 1
 
     bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2)
     subdir1, subdir2 = make_number_of_strings(sub_dir, 2)
@@ -21,7 +20,7 @@ class ErrorNotCachedMultipleModelMultipleBatch:
                  make_input_row(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
                                 model_name="non_existing_model") * data_size
 
-    output_data = make_output_row(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * n_entities * data_size + \
+    output_data = make_output_row(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * data_size + \
                   make_output_row(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
                                   model_name="non_existing_model",
                                   score=None, answer=None,
@@ -30,14 +29,14 @@ class ErrorNotCachedMultipleModelMultipleBatch:
     work_with_span_input_data = make_input_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * data_size + \
                                 make_input_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
                                                          model_name="non_existing_model") * data_size
-    work_with_span_output_data = make_output_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * n_entities * data_size + \
+    work_with_span_output_data = make_output_row_with_span(bucketfs_conn=bfs_conn1, sub_dir=subdir1) * data_size + \
                                  make_output_row_with_span(bucketfs_conn=bfs_conn2, sub_dir=subdir2,
                                                  model_name="non_existing_model",
                                                  score=None, answer=None,
                                                  error_msg="Traceback") * 1 * data_size #error on load_model -> only one output per input
 
 
-    tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(number_entities=n_entities) * data_size]
+    tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row() * data_size]
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1]
 
