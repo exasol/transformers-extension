@@ -18,6 +18,12 @@ from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_labels_single_model_
     MultipleLabelsSingleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_labels_single_model_single_batch import \
     MultipleLabelsSingleModelSingleBatch
+from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
+from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_bfsconn_single_subdir_single_model_single_batch import \
+    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
+from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_multiple_model_per_batch import \
+    MultipleModelMultipleBatchMultipleModelsPerBatch
 from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
 from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher

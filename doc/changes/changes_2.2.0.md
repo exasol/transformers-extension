@@ -22,6 +22,7 @@ n/a
 ### Refactorings
 
 - #273: Refactored unit tests for token_classification_udf to use StandAloneUDFMock, made params files more maintainable
+- #274: Refactored unit tests for zero_shot_text_classification_udf to use StandAloneUDFMock, made params files more maintainable
 - #271: Moved test cases which only pertain to the base udf to base udf unit tests
 - #274: Refactored unit tests for zero_shot_text_classification_udf to use StandAloneUDFMock, made params files more maintainable
 
