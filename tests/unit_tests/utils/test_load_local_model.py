@@ -10,7 +10,6 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import Buc
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
-from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import MockPipeline
 from tests.utils.mock_cast import mock_cast
 
 
