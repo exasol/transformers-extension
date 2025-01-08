@@ -2,7 +2,7 @@ from unittest.mock import patch
 import pytest
 
 from tests.unit_tests.utils.utils_for_base_udf_tests import (run_test, create_mock_metadata,
-                                                             create_mock_metadata_with_span, regex_matcher)
+                                                             create_mock_metadata_with_span)
 from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 
 from tests.unit_tests.udf_wrapper_params.base_udf.error_not_cached_multiple_model_multiple_batch import \
