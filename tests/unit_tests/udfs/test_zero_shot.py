@@ -20,9 +20,9 @@ from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_labels_single_model_
     MultipleLabelsSingleModelSingleBatch
 from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
-
-from tests.unit_tests.udfs.test_token_classification import assert_correct_number_of_results, \
+from tests.unit_tests.utils.utils_for_udf_tests import assert_correct_number_of_results, \
     assert_result_matches_expected_output
+
 from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 from tests.utils.mock_cast import mock_cast
 
@@ -138,7 +138,6 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
     udf.run(mock_ctx)
     result = mock_ctx.output
 
-    # todo change import after merge
     assert_correct_number_of_results(result, mock_meta.output_columns, expected_output_data)
     assert_result_matches_expected_output(result, expected_output_data,  mock_meta.input_columns)
     assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
