@@ -52,7 +52,7 @@ def setup_base_udf_tests_and_run(bfs_connections, input_data,
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     res = run_test(mock_exa, mock_base_model_factory, mock_tokenizer_factory,
                    mock_pipeline_factory, mock_ctx, batch_size, work_with_span)
-    return res, mock_meta
+    return res, mock_meta, mock_pipeline_factory
 
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
@@ -85,14 +85,14 @@ def test_base_model_udf(mock_local_path, mock_create_loc, params):
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
-    res, mock_meta = setup_base_udf_tests_and_run(bfs_connections, input_data,
+    res, mock_meta, mock_pipeline_factory = setup_base_udf_tests_and_run(bfs_connections, input_data,
                                                   expected_model_counter,
                                                   tokenizer_models_output_df,
                                                   batch_size)
 
     assert_correct_number_of_results(res, mock_meta.output_columns, expected_output_data)
     assert_result_matches_expected_output(res, expected_output_data,  mock_meta.input_columns)
-    #assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
+    assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
 
 @pytest.mark.parametrize("params", [
     SingleModelSingleBatchIncomplete,
@@ -126,12 +126,12 @@ def test_base_model_udf_with_span(mock_local_path, mock_create_loc, params):
     expected_output_data = params.work_with_span_output_data
     work_with_span = True
 
-    res, mock_meta = setup_base_udf_tests_and_run(bfs_connections, input_data,
+    res, mock_meta, mock_pipeline_factory = setup_base_udf_tests_and_run(bfs_connections, input_data,
                                                   expected_model_counter,
                                                   tokenizer_models_output_df,
                                                   batch_size, work_with_span)
 
     assert_correct_number_of_results(res, mock_meta.output_columns, expected_output_data)
     assert_result_matches_expected_output(res, expected_output_data,  mock_meta.input_columns)
-    #assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
+    assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
 

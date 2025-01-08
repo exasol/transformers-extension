@@ -22,7 +22,7 @@ def make_input_row(device_id=device_id, model_name=model_name, sub_dir=sub_dir,
     return [(device_id, model_name, sub_dir, bucketfs_conn, input_data)]
 
 def make_output_row(model_name=model_name, sub_dir=sub_dir,
-                   bucketfs_conn=bucketfs_conn, input_data=input_data,
+                    bucketfs_conn=bucketfs_conn, input_data=input_data,
                     answer=answer, score=score, error_msg=error_msg):
     """
     Creates an output row for base udf without span usage as a list,
