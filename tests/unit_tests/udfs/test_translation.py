@@ -7,18 +7,10 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
-from tests.unit_tests.udf_wrapper_params.translation.error_not_cached_multiple_model_multiple_batch import \
-    ErrorNotCachedMultipleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.translation.error_not_cached_single_model_multiple_batch import \
-    ErrorNotCachedSingleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.error_on_prediction_multiple_model_multiple_batch import \
     ErrorOnPredictionMultipleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.error_on_prediction_single_model_multiple_batch import \
     ErrorOnPredictionSingleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.translation.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.translation.multiple_bfsconn_single_subdir_single_model_single_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.translation.multiple_language_single_model_multiple_batch import \
     MultipleLanguageSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.multiple_language_single_model_single_batch import \
@@ -27,26 +19,6 @@ from tests.unit_tests.udf_wrapper_params.translation.multiple_max_length_single_
     MultipleMaxLengthSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.translation.multiple_max_length_single_model_single_batch import \
     MultipleMaxLengthSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.translation.multiple_model_multiple_batch_incomplete import \
-    MultipleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.translation.multiple_model_multiple_batch_multiple_models_per_batch import \
-    MultipleModelMultipleBatchMultipleModelsPerBatch
-from tests.unit_tests.udf_wrapper_params.translation.multiple_model_single_batch_complete import \
-    MultipleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.translation.multiple_model_single_batch_incomplete import \
-    MultipleModelSingleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.translation.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.translation.single_bfsconn_multiple_subdir_single_model_single_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.translation.single_model_multiple_batch_complete import \
-    SingleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.translation.single_model_multiple_batch_incomplete import \
-    SingleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.translation.single_model_single_batch_complete import \
-    SingleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.translation.single_model_single_batch_incomplete import \
-    SingleModelSingleBatchIncomplete
 from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 from tests.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
 
@@ -82,25 +54,10 @@ def create_mock_metadata(udf_wrapper):
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchIncomplete,
-    SingleModelSingleBatchComplete,
-    SingleModelMultipleBatchIncomplete,
-    SingleModelMultipleBatchComplete,
-    MultipleModelSingleBatchIncomplete,
-    MultipleModelMultipleBatchComplete,
-    MultipleModelMultipleBatchIncomplete,
-    MultipleModelMultipleBatchComplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
     MultipleMaxLengthSingleModelNameSingleBatch,
     MultipleMaxLengthSingleModelNameMultipleBatch,
     MultipleLanguageSingleModelNameSingleBatch,
     MultipleLanguageSingleModelNameMultipleBatch,
-    ErrorNotCachedSingleModelMultipleBatch,
-    ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch
 ])

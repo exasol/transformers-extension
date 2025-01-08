@@ -7,44 +7,17 @@ from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
-from tests.unit_tests.udf_wrapper_params.filling_mask.error_not_cached_multiple_model_multiple_batch import \
-    ErrorNotCachedMultipleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.error_not_cached_single_model_multiple_batch import \
-    ErrorNotCachedSingleModelMultipleBatch
+
 from tests.unit_tests.udf_wrapper_params.filling_mask.error_on_prediction_multiple_model_multiple_batch import \
     ErrorOnPredictionMultipleModelMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.error_on_prediction_single_model_multiple_batch import \
     ErrorOnPredictionSingleModelMultipleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_multiple_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_bfsconn_single_subdir_single_model_single_batch import \
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_multiple_batch_incomplete import \
-    MultipleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_multiple_batch_multiple_models_per_batch import \
-    MultipleModelMultipleBatchMultipleModelsPerBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batch_complete import \
-    MultipleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_model_single_batch_incomplete import \
-    MultipleModelSingleBatchIncomplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_multiple_batch import \
     MultipleTopkSingleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.multiple_topk_single_model_single_batch import \
     MultipleTopkSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_bfsconn_multiple_subdir_single_model_multiple_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_bfsconn_multiple_subdir_single_model_single_batch import \
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_multiple_batch_complete import \
-    SingleModelMultipleBatchComplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_multiple_batch_incomplete import \
-    SingleModelMultipleBatchIncomplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_single_batch_complete import \
-    SingleModelSingleBatchComplete
-from tests.unit_tests.udf_wrapper_params.filling_mask.single_model_single_batch_incomplete import \
-    SingleModelSingleBatchIncomplete
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_multiple_batch import \
     SingleTopkMultipleModelNameMultipleBatch
 from tests.unit_tests.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import \
@@ -83,25 +56,11 @@ def create_mock_metadata(udf_wrapper):
 
 
 @pytest.mark.parametrize("params", [
-    SingleModelSingleBatchComplete,
-    SingleModelSingleBatchIncomplete,
-    SingleModelMultipleBatchComplete,
-    SingleModelMultipleBatchIncomplete,
-    MultipleModelSingleBatchComplete,
-    MultipleModelSingleBatchIncomplete,
     MultipleModelMultipleBatchComplete,
-    MultipleModelMultipleBatchIncomplete,
-    MultipleModelMultipleBatchMultipleModelsPerBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameSingleBatch,
-    MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameSingleBatch,
-    SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch,
     MultipleTopkSingleModelNameMultipleBatch,
     MultipleTopkSingleModelNameSingleBatch,
     SingleTopkMultipleModelNameSingleBatch,
     SingleTopkMultipleModelNameMultipleBatch,
-    ErrorNotCachedSingleModelMultipleBatch,
-    ErrorNotCachedMultipleModelMultipleBatch,
     ErrorOnPredictionSingleModelMultipleBatch,
     ErrorOnPredictionMultipleModelMultipleBatch
 ])

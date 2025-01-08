@@ -9,7 +9,8 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
     BucketFSModelSpecificationFactory
-from tests.unit_tests.utils_for_udf_tests import create_mock_exa_environment, create_mock_udf_context
+from tests.unit_tests.utils.utils_for_udf_tests import create_mock_udf_context, \
+    create_mock_exa_environment_with_token_con
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
@@ -19,11 +20,8 @@ from tests.utils.matchers import AnyOrder
 from tests.utils.mock_cast import mock_cast
 
 def create_mock_metadata() -> MockMetaData:
-    def udf_wrapper():
-        pass
-
     meta = MockMetaData(
-        script_code_wrapper_function=udf_wrapper,
+    script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("model_name", str, "VARCHAR(2000000)"),
@@ -89,7 +87,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
         for i in range(count)
     ]
     mock_meta = create_mock_metadata()
-    mock_exa = create_mock_exa_environment(
+    mock_exa = create_mock_exa_environment_with_token_con(
         bfs_conn_name,
         bucketfs_connections,
         mock_meta,

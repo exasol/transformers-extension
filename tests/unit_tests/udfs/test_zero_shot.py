@@ -20,6 +20,7 @@ from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_labels_single_model_
     MultipleLabelsSingleModelSingleBatch
 from tests.unit_tests.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_complete import \
     MultipleModelMultipleBatchComplete
+from tests.unit_tests.udfs.output_matcher import Output, OutputMatcher
 
 from tests.unit_tests.udfs.test_token_classification import assert_correct_number_of_results, \
     assert_result_matches_expected_output
