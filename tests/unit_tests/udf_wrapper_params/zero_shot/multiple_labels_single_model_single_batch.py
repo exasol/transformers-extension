@@ -1,28 +1,9 @@
 from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
-from tests.unit_tests.udf_wrapper_params.zero_shot.mock_zero_shot import \
-    MockZeroShotFactory, MockZeroShotModel, MockPipeline
 
-
-def udf_wrapper():
-    from exasol_udf_mock_python.udf_context import UDFContext
-    from exasol_transformers_extension.udfs.models.\
-        zero_shot_text_classification_udf import ZeroShotTextClassificationUDF
-    from tests.unit_tests.udf_wrapper_params.zero_shot.mock_sequence_tokenizer \
-        import MockSequenceTokenizer
-    from tests.unit_tests.udf_wrapper_params.zero_shot.\
-        multiple_labels_single_model_single_batch import \
-        MultipleLabelsSingleModelSingleBatch as params
-
-    udf = ZeroShotTextClassificationUDF(
-        exa,
-        batch_size=params.batch_size,
-        pipeline=params.mock_pipeline,
-        base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer)
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
+from tests.unit_tests.udf_wrapper_params.zero_shot.make_data_row_functions import make_number_of_strings, sub_dir, \
+    model_name, text_data, label, make_input_row, score, make_output_row, make_model_output_for_one_input_row, \
+    bucketfs_conn
 
 
 class MultipleLabelsSingleModelSingleBatch:
@@ -33,25 +14,27 @@ class MultipleLabelsSingleModelSingleBatch:
     batch_size = 1
     data_size = 1
 
-    input_data = [(None, "bfs_conn1", "sub_dir1", "model1",
-                   "text1", "label1,label2")] * data_size
-    output_data = [("bfs_conn1", "sub_dir1", "model1", "text1",
-                    "label1,label2", "label1", 0.2, 1, None),
-                   ("bfs_conn1", "sub_dir1", "model1", "text1",
-                    "label1,label2", "label2", 0.1, 2, None)] * data_size
+    sub_dir1, sub_dir2 = make_number_of_strings(sub_dir, 2)
+    model_name1, model_name2 = make_number_of_strings(model_name, 2)
+    text_data1, text_data2 = make_number_of_strings(text_data, 2)
+    label1, label2 = make_number_of_strings(label, 2)
+
+
+    input_data = make_input_row(sub_dir=sub_dir1,model_name=model_name1, text_data=text_data1,
+                                candidate_labels=f"{label1},{label2}") * data_size
+
+    output_data = make_output_row(sub_dir=sub_dir1, model_name=model_name1,
+                                  text_data=text_data1, candidate_labels=f"{label1},{label2}",
+                                  label=label1, score=score, rank=2) * data_size + \
+                  make_output_row(sub_dir=sub_dir1, model_name=model_name1,
+                                  text_data=text_data1, candidate_labels=f"{label1},{label2}",
+                                  label=label2, score=score+0.1, rank=1) * data_size
+
+    zero_shot_models_output_df = [[make_model_output_for_one_input_row(candidate_labels=f"{label1},{label2}",
+                                                                       score=score) * data_size]]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}")
+        bucketfs_conn: Connection(address=f"file://{base_cache_dir1}"),
     }
-
-    mock_factory = MockZeroShotFactory({
-        PurePosixPath(base_cache_dir1, "sub_dir1", "model1_zero-shot-classification"):
-            MockZeroShotModel([{"labels": "label1", "scores": 0.2},
-                               {"labels": "label2", "scores": 0.1}])
-    })
-
-    mock_pipeline = MockPipeline
-    udf_wrapper = udf_wrapper
-
