@@ -112,9 +112,14 @@ def test_zero_shot_classification_single_text_script_with_spans(
     # assertions
     assert result[0][-1] is None
     # added_columns: label,score,rank,error_message
-    # removed_columns: device_id
-    assert_correct_number_of_results(4, 1,input_data[0], result, n_rows_result)
+    # removed_columns: device_id, text_data, candidate_labels
+    assert_correct_number_of_results(4, 3,input_data[0], result, n_rows_result)
+
+    #todo should we assert that spans are identical to input?
 
     # lenient test for quality of results, will be replaced by deterministic test later
+    result.remove("text_data_docid")
+    result.remove("text_data_char_begin")
+    result.remove("text_data_char_end")
     assert_lenient_check_of_output_quality(result, n_rows_result)
-    #todo should we assert that spans are identical to input?
+

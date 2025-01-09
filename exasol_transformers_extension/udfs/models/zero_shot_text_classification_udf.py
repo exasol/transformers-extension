@@ -59,17 +59,17 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
         return results
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        #todo if the names stay this way we dont really need these, just dont drop them from input
+        #no new span so no new columns. we just return the input span
         #model_df[["text_docid", "text_entity_char_begin", "text_entity_char_end"]] = None, None, None
-        # reorder columns to have them in same output oder as other udfs ##todo does this matter to us?
-        cols = model_df.columns.tolist()
-        cols.remove(cols[5::7])
-        cols.append("text_docid", "text_entity_char_begin", "text_entity_char_end")
-        return model_df[cols]
+        # reorder columns to have them in same output oder as other udfs ##todo probs remove
+        #cols = model_df.columns.tolist()
+        #cols.remove(cols[5::7])
+        #cols.append("text_docid", "text_entity_char_begin", "text_entity_char_end")
+        return model_df#[cols]
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(columns=["text_data", "candidate_labels"])
+        model_df = model_df.drop(columns=["text_data", "candidate_labels"]) #todo we want to keep candidate lables
         return model_df
 
     def create_dataframes_from_predictions(

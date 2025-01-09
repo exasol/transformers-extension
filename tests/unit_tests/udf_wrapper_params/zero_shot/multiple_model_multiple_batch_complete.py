@@ -3,7 +3,7 @@ from exasol_udf_mock_python.connection import Connection
 
 from tests.unit_tests.udf_wrapper_params.zero_shot.make_data_row_functions import make_number_of_strings, sub_dir, \
     model_name, text_data, label, make_input_row, score, make_output_row, make_model_output_for_one_input_row, \
-    bucketfs_conn
+    bucketfs_conn, make_input_row_with_span, make_output_row_with_span
 
 
 class MultipleModelMultipleBatchComplete:
@@ -30,6 +30,16 @@ class MultipleModelMultipleBatchComplete:
                   make_output_row(sub_dir=sub_dir2, model_name=model_name2,
                                   text_data=text_data2, candidate_labels=label2,
                                   label=label2,  score=score + 0.1) * data_size
+
+    work_with_span_input_data = make_input_row_with_span(sub_dir=sub_dir1, model_name=model_name1,
+                                                         text_data=text_data1, candidate_labels=label1) * data_size + \
+                                make_input_row_with_span(sub_dir=sub_dir2, model_name=model_name2,
+                                                         text_data=text_data2, candidate_labels=label2) * data_size
+
+    work_with_span_output_data = make_output_row_with_span(sub_dir=sub_dir1, model_name=model_name1,
+                                                           label=label1, score=score) * data_size + \
+                                 make_output_row_with_span(sub_dir=sub_dir2, model_name=model_name2,
+                                                           label=label2,  score=score + 0.1) * data_size
 
     zero_shot_model_output_df_model1 = [make_model_output_for_one_input_row(candidate_labels=label1, score=score) * data_size]
     zero_shot_model_output_df_model2 = [make_model_output_for_one_input_row(candidate_labels=label2, score=score+0.1) * data_size]

@@ -65,8 +65,8 @@ def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, s
     Creates an input row for token classification with span usage as a list,
     using base params for all params that are not specified.
     """
-    return [(device_id, bucketfs_conn, sub_dir, model_name,text_data,text_data_docid,
-             text_data_char_begin,text_data_char_end, aggregation_strategy)]
+    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, text_data_docid,
+             text_data_char_begin, text_data_char_end, aggregation_strategy)]
 
 def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                               model_name=model_name, text_data_docid=text_docid, text_data_char_begin=text_start,
