@@ -6,7 +6,7 @@ sub_dir="sub_dir"
 model_name="model"
 
 text_data="text"
-text_docid = 1
+text_doc_id = 1
 text_start = 0
 text_end = 6
 
@@ -50,18 +50,18 @@ def make_model_output_for_one_input_row(candidate_labels=candidate_labels, score
 
 def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
                              model_name=model_name, text_data=text_data,
-                             text_data_docid=text_docid,
+                             text_data_doc_id=text_doc_id,
                              text_data_char_begin=text_start, text_data_char_end=text_end,
                              candidate_labels=candidate_labels):
     """
     Creates an input row for zero shot classification with span usage as a list,
     using default values for all parameters that are not specified.
     """
-    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, text_data_docid,
+    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, text_data_doc_id,
              text_data_char_begin, text_data_char_end, candidate_labels)]
 
 def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
-                              model_name=model_name, text_data_docid=text_docid,
+                              model_name=model_name, text_data_doc_id=text_doc_id,
                               text_data_char_begin=text_start,
                               text_data_char_end=text_end,
                               label=label, score=score, rank=rank, error_msg=error_msg):
@@ -69,7 +69,7 @@ def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
     Creates an output row for zero shot classification with span usage as a list,
     using default values for all parameters that are not specified.
     """
-    return [(bucketfs_conn, sub_dir, model_name, text_data_docid,
+    return [(bucketfs_conn, sub_dir, model_name, text_data_doc_id,
              text_data_char_begin, text_data_char_end,
              label,score, rank, error_msg)]
 

@@ -37,7 +37,7 @@ def create_mock_metadata_with_span():
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("text_data_docid", int, "INTEGER"),
+            Column("text_data_doc_id", int, "INTEGER"),
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
             Column("candidate_labels", str, "VARCHAR(2000000)")
@@ -47,7 +47,7 @@ def create_mock_metadata_with_span():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("text_data_docid", int, "INTEGER"),
+            Column("text_data_doc_id", int, "INTEGER"),
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
             Column("label", str, "VARCHAR(2000000)"),

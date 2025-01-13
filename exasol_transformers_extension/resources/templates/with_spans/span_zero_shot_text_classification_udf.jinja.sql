@@ -4,7 +4,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_ZERO_SHOT_TEXT_CLASSIFICAT
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
     text_data VARCHAR(2000000),
-    text_data_docid INTEGER,
+    text_data_doc_id INTEGER,
     text_data_char_begin INTEGER,
     text_data_char_end INTEGER,
     candidate_labels VARCHAR(2000000)
@@ -13,7 +13,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_ZERO_SHOT_TEXT_CLASSIFICAT
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
-    text_data_docid INTEGER,
+    text_data_doc_id INTEGER,
     text_data_char_begin INTEGER,
     text_data_char_end INTEGER,
     label VARCHAR(2000000),

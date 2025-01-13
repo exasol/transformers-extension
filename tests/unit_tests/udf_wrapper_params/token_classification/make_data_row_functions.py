@@ -5,7 +5,7 @@ sub_dir="sub_dir"
 model_name="model"
 
 text_data="text"
-text_docid = 1
+text_doc_id = 1
 text_start = 0
 text_end = 6
 
@@ -58,18 +58,18 @@ def make_model_output_for_one_input_row(number_entities:int, aggregation_strateg
     return [[model_output_single_entities] * number_entities]
 
 def make_input_row_with_span(device_id=device_id, bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
-                             model_name=model_name, text_data=text_data, text_data_docid=text_docid,
+                             model_name=model_name, text_data=text_data, text_data_doc_id=text_doc_id,
                              text_data_char_begin=text_start, text_data_char_end=text_end,
                              aggregation_strategy=agg_strategy_simple):
     """
     Creates an input row for token classification with span usage as a list,
     using base params for all params that are not specified.
     """
-    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, text_data_docid,
+    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, text_data_doc_id,
              text_data_char_begin, text_data_char_end, aggregation_strategy)]
 
 def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
-                              model_name=model_name, text_data_docid=text_docid, text_data_char_begin=text_start,
+                              model_name=model_name, text_data_doc_id=text_doc_id, text_data_char_begin=text_start,
                               text_data_char_end=text_end, aggregation_strategy=agg_strategy_simple,
                               text_start=text_start, token_start=token_start, token_end =token_end,
                               entity_covered_text=token, entity_type=entity_type, score=score,
@@ -81,10 +81,10 @@ def make_output_row_with_span(bucketfs_conn=bucketfs_conn, sub_dir=sub_dir,
     """
     entity_char_begin = text_start + token_start
     entity_char_end = text_start + token_end
-    entity_docid = text_data_docid
+    entity_doc_id = text_data_doc_id
     return [(bucketfs_conn, sub_dir, model_name,
-             text_data_docid, text_data_char_begin, text_data_char_end, aggregation_strategy,
-             entity_covered_text, entity_type, score, entity_docid, entity_char_begin, entity_char_end,
+             text_data_doc_id, text_data_char_begin, text_data_char_end, aggregation_strategy,
+             entity_covered_text, entity_type, score, entity_doc_id, entity_char_begin, entity_char_end,
              error_msg)]
 
 def make_number_of_strings(input_str: str, desired_number: int):

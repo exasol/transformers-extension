@@ -160,7 +160,7 @@ def test_zero_shot_classification_single_text_udf_with_span(
         'sub_dir',
         'model_name',
         'text_data',
-        'text_data_docid',
+        'text_data_doc_id',
         'text_data_char_begin',
         'text_data_char_end',
         'candidate_labels']

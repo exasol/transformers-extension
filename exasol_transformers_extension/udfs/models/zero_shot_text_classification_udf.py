@@ -60,11 +60,11 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
         #no new span so no new columns. we just return the input span
-        #model_df[["text_docid", "text_entity_char_begin", "text_entity_char_end"]] = None, None, None
+        #model_df[["text_doc_id", "text_entity_char_begin", "text_entity_char_end"]] = None, None, None
         # reorder columns to have them in same output oder as other udfs ##todo probs remove
         #cols = model_df.columns.tolist()
         #cols.remove(cols[5::7])
-        #cols.append("text_docid", "text_entity_char_begin", "text_entity_char_end")
+        #cols.append("text_doc_id", "text_entity_char_begin", "text_entity_char_end")
         return model_df#[cols]
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:

@@ -97,13 +97,13 @@ def test_zero_shot_classification_single_text_script_with_spans(
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.text_data," \
-            f"t.text_data_docid, " \
+            f"t.text_data_doc_id, " \
             f"t.text_data_char_begin, " \
             f"t.text_data_char_end, " \
             f"t.candidate_labels) " \
             f"FROM (VALUES {python_rows_to_sql(input_data)} " \
             f"AS t(device_id, bucketfs_conn_name, " \
-            f"sub_dir, model_name, text_data, text_data_docid, text_data_char_begin, " \
+            f"sub_dir, model_name, text_data, text_data_doc_id, text_data_char_begin, " \
             f"text_data_char_end, candidate_labels));"
 
     # execute sequence classification UDF
@@ -118,7 +118,7 @@ def test_zero_shot_classification_single_text_script_with_spans(
     #todo should we assert that spans are identical to input?
 
     # lenient test for quality of results, will be replaced by deterministic test later
-    result.remove("text_data_docid")
+    result.remove("text_data_doc_id")
     result.remove("text_data_char_begin")
     result.remove("text_data_char_end")
     assert_lenient_check_of_output_quality(result, n_rows_result)

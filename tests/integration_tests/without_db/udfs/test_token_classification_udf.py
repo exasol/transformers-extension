@@ -130,7 +130,7 @@ def test_token_classification_udf_with_span(
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
-
+# todo also pull out stuff here
     bucketfs_base_path = prepare_token_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
@@ -153,7 +153,7 @@ def test_token_classification_udf_with_span(
         'sub_dir',
         'model_name',
         'text_data',
-        "text_data_docid",
+        "text_data_doc_id",
         "text_data_char_begin",
         "text_data_char_end",
         'aggregation_strategy'
@@ -163,7 +163,7 @@ def test_token_classification_udf_with_span(
         'bucketfs_conn',
         'sub_dir',
         'model_name',
-        "text_data_docid",
+        "text_data_doc_id",
         "text_data_char_begin",
         "text_data_char_end",
         'aggregation_strategy'
@@ -178,7 +178,7 @@ def test_token_classification_udf_with_span(
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = \
-        ['entity_covered_text', 'entity_type', 'score', 'entity_docid',
+        ['entity_covered_text', 'entity_type', 'score', 'entity_doc_id',
          'entity_char_begin', 'entity_char_end', 'error_message']
 
     result = Result(result_df)
