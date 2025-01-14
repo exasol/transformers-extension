@@ -8,7 +8,7 @@ T.B.D
 
 ### Features
 
-- #260: Added span input and output types for zero-shot-classification-udf
+n/a
 
 ### Bugs
 
