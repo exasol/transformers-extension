@@ -7,7 +7,11 @@ from exasol_transformers_extension.utils import dataframe_operations
 
 
 class ZeroShotTextClassificationUDF(BaseModelUDF):
-    # todo commetn class
+    """
+    UDF labeling a given text.
+    If given an input span, text_data_char_begin and text_data_char_end should
+    represent the entire input text and not indicate a substring.
+    """
     def __init__(self,
                  exa,
                  batch_size=100,
@@ -60,16 +64,11 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
         #no new span so no new columns. we just return the input span
-        #model_df[["text_doc_id", "text_entity_char_begin", "text_entity_char_end"]] = None, None, None
-        # reorder columns to have them in same output oder as other udfs ##todo probs remove
-        #cols = model_df.columns.tolist()
-        #cols.remove(cols[5::7])
-        #cols.append("text_doc_id", "text_entity_char_begin", "text_entity_char_end")
-        return model_df#[cols]
+        return model_df
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(columns=["text_data", "candidate_labels"]) #todo we want to keep candidate lables
+        model_df = model_df.drop(columns=["text_data", "candidate_labels"]) #todo do we want to keep candidate lables?
         return model_df
 
     def create_dataframes_from_predictions(

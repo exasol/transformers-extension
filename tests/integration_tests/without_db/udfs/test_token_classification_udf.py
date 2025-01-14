@@ -130,7 +130,7 @@ def test_token_classification_udf_with_span(
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
-# todo also pull out stuff here
+
     bucketfs_base_path = prepare_token_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)

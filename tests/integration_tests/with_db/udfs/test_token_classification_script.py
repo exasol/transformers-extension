@@ -107,4 +107,3 @@ def test_token_classification_script_with_span(
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [[result[i][7], result[i][8]] for i in range(len(result))]
     assert_lenient_check_of_output_quality(results)
-    # todo should we assert spans correct somehow?

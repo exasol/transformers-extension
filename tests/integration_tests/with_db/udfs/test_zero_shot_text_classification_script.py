@@ -16,7 +16,7 @@ def assert_correct_number_of_results(added_columns: int, removed_columns: int,
                                                                               f"expected {n_rows_result} rows, {n_cols_result} columns."
                                                                               f"actual: {len(result)} rows, {len(result[0])} columns")
 
-def assert_lenient_check_of_output_quality(result: list, n_rows_result: int):
+def assert_lenient_check_of_output_quality(result: list, n_rows_result: int, label_index: int = 5):
     acceptable_results = ["Analytics", "Database", "Germany"]
 
     def contains(string, list):
@@ -24,10 +24,10 @@ def assert_lenient_check_of_output_quality(result: list, n_rows_result: int):
 
     number_accepted_results = 0
     for i in range(len(result)):
-        if (contains(result[i][5], acceptable_results) and
-                result[i][6] > 0.8):  # check if confidence reasonably high
+        if (contains(result[i][label_index], acceptable_results) and
+                result[i][label_index+1] > 0.8):  # check if confidence reasonably high
             number_accepted_results += 1
-        elif result[i][6] < 0.2:
+        elif result[i][label_index+1] < 0.2:
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 1.5, f"Not enough acceptable labels ({acceptable_results}) in results {result}"
 
@@ -91,7 +91,7 @@ def test_zero_shot_classification_single_text_script_with_spans(
             candidate_labels
         ))
 
-    query = f"SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(" \
+    query = f"SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF_WITH_SPAN(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -115,11 +115,6 @@ def test_zero_shot_classification_single_text_script_with_spans(
     # removed_columns: device_id, text_data, candidate_labels
     assert_correct_number_of_results(4, 3,input_data[0], result, n_rows_result)
 
-    #todo should we assert that spans are identical to input?
-
     # lenient test for quality of results, will be replaced by deterministic test later
-    result.remove("text_data_doc_id")
-    result.remove("text_data_char_begin")
-    result.remove("text_data_char_end")
-    assert_lenient_check_of_output_quality(result, n_rows_result)
+    assert_lenient_check_of_output_quality(result, n_rows_result, label_index=6)
 
