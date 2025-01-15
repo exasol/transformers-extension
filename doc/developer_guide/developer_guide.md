@@ -55,6 +55,17 @@ run parts of the integration tests:
 ```
 You can find more information regarding the tests in the [Tests](#tests) section below
 
+## Python Toolbox
+We use the Python toolbox, however some things are modified for this project,
+mainly because we run our integration tests differently here.
+
+ * we don't use the "slow-checks" workflow for running integration tests, instead we run them in AWS
+    * this means code coverage is currently not run on integration tests.
+ * we also don't use the "build-and-publish" workflow, because we need to build
+    and upload the slc at the moment. instead we use release droid with the
+    release_droid_upload_github_release_assets workflow for now.
+
+
 ## Add Transformer Tasks
 In the transformers-extension library, the 8 most popular NLP tasks provided by
 [Transformers API](https://huggingface.co/docs/transformers/index) have already
