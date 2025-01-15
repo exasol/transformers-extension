@@ -38,7 +38,58 @@ toml = "^0.10.2"
 nox = "^2023.4.22"
 pytest-exasol-slc = ">=0.3.0"
 pytest-exasol-extension = ">=0.2.1,<1"
+exasol-toolbox = "^0.20.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+# python-toolbox config:
+
+# Allows fine-grained control over what is considered for code coverage
+[tool.coverage.run]
+relative_files = true
+source = [
+     "exasol_transformers_extension",
+]
+
+# defines the minimum required code coverage
+[tool.coverage.report]
+fail_under = 15
+
+# Controls maximum line length in your project
+[tool.black]
+line-length = 88
+verbose = false
+include = "\\.pyi?$"
+
+# Modify the behavior of import sorting
+[tool.isort]
+profile = "black"
+force_grid_wrap = 2
+
+# Define the minimum linting score considered acceptable
+[tool.pylint.master]
+fail-under = 7.5
+
+# Maximum line length should match what is configured for black.
+# Additionally, a maximum module size can be defined here.
+[tool.pylint.format]
+max-line-length = 88
+max-module-lines = 800
+
+
+# Configure exceptions for the type checker
+[[tool.mypy.overrides]]
+module = [
+    "test.*"
+]
+ignore_errors = true
+
+#[tool.poetry.plugins."console_scripts"]
+#"version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
+
+
+#[tool.poetry.scripts]
+#tbx = 'exasol.toolbox.tools.tbx:CLI'
+#sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'

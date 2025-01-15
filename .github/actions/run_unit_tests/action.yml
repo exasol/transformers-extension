@@ -8,5 +8,5 @@ runs:
       shell: bash
 
     - name: Run Python unit tests
-      run: poetry run nox -s unit_tests
+      run: poetry run nox -s test:unit
       shell: bash
