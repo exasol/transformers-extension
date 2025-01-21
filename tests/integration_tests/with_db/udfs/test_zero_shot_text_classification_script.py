@@ -23,11 +23,13 @@ def assert_lenient_check_of_output_quality(result: list, n_rows_result: int, lab
         return any(map(lambda x: x in string, list))
 
     number_accepted_results = 0
-    for i in range(len(result)):
-        if (contains(result[i][label_index], acceptable_results) and
-                result[i][label_index+1] > 0.8):  # check if confidence reasonably high
+    for result_i in result:
+        result_label = result_i[label_index]
+        result_score = result_i[label_index+1]
+        if (contains(result_label, acceptable_results) and
+                result_score > 0.8):  # check if confidence reasonably high
             number_accepted_results += 1
-        elif result[i][label_index+1] < 0.2:
+        elif result_score < 0.2:
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 1.5, f"Not enough acceptable labels ({acceptable_results}) in results {result}"
 

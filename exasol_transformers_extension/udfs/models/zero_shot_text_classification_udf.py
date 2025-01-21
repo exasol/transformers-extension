@@ -9,8 +9,9 @@ from exasol_transformers_extension.utils import dataframe_operations
 class ZeroShotTextClassificationUDF(BaseModelUDF):
     """
     UDF labeling a given text.
-    If given an input span, text_data_char_begin and text_data_char_end should
-    represent the entire input text and not indicate a substring.
+    If given an input span as input columns text_data_doc_id, text_data_char_begin, text_data_char_end, the span should
+    represent the entire input text_data. This udf is not equipped to select substrings of the
+    input text for classification based on the input span.
     """
     def __init__(self,
                  exa,
