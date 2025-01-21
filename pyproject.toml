@@ -17,7 +17,7 @@ keywords = ['exasol']
 
 [tool.poetry.dependencies]
 python = "^3.10.0"
-pandas = ">=1.4.2,<3.0.0"
+pandas = ">=2.2.3,<3.0.0"
 torch = "^2.0.1"
 transformers = {extras = ["torch"], version = "^4.36.2"}
 Jinja2 = "^3.0.3"

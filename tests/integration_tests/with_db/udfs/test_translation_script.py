@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_translation_script(
         setup_database, db_conn, upload_seq2seq_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     n_rows = 100
     src_lang = "English"
     target_lang = "German"
@@ -22,7 +22,7 @@ def test_translation_script(
             max_length
         ))
 
-    query = f"SELECT {schema_name}.TE_TRANSLATION_UDF(" \
+    query = f"SELECT TE_TRANSLATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

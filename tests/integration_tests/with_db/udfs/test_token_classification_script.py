@@ -26,7 +26,7 @@ def assert_lenient_check_of_output_quality(results: list):
 
 def test_token_classification_script_without_spans(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
     for i in range(n_rows):
@@ -39,7 +39,7 @@ def test_token_classification_script_without_spans(
             aggregation_strategy
         ))
 
-    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF(" \
+    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
@@ -65,7 +65,7 @@ def test_token_classification_script_without_spans(
 
 def test_token_classification_script_with_span(
         setup_database, db_conn, upload_token_classification_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
     for i in range(n_rows):
@@ -81,26 +81,26 @@ def test_token_classification_script_with_span(
             aggregation_strategy
         ))
 
-    query = f"SELECT {schema_name}.TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
+    query = f"SELECT TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \
             f"t.model_name, " \
             f"t.text_data, " \
-            f"t.text_data_docid, " \
+            f"t.text_data_doc_id, " \
             f"t.text_data_char_begin, "\
             f"t.text_data_char_end, " \
             f"t.aggregation_strategy" \
             f") FROM (VALUES {python_rows_to_sql(input_data)} " \
             f"AS t(device_id, bucketfs_conn_name, " \
-            f"sub_dir, model_name, text_data, text_data_docid, text_data_char_begin, " \
+            f"sub_dir, model_name, text_data, text_data_doc_id, text_data_char_begin, " \
             f"text_data_char_end, aggregation_strategy));"
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
     # assertions
     assert result[0][-1] is None
-    # added_columns: entity_covered_text, entity_type, score, entity_docid, entity_char_begin, entity_char_end, error_message
+    # added_columns: entity_covered_text, entity_type, score, entity_doc_id, entity_char_begin, entity_char_end, error_message
     # removed_columns: # device_id, text_data
     assert_correct_number_of_results(7, 2,
                                      input_data[0], result, n_rows)

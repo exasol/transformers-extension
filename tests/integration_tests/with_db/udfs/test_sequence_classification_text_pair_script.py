@@ -4,7 +4,7 @@ from tests.utils.parameters import model_params
 
 def test_sequence_classification_text_pair_script(
         setup_database, db_conn, upload_sequence_classification_pair_model_to_bucketfs):
-    bucketfs_conn_name, schema_name = setup_database
+    bucketfs_conn_name, _ = setup_database
     n_labels = 3
     n_rows = 100
     input_data = []
@@ -17,7 +17,7 @@ def test_sequence_classification_text_pair_script(
             'The database software company Exasol is based in Nuremberg',
             'The main Exasol office is located in Flensburg'))
 
-    query = f"SELECT {schema_name}.TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(" \
+    query = f"SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

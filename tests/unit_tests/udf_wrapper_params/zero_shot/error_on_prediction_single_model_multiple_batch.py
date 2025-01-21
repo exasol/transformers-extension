@@ -3,7 +3,8 @@ from exasol_udf_mock_python.connection import Connection
 
 from tests.unit_tests.udf_wrapper_params.zero_shot.make_data_row_functions import make_number_of_strings, sub_dir, \
     model_name, text_data, label, make_input_row, score, make_output_row, make_model_output_for_one_input_row, \
-    bucketfs_conn
+    bucketfs_conn, make_input_row_with_span, make_output_row_with_span
+
 
 class ErrorOnPredictionSingleModelMultipleBatch:
     """
@@ -24,6 +25,11 @@ class ErrorOnPredictionSingleModelMultipleBatch:
 
     zero_shot_models_output_df = [zero_shot_model_output_df_batch1, zero_shot_model_output_df_batch2,
                                   zero_shot_model_output_df_batch3]
+
+    work_with_span_input_data = make_input_row_with_span(text_data="error on pred", candidate_labels=label) * data_size
+
+    work_with_span_output_data = make_output_row_with_span(label=None,  score=None, rank=None,
+                                                           error_msg="Traceback") * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bucketfs_conn)

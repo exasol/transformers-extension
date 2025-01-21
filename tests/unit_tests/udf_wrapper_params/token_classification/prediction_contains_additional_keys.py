@@ -2,7 +2,7 @@ from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 from tests.unit_tests.udf_wrapper_params.token_classification.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
-    text_docid, text_start, text_end, agg_strategy_simple, make_model_output_for_one_input_row, sub_dir, model_name
+    text_doc_id, text_start, text_end, agg_strategy_simple, make_model_output_for_one_input_row, sub_dir, model_name
 
 class PredictionContainsAdditionalFields:
     """

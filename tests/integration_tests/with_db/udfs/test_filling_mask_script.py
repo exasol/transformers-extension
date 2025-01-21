@@ -18,7 +18,7 @@ def test_filling_mask_script(
             text_data,
             top_k))
 
-    query = f"SELECT {schema_name}.TE_FILLING_MASK_UDF(" \
+    query = f"SELECT TE_FILLING_MASK_UDF(" \
             f"t.device_id, " \
             f"t.bucketfs_conn_name, " \
             f"t.sub_dir, " \

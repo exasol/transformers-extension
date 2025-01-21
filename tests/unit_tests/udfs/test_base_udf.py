@@ -134,4 +134,3 @@ def test_base_model_udf_with_span(mock_local_path, mock_create_loc, params):
     assert_correct_number_of_results(res, mock_meta.output_columns, expected_output_data)
     assert_result_matches_expected_output(res, expected_output_data,  mock_meta.input_columns)
     assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
-

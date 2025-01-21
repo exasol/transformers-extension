@@ -15,9 +15,7 @@ UDF_CALL_TEMPLATES = {
     "text_generation_udf_call.py":
         "text_generation_udf.jinja.sql",
     "translation_udf_call.py":
-        "translation_udf.jinja.sql",
-    "zero_shot_text_classification_udf.py":
-        "zero_shot_text_classification_udf.jinja.sql"
+        "translation_udf.jinja.sql"
 }
 
 constants = InstallScriptsConstants(

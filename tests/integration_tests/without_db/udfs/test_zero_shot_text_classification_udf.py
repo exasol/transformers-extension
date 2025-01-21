@@ -45,6 +45,40 @@ class Context:
         self._is_accessed_once = True
         return return_df
 
+def prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs, bfs_conn="bucketfs_connection"):
+    bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
+    return bucketfs_conn_name, bucketfs_connection
+
+def base_params():
+    n_rows = 3
+    batch_size = 2
+    candidate_labels = "Database,Analytics,Germany,Food,Party"
+    n_labels = len(candidate_labels.split(","))
+    return n_rows, batch_size, candidate_labels, n_labels
+
+def run_test(sample_data, columns,
+             bucketfs_conn_name, bucketfs_connection,
+             batch_size):
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+
+    ctx = Context(input_df=sample_df)
+    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = ZeroShotTextClassificationUDF(
+        exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+
+    return result_df
+
+def format_result(result_df):
+    grouped_by_inputs = result_df.groupby('text_data')
+    n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
+    result = Result(result_df)
+    return result, n_unique_labels_per_input
 
 @pytest.mark.parametrize(
     "description, device_id", [
@@ -57,13 +91,9 @@ def test_zero_shot_classification_single_text_udf(
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
-    bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
+    bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs)
 
-    n_rows = 3
-    batch_size = 2
-    candidate_labels = "Database,Analytics,Germany,Food,Party"
+    n_rows, batch_size, candidate_labels, n_labels = base_params()
     sample_data = [(
         None,
         bucketfs_conn_name,
@@ -79,24 +109,13 @@ def test_zero_shot_classification_single_text_udf(
         'model_name',
         'text_data',
         'candidate_labels']
-    sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
-    ctx = Context(input_df=sample_df)
-    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
-
-    sequence_classifier = ZeroShotTextClassificationUDF(
-        exa, batch_size=batch_size)
-    sequence_classifier.run(ctx)
-
-    result_df = ctx.get_emitted()[0][0]
+    result_df = run_test(sample_data, columns,
+                         bucketfs_conn_name, bucketfs_connection, batch_size)
+    result, n_unique_labels_per_input = format_result(result_df)
     new_columns = ['label', 'score', 'rank', 'error_message']
 
     # assertions
-    n_labels = len(candidate_labels.split(","))
-    grouped_by_inputs = result_df.groupby('text_data')
-    n_unique_labels_per_input = grouped_by_inputs['label'].nunique().to_list()
-
-    result = Result(result_df)
     assert (
             result == ScoreMatcher()
             and result == RankDTypeMatcher()
@@ -108,6 +127,61 @@ def test_zero_shot_classification_single_text_udf(
             and n_unique_labels_per_input == [n_labels] * n_rows
     )
 
+
+@pytest.mark.parametrize(
+    "description, device_id", [
+        ("on CPU", None),
+        ("on GPU", 0)
+    ])
+def test_zero_shot_classification_single_text_udf_with_span(
+        description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(f"There is no available device({device_id}) "
+                    f"to execute the test")
+
+    bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs)
+
+    n_rows, batch_size, candidate_labels, n_labels = base_params()
+    sample_data = [(
+        None,
+        bucketfs_conn_name,
+        model_params.sub_dir,
+        model_params.zero_shot_model_specs.model_name,
+        model_params.text_data + str(i),
+        #model_params.text_data * (i + 1),
+        i,
+        0,
+        len(model_params.text_data),
+        candidate_labels + str(i)
+    ) for i in range(n_rows)]
+    columns = [
+        'device_id',
+        'bucketfs_conn',
+        'sub_dir',
+        'model_name',
+        'text_data',
+        'text_data_doc_id',
+        'text_data_char_begin',
+        'text_data_char_end',
+        'candidate_labels']
+
+    result_df = run_test(sample_data, columns,
+                         bucketfs_conn_name, bucketfs_connection, batch_size)
+    result, n_unique_labels_per_input = format_result(result_df)
+
+    new_columns = ['label', 'score', 'rank', 'error_message']
+
+    # assertions
+    assert (
+            result == ScoreMatcher()
+            and result == RankDTypeMatcher()
+            and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=n_labels)
+            and result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows,
+                                       results_per_row=n_labels)
+            and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+            and result == NoErrorMessageMatcher()
+            and n_unique_labels_per_input == [n_labels] * n_rows
+    )
 
 @pytest.mark.parametrize(
     "description, device_id", [

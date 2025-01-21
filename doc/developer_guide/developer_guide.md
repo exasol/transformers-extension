@@ -82,6 +82,7 @@ inference output to the inputs.
 Before implementing the UDF logic (examined in item 4 in this section), the 
 `run` function responsible for calling the newly created UDF script should be 
 defined in `exasol_transformers_extension/udfs/callers/`.
+Also add the new udf to the lists in tests/utils/db_queries.py
 
 ### 3. UDF Template-Caller Matching 
 The added UDF template and defined UDF caller should be added to the dictionary

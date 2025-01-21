@@ -1,30 +1,18 @@
-# Transformers Extension 2.2.0, T.B.D
+# Transformers Extension 2.2.0, 2025-01-21
 
-Code name: T.B.D
+Code name: Bugfix for token classification
 
 ## Summary
 
-T.B.D
-
-### Features
-
-n/a
+This release includes a bugfix for handling unexpected results in the token classification udf, 
+as well as internal refactorings for the unit tests.
 
 ### Bugs
 
 - #272: Fixed unit tests assertions not working correctly
 - #275: Fixed a bug where models returning unexpected results was not handled correctly
 
-### Documentation
-
-n/a
-
 ### Refactorings
 
 - #273: Refactored unit tests for token_classification_udf to use StandAloneUDFMock, made params files more maintainable
 - #271: Moved test cases which only pertain to the base udf to base udf unit tests
-- #274: Refactored unit tests for zero_shot_text_classification_udf to use StandAloneUDFMock, made params files more maintainable
-
-### Security
-
-n/a
