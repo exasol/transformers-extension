@@ -1,4 +1,4 @@
-# Transformers Extension 2.2.0, 2025-01-21
+# Transformers Extension 2.2.0, 2025-01-22
 
 Code name: Bugfix for token classification
 
