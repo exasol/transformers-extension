@@ -44,7 +44,7 @@ def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location)
     downloader = model_transfer_factory.create(bucketfs_location=mock_bucketfs_location,
                                                model_specification=test_setup.model_specification,
                                                model_path=Path("cached_files"),
-                                               token="")
+                                               token=None)
     downloader.download_from_huggingface_hub(test_setup.base_model_factory)
     downloader.download_from_huggingface_hub(test_setup.tokenizer_factory)
     return downloader.upload_to_bucketfs()
