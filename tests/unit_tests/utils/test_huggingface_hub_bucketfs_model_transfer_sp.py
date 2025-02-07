@@ -66,7 +66,7 @@ def test_download_function_call():
     model_save_path = create_save_pretrained_model_path(cache_dir, test_setup.model_specification)
     assert test_setup.model_factory_mock.mock_calls == [
         call.from_pretrained(test_setup.model_name, cache_dir=Path(cache_dir)/"cache",
-                             use_auth_token=test_setup.token),
+                             token=test_setup.token),
         call.from_pretrained().parameters(),
         call.from_pretrained().parameters().__iter__(),
         call.from_pretrained().save_pretrained(model_save_path)]
