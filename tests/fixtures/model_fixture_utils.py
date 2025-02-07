@@ -33,11 +33,11 @@ def download_model_to_path(model_specification: ModelSpecification,
                            tmpdir_name: Path):
     tmpdir_name = Path(tmpdir_name)
     model_name = model_specification.model_name
-    # todo pull this download into a function? -> create ticket
-    for model_factory in [transformers.AutoModel, transformers.AutoTokenizer]:
-        model = model_factory.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
-        model.save_pretrained(tmpdir_name)
-
+    model_factory = model_specification.get_model_factory()
+    for model in [model_factory, transformers.AutoTokenizer]:
+        downloaded_model = model.from_pretrained(model_name, cache_dir=tmpdir_name / "cache" / model_name)
+        make_parameters_of_model_contiguous_tensors(downloaded_model)
+        downloaded_model.save_pretrained(tmpdir_name)
 
 def prepare_model_for_local_bucketfs(model_specification: ModelSpecification,
                                      tmpdir_factory):

@@ -9,7 +9,8 @@ class ModelFactoryProtocol(Protocol):
     """
     Protocol for better type hints.
     """
-    def from_pretrained(self, model_name: str, cache_dir: Optional[Path]=None, use_auth_token: Optional[str]=None) \
+
+    def from_pretrained(self, model_name: str, cache_dir: Optional[Path] = None, token: Optional[str] = None) \
             -> transformers.PreTrainedModel:
         """
         Either downloads a model from Huggingface Hub(all parameters required),

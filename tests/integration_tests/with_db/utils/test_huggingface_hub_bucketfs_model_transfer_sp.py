@@ -27,7 +27,7 @@ class TestSetup:
             create_autospec(BucketFSModelUploader)
         mock_cast(self.bucketfs_model_uploader_factory_mock.create).side_effect = [self.bucketfs_model_uploader_mock]
 
-        self.token = "token"
+        self.token = None
         self.model_specification = model_params.tiny_model_specs
         self.model_path = Path("test_model_path")
         self.downloader = HuggingFaceHubBucketFSModelTransferSP(

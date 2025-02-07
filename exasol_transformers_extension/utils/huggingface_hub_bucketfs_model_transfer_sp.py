@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import exasol.bucketfs as bfs
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
@@ -28,11 +29,12 @@ class HuggingFaceHubBucketFSModelTransferSP:
     :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory. Mainly change for testing.
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
     """
+
     def __init__(self,
                  bucketfs_location: bfs.path.PathLike,
                  model_specification: ModelSpecification,
                  bucketfs_model_path: Path,
-                 token: str,
+                 token: Optional[str],
                  temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
                  bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory()):
         self._token = token
@@ -62,7 +64,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
         """
         model_name = self._model_specification.model_name
         model = model_factory.from_pretrained(model_name, cache_dir=self._tmpdir_name / "cache",
-                                              use_auth_token=self._token)
+                                              token=self._token)
         make_parameters_of_model_contiguous_tensors(model)
         model.save_pretrained(self._save_pretrained_model_path)
 
@@ -79,11 +81,12 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
     """
     Class for creating a HuggingFaceHubBucketFSModelTransferSP object.
     """
+
     def create(self,
                bucketfs_location: bfs.path.PathLike,
                model_specification: ModelSpecification,
                model_path: Path,
-               token: str) -> HuggingFaceHubBucketFSModelTransferSP:
+               token: Optional[str]) -> HuggingFaceHubBucketFSModelTransferSP:
         """
         Creates a HuggingFaceHubBucketFSModelTransferSP object.
 

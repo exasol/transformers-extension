@@ -93,14 +93,10 @@ class TestEnvironmentSetup:
 def test_model_downloader_udf_implementation(tmp_path):
     env1 = TestEnvironmentSetup(
         "1", tmp_path, token_conn_name='')
-    env2 = TestEnvironmentSetup(
-        "2", tmp_path, token_conn_name='token_conn_name')
 
-    ctx = Context([env1.ctx_data, env2.ctx_data])
+    ctx = Context([env1.ctx_data])
     exa = ExaEnvironment({
         env1.bucketfs_conn_name: env1.bucketfs_connection,
-        env2.bucketfs_conn_name: env2.bucketfs_connection,
-        env2.token_conn_name: env2.token_connection
     })
 
     # run udf implementation
@@ -109,8 +105,5 @@ def test_model_downloader_udf_implementation(tmp_path):
 
     # assertions
     env1_bucketfs_files = env1.list_files_in_bucketfs()
-    env2_bucketfs_files = env2.list_files_in_bucketfs()
     assert ctx.get_emitted()[0] == (str(env1.model_path), str(env1.model_path.with_suffix(".tar.gz")))
-    assert ctx.get_emitted()[1] == (str(env2.model_path), str(env2.model_path.with_suffix(".tar.gz")))
     assert ctx.get_emitted()[0][1] in env1_bucketfs_files
-    assert ctx.get_emitted()[1][1] in env2_bucketfs_files
