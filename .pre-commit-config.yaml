@@ -22,7 +22,6 @@ repos:
       - id: trailing-whitespace
         stages: [ pre-commit ]
 
-#  todo
   #- repo: local
   #  hooks:
   #    - id: type-check
@@ -33,12 +32,12 @@ repos:
   #      entry: poetry run nox -s lint:typing
   #      stages: [ pre-push ]
 
-  #- repo: local
-  #  hooks:
-  #    - id: lint
-  #      name: lint
-  #      types: [ python ]
-  #      pass_filenames: false
-  #      language: system
-  #      entry: poetry run nox -s lint:code
-   #     stages: [ pre-push ]
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        types: [ python ]
+        pass_filenames: false
+        language: system
+        entry: poetry run nox -s lint:code
+        stages: [ pre-push ]
