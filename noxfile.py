@@ -26,9 +26,6 @@ def export_slc(session: nox.Session):
 def TE_integration_test_overwrite(session) -> None:
     """Runs all integration tests with all backends"""
     # Overwrite for python toolbox tests:integration task, because we need additional parameters
-    # todo find out if this could also be done with just sending parameters to test:integration task.
-    # todo should this include starting db and export slc?
-    # todo can we update itde to allow stopping with starting db seperateley?
 
     # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
