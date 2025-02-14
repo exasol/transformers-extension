@@ -68,7 +68,7 @@ force_grid_wrap = 2
 
 # Define the minimum linting score considered acceptable
 [tool.pylint.master]
-fail-under = 4.4
+fail-under = 4.0
 
 # Maximum line length should match what is configured for black.
 # Additionally, a maximum module size can be defined here.

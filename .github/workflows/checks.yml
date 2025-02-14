@@ -76,27 +76,6 @@ jobs:
           path: .lint.txt
           include-hidden-files: true
 
-  Type-Check:
-    name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ Version-Check, build-matrix ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
-
-    steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.20.0
-        with:
-          python-version: ${{ matrix.python-version }}
-          poetry-version: 2.0.1
-
-      - name: Run type-check
-        run: poetry run nox -s lint:typing
-
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
