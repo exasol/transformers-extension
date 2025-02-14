@@ -1,10 +1,10 @@
-# Transformers Extension X.X.X, TBD
+# Transformers Extension X.X.X, T.B.D
 
-TBD
+T.B.D
 
 ## Summary
 
-TBD
+T.B.D
 
 ### Refactorings
 
