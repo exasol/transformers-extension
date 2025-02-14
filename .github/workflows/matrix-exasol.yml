@@ -1,6 +1,7 @@
 name: Build Matrix (Exasol)
 
 on:
+  pull_request:
   workflow_call:
     outputs:
       matrix:

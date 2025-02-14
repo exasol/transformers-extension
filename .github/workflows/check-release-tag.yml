@@ -1,7 +1,6 @@
 name: Check Release Tag
 
 on: workflow_call
-
 jobs:
 
   check-tag-version-job:

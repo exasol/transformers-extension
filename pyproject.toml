@@ -7,7 +7,7 @@ authors = [
     	"Umit Buyuksahin <umit.buyuksahin@exasol.com>",
     	"Torsten Kilias <torsten.kilias@exasol.com>"
 ]
-
+#todo remove on pull request triggers from GH actions
 readme = 'README.md'
 
 repository = "https://github.com/exasol/transformers-extension"
