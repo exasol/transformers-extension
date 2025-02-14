@@ -69,7 +69,7 @@ def test_model_downloader(mock_create_loc, description, count, token_conn_name, 
                                model_name=base_model_names[i],
                                task_type=task_type[i],
                                sub_dir=Path(sub_directory_names[i]),
-                               get_model_factory=BucketFSModelSpecification.get_model_factory) for i in range(count)]
+                               bucketfs_conn_name=bfs_conn_name[i] ) for i in range(count)]
     for i in range(count):
         mock_cast(mock_bucketfs_model_specs[i].get_bucketfs_model_save_path).side_effect = [f'{sub_directory_names[i]}/{base_model_names[i]}']
     mock_current_model_specification_factory: Union[BucketFSModelSpecificationFactory, MagicMock] = (
