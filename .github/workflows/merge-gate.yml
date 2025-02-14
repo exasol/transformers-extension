@@ -1,7 +1,6 @@
 name: Merge-Gate
 
 on:
-  pull_request:
   workflow_call:
     secrets:
       ALTERNATIVE_GITHUB_TOKEN:

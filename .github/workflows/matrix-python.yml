@@ -1,7 +1,6 @@
 name: Build Matrix (Python)
 
 on:
-  pull_request:
   workflow_call:
     outputs:
       matrix:
