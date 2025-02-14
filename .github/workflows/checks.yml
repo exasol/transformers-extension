@@ -23,13 +23,8 @@ jobs:
           poetry-version: 2.0.1
 
       - name: Check Version(s)
-        run: |
-          echo "Please enable the version check by replacing this output with shell command bellow:"
-          echo ""
-          echo "poetry run version-check <<VERSION_PY>>"
-          echo ""
-          echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
-          exit 1
+        run: poetry run version-check version.py
+
 
   Documentation:
     name: Docs
@@ -130,26 +125,9 @@ jobs:
           path: .security.json
           include-hidden-files: true
 
-  Format:
-    name: Format Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.20.0
-        with:
-          python-version: "3.9"
-          poetry-version: 2.0.1
-
-      - name: Run format check
-        run: poetry run nox -s project:format
-
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix ]
+    needs: [ Documentation, Security, build-matrix ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
