@@ -1,8 +1,10 @@
 from __future__ import annotations
 from pathlib import Path
+from typing import Optional
 
 import click
 import transformers
+from exasol.bucketfs._path import PathLike
 
 from exasol.python_extension_common.cli.std_options import (
     StdTags, select_std_options, make_option_secret)
@@ -32,21 +34,37 @@ def upload_model(**kwargs) -> None:
     """
     Downloads model from Huggingface hub and the transfers model to database
     """
-    # create BucketFSModelSpecification for model to be loaded
-    current_model_spec = BucketFSModelSpecification(kwargs[MODEL_NAME_ARG], kwargs[TASK_TYPE_ARG],
-                                                    "", Path(kwargs[SUBDIR_ARG]))
-    # upload the downloaded model files into bucketfs
-    upload_path = current_model_spec.get_bucketfs_model_save_path()
-
     # create bucketfs location
     bucketfs_location = create_bucketfs_location(**kwargs)
+
+    upload_model_to_bfs_location(kwargs[MODEL_NAME_ARG], kwargs[TASK_TYPE_ARG],
+                                 Path(kwargs[SUBDIR_ARG]), bucketfs_location, kwargs[TOKEN_ARG])
+
+
+def upload_model_to_bfs_location(model_name: str, task_type: str, subdir: Path,
+                                 bucketfs_location: PathLike, huggingface_token: Optional[str] = None) -> None:
+    """
+    Downloads model from Huggingface hub and the transfers model to database at bucketfs_location
+
+    params:
+        model_name: name of the model
+        task_type: name of the task model is used for
+        subdir: directory where the model will be stored in the BucketFS
+        bucketfs_location: BucketFS location model will be uploaded to
+        huggingface_token: Optional. Huggingface token for private models
+    """
+    # create BucketFSModelSpecification for model to be loaded
+    current_model_spec = BucketFSModelSpecification(model_name, task_type,
+                                                    "", subdir)
+    # upload the downloaded model files into bucketfs
+    upload_path = current_model_spec.get_bucketfs_model_save_path()
 
     model_factory = current_model_spec.get_model_factory()
 
     downloader = HuggingFaceHubBucketFSModelTransferSP(bucketfs_location=bucketfs_location,
                                                        model_specification=current_model_spec,
                                                        bucketfs_model_path=upload_path,
-                                                       token=kwargs[TOKEN_ARG])
+                                                       token=huggingface_token)
 
     for model in [model_factory, transformers.AutoTokenizer]:
         downloader.download_from_huggingface_hub(model)
