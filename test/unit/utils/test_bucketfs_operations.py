@@ -24,16 +24,16 @@ def test_content(tmp_path):
 
 
 def test_upload_model_files_to_bucketfs(test_content, tmp_path):
-    path_in_backet = 'abcd'
+    path_in_bucket = 'abcd'
     bucket = bfs.MountedBucket(base_path=str(tmp_path))
-    bucketfs_location = bfs.path.BucketPath(path_in_backet, bucket)
+    bucketfs_location = bfs.path.BucketPath(path_in_bucket, bucket)
     model_path = Path("test_model_path")
     upload_model_files_to_bucketfs(
         bucketfs_location=bucketfs_location,
         bucketfs_model_path=model_path,
         model_directory=str(test_content)
     )
-    expected_tar_path = tmp_path / path_in_backet / model_path.with_suffix(".tar.gz")
+    expected_tar_path = tmp_path / path_in_bucket / model_path.with_suffix(".tar.gz")
     assert expected_tar_path.exists()
 
 
