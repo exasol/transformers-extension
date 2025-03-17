@@ -37,12 +37,12 @@ def upload_model(**kwargs) -> None:
     # create bucketfs location
     bucketfs_location = create_bucketfs_location(**kwargs)
 
-    upload_model_to_bfs_location(kwargs[MODEL_NAME_ARG], kwargs[TASK_TYPE_ARG],
+    model_tar_file_path = upload_model_to_bfs_location(kwargs[MODEL_NAME_ARG], kwargs[TASK_TYPE_ARG],
                                  Path(kwargs[SUBDIR_ARG]), bucketfs_location, kwargs[TOKEN_ARG])
-
+    print("Your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
 
 def upload_model_to_bfs_location(model_name: str, task_type: str, subdir: Path,
-                                 bucketfs_location: PathLike, huggingface_token: Optional[str] = None) -> None:
+                                 bucketfs_location: PathLike, huggingface_token: Optional[str] = None) -> Path:
     """
     Downloads model from Huggingface hub and the transfers model to database at bucketfs_location
 
@@ -52,6 +52,9 @@ def upload_model_to_bfs_location(model_name: str, task_type: str, subdir: Path,
         subdir: directory where the model will be stored in the BucketFS
         bucketfs_location: BucketFS location model will be uploaded to
         huggingface_token: Optional. Huggingface token for private models
+
+    returns
+        path model/tokenizer is saved at in the BucketFS
     """
     # create BucketFSModelSpecification for model to be loaded
     current_model_spec = BucketFSModelSpecification(model_name, task_type,
@@ -70,7 +73,7 @@ def upload_model_to_bfs_location(model_name: str, task_type: str, subdir: Path,
         downloader.download_from_huggingface_hub(model)
         # upload model files to BucketFS
     model_tar_file_path = downloader.upload_to_bucketfs()
-    print("Your model or tokenizer has been saved in the BucketFS at: " + str(model_tar_file_path))
+    return model_tar_file_path
 
 
 upload_model_command = click.Command(None, params=opts, callback=upload_model)
