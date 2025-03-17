@@ -1,10 +1,12 @@
+"""fixtures for setting up the test db with schema, language alias, udf install"""
 from typing import Tuple
-import pytest
-from pyexasol import ExaConnection
 
 from exasol_transformers_extension.deployment.scripts_deployer import \
     ScriptsDeployer
 from test.utils.parameters import PATH_IN_BUCKET
+
+import pytest
+from pyexasol import ExaConnection
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"
@@ -12,6 +14,7 @@ LANGUAGE_ALIAS = "TEST_PYTHON3_TE"
 
 
 def _deploy_scripts(pyexasol_connection: ExaConnection, install_all_scripts: bool) -> None:
+    """installs all existing udfs to test-db"""
     scripts_deployer = ScriptsDeployer(schema=SCHEMA_NAME,
                                        language_alias=LANGUAGE_ALIAS,
                                        install_all_scripts=install_all_scripts,
@@ -21,11 +24,13 @@ def _deploy_scripts(pyexasol_connection: ExaConnection, install_all_scripts: boo
 
 @pytest.fixture(scope="session")
 def db_schema_name() -> str:
+    """get schema name for tests"""
     return SCHEMA_NAME
 
 
 @pytest.fixture(scope='session')
 def language_alias(project_short_tag):
+    """get language_alias for TE"""
     return LANGUAGE_ALIAS
 
 
@@ -34,6 +39,7 @@ def setup_database(backend,
                    pyexasol_connection,
                    bucketfs_connection_factory,
                    deployed_slc) -> Tuple[str, str]:
+    """gets a connection to the test-db and installs udfs"""
     # This is a temporary workaround for the problem with slow slc file extraction
     # at a SaaS database. To be removed when a proper completion check is in place.
     if backend == 'saas':
