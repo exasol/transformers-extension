@@ -1,15 +1,17 @@
 from typing import Any, Tuple, List, Union
-from unittest.mock import patch, MagicMock, create_autospec
+from unittest.mock import MagicMock, create_autospec
 
-from transformers import Pipeline, AutoModel
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from test.unit.udfs.output_matcher import Output, OutputMatcher
 from test.utils.mock_cast import mock_cast
+
+from transformers import Pipeline, AutoModel
 
 from exasol_udf_mock_python.mock_context import StandaloneMockContext
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 
 
 def create_mock_udf_context(input_data: List[Tuple[Any, ...]], mock_meta: MockMetaData) -> StandaloneMockContext:
@@ -31,7 +33,7 @@ def create_bfs_connections_with_token_con(bfs_conn_names: List[str],
                                           token_conn_name: str,
                                           token_conn_obj: Connection
                                           ) -> dict[str, Connection]:
-    connections_dict = {k: v for k, v in zip(bfs_conn_names, bucketfs_connections)}
+    connections_dict = dict(zip(bfs_conn_names, bucketfs_connections))
     connections_dict[token_conn_name] = token_conn_obj
     return connections_dict
 
@@ -96,8 +98,9 @@ def assert_result_matches_expected_output(result, expected_output_data, input_co
     expected_output = Output(expected_output_data)
     actual_output = Output(result)
     n_input_columns = len(input_columns) - 1
-    assert OutputMatcher(actual_output, n_input_columns) == expected_output, ("OutputMatcher found expected_output_data and reult not matching:"
-                                                                              f"expected_output_data: \n"
+    assert OutputMatcher(actual_output, n_input_columns) == expected_output, ("OutputMatcher found expected_output_data "
+                                                                              "and result not matching:"
+                                                                              "expected_output_data: \n"
                                                                               f"{expected_output_data}\n"
-                                                                              f"actual_output_data: \n"
+                                                                              "actual_output_data: \n"
                                                                               f"{actual_output}")
