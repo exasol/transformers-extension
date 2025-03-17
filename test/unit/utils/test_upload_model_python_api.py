@@ -1,9 +1,7 @@
-from os import mkdir
 from pathlib import Path
-from unittest.mock import Mock
 
 from exasol_transformers_extension.upload_model import upload_model_to_bfs_location
-from utils.parameters import model_params
+from test.utils.parameters import model_params
 
 
 def test_model_upload_python_api(tmpdir_factory):
