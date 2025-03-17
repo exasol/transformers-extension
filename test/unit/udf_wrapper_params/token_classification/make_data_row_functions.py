@@ -1,5 +1,5 @@
 # default values, used for input/output rows if no other params are given
-device_id=None
+device_id=None#todo rename variables
 bucketfs_conn="bfs_conn"
 sub_dir="sub_dir"
 model_name="model"

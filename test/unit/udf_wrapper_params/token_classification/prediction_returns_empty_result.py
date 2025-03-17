@@ -1,10 +1,12 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.token_classification.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
-    text_doc_id, text_start, text_end, agg_strategy_simple, make_model_output_for_one_input_row, sub_dir, model_name
+    make_model_output_for_one_input_row
 
+from exasol_udf_mock_python.connection import Connection
 
+@dataclasses.dataclass
 class PredictionReturnsEmptyResult:
     """
     Output from model is empty. Respective input row should be dropped and remaining output returned normally.
@@ -22,8 +24,9 @@ class PredictionReturnsEmptyResult:
                   make_input_row(text_data=text_data) * data_size + \
                   make_input_row(text_data=text_data) * data_size + \
                   make_input_row() * data_size
+    # Result of input #2 is empty, so the row does not appear in the output
     output_data = make_output_row() * n_entities * data_size + \
-                  make_output_row() * n_entities * data_size # Result of input #2 is empty, so the row does not appear in the output
+                  make_output_row() * n_entities * data_size
 
     work_with_span_input_data = make_input_row_with_span() * data_size  + \
                                 make_input_row_with_span(text_data=text_data) * data_size  + \
@@ -32,8 +35,9 @@ class PredictionReturnsEmptyResult:
                                 make_input_row_with_span(text_data=text_data) * data_size + \
                                 make_input_row_with_span() * data_size
 
+    # Result of input #2 is empty, so the row does not appear in the output
     work_with_span_output_data =  make_output_row_with_span() * n_entities * data_size  + \
-                                  make_output_row_with_span() * n_entities * data_size # Result of input #2 is empty, so the row does not appear in the output
+                                  make_output_row_with_span() * n_entities * data_size
 
 
     tokenizer_model_output_df_model1 = make_model_output_for_one_input_row(number_entities=n_entities) * data_size
@@ -41,7 +45,8 @@ class PredictionReturnsEmptyResult:
     tokenizer_model_output_df_model1.append({})
     tokenizer_model_output_df_model1.append([[]])
     tokenizer_model_output_df_model1.append([{}])
-    tokenizer_model_output_df_model1 = tokenizer_model_output_df_model1 + make_model_output_for_one_input_row(number_entities=n_entities) * data_size
+    tokenizer_model_output_df_model1 = (tokenizer_model_output_df_model1 +
+                                        make_model_output_for_one_input_row(number_entities=n_entities) * data_size)
 
     tokenizer_models_output_df = [[tokenizer_model_output_df_model1]]
 
