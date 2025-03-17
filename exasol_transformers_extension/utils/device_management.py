@@ -1,5 +1,7 @@
-import torch
+""" Function get_torch_device to set the device(CPU/cuda device) torch will use"""
 from typing import Optional
+import torch
+
 
 
 def get_torch_device(device_id: Optional[int]) -> torch.device:

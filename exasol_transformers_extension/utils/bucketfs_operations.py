@@ -1,3 +1,4 @@
+"""Collection of useful bucketfs related operations """
 from __future__ import annotations
 import tarfile
 import tempfile
@@ -26,7 +27,8 @@ def upload_model_files_to_bucketfs(
         return model_upload_tar_file_path
 
 
-def create_tar_of_directory(path: Path, fileobj: BinaryIO):
+def create_tar_of_directory(path: Path, fileobj: BinaryIO) -> None:
+    """tar the contents of "path" into "fileobj", used for model upload"""
     with tarfile.open(name="model.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
         for subpath in path.glob("*"):
             tar.add(name=subpath, arcname=subpath.name)

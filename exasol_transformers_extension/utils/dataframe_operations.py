@@ -1,5 +1,6 @@
-import pandas as pd
+"""collection of dataframe operation: get_unique_values, sort_cell_values"""
 from typing import List, Any
+import pandas as pd
 
 
 def get_unique_values(
@@ -36,5 +37,3 @@ def sort_cell_values(
         lambda cell: ','.join(sorted(cell.split(sep))))
 
     return df
-
-
