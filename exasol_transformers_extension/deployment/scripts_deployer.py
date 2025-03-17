@@ -22,10 +22,10 @@ class ScriptsDeployer:
         self._use_spans = use_spans
         self._install_all_scripts = install_all_scripts
         self._pyexasol_conn = pyexasol_conn
-        logger.debug(f"Init {ScriptsDeployer.__name__}.")
+        logger.debug("Init %s.", ScriptsDeployer.__name__)
 
     def _get_current_schema(self) -> str | None:
-        return self._pyexasol_conn.execute(f"SELECT CURRENT_SCHEMA;").fetchval()
+        return self._pyexasol_conn.execute("SELECT CURRENT_SCHEMA;").fetchval()
 
     def _set_current_schema(self, schema: str | None):
         if schema:
@@ -39,10 +39,10 @@ class ScriptsDeployer:
                 f'CREATE SCHEMA IF NOT EXISTS "{self._schema}";')
         except pyexasol.ExaQueryError as e:
             logger.warning(
-                f"Could not create schema {self._schema}. Got error: {e}")
-            logger.info(f"Trying to open schema {self._schema} instead.")
+                "Could not create schema %s. Got error: %s", self._schema, e)
+            logger.info("Trying to open schema %s instead.", self._schema)
         self._set_current_schema(self._schema)
-        logger.info(f"Schema {self._schema} is opened.")
+        logger.info("Schema %s is opened.", self._schema)
 
     def  _deploy_udf_scripts_from_constants(self, constants_set: InstallScriptsConstants) -> None:
         for udf_call_src, template_src in constants_set.udf_callers_templates.items():
@@ -59,8 +59,7 @@ class ScriptsDeployer:
             )
 
             self._pyexasol_conn.execute(udf_query)
-            logger.debug(f"The UDF statement of the template "
-                         f"{template_src} is executed.")
+            logger.debug("The UDF statement of the template %s is executed.", template_src)
 
     def _deploy_udf_scripts(self) -> None:
         """
@@ -82,7 +81,7 @@ class ScriptsDeployer:
         try:
             self._open_schema()
             self._deploy_udf_scripts()
-            logger.debug(f"Scripts are deployed.")
+            logger.debug("Scripts are deployed.")
         finally:
             self._set_current_schema(current_schema)
 
