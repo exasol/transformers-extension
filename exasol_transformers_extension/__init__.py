@@ -1,1 +1,2 @@
-__version__ = '0.1.0'
+"""transformers extension init file"""
+__version__ = '2.2.1'
