@@ -1,4 +1,5 @@
-from pathlib import PurePosixPath, Path
+"""Class ModelSpecification describing a specific model."""
+from pathlib import PurePosixPath
 import transformers
 
 
@@ -7,7 +8,10 @@ class ModelSpecification:
     Class describing a model.
     """
     def __init__(self, model_name: str, task_type: str):
-        # task_type, model_version
+        """
+        :param model_name: name of the model
+        :param task_type: name of the task model is intended for
+        """
         self.model_name = model_name
         self.task_type = self._set_task_type_from_udf_name(task_type)
 
@@ -34,13 +38,14 @@ class ModelSpecification:
         return task_type
 
     def __eq__(self, other):
-        """Overrides the default implementation"""
+        """Overrides the default implementation of equal"""
         if isinstance(other, ModelSpecification):
             return (self.model_name == other.model_name
                     and self.task_type == other.task_type)
         return False
 
     def get_model_specific_path_suffix(self) -> PurePosixPath:
+        """ Returns pyth suffix specific to the model """
         return PurePosixPath(self.model_name.replace(".", "_") + "_" + self.task_type) #model_name-version-task#
 
     def get_model_factory(self):

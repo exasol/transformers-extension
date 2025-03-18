@@ -66,7 +66,7 @@ class DBQueries:
 
     @staticmethod
     def get_language_settings(db_conn) -> ExaParameter:
-        query = f"""
+        query = """
             SELECT "SYSTEM_VALUE", "SESSION_VALUE"
             FROM SYS.EXA_PARAMETERS
             WHERE PARAMETER_NAME='SCRIPT_LANGUAGES'"""

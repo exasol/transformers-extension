@@ -1,3 +1,4 @@
+"""Constants defining which UDF to install independent fo work_with_spans"""
 from pathlib import Path
 
 from exasol_transformers_extension.deployment.install_scripts_constants import InstallScriptsConstants

@@ -1,7 +1,7 @@
-import exasol.bucketfs as bfs
 import pytest
 from test.utils.parameters import PATH_IN_BUCKET
 
+import exasol.bucketfs as bfs
 
 @pytest.fixture(scope="session")
 def bucketfs_location(backend_aware_bucketfs_params) -> bfs.path.PathLike:

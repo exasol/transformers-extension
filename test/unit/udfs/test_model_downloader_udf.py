@@ -2,6 +2,11 @@ from typing import Union, List
 from pathlib import Path
 from unittest.mock import create_autospec, MagicMock, call, Mock, patch
 
+from test.utils.matchers import AnyOrder
+from test.utils.mock_cast import mock_cast
+from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, \
+    create_mock_exa_environment_with_token_con
+
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
@@ -9,15 +14,11 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification, \
     BucketFSModelSpecificationFactory
-from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, \
-    create_mock_exa_environment_with_token_con
 from exasol_transformers_extension.udfs.models.model_downloader_udf import \
     ModelDownloaderUDF
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
     HuggingFaceHubBucketFSModelTransferSPFactory, HuggingFaceHubBucketFSModelTransferSP
-from test.utils.matchers import AnyOrder
-from test.utils.mock_cast import mock_cast
 
 def create_mock_metadata() -> MockMetaData:
     meta = MockMetaData(

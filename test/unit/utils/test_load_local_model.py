@@ -1,16 +1,14 @@
-import tempfile
-from pathlib import Path
 from typing import Union
 from unittest.mock import create_autospec, MagicMock, call, Mock
 
-import transformers
+from test.utils.mock_cast import mock_cast
 
 from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
 from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
-from test.utils.mock_cast import mock_cast
+
 
 
 class TestSetup:
@@ -21,7 +19,8 @@ class TestSetup:
         self.token = "token"
         self.model_name = "model_name"
         self.model_task = "test_task"
-        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = create_autospec(BucketFSModelSpecification)
+        self.mock_current_model_specification: Union[BucketFSModelSpecification, MagicMock] = (
+            create_autospec(BucketFSModelSpecification))
         self.cache_dir = "test/Path"
 
         self.mock_pipeline = Mock()

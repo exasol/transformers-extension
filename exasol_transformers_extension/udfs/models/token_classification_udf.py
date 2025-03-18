@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Union, Dict
+from typing import List, Iterator, Any, Dict
 from exasol_transformers_extension.utils import dataframe_operations
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
@@ -66,7 +66,7 @@ class TokenClassificationUDF(BaseModelUDF):
         results = self.last_created_pipeline(
             text_data, aggregation_strategy=aggregation_strategy)
 
-        results = results if type(results[0]) == list else [results]
+        results = results if isinstance(results[0], list) else [results]
 
         if aggregation_strategy == "none":
             self._desired_fields_in_prediction = [
@@ -166,4 +166,3 @@ class TokenClassificationUDF(BaseModelUDF):
             results_df_list.append(result_df)
 
         return results_df_list
-

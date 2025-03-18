@@ -1,9 +1,12 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.token_classification.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
-    sub_dir, model_name, text_data, token, entity_type, score, make_model_output_for_one_input_row, make_number_of_strings
+    sub_dir, model_name, text_data, token, entity_type, score, \
+    make_model_output_for_one_input_row, make_number_of_strings
+from exasol_udf_mock_python.connection import Connection
 
+@dataclasses.dataclass
 class MultipleModelMultipleBatchCompleteMultipleEntities:
     """
     multiple model, multiple batch, last batch complete
@@ -36,18 +39,21 @@ class MultipleModelMultipleBatchCompleteMultipleEntities:
                                                          model_name=model_name1, text_data=text_data1) * data_size + \
                                 make_input_row_with_span(sub_dir=sub_dir2,
                                                          model_name=model_name2, text_data=text_data2) * data_size
-    work_with_span_output_data = make_output_row_with_span(sub_dir=sub_dir1,
+    work_with_span_output_data = (make_output_row_with_span(sub_dir=sub_dir1,
                                                            model_name=model_name1, entity_covered_text=token1,
-                                                           entity_type=entity_type1, score=score) * n_entities * data_size + \
+                                                           entity_type=entity_type1, score=score) * n_entities *
+                                  data_size +
                                  make_output_row_with_span(sub_dir=sub_dir2,
                                                            model_name=model_name2, entity_covered_text=token2,
-                                                           entity_type=entity_type2, score=score+0.1) * n_entities * data_size
+                                                           entity_type=entity_type2, score=score+0.1) * n_entities *
+                                  data_size)
 
     tokenizer_model_output_df_model1 = [make_model_output_for_one_input_row(number_entities=n_entities, word=token1,
                                                                      entity_group=entity_type1, score=score) * \
                                                                      data_size]
     tokenizer_model_output_df_model2 = [make_model_output_for_one_input_row(number_entities=n_entities, word=token2,
-                                                                     entity_group=entity_type2, score=score+0.1) * data_size]
+                                                                     entity_group=entity_type2, score=score+0.1) *
+                                        data_size]
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2]
 

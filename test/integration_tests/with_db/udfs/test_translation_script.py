@@ -3,7 +3,7 @@ from test.utils.parameters import model_params
 
 
 def test_translation_script(
-        setup_database, db_conn, upload_seq2seq_model_to_bucketfs):
+        setup_database, db_conn, upload_translation_model_to_bucketfs):
     bucketfs_conn_name, _ = setup_database
     n_rows = 100
     src_lang = "English"

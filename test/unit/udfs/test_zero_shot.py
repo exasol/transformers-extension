@@ -1,15 +1,6 @@
-from typing import Union, List
-from unittest.mock import patch, MagicMock, create_autospec
 
-import pytest
-from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.mock_context import StandaloneMockContext
-from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
-from exasol_udf_mock_python.mock_meta_data import MockMetaData
-from transformers import AutoModel, Pipeline
+from unittest.mock import patch
 
-from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import ZeroShotTextClassificationUDF
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
 from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_multiple_model_multiple_batch import \
     ErrorOnPredictionMultipleModelMultipleBatch
 from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_single_model_multiple_batch import \
@@ -25,9 +16,15 @@ from test.unit.utils.utils_for_udf_tests import assert_correct_number_of_results
     create_mock_model_factories_with_models, create_mock_pipeline_factory
 
 from test.utils.mock_bucketfs_location import (fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path)
-from test.utils.mock_cast import mock_cast
+
+import pytest
+from exasol_udf_mock_python.column import Column
+from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import ZeroShotTextClassificationUDF
 
 def create_mock_metadata_with_span():
+    """creates mock metadata for udf tests. includes span columns"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",
@@ -59,6 +56,7 @@ def create_mock_metadata_with_span():
     return meta
 
 def create_mock_metadata():
+    """creates mock metadata for udf tests"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",

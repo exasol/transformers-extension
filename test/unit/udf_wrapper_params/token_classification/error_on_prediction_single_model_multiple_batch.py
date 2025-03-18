@@ -1,10 +1,12 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.token_classification.make_data_row_functions import make_input_row, \
-    make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
-    text_doc_id, text_start, text_end, agg_strategy_simple, make_model_output_for_one_input_row, sub_dir, model_name
+    make_output_row, make_input_row_with_span, bucketfs_conn, \
+    text_doc_id, text_start, text_end, agg_strategy_simple, sub_dir, model_name
 
+from exasol_udf_mock_python.connection import Connection
 
+@dataclasses.dataclass
 class ErrorOnPredictionSingleModelMultipleBatch:
     """
     error on prediction, single model, multiple batch,
@@ -28,10 +30,12 @@ class ErrorOnPredictionSingleModelMultipleBatch:
 
     number_complete_batches = data_size // batch_size
     number_remaining_data_entries_in_last_batch = data_size % batch_size
-    tokenizer_model_output_df_model1 = [[Exception("Traceback mock_pipeline is throwing an error intentionally")] #error on pred -> only one output per input
-                                   * batch_size] * \
-                                number_complete_batches + \
-                                [[Exception("Traceback mock_pipeline is throwing an error intentionally")] * number_remaining_data_entries_in_last_batch]
+    # error on pred -> only one output per input
+    tokenizer_model_output_df_model1 = [[Exception("Traceback mock_pipeline is throwing an error intentionally")]
+                                        * batch_size] * \
+                                       number_complete_batches + \
+                                       [[Exception("Traceback mock_pipeline is throwing an error intentionally")] *
+                                        number_remaining_data_entries_in_last_batch]
     tokenizer_models_output_df = [tokenizer_model_output_df_model1]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

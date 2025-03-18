@@ -56,7 +56,7 @@ class TextGenerationUDF(BaseModelUDF):
         #  Batch prediction returns list of list while single prediction just
         #  return a list. In case of batch predictions, we need to flatten
         #  2D prediction results to 1D list
-        results = sum(results, []) if type(results[0]) == list else results
+        results = sum(results, []) if isinstance((results[0]), list) else results
         return results
 
     def append_predictions_to_input_dataframe(

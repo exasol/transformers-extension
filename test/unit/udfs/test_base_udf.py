@@ -1,5 +1,4 @@
 from unittest.mock import patch
-import pytest
 
 from test.unit.utils.utils_for_base_udf_tests import (run_test, create_mock_metadata,
                                                       create_mock_metadata_with_span)
@@ -38,6 +37,7 @@ from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_
     create_mock_pipeline_factory, create_mock_model_factories_with_models, assert_correct_number_of_results, \
     assert_result_matches_expected_output
 
+import pytest
 
 def setup_base_udf_tests_and_run(bfs_connections, input_data,
                                  number_of_intended_used_models, tokenizer_models_output_df,

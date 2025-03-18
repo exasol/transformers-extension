@@ -1,3 +1,4 @@
+"""HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace hub to the bucketfs"""
 from pathlib import Path
 from typing import Optional
 
@@ -11,7 +12,7 @@ from exasol_transformers_extension.utils.temporary_directory_factory import Temp
 
 
 def make_parameters_of_model_contiguous_tensors(model):
-    # Fix for "ValueError: You are trying to save a non contiguous tensor" when calling save_pretrained
+    """ Fix for "ValueError: You are trying to save a non-contiguous tensor" when calling save_pretrained"""
     if hasattr(model, "parameters"):
         for param in model.parameters():
             param.data = param.data.contiguous()
@@ -24,7 +25,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
     :bucketfs_location:                 BucketFSLocation the model should be loaded to
     :model_specification:        Holds information specifying details of Huggingface model to be downloaded
-    :model_path:                        Path the model will be loaded into the BucketFS at
+    :bucketfs_model_path:               Path the model will be loaded into the BucketFS at
     :token:                             Huggingface token, only needed for private models
     :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory. Mainly change for testing.
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
