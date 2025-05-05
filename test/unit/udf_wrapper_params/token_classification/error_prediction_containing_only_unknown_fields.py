@@ -9,7 +9,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class ErrorPredictionOnlyContainsUnknownFields:
     """
-    Model returns only not expected output columns. Udf returns error message and empty results.
+    Model returns only not expected output columns. UDF returns error message and empty results.
     """
     expected_model_counter = 1
     batch_size = 2

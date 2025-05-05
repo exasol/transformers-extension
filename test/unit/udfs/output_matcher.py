@@ -4,7 +4,7 @@ Row = List[Tuple[Any, ...]]
 
 
 class Output:
-    """encapsulates a model output"""
+    """Encapsulates a model output"""
     def __init__(self, data: Row):
         self._data = data
 
@@ -17,7 +17,7 @@ class Output:
 
 
 class OutputMatcher:
-    """takes an (expected) Output and corresponding number of input columns (n_input_columns) and allows multiple
+    """Takes an (expected) Output and corresponding number of input columns (n_input_columns) and allows multiple
     query's to be made about the output. most importantly can check weather this Output equals another Output"""
     def __init__(self, output: Output, n_input_columns: int,
                  error_message_index: int = -1):
@@ -26,15 +26,15 @@ class OutputMatcher:
         self._error_message_index = error_message_index
 
     def error_exists(self, row) -> Optional[bool]:
-        """returns true if error exists in error column"""
+        """Returns true if error exists in error column"""
         return row[self._error_message_index] is not None
 
     def error_message(self, row) -> Optional[str]:
-        """returns error message from error column"""
+        """Returns error message from error column"""
         return row[self._error_message_index]
 
     def input_columns(self, row) -> Tuple[Any]:
-        """returns only the part of the output from the first up until n_input_columns.
+        """Returns only the part of the Output from the first up until n_input_columns.
         the assumption being that those correspond to the input columns"""
         return row[: self._n_input_columns]
 
@@ -50,7 +50,7 @@ class OutputMatcher:
         return result
 
     def compare_row(self, expected_row, actual_row):
-        """checks weather two rows are equal"""
+        """Checks weather two rows are equal"""
         if not self.error_exists(expected_row):
             return expected_row == actual_row
 

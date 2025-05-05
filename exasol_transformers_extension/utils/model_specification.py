@@ -9,8 +9,8 @@ class ModelSpecification:
     """
     def __init__(self, model_name: str, task_type: str):
         """
-        :param model_name: name of the model
-        :param task_type: name of the task model is intended for
+        :param model_name: Name of the model
+        :param task_type: Name of the task model is intended for
         """
         self.model_name = model_name
         self.task_type = self._set_task_type_from_udf_name(task_type)
@@ -45,7 +45,7 @@ class ModelSpecification:
         return False
 
     def get_model_specific_path_suffix(self) -> PurePosixPath:
-        """ Returns pyth suffix specific to the model """
+        """Returns pyth suffix specific to the model"""
         return PurePosixPath(self.model_name.replace(".", "_") + "_" + self.task_type) #model_name-version-task#
 
     def get_model_factory(self):

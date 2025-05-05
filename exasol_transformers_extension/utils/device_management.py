@@ -1,4 +1,4 @@
-""" Function get_torch_device to set the device(CPU/cuda device) torch will use"""
+"""Function get_torch_device to set the device(CPU/CUDA device) PyTorch will use"""
 from typing import Optional
 import torch
 

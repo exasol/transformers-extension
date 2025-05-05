@@ -24,7 +24,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import ZeroShotTextClassificationUDF
 
 def create_mock_metadata_with_span():
-    """creates mock metadata for udf tests. includes span columns"""
+    """Creates mock metadata for UDF tests. includes span columns"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",
@@ -56,7 +56,7 @@ def create_mock_metadata_with_span():
     return meta
 
 def create_mock_metadata():
-    """creates mock metadata for udf tests"""
+    """Creates mock metadata for UDF tests"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",

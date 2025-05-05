@@ -10,7 +10,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
     """
-    single bucketfs connection, multiple subdir, single model, multiple batch
+    Single BucketFS connection, multiple subdirs, single model, multiple batches
     """
     expected_model_counter = 2
     batch_size = 2

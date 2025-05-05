@@ -10,7 +10,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
     """
-    multiple bucketfs connection, single subdir, single model, multiple_batch
+    Multiple BucketFS connections, single subdir, single model, multiple batches
     """
     # looks same as multiple bfsconn single batch test, but batch does not get split because of bfsconn,
     # instead input is split into 2 batches because of batch size
@@ -30,7 +30,7 @@ class MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch:
                                 make_input_row_with_span(bucketfs_conn=bfs_conn2) * data_size
     work_with_span_output_data =  (make_output_row_with_span(bucketfs_conn=bfs_conn1, answer=answer1, score=score) *
                                    data_size +
-                                  make_output_row_with_span(bucketfs_conn=bfs_conn2, answer=answer2, score=score+0.1) *
+                                   make_output_row_with_span(bucketfs_conn=bfs_conn2, answer=answer2, score=score+0.1) *
                                    data_size)
 
     tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(answer=answer1, score=score,) * data_size]

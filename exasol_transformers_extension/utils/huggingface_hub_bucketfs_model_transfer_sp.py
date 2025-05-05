@@ -1,4 +1,4 @@
-"""HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace hub to the bucketfs"""
+"""HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace Hub to the BucketFS."""
 from pathlib import Path
 from typing import Optional
 
@@ -12,7 +12,7 @@ from exasol_transformers_extension.utils.temporary_directory_factory import Temp
 
 
 def make_parameters_of_model_contiguous_tensors(model):
-    """ Fix for "ValueError: You are trying to save a non-contiguous tensor" when calling save_pretrained"""
+    """Fix for "ValueError: You are trying to save a non-contiguous tensor" when calling save_pretrained."""
     if hasattr(model, "parameters"):
         for param in model.parameters():
             param.data = param.data.contiguous()

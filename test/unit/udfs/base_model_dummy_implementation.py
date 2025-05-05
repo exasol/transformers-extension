@@ -7,7 +7,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
 class DummyImplementationUDF(BaseModelUDF):
-    """a dummy implementation for the base udf. used for testing base udf functionality.
+    """A dummy implementation for the  BaseModelUDF. used for testing BaseModelUDF functionality.
     implements necessary functions as simply as possible"""
     def __init__(self,
                  exa,

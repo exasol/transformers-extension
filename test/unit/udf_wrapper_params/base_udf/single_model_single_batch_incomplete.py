@@ -9,7 +9,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class SingleModelSingleBatchIncomplete:
     """
-    single model, single batch, batch incomplete
+    Single model, single batch, batch incomplete
     """
     expected_model_counter = 1
     batch_size = 2

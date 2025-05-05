@@ -9,7 +9,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class ErrorPredictionMissingExpectedFields:
     """
-    Model Outputs is missing column "score", error message about missing column is returned, with empty output columns.
+    Model outputs are missing column "score", error message about missing column is returned, with empty output columns.
     Existing output columns are dropped for all rows where one output column is missing.
     """
     expected_model_counter = 1

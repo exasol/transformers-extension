@@ -1,10 +1,10 @@
-""" Class InstallScriptsConstants to encapsulate different sets of constants for each set of udfs to be installed."""
+"""Class InstallScriptsConstants to encapsulate different sets of constants for each set of UDFs to be installed."""
 from pathlib import Path
 from importlib_resources import files
 
 class InstallScriptsConstants:
     """
-    Class to encapsulate different sets of constants for each set of udfs/scripts to be installed.
+    Class to encapsulate different sets of constants for each set of UDFs/scripts to be installed.
     """
     def __init__(self,
                  base_dir : str,

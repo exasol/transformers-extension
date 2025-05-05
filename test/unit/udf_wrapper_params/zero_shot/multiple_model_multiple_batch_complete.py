@@ -10,7 +10,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class MultipleModelMultipleBatchComplete:
     """
-    multiple model, multiple batch, last batch complete
+    Multiple model, multiple batches, last batch complete
     """
     expected_model_counter = 2
     batch_size = 2

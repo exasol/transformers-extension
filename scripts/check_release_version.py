@@ -9,7 +9,7 @@ import toml
 
 
 def get_git_version():
-    """get the latest released git version"""
+    """Get the latest released Git version"""
     repo = Repo()
     assert not repo.bare
     tag_strings = [t.name for t in repo.tags]
@@ -21,13 +21,13 @@ def get_git_version():
 
 
 def get_poetry_version():
-    """get version defined in pyproject.toml"""
+    """Get version defined in pyproject.toml"""
     parsed_toml = toml.load('pyproject.toml')
     return parsed_toml["tool"]["poetry"]["version"].strip()
 
 
 def get_change_log_version():
-    """get version of latest changelog file"""
+    """Get version of latest changelog file"""
     # Path overloads __truediv__
     with open(Path(__file__).parent / ".." / "doc" / "changes" / "changelog.md") as changelog:
         changelog_str = changelog.read()
@@ -38,7 +38,7 @@ def get_change_log_version():
 
 
 if __name__ == '__main__':
-    """check if version is consistent across files"""
+    """Check if version is consistent across files"""
     poetry_version = get_poetry_version()
     latest_tag = get_git_version()
     changelog_version = get_change_log_version()

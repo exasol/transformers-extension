@@ -20,7 +20,7 @@ nox.options.sessions = ["project:fix"]
 
 @nox.session(python=False)
 def export_slc():
-    """exports transformers extension slc"""
+    """Exports Transformers Extension Script Language Container"""
     with language_container_factory() as container_builder:
         container_builder.export(EXPORT_PATH)
 
@@ -48,7 +48,7 @@ def saas_integration_tests(session):
 @nox.session(python=False)
 def onprem_integration_tests(session):
     """
-    runs all integration tests with onprem backend
+    Runs all integration tests with onprem backend
     """
     # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
@@ -59,7 +59,7 @@ def onprem_integration_tests(session):
 @nox.session(python=False)
 def without_db_integration_tests(session):
     """
-    runs only non-db integration tests
+    Runs only non-db integration tests
     """
     # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
     # configure the database. See the start_database session.
@@ -69,7 +69,7 @@ def without_db_integration_tests(session):
 @nox.session(python=False)
 def start_database(session):
     """
-    starts onprem backend/db
+    Starts onprem backend/db
     """
     session.run('itde', 'spawn-test-environment',
                 '--environment-name', 'test',

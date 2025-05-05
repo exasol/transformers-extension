@@ -11,11 +11,11 @@ class LoadLocalModel:
     """
     Class for loading locally saved models and tokenizers. Also stores information regarding the model and pipeline.
 
-    :param pipeline_factory:      a function to create a transformers pipeline
-    :param task_type:              name of the current task
-    :param device:                 device to be used for pipeline creation, i.e "CPU"
-    :param base_model_factory:    a ModelFactoryProtocol for creating the loaded model
-    :param tokenizer_factory:     a ModelFactoryProtocol for creating the loaded tokenizer
+    :param pipeline_factory:      A function to create a transformers pipeline
+    :param task_type:             Name of the current task
+    :param device:                Device to be used for pipeline creation, i.e "CPU"
+    :param base_model_factory:    A ModelFactoryProtocol for creating the loaded model
+    :param tokenizer_factory:     A ModelFactoryProtocol for creating the loaded tokenizer
     """
     def __init__(self,
                  pipeline_factory,
@@ -48,8 +48,8 @@ class LoadLocalModel:
         Loads a locally saved model and tokenizer from model_path.
         Returns new pipeline corresponding to the model and task.
 
-        :param model_path:            location of the saved model and tokenizer
-        :param current_model_key:     key of the model to be loaded
+        :param model_path:            Location of the saved model and tokenizer
+        :param current_model_key:     Key of the model to be loaded
         """
 
         loaded_model = self._base_model_factory.from_pretrained(str(self._bucketfs_model_cache_dir))

@@ -9,7 +9,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class MultipleModelMultipleBatchMultipleModelsPerBatch:
     """
-    multiple model, multiple batch, multiple models per batch
+    Multiple models, multiple batches, multiple models per batch
     """
     expected_model_counter = 4
     batch_size = 2

@@ -1,4 +1,4 @@
-"""collection of dataframe operation: get_unique_values, sort_cell_values"""
+"""Collection of DataFrame operation: get_unique_values, sort_cell_values"""
 from typing import List, Any
 import pandas as pd
 
