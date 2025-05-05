@@ -9,6 +9,7 @@ T.B.D
 ### Refactorings
 
  - #201: Added python toolbox to project
+ - #302: Improved linter score
 
 ### Bugs
 
