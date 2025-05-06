@@ -64,12 +64,12 @@ class Context:
     ])
 def test_translation_udf(
         description, device_id, languages,
-        prepare_translation_model_in_local_bucketfs):
+        prepare_translation_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_translation_model_in_local_bucketfs
+    bucketfs_base_path = prepare_translation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -132,12 +132,12 @@ def test_translation_udf(
     ])
 def test_translation_udf_on_error_handling(
         description, device_id, languages,
-        prepare_translation_model_in_local_bucketfs):
+        prepare_translation_model_for_local_bucketfs):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(f"There is no available device({device_id}) "
                     f"to execute the test")
 
-    bucketfs_base_path = prepare_translation_model_in_local_bucketfs
+    bucketfs_base_path = prepare_translation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 

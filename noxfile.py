@@ -19,7 +19,7 @@ nox.options.sessions = ["project:fix"]
 
 
 @nox.session(python=False)
-def export_slc():
+def export_slc(session: nox.Session):
     """Exports Transformers Extension Script Language Container"""
     with language_container_factory() as container_builder:
         container_builder.export(EXPORT_PATH)
