@@ -14,6 +14,7 @@ T.B.D
 
  - #201: Added python toolbox to project
  - #294: Improved linter score
+ - #305: Update python toolbox to 1.0.1
 
 ### Bugs
 
