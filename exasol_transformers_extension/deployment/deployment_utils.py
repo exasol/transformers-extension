@@ -1,4 +1,4 @@
-"""utils for TE deployment, contains function to get """#todo what do?
+"""Utils for TE deployment, it contains function to render SQL statements from Jinja2 templates"""
 import logging
 from jinja2 import Environment, PackageLoader, select_autoescape, ChoiceLoader
 from exasol_transformers_extension.deployment.constants import constants
