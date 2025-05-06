@@ -92,3 +92,4 @@ ignore_errors = true
 #[tool.poetry.scripts]
 #tbx = 'exasol.toolbox.tools.tbx:CLI'
 #sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
+
