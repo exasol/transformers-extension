@@ -40,18 +40,18 @@ for the project using nox. See [the nox file](../../noxfile.py) for all tasks ru
 
 Run unit tests:
 ```bash
-      poetry run nox -s test:unit
+      poetry run -- nox -s test:unit
 ```
 Start a test database and run all integration tests:
 ```bash
-      poetry run nox -s start_database
-      poetry run nox -s test:integration
+      poetry run -- nox -s start_database
+      poetry run -- nox -s test:integration
 ```
 run parts of the integration tests:
 ```bash
-      poetry run nox -s onprem_integration_tests
-      poetry run nox -s saas_integration_tests
-      poetry run nox -s without_db_integration_tests
+      poetry run -- nox -s onprem_integration_tests
+      poetry run -- nox -s saas_integration_tests
+      poetry run -- nox -s without_db_integration_tests
 ```
 You can find more information regarding the tests in the [Tests](#tests) section below
 
