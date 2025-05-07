@@ -1,4 +1,5 @@
 """Class LoadLocalModel for loading locally saved models and tokenizers."""
+from pathlib import PurePosixPath
 
 import torch
 import transformers.pipelines
@@ -36,9 +37,9 @@ class LoadLocalModel:
         self.device = device
         self._base_model_factory = base_model_factory
         self._tokenizer_factory = tokenizer_factory
-        self._current_model_specification = None
-        self._bucketfs_model_cache_dir = None
-        self.last_model_loaded_successfully = None
+        self._current_model_specification: BucketFSModelSpecification
+        self._bucketfs_model_cache_dir: PurePosixPath
+        self.last_model_loaded_successfully: bool
         self.model_load_error = None
 
     @property

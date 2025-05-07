@@ -41,6 +41,8 @@ nox = "^2023.4.22"
 pytest-exasol-slc = ">=0.3.0"
 pytest-exasol-extension = ">=0.2.1,<1"
 exasol-toolbox = "^1.0.0"
+pandas-stubs = "^2.2.0"
+types-toml = "^0.10.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
@@ -80,10 +82,22 @@ fail-under = 4.0
 max-line-length = 88
 max-module-lines = 800
 
+[tool.mypy]
+plugins = [
+    "pydantic.mypy",
+]
 
 # Configure exceptions for the type checker
 [[tool.mypy.overrides]]
 module = [
-    "test.*"
+    "test.*",
+    "transformers.*",
+    "pyexasol.*",
+    "exasol.python_extension_common.*",
+    # exa not defined
+    "exasol_transformers_extension.udfs.callers.*",
+    # list[...] vs list[DataFrame]
+    "exasol_transformers_extension.udfs.models.*"
 ]
+ignore_missing_imports = true
 ignore_errors = true

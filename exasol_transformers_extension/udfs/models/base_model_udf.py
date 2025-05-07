@@ -70,9 +70,9 @@ class BaseModelUDF(ABC):
         self.tokenizer = tokenizer
         self.task_type = task_type
         self.device = None
-        self.model_loader = None
-        self.last_created_pipeline = None
-        self.new_columns = []
+        self.model_loader: LoadLocalModel
+        self.last_created_pipeline: transformers.pipelines.Pipeline
+        self.new_columns: list = []
         self.work_with_spans = work_with_spans
 
     def run(self, ctx):
@@ -235,7 +235,7 @@ class BaseModelUDF(ABC):
 
             try:
                 self.last_created_pipeline = self.model_loader.load_models()
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
                 self.model_loader.model_load_error = stack_trace
@@ -243,8 +243,7 @@ class BaseModelUDF(ABC):
 
         elif not self.model_loader.last_model_loaded_successfully:
             raise Exception(
-                "Model loading failed previously with :"
-                + self.model_loader.model_load_error
+                f"Model loading failed previously with : {self.model_loader.model_load_error}"
             )
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:

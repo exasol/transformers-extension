@@ -23,19 +23,19 @@ logger = logging.getLogger(__name__)
 def load_and_render_statement(
     template_name, work_with_spans, install_all_scripts, **kwargs
 ) -> str:
-    package_loaders = [PackageLoader(constants.base_dir, constants.templates_dir)]
+    package_loaders = [PackageLoader(constants.base_dir, str(constants.templates_dir))]
     if work_with_spans or install_all_scripts:
         package_loaders.append(
             PackageLoader(
                 work_with_spans_constants.base_dir,
-                work_with_spans_constants.templates_dir,
+                str(work_with_spans_constants.templates_dir),
             )
         )
     if install_all_scripts or not work_with_spans:
         package_loaders.append(
             PackageLoader(
                 work_without_spans_constants.base_dir,
-                work_without_spans_constants.templates_dir,
+                str(work_without_spans_constants.templates_dir),
             )
         )
 
