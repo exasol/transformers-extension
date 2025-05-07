@@ -1,4 +1,5 @@
 """Class LoadLocalModel for loading locally saved models and tokenizers."""
+
 from pathlib import PurePosixPath
 
 import torch
