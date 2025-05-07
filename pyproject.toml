@@ -93,6 +93,10 @@ module = [
     "test.*",
     "transformers.*",
     "pyexasol.*",
+    # __init__ None values vs unit tests
+    "exasol_transformers_extension.utils.load_local_model",
+    # "PreTrainedModel" has no attribute "save_pretrained"
+    "exasol_transformers_extension/utils/huggingface_hub_bucketfs_model_transfer_sp",
     # exa not defined
     "exasol_transformers_extension.udfs.callers.*",
     # list[...] vs list[DataFrame]

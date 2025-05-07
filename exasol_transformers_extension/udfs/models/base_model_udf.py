@@ -243,8 +243,7 @@ class BaseModelUDF(ABC):
 
         elif not self.model_loader.last_model_loaded_successfully:
             raise Exception(
-                "Model loading failed previously with :"
-                + self.model_loader.model_load_error
+                f"Model loading failed previously with : {self.model_loader.model_load_error}"
             )
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
