@@ -1,3 +1,4 @@
+"""Deploy command which installs Transformers extension SLC, scripts, creates connection objects"""
 import logging
 import click
 from exasol.python_extension_common.cli.std_options import (
@@ -27,11 +28,13 @@ formatters = {StdParams.version: ver_formatter}
 
 
 def get_opt_name(arg_name: str) -> str:
-    # This and the next function should have been implemented in the PEC.
+    """get opt_name for arg_name"""
+    # This and the next function should have been implemented in the PEC.#todo make ticket and remove this comment
     return f'--{arg_name.replace("_", "-")}'
 
 
 def get_bool_opt_name(arg_name: str) -> str:
+    """turn arg_name into bool_opt_name"""
     opt_name = arg_name.replace("_", "-")
     return f'--{opt_name}/--no-{opt_name}'
 
@@ -53,7 +56,7 @@ opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))
 
 
 def deploy(**kwargs):
-
+    """Deploy TE slc, scripts, create bucketfs connection object and token connection object."""
     # Deploy the SLC
     if kwargs[DEPLOY_SLC_ARG]:
         slc_deployer = LanguageContainerDeployerCli(

@@ -1,11 +1,14 @@
-
+"""a dummy implementation for the base udf. used for testing base udf functionality. """
+from typing import List, Iterator, Any, Dict, Union
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Dict, Union
+
 from exasol_transformers_extension.udfs.models.base_model_udf import \
     BaseModelUDF
 
 class DummyImplementationUDF(BaseModelUDF):
+    """A dummy implementation for the  BaseModelUDF. used for testing BaseModelUDF functionality.
+    implements necessary functions as simply as possible"""
     def __init__(self,
                  exa,
                  batch_size=100,
@@ -54,7 +57,7 @@ class DummyImplementationUDF(BaseModelUDF):
 
     def create_new_span_columns(self, model_df: pd.DataFrame) \
             -> pd.DataFrame:
-        model_df[["test_span_column_add"]] = 'add_this',
+        model_df[["test_span_column_add"]] = 'add_this'
         return model_df
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame)\

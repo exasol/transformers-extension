@@ -58,7 +58,7 @@ fail_under = 15
 
 # Controls maximum line length in your project
 [tool.black]
-line-length = 88
+line-length = 120
 verbose = false
 include = "\\.pyi?$"
 
@@ -69,17 +69,18 @@ force_grid_wrap = 2
 
 # Define the minimum linting score considered acceptable
 [tool.pylint.master]
-fail-under = 4.0
+fail-under = 6.5
 
 # Maximum line length should match what is configured for black.
 # Additionally, a maximum module size can be defined here.
 [tool.pylint.format]
-max-line-length = 88
+max-line-length = 120
 max-module-lines = 800
 
 
 # Configure exceptions for the type checker
 [[tool.mypy.overrides]]
+plugins = ['pydantic.mypy']
 module = [
     "test.*"
 ]
@@ -92,3 +93,4 @@ ignore_errors = true
 #[tool.poetry.scripts]
 #tbx = 'exasol.toolbox.tools.tbx:CLI'
 #sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
+

@@ -1,3 +1,4 @@
+"""Constants defining which UDF to install if work_with_spans=false"""
 import pathlib
 
 from exasol_transformers_extension.deployment.install_scripts_constants import InstallScriptsConstants

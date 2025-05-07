@@ -1,17 +1,5 @@
 from unittest.mock import patch
 
-import pytest
-from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.mock_meta_data import MockMetaData
-
-from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
-from test.unit.udf_wrapper_params.token_classification.multiple_model_multiple_batch_complete_multiple_entities import \
-    MultipleModelMultipleBatchCompleteMultipleEntities
-from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
-    create_mock_pipeline_factory, create_mock_model_factories_with_models, assert_correct_number_of_results, \
-    assert_result_matches_expected_output
-from test.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
-
 # test params:
 from test.unit.udf_wrapper_params.token_classification.error_on_prediction_multiple_model_multiple_batch import \
     ErrorOnPredictionMultipleModelMultipleBatch
@@ -30,9 +18,21 @@ from test.unit.udf_wrapper_params.token_classification.prediction_returns_empty_
 from test.unit.udf_wrapper_params.token_classification.prediction_contains_additional_keys import \
     PredictionContainsAdditionalFields
 
+from test.unit.udf_wrapper_params.token_classification.multiple_model_multiple_batch_complete_multiple_entities import \
+    MultipleModelMultipleBatchCompleteMultipleEntities
+from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
+    create_mock_pipeline_factory, create_mock_model_factories_with_models, assert_correct_number_of_results, \
+    assert_result_matches_expected_output
+from test.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
 
+from exasol_transformers_extension.udfs.models.token_classification_udf import TokenClassificationUDF
+from exasol_udf_mock_python.column import Column
+from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+import pytest
 
 def create_mock_metadata_with_span():
+    """Creates mock metadata for UDF tests. includes span columns"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",
@@ -68,6 +68,7 @@ def create_mock_metadata_with_span():
     return meta
 
 def create_mock_metadata():
+    """Creates mock metadata for UDF tests"""
     meta = MockMetaData(
         script_code_wrapper_function=None,
         input_type="SET",

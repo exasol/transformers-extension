@@ -1,14 +1,15 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 
-from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import make_number_of_strings, sub_dir, \
-    model_name, text_data, label, make_input_row, score, make_output_row, make_model_output_for_one_input_row, \
+from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import label, make_input_row, make_output_row, \
     bucketfs_conn, make_input_row_with_span, make_output_row_with_span
 
+from exasol_udf_mock_python.connection import Connection
 
+@dataclasses.dataclass
 class ErrorOnPredictionSingleModelMultipleBatch:
     """
-    not cached error, single model, multiple batch
+    Not cached error, single model, multiple batches
     """
     expected_model_counter = 1
     batch_size = 2

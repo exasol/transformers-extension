@@ -1,13 +1,15 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.base_udf.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
     sub_dir, model_name, input_data, answer, score, make_model_output_for_one_input_row, make_number_of_strings
 
+from exasol_udf_mock_python.connection import Connection
 
+@dataclasses.dataclass
 class MultipleModelMultipleBatchIncomplete:
     """
-    multiple model, multiple batch, last batch incomplete
+    Multiple models, multiple batches, last batch incomplete
     """
     expected_model_counter = 2
     batch_size = 3
@@ -49,9 +51,11 @@ class MultipleModelMultipleBatchIncomplete:
     tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(answer=answer1,
                                                                      score=score) * \
                                                                      data_size]
-    tokenizer_model_output_df_model2 =  [make_model_output_for_one_input_row(answer=answer2, # in first batch model is used for one input
+    # in first batch model is used for one input
+    # in second batch model is used for one input
+    tokenizer_model_output_df_model2 =  [make_model_output_for_one_input_row(answer=answer2,
                                                                      score=score+0.1)] + \
-                                        [make_model_output_for_one_input_row(answer=answer2, # in second batch model is used for one input
+                                        [make_model_output_for_one_input_row(answer=answer2,
                                                                              score=score + 0.1)]
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2]

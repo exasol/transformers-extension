@@ -6,8 +6,6 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-from exasol.toolbox.nox.plugin import hookimpl
-from exasol.toolbox.tools.replace_version import update_workflow
 
 @dataclass(frozen=True)
 class Config:

@@ -1,10 +1,16 @@
+"""
+LanguageContainerDeployer for Transformers Extension Language Container 
+"""
+
 from typing import Optional
 from pathlib import Path
 from exasol.python_extension_common.deployment.language_container_deployer import LanguageContainerDeployer
 
 
 class TeLanguageContainerDeployer(LanguageContainerDeployer):
-
+    """
+    LanguageContainerDeployer for Transformers Extension Language Container 
+    """
     SLC_NAME = "exasol_transformers_extension_container_release.tar.gz"
     SLC_URL_FORMATTER = "https://github.com/exasol/transformers-extension/releases/download/{version}/" + SLC_NAME
 
@@ -12,8 +18,9 @@ class TeLanguageContainerDeployer(LanguageContainerDeployer):
                                      alter_system: bool = True,
                                      allow_override: bool = False,
                                      wait_for_completion: bool = True) -> None:
-
-        self.download_and_run(self.SLC_URL_FORMATTER.format(version=version), self.SLC_NAME,
+        """Download SLC from GitHub and deploy it."""
+        slc_url = self.SLC_URL_FORMATTER.format(version=version)
+        self.download_and_run(slc_url, self.SLC_NAME,
                               alter_system=alter_system, allow_override=allow_override,
                               wait_for_completion=wait_for_completion)
 
@@ -22,7 +29,7 @@ class TeLanguageContainerDeployer(LanguageContainerDeployer):
             alter_system: bool = True,
             allow_override: bool = False,
             wait_for_completion: bool = True) -> None:
-
+        """Deploy the Language Container. If no bucket_file_path is given, use the static SLC name of TeLanguageContainerDeployer."""
         if not bucket_file_path:
             bucket_file_path = self.SLC_NAME
         super().run(container_file, bucket_file_path, alter_system, allow_override,

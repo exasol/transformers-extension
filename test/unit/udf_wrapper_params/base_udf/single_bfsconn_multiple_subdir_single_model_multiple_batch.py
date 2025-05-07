@@ -1,14 +1,16 @@
+import dataclasses
 from pathlib import PurePosixPath
-from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.base_udf.make_data_row_functions import make_input_row, \
     make_output_row, make_input_row_with_span, make_output_row_with_span, bucketfs_conn, \
     sub_dir, answer, score, make_model_output_for_one_input_row, make_number_of_strings
 
+from exasol_udf_mock_python.connection import Connection
 
 
+@dataclasses.dataclass
 class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
     """
-    single bucketfs connection, multiple subdir, single model, multiple batch
+    Single BucketFS connection, multiple subdirs, single model, multiple batches
     """
     expected_model_counter = 2
     batch_size = 2
@@ -26,11 +28,15 @@ class SingleBucketFSConnMultipleSubdirSingleModelNameMultipleBatch:
 
     work_with_span_input_data = make_input_row_with_span(sub_dir=sub_dir1) * data_size + \
                                 make_input_row_with_span(sub_dir=sub_dir2) * data_size
-    work_with_span_output_data =  make_output_row_with_span(sub_dir=sub_dir1, answer=answer1, score=score) * data_size + \
-                                  make_output_row_with_span(sub_dir=sub_dir2, answer=answer2, score=score+0.1) * data_size
+    work_with_span_output_data =  make_output_row_with_span(sub_dir=sub_dir1, answer=answer1,
+                                                            score=score) * data_size + \
+                                  make_output_row_with_span(sub_dir=sub_dir2, answer=answer2,
+                                                            score=score+0.1) * data_size
 
-    tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(answer=answer1, score=score) * data_size]
-    tokenizer_model_output_df_model2 =  [make_model_output_for_one_input_row(answer=answer2, score=score+0.1) * data_size]
+    tokenizer_model_output_df_model1 =  [make_model_output_for_one_input_row(answer=answer1,
+                                                                             score=score) * data_size]
+    tokenizer_model_output_df_model2 =  [make_model_output_for_one_input_row(answer=answer2,
+                                                                             score=score+0.1) * data_size]
 
     tokenizer_models_output_df = [tokenizer_model_output_df_model1, tokenizer_model_output_df_model2]
 

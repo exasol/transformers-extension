@@ -106,7 +106,7 @@ jobs:
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Security, build-matrix ]
+    needs: [ Documentation, Security, build-matrix, Lint ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
