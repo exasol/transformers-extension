@@ -1,14 +1,23 @@
 """HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace Hub to the BucketFS."""
+
 from pathlib import Path
 from typing import Optional
 
 import exasol.bucketfs as bfs
-from exasol_transformers_extension.utils.bucketfs_operations import create_save_pretrained_model_path
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
-from exasol_transformers_extension.utils.model_factory_protocol import ModelFactoryProtocol
-from exasol_transformers_extension.utils.bucketfs_model_uploader import BucketFSModelUploaderFactory
-from exasol_transformers_extension.utils.temporary_directory_factory import TemporaryDirectoryFactory
+from exasol_transformers_extension.utils.bucketfs_model_uploader import (
+    BucketFSModelUploaderFactory,
+)
+from exasol_transformers_extension.utils.bucketfs_operations import (
+    create_save_pretrained_model_path,
+)
+from exasol_transformers_extension.utils.model_factory_protocol import (
+    ModelFactoryProtocol,
+)
+from exasol_transformers_extension.utils.model_specification import ModelSpecification
+from exasol_transformers_extension.utils.temporary_directory_factory import (
+    TemporaryDirectoryFactory,
+)
 
 
 def make_parameters_of_model_contiguous_tensors(model):
@@ -31,23 +40,26 @@ class HuggingFaceHubBucketFSModelTransferSP:
     :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
     """
 
-    def __init__(self,
-                 bucketfs_location: bfs.path.PathLike,
-                 model_specification: ModelSpecification,
-                 bucketfs_model_path: Path,
-                 token: Optional[str],
-                 temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
-                 bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory()):
+    def __init__(
+        self,
+        bucketfs_location: bfs.path.PathLike,
+        model_specification: ModelSpecification,
+        bucketfs_model_path: Path,
+        token: Optional[str],
+        temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
+        bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory(),
+    ):
         self._token = token
         self._model_specification = model_specification
         self._temporary_directory_factory = temporary_directory_factory
         self._bucketfs_model_uploader = bucketfs_model_uploader_factory.create(
-            model_path=bucketfs_model_path,
-            bucketfs_location=bucketfs_location)
+            model_path=bucketfs_model_path, bucketfs_location=bucketfs_location
+        )
         self._tmpdir = temporary_directory_factory.create()
         self._tmpdir_name = Path(self._tmpdir.__enter__())
-        self._save_pretrained_model_path = create_save_pretrained_model_path(self._tmpdir_name,
-                                                                             self._model_specification)
+        self._save_pretrained_model_path = create_save_pretrained_model_path(
+            self._tmpdir_name, self._model_specification
+        )
 
     def __enter__(self):
         return self
@@ -64,8 +76,9 @@ class HuggingFaceHubBucketFSModelTransferSP:
         in a temporary directory.
         """
         model_name = self._model_specification.model_name
-        model = model_factory.from_pretrained(model_name, cache_dir=self._tmpdir_name / "cache",
-                                              token=self._token)
+        model = model_factory.from_pretrained(
+            model_name, cache_dir=self._tmpdir_name / "cache", token=self._token
+        )
         make_parameters_of_model_contiguous_tensors(model)
         model.save_pretrained(self._save_pretrained_model_path)
 
@@ -75,7 +88,9 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
-        return self._bucketfs_model_uploader.upload_directory(self._save_pretrained_model_path)
+        return self._bucketfs_model_uploader.upload_directory(
+            self._save_pretrained_model_path
+        )
 
 
 class HuggingFaceHubBucketFSModelTransferSPFactory:
@@ -83,11 +98,13 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
     Class for creating a HuggingFaceHubBucketFSModelTransferSP object.
     """
 
-    def create(self,
-               bucketfs_location: bfs.path.PathLike,
-               model_specification: ModelSpecification,
-               model_path: Path,
-               token: Optional[str]) -> HuggingFaceHubBucketFSModelTransferSP:
+    def create(
+        self,
+        bucketfs_location: bfs.path.PathLike,
+        model_specification: ModelSpecification,
+        model_path: Path,
+        token: Optional[str],
+    ) -> HuggingFaceHubBucketFSModelTransferSP:
         """
         Creates a HuggingFaceHubBucketFSModelTransferSP object.
 
@@ -98,7 +115,9 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
 
         returns: The created HuggingFaceHubBucketFSModelTransferSP object.
         """
-        return HuggingFaceHubBucketFSModelTransferSP(bucketfs_location=bucketfs_location,
-                                                     model_specification=model_specification,
-                                                     bucketfs_model_path=model_path,
-                                                     token=token)
+        return HuggingFaceHubBucketFSModelTransferSP(
+            bucketfs_location=bucketfs_location,
+            model_specification=model_specification,
+            bucketfs_model_path=model_path,
+            token=token,
+        )

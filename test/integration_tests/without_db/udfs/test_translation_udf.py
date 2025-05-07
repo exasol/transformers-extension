@@ -1,3 +1,12 @@
+from test.integration_tests.without_db.udfs.matcher import (
+    ErrorMessageMatcher,
+    NewColumnsEmptyMatcher,
+    NoErrorMessageMatcher,
+    Result,
+    ShapeMatcher,
+)
+from test.utils.mock_connections import create_mounted_bucketfs_connection
+from test.utils.parameters import model_params
 from typing import Dict
 
 import pandas as pd
@@ -5,12 +14,7 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.translation_udf import \
-    TranslationUDF
-from test.integration_tests.without_db.udfs.matcher import Result, ShapeMatcher, NoErrorMessageMatcher, \
-    NewColumnsEmptyMatcher, ErrorMessageMatcher
-from test.utils.mock_connections import create_mounted_bucketfs_connection
-from test.utils.parameters import model_params
+from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
 
 
 class ExaEnvironment:
@@ -38,145 +42,176 @@ class Context:
     def get_emitted(self):
         return self._emitted
 
-    def get_dataframe(self, num_rows='all', start_col=0):
-        return_df = None if self._is_accessed_once \
+    def get_dataframe(self, num_rows="all", start_col=0):
+        return_df = (
+            None
+            if self._is_accessed_once
             else self.input_df[self.input_df.columns[start_col:]]
+        )
         self._is_accessed_once = True
         return return_df
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, languages", [
-        ("on CPU with single input", None, [
-            ("English", "French")]),
-        ("on CPU with batch input, single-pair language", None, [
-            ("English", "French")] * 3),
-        ("on CPU with batch input, multi language", None, [
-            ("English", "French"), ("English", "German"),
-            ("English", "Romanian")]),
-        ("on GPU with single input", 0, [
-            ("English", "French")]),
-        ("on GPU with batch input, single-pair language", 0, [
-            ("English", "French")] * 3),
-        ("on GPU with batch input, multi language", 0, [
-            ("English", "French"), ("English", "German"),
-            ("English", "Romanian")])
-    ])
+    "description,  device_id, languages",
+    [
+        ("on CPU with single input", None, [("English", "French")]),
+        (
+            "on CPU with batch input, single-pair language",
+            None,
+            [("English", "French")] * 3,
+        ),
+        (
+            "on CPU with batch input, multi language",
+            None,
+            [("English", "French"), ("English", "German"), ("English", "Romanian")],
+        ),
+        ("on GPU with single input", 0, [("English", "French")]),
+        (
+            "on GPU with batch input, single-pair language",
+            0,
+            [("English", "French")] * 3,
+        ),
+        (
+            "on GPU with batch input, multi language",
+            0,
+            [("English", "French"), ("English", "German"), ("English", "Romanian")],
+        ),
+    ],
+)
 def test_translation_udf(
-        description, device_id, languages,
-        prepare_translation_model_for_local_bucketfs):
+    description, device_id, languages, prepare_translation_model_for_local_bucketfs
+):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(f"There is no available device({device_id}) "
-                    f"to execute the test")
+        pytest.skip(
+            f"There is no available device({device_id}) " f"to execute the test"
+        )
 
     bucketfs_base_path = prepare_translation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
-    sample_data = [(
-        None,
-        bucketfs_conn_name,
-        model_params.sub_dir,
-        model_params.seq2seq_model_specs.model_name,
-        model_params.text_data,
-        src_lang,
-        target_lang,
-        50
-    ) for src_lang, target_lang in languages]
+    sample_data = [
+        (
+            None,
+            bucketfs_conn_name,
+            model_params.sub_dir,
+            model_params.seq2seq_model_specs.model_name,
+            model_params.text_data,
+            src_lang,
+            target_lang,
+            50,
+        )
+        for src_lang, target_lang in languages
+    ]
     columns = [
-        'device_id',
-        'bucketfs_conn',
-        'sub_dir',
-        'model_name',
-        'text_data',
-        'source_language',
-        'target_language',
-        'max_length'
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "source_language",
+        "target_language",
+        "max_length",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TranslationUDF(
-        exa, batch_size=batch_size)
+    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['translation_text', 'error_message']
+    new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
     assert (
-            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
-            and result == NoErrorMessageMatcher()
+        result
+        == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
+        and result == NoErrorMessageMatcher()
     )
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, languages", [
-        ("on CPU with single input", None, [
-            ("English", "French")]),
-        ("on CPU with batch input, single-pair language", None, [
-            ("English", "French")] * 3),
-        ("on CPU with batch input, multi language", None, [
-            ("English", "French"), ("English", "German"),
-            ("English", "Romanian")]),
-        ("on GPU with single input", 0, [
-            ("English", "French")]),
-        ("on GPU with batch input, single-pair language", 0, [
-            ("English", "French")] * 3),
-        ("on GPU with batch input, multi language", 0, [
-            ("English", "French"), ("English", "German"),
-            ("English", "Romanian")])
-    ])
+    "description,  device_id, languages",
+    [
+        ("on CPU with single input", None, [("English", "French")]),
+        (
+            "on CPU with batch input, single-pair language",
+            None,
+            [("English", "French")] * 3,
+        ),
+        (
+            "on CPU with batch input, multi language",
+            None,
+            [("English", "French"), ("English", "German"), ("English", "Romanian")],
+        ),
+        ("on GPU with single input", 0, [("English", "French")]),
+        (
+            "on GPU with batch input, single-pair language",
+            0,
+            [("English", "French")] * 3,
+        ),
+        (
+            "on GPU with batch input, multi language",
+            0,
+            [("English", "French"), ("English", "German"), ("English", "Romanian")],
+        ),
+    ],
+)
 def test_translation_udf_on_error_handling(
-        description, device_id, languages,
-        prepare_translation_model_for_local_bucketfs):
+    description, device_id, languages, prepare_translation_model_for_local_bucketfs
+):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(f"There is no available device({device_id}) "
-                    f"to execute the test")
+        pytest.skip(
+            f"There is no available device({device_id}) " f"to execute the test"
+        )
 
     bucketfs_base_path = prepare_translation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
     batch_size = 2
-    sample_data = [(
-        None,
-        bucketfs_conn_name,
-        model_params.sub_dir,
-        "not existing model",
-        model_params.text_data,
-        src_lang,
-        target_lang,
-        50
-    ) for src_lang, target_lang in languages]
+    sample_data = [
+        (
+            None,
+            bucketfs_conn_name,
+            model_params.sub_dir,
+            "not existing model",
+            model_params.text_data,
+            src_lang,
+            target_lang,
+            50,
+        )
+        for src_lang, target_lang in languages
+    ]
     columns = [
-        'device_id',
-        'bucketfs_conn',
-        'sub_dir',
-        'model_name',
-        'text_data',
-        'source_language',
-        'target_language',
-        'max_length'
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "source_language",
+        "target_language",
+        "max_length",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
     ctx = Context(input_df=sample_df)
     exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TranslationUDF(
-        exa, batch_size=batch_size)
+    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ['translation_text', 'error_message']
+    new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
     assert (
-            result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
-            and result == NewColumnsEmptyMatcher(new_columns=new_columns)
-            and result == ErrorMessageMatcher()
+        result
+        == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
+        and result == NewColumnsEmptyMatcher(new_columns=new_columns)
+        and result == ErrorMessageMatcher()
     )

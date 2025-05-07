@@ -1,12 +1,16 @@
 """Collection of DataFrame operation: get_unique_values, sort_cell_values"""
-from typing import List, Any
+
+from typing import (
+    Any,
+    List,
+)
+
 import pandas as pd
 
 
 def get_unique_values(
-        df: pd.DataFrame,
-        columns: List[str],
-        sort: bool = False) -> List[List[Any]]:
+    df: pd.DataFrame, columns: List[str], sort: bool = False
+) -> List[List[Any]]:
     """
     Filter given dataframe and return the unique values. Sorts the unique values
     if the sort parameter is set to True
@@ -23,8 +27,7 @@ def get_unique_values(
     return unique_df.values.tolist()
 
 
-def sort_cell_values(
-        df: pd.DataFrame, column: str, sep: str = ",") -> pd.DataFrame:
+def sort_cell_values(df: pd.DataFrame, column: str, sep: str = ",") -> pd.DataFrame:
     """
     Sort separated values in each cell
 
@@ -33,7 +36,6 @@ def sort_cell_values(
     :param sep: Separator of values in cell
     """
 
-    df[column] = df[column].apply(
-        lambda cell: ','.join(sorted(cell.split(sep))))
+    df[column] = df[column].apply(lambda cell: ",".join(sorted(cell.split(sep))))
 
     return df

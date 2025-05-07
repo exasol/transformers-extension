@@ -1,5 +1,6 @@
-from exasol_transformers_extension.udfs.models.token_classification_udf import \
-    TokenClassificationUDF
+from exasol_transformers_extension.udfs.models.token_classification_udf import (
+    TokenClassificationUDF,
+)
 
 udf = TokenClassificationUDF(exa)
 

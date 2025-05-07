@@ -1,17 +1,23 @@
 """Class InstallScriptsConstants to encapsulate different sets of constants for each set of UDFs to be installed."""
+
 from pathlib import Path
+
 from importlib_resources import files
+
 
 class InstallScriptsConstants:
     """
     Class to encapsulate different sets of constants for each set of UDFs/scripts to be installed.
     """
-    def __init__(self,
-                 base_dir : str,
-                 templates_dir : Path,
-                 udf_callers_dir_suffix : str,
-                 udf_callers_templates : dict,
-                 ordered_columns : list):
+
+    def __init__(
+        self,
+        base_dir: str,
+        templates_dir: Path,
+        udf_callers_dir_suffix: str,
+        udf_callers_templates: dict,
+        ordered_columns: list,
+    ):
         """
 
         :param base_dir:
