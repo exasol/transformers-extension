@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10' ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Build language container
-        run: poetry run nox -s export_slc
+        run: poetry run -- nox -s export_slc
 
       - name: Upload assets to the GitHub release draft
         uses: shogo82148/actions-upload-release-asset@v1
