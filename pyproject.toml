@@ -92,6 +92,7 @@ plugins = [
 module = [
     "test.*",
     "transformers.*",
+    "pyexasol.*",
     # exa not defined
     "exasol_transformers_extension.udfs.callers.*",
     # list[...] vs list[DataFrame]
