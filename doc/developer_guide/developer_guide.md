@@ -11,7 +11,7 @@ There are two ways to install the Transformers Extension Package:
 ### 1. Build and install the Python Package
 This project needs Python 3.10 or above installed on the development machine.
 In addition, in order to build Python packages you need to have the [Poetry](https://python-poetry.org/)
-(>= 1.1.11) package manager. Then you can install and build the `transformers-extension` as follows:
+(>= 2.1.0) package manager. Then you can install and build the `transformers-extension` as follows:
 ```bash
 poetry install
 poetry build

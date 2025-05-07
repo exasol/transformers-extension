@@ -17,7 +17,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
         with:
           python-version: ${{ matrix.python-version }}
-          poetry-version: 2.1.1
+          poetry-version: 2.1.2
 
       - name: Test pip install
         uses: ./.github/actions/test_pip_install
