@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 from pathlib import Path
 from typing import List
+
 import exasol.bucketfs as bfs
 from exasol_udf_mock_python.group import Group
 
 
-def get_rounded_result(result: List[Group], round_: int = 2) -> List[tuple]:
+def get_rounded_result(result: list[Group], round_: int = 2) -> list[tuple]:
     """
     Round the score value in each row, and re-creates the rows. Note that,
     `score` correspond to the 2nd column from the last. The `error_message`

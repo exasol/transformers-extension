@@ -22,4 +22,4 @@ phases:
       - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
   build:
     commands:
-      - poetry run nox -s without_db_integration_tests
+      - poetry run -- nox -s without_db_integration_tests

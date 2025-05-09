@@ -11,7 +11,7 @@ There are two ways to install the Transformers Extension Package:
 ### 1. Build and install the Python Package
 This project needs Python 3.10 or above installed on the development machine.
 In addition, in order to build Python packages you need to have the [Poetry](https://python-poetry.org/)
-(>= 1.1.11) package manager. Then you can install and build the `transformers-extension` as follows:
+(>= 2.1.0) package manager. Then you can install and build the `transformers-extension` as follows:
 ```bash
 poetry install
 poetry build
@@ -40,18 +40,18 @@ for the project using nox. See [the nox file](../../noxfile.py) for all tasks ru
 
 Run unit tests:
 ```bash
-      poetry run nox -s test:unit
+      poetry run -- nox -s test:unit
 ```
 Start a test database and run all integration tests:
 ```bash
-      poetry run nox -s start_database
-      poetry run nox -s test:integration
+      poetry run -- nox -s start_database
+      poetry run -- nox -s test:integration
 ```
 run parts of the integration tests:
 ```bash
-      poetry run nox -s onprem_integration_tests
-      poetry run nox -s saas_integration_tests
-      poetry run nox -s without_db_integration_tests
+      poetry run -- nox -s onprem_integration_tests
+      poetry run -- nox -s saas_integration_tests
+      poetry run -- nox -s without_db_integration_tests
 ```
 You can find more information regarding the tests in the [Tests](#tests) section below
 

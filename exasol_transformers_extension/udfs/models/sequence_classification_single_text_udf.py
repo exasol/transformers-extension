@@ -1,23 +1,38 @@
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+)
+
 import pandas as pd
 import transformers
-from typing import List, Iterator, Any, Dict
-from exasol_transformers_extension.udfs.models.base_model_udf import \
-    BaseModelUDF
+
+from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
 
 class SequenceClassificationSingleTextUDF(BaseModelUDF):
-    def __init__(self,
-                 exa,
-                 batch_size=100,
-                 pipeline=transformers.pipeline,
-                 base_model=transformers.AutoModelForSequenceClassification,
-                 tokenizer=transformers.AutoTokenizer):
-        super().__init__(exa, batch_size, pipeline, base_model,
-                         tokenizer, task_type='text-classification')
+    def __init__(
+        self,
+        exa,
+        batch_size=100,
+        pipeline=transformers.pipeline,
+        base_model=transformers.AutoModelForSequenceClassification,
+        tokenizer=transformers.AutoTokenizer,
+    ):
+        super().__init__(
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
+            task_type="text-classification",
+        )
         self.new_columns = ["label", "score", "error_message"]
 
     def extract_unique_param_based_dataframes(
-            self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+        self, model_df: pd.DataFrame
+    ) -> Iterator[pd.DataFrame]:
         """
         Extract unique dataframes having same model parameter values. if there
         is no model specified parameter, the input dataframe return as it is.
@@ -29,8 +44,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
 
         yield model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) \
-            -> List[List[Dict[str, Any]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> List[List[Dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -39,13 +53,13 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
 
         :return: List of dataframe includes prediction details
         """
-        sequences = list(model_df['text_data'])
+        sequences = list(model_df["text_data"])
         results = self.last_created_pipeline(sequences, return_all_scores=True)
         return results
 
     def append_predictions_to_input_dataframe(
-            self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]) \
-            -> pd.DataFrame:
+        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+    ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
@@ -66,8 +80,8 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-            self, predictions:  List[List[Dict[str, Any]]]) \
-            -> List[pd.DataFrame]:
+        self, predictions: List[List[Dict[str, Any]]]
+    ) -> List[pd.DataFrame]:
         """
         Convert predictions to dataframe. If the prediction results can be
         presented as is, the results are converted directly into the dataframe.

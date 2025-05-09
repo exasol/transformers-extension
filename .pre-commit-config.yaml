@@ -18,5 +18,5 @@ repos:
         types: [ python ]
         pass_filenames: false
         language: system
-        entry: poetry run nox -s lint:code
+        entry: poetry run -- nox -s lint:code
         stages: [ pre-push ]

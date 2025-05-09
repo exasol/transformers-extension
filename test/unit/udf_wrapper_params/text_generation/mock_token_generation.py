@@ -1,7 +1,12 @@
 from pathlib import PurePosixPath
-from typing import Dict, List, Union
-from test.unit.udf_wrapper_params.text_generation.\
-    mock_sequence_tokenizer import MockSequenceTokenizer
+from test.unit.udf_wrapper_params.text_generation.mock_sequence_tokenizer import (
+    MockSequenceTokenizer,
+)
+from typing import (
+    Dict,
+    List,
+    Union,
+)
 
 
 class MockTextGenerationModel:
@@ -18,8 +23,7 @@ class MockTextGenerationModel:
 
 
 class MockTextGenerationFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath,
-                                         MockTextGenerationModel]):
+    def __init__(self, mock_models: Dict[PurePosixPath, MockTextGenerationModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -30,12 +34,14 @@ class MockTextGenerationFactory:
 class MockPipeline:
     counter = 0
 
-    def __init__(self,
-                 task: str,
-                 model: MockTextGenerationModel,
-                 tokenizer: MockSequenceTokenizer,
-                 device : str,
-                 framework: str):
+    def __init__(
+        self,
+        task: str,
+        model: MockTextGenerationModel,
+        tokenizer: MockSequenceTokenizer,
+        device: str,
+        framework: str,
+    ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
@@ -43,13 +49,18 @@ class MockPipeline:
         self.framework = framework
         MockPipeline.counter += 1
 
-    def __call__(self, text_data: List[str], **kwargs) -> \
-            List[Dict[str, Union[str, float]]]:
+    def __call__(
+        self, text_data: List[str], **kwargs
+    ) -> List[Dict[str, Union[str, float]]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 
-        len_generated_text = kwargs["max_length"] \
-            if kwargs["return_full_text"] else kwargs["max_length"] - 1
-        result = {"generated_text":
-                      self.model.result["generated_text"] * len_generated_text}
+        len_generated_text = (
+            kwargs["max_length"]
+            if kwargs["return_full_text"]
+            else kwargs["max_length"] - 1
+        )
+        result = {
+            "generated_text": self.model.result["generated_text"] * len_generated_text
+        }
         return [result] * len(text_data)

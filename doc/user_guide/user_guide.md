@@ -163,7 +163,7 @@ pip install <path/wheel-filename.whl>
 #### Build the project yourself
 
 In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/)
-(>= 1.1.11) package manager installed. Clone the GitHub Repository, and install and build
+(>= 2.1.0) package manager installed. Clone the GitHub Repository, and install and build
 the `transformers-extension` as follows:
 ```bash
 poetry install
