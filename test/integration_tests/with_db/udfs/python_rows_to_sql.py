@@ -1,4 +1,8 @@
-from typing import Any, Tuple, List
+from typing import (
+    Any,
+    List,
+    Tuple,
+)
 
 
 def python_value_to_sql(value: Any) -> str:

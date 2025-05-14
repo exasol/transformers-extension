@@ -1,5 +1,6 @@
-from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf \
-    import SequenceClassificationSingleTextUDF
+from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import (
+    SequenceClassificationSingleTextUDF,
+)
 
 udf = SequenceClassificationSingleTextUDF(exa)
 

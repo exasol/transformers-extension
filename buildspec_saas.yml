@@ -14,7 +14,7 @@ phases:
     runtime-versions:
       python: 3.10
     commands:
-      - curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.2 python3 -
+      - curl -sSL https://install.python-poetry.org | POETRY_VERSION=2.1.2 python3 -
       - export PATH=$PATH:$HOME/.local/bin
       - poetry env use $(command -v "python3.10")
       - poetry --version
@@ -25,5 +25,5 @@ phases:
       - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
   build:
     commands:
-      - poetry run nox -s export_slc
-      - poetry run nox -s saas_integration_tests
+      - poetry run -- nox -s export_slc
+      - poetry run -- nox -s saas_integration_tests

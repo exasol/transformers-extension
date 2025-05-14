@@ -3,31 +3,37 @@ from test.utils.parameters import model_params
 
 
 def test_filling_mask_script(
-        setup_database, db_conn, upload_filling_mask_model_to_bucketfs):
+    setup_database, db_conn, upload_filling_mask_model_to_bucketfs
+):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "I <mask> you so much."
     n_rows = 100
     top_k = 3
     input_data = []
     for i in range(n_rows):
-        input_data.append((
-            '',
-            bucketfs_conn_name,
-            str(model_params.sub_dir),
-            model_params.base_model_specs.model_name,
-            text_data,
-            top_k))
+        input_data.append(
+            (
+                "",
+                bucketfs_conn_name,
+                str(model_params.sub_dir),
+                model_params.base_model_specs.model_name,
+                text_data,
+                top_k,
+            )
+        )
 
-    query = f"SELECT TE_FILLING_MASK_UDF(" \
-            f"t.device_id, " \
-            f"t.bucketfs_conn_name, " \
-            f"t.sub_dir, " \
-            f"t.model_name, " \
-            f"t.text_data," \
-            f"t.top_k" \
-            f") FROM (VALUES {python_rows_to_sql(input_data)} " \
-            f"AS t(device_id, bucketfs_conn_name, sub_dir, " \
-            f"model_name, text_data, top_k));"
+    query = (
+        f"SELECT TE_FILLING_MASK_UDF("
+        f"t.device_id, "
+        f"t.bucketfs_conn_name, "
+        f"t.sub_dir, "
+        f"t.model_name, "
+        f"t.text_data,"
+        f"t.top_k"
+        f") FROM (VALUES {python_rows_to_sql(input_data)} "
+        f"AS t(device_id, bucketfs_conn_name, sub_dir, "
+        f"model_name, text_data, top_k));"
+    )
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()

@@ -1,20 +1,26 @@
-"""Collection of useful bucketfs related operations """
+"""Collection of useful bucketfs related operations"""
+
 from __future__ import annotations
+
 import tarfile
 import tempfile
-from pathlib import PurePosixPath, Path
+from pathlib import (
+    Path,
+    PurePosixPath,
+)
 from typing import BinaryIO
 
 import exasol.bucketfs as bfs
-from exasol.saas.client.api_access import get_database_id   # type: ignore
+from exasol.saas.client.api_access import get_database_id  # type: ignore
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
 def upload_model_files_to_bucketfs(
-        model_directory: str,
-        bucketfs_model_path: Path,
-        bucketfs_location: bfs.path.PathLike) -> Path:
+    model_directory: str,
+    bucketfs_model_path: Path,
+    bucketfs_location: bfs.path.PathLike,
+) -> Path:
     """
     uploads model in tmpdir_name to model_path in bucketfs_location
     """
@@ -35,7 +41,8 @@ def create_tar_of_directory(path: Path, fileobj: BinaryIO) -> None:
 
 
 def get_local_bucketfs_path(
-        bucketfs_location: bfs.path.PathLike, model_path: str) -> PurePosixPath:
+    bucketfs_location: bfs.path.PathLike, model_path: str
+) -> PurePosixPath:
     """
     returns path model defined by model_path can be found at in bucket defined by bucketfs_location
     """
@@ -43,7 +50,9 @@ def get_local_bucketfs_path(
     return PurePosixPath(bucketfs_model_location.as_udf_path())
 
 
-def create_save_pretrained_model_path(_tmpdir_name, model_specification: ModelSpecification) -> Path:
+def create_save_pretrained_model_path(
+    _tmpdir_name, model_specification: ModelSpecification
+) -> Path:
     """
     path HuggingFaceHubBucketFSModelTransferSP saves the model at using save_pretrained,
     before it is uploaded to the bucketfs

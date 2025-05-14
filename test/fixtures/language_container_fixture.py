@@ -1,10 +1,13 @@
-""" slc_builder: selects the slc builder for the current configuration"""
+"""slc_builder: selects the slc builder for the current configuration"""
+
 import pytest
 
-from exasol_transformers_extension.deployment.language_container import language_container_factory
+from exasol_transformers_extension.deployment.language_container import (
+    language_container_factory,
+)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def slc_builder(use_onprem, use_saas):
     """Selects the slc builder for the current configuration"""
     if use_onprem or use_saas:

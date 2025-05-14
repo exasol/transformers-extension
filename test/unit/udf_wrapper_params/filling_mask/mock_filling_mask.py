@@ -1,6 +1,14 @@
 from pathlib import PurePosixPath
-from typing import Dict, List, Union, Optional, Tuple
-from test.unit.udf_wrapper_params.filling_mask.mock_sequence_tokenizer import MockSequenceTokenizer
+from test.unit.udf_wrapper_params.filling_mask.mock_sequence_tokenizer import (
+    MockSequenceTokenizer,
+)
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 
 class MockFillingMaskModel:
@@ -28,12 +36,14 @@ class MockFillingMaskFactory:
 class MockPipeline:
     counter = 0
 
-    def __init__(self,
-                 task: str,
-                 model: "MockFillingMaskModel",
-                 tokenizer: MockSequenceTokenizer,
-                 device: str,
-                 framework: str):
+    def __init__(
+        self,
+        task: str,
+        model: "MockFillingMaskModel",
+        tokenizer: MockSequenceTokenizer,
+        device: str,
+        framework: str,
+    ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
@@ -41,8 +51,9 @@ class MockPipeline:
         self.framework = framework
         MockPipeline.counter += 1
 
-    def __call__(self, text_data: List[str], top_k: int) -> \
-            List[Dict[str, Union[str, float]]]:
+    def __call__(
+        self, text_data: List[str], top_k: int
+    ) -> List[Dict[str, Union[str, float]]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 

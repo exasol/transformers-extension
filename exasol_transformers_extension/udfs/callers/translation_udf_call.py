@@ -1,5 +1,4 @@
-from exasol_transformers_extension.udfs.models.translation_udf import \
-    TranslationUDF
+from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
 
 udf = TranslationUDF(exa)
 

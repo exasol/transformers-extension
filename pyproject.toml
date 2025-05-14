@@ -1,26 +1,29 @@
-[tool.poetry]
+[project]
 name = "exasol-transformers-extension"
 version = "2.2.1"
+requires-python = ">=3.10.0,<4.0"
 description = "An Exasol extension for using state-of-the-art pretrained machine learning models via the Hugging Face Transformers API."
-
 authors = [
-    	"Umit Buyuksahin <umit.buyuksahin@exasol.com>",
-    	"Torsten Kilias <torsten.kilias@exasol.com>"
+    {name="Umit Buyuksahin", email="umit.buyuksahin@exasol.com"},
+    {name="Torsten Kilias", email="torsten.kilias@exasol.com"},
 ]
 
 readme = 'README.md'
+keywords = ['exasol']
+dynamic = ["dependencies"]
 
+[project.urls]
 repository = "https://github.com/exasol/transformers-extension"
 homepage = "https://github.com/exasol/transformers-extension"
 
-keywords = ['exasol']
+[tool.poetry]
+requires-poetry = ">=2.1.0"
 
 [tool.poetry.dependencies]
-python = "^3.10.0"
 pandas = ">=2.2.3,<3.0.0"
 torch = "^2.0.1"
 transformers = {extras = ["torch"], version = "^4.36.2"}
-Jinja2 = "^3.0.3"
+Jinja2 = "^3.1.6"
 importlib-resources = "^6.4.0"
 click = "^8.0.4"
 pyexasol = ">=0.25.0"
@@ -28,7 +31,7 @@ exasol-bucketfs = ">=1.0.0"
 tenacity = "^8.2.2"
 sacremoses = ">=0.0.53"
 bitsandbytes = ">=0.45.0"
-exasol-python-extension-common = ">=0.8.0,<1"
+exasol-python-extension-common = ">=0.9.0,<1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
@@ -37,10 +40,12 @@ toml = "^0.10.2"
 nox = "^2023.4.22"
 pytest-exasol-slc = ">=0.3.0"
 pytest-exasol-extension = ">=0.2.1,<1"
-exasol-toolbox = ">=0.20.0"
+exasol-toolbox = ">=1.1.0"
+pandas-stubs = "^2.2.0"
+types-toml = "^0.10.0"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 # python-toolbox config:
@@ -58,7 +63,7 @@ fail_under = 15
 
 # Controls maximum line length in your project
 [tool.black]
-line-length = 120
+line-length = 88
 verbose = false
 include = "\\.pyi?$"
 
@@ -69,28 +74,36 @@ force_grid_wrap = 2
 
 # Define the minimum linting score considered acceptable
 [tool.pylint.master]
-fail-under = 6.5
+fail-under = 5.9
 
 # Maximum line length should match what is configured for black.
 # Additionally, a maximum module size can be defined here.
 [tool.pylint.format]
-max-line-length = 120
+max-line-length = 88
 max-module-lines = 800
 
+[tool.mypy]
+plugins = [
+    "pydantic.mypy",
+]
 
 # Configure exceptions for the type checker
 [[tool.mypy.overrides]]
-plugins = ['pydantic.mypy']
 module = [
-    "test.*"
+    "test.*",
+    "transformers.*",
+    "pyexasol.*",
+    # __init__ None values vs unit tests
+    "exasol_transformers_extension.utils.load_local_model",
+    # "PreTrainedModel" has no attribute "save_pretrained"
+    "exasol_transformers_extension/utils/huggingface_hub_bucketfs_model_transfer_sp",
+    # exa not defined
+    "exasol_transformers_extension.udfs.callers.*",
+    # list[...] vs list[DataFrame]
+    "exasol_transformers_extension.udfs.models.*"
 ]
+ignore_missing_imports = true
 ignore_errors = true
 
-#[tool.poetry.plugins."console_scripts"]
-#"version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
-
-
-#[tool.poetry.scripts]
-#tbx = 'exasol.toolbox.tools.tbx:CLI'
-#sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
-
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"

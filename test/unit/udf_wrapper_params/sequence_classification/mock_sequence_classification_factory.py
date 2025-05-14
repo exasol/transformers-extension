@@ -1,8 +1,12 @@
-from pathlib import PurePosixPath
-from typing import Dict, List
 from dataclasses import dataclass
-from test.unit.udf_wrapper_params.sequence_classification.mock_sequence_tokenizer import \
-    MockSequenceTokenizer
+from pathlib import PurePosixPath
+from test.unit.udf_wrapper_params.sequence_classification.mock_sequence_tokenizer import (
+    MockSequenceTokenizer,
+)
+from typing import (
+    Dict,
+    List,
+)
 
 
 @dataclass
@@ -22,8 +26,9 @@ class MockSequenceClassificationModel:
 
 class MockSequenceClassificationFactory:
 
-    def __init__(self, mock_models: Dict[PurePosixPath,
-                                         MockSequenceClassificationModel]):
+    def __init__(
+        self, mock_models: Dict[PurePosixPath, MockSequenceClassificationModel]
+    ):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -33,12 +38,14 @@ class MockSequenceClassificationFactory:
 class MockPipeline:
     counter = 0
 
-    def __init__(self,
-                 task: str,
-                 model: MockSequenceClassificationModel,
-                 tokenizer: MockSequenceTokenizer,
-                 device: str,
-                 framework: str):
+    def __init__(
+        self,
+        task: str,
+        model: MockSequenceClassificationModel,
+        tokenizer: MockSequenceTokenizer,
+        device: str,
+        framework: str,
+    ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
@@ -47,12 +54,14 @@ class MockPipeline:
         MockPipeline.counter += 1
 
     def __call__(self, sequences: List[str], **kwargs):
-        if "error" in sequences[0] or \
-                isinstance(sequences[0], dict) and "error" in sequences[0]["text"]:
+        if (
+            "error" in sequences[0]
+            or isinstance(sequences[0], dict)
+            and "error" in sequences[0]["text"]
+        ):
             raise Exception("Error while performing prediction.")
 
         result = []
         for label_score in self.model.label_scores:
-            result.append({"label": label_score.label,
-                           "score": label_score.score})
+            result.append({"label": label_score.label, "score": label_score.score})
         return [result] * len(sequences)
