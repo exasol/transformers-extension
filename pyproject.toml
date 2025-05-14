@@ -104,3 +104,6 @@ module = [
 ]
 ignore_missing_imports = true
 ignore_errors = true
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
