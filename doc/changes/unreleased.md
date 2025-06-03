@@ -21,3 +21,5 @@ T.B.D
  n/a
 
 ### Dependency Updates
+
+- Updated  tornado (6.4.2 -> 6.5.1)
