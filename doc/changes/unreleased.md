@@ -15,6 +15,8 @@ T.B.D
  - #201: Added python toolbox to project
  - #294: Improved linter score
  - #305: Updated python toolbox to 1.1.0 & added basic typing checks
+ - #295: Activated type check in .pre-commit-config.yaml
+ - #296: Activated code formatting in .pre-commit-config.yaml
 
 ### Bugs
 
