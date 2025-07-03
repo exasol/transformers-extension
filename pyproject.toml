@@ -40,7 +40,7 @@ toml = "^0.10.2"
 nox = "^2023.4.22"
 pytest-exasol-slc = ">=0.3.0"
 pytest-exasol-extension = ">=0.2.1,<1"
-exasol-toolbox = ">=1.1.0"
+exasol-toolbox = "^1.6.0"
 pandas-stubs = "^2.2.0"
 types-toml = "^0.10.0"
 
