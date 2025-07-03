@@ -23,4 +23,5 @@ T.B.D
 ### Dependency Updates
 
 - Updated  tornado (6.4.2 -> 6.5.1)
+- #311: Updated transitive dependencies urllib3 (2.4.0 -> 2.5.0) & requests (2.32.3 -> 2.32.4)
 
