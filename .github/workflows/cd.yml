@@ -21,12 +21,13 @@ jobs:
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
-  publish-docs:
-    needs: [ cd-job ]
-    name: Publish Documentation
-    uses: ./.github/workflows/gh-pages.yml
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+# Not yet serving documents; see #298
+#  publish-docs:
+#    needs: [ cd-job ]
+#    name: Publish Documentation
+#    uses: ./.github/workflows/gh-pages.yml
+#    permissions:
+#      contents: read
+#      pages: write
+#      id-token: write
 
