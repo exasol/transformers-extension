@@ -15,6 +15,8 @@ T.B.D
  - #201: Added python toolbox to project
  - #294: Improved linter score
  - #305: Updated python toolbox to 1.1.0 & added basic typing checks
+ - #295: Activated type check in .pre-commit-config.yaml
+ - #296: Activated code formatting in .pre-commit-config.yaml
 
 ### Bugs
 
@@ -23,4 +25,5 @@ T.B.D
 ### Dependency Updates
 
 - Updated  tornado (6.4.2 -> 6.5.1)
+- #311: Updated transitive dependencies urllib3 (2.4.0 -> 2.5.0) & requests (2.32.3 -> 2.32.4)
 
