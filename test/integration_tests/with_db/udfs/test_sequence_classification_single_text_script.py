@@ -44,14 +44,40 @@ def test_sequence_classification_single_text_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # lenient test for quality of results, will be replaced by deterministic test later
+    # lenient test for quality of results,
+    # checks whether enough of the results are of "good quality".
+    # Since in this test the input is a sentence with positive sentiment, which the test model can detect,
+    # the "acceptable_results" here is the label "positive" with a reasonably high score.
+    # we want high confidence on good results, and low confidence on bad results. however, cutoffs for
+    # high and low confidence where not set in an elaborate scientific way.
+    # this check is only here to assure us the models output is not totally of kilter
+    # (and crucially does not get worse with our changes over time),
+    # and therefore we can assume model loading and execution is working correctly.
+    # a plan to make this check deterministic in the future exists.
 
+    # An accepted results is defined as follows:
+    #                       | label acceptable  | label unacceptable
+    # --------------------------------------------------------------
+    # high confidence       | acceptable        |  bad result
+    # (result_score > 0.8)  |                   |
+    # --------------------------------------------------------------
+    # other confidence      | result not        |  result not
+    # (result_score between | good enough to    |  good enough to
+    # high and low)         | be accepted       |  be accepted
+    # --------------------------------------------------------------
+    # low confidence        | bad result        |  acceptable
+    # (result_score < 0.2)  |                   |
+
+    # we only sum up acceptable results below, because we already know we
+    # have the correct number of results from the other checks.
     number_accepted_results = 0
     for i in range(len(result)):
+        result_label = result[i][4]
+        result_score = result[i][5]
         if (
-            result[i][4] == "positive" and result[i][5] > 0.8
+            result_label == "positive" and result_score > 0.8
         ):  # check if confidence reasonably high
             number_accepted_results += 1
-        elif result[i][5] < 0.2:
+        elif result_score < 0.2 and result_label != "positive":
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 1.5

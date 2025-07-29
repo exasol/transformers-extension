@@ -25,6 +25,12 @@ def assert_correct_number_of_results(
 
 
 def assert_lenient_check_of_output_quality(results: list):
+    # lenient test for quality of results.
+    # We do this by seeing if the result is one of our predefined "acceptable_results".
+    # this check is only here to assure us the models output is not totally of kilter
+    # (and crucially does not get worse with our changes over time),
+    # and therefore we can assume model loading and execution is working correctly.
+    # a plan to make this check deterministic in the future exists.
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     number_accepted_results = 0
 

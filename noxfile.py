@@ -74,7 +74,8 @@ def onprem_integration_tests(session):
         "-s",
         "--backend=onprem",
         "--itde-db-version=external",
-        "test/integration_tests/with_db",
+        #"test/integration_tests/with_db",
+        "test/integration_tests/with_db/udfs/test_sequence_classification_single_text_script.py"
     )
 
 

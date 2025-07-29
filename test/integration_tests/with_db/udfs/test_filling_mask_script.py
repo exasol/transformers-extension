@@ -47,6 +47,13 @@ def test_filling_mask_script(
 
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [result[i][5] for i in range(len(result))]
+
+    # lenient test for quality of results.
+    # We do this by seeing if the result contains one of our predefined "acceptable_results".
+    # this check is only here to assure us the models output is not totally of kilter
+    # (and crucially does not get worse with our changes over time),
+    # and therefore we can assume model loading and execution is working correctly.
+    # a plan to make this check deterministic in the future exists.
     acceptable_results = ["love", "miss", "want", "need"]
     number_accepted_results = 0
 
@@ -57,3 +64,4 @@ def test_filling_mask_script(
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 2
+

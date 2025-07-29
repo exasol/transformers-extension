@@ -50,6 +50,13 @@ def test_question_answering_script(
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
     results = [result[i][6] for i in range(len(result))]
+
+    # lenient test for quality of results.
+    # We do this by seeing if the result contains one of our predefined "acceptable_results".
+    # this check is only here to assure us the models output is not totally of kilter
+    # (and crucially does not get worse with our changes over time),
+    # and therefore we can assume model loading and execution is working correctly.
+    # a plan to make this check deterministic in the future exists.
     acceptable_results = ["Nuremberg", "Germany"]
     number_accepted_results = 0
 
