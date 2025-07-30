@@ -52,12 +52,12 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
 
         results = [result[i][5] for i in range(len(result))]
 
-        # lenient test for quality of results.
+        # Lenient test for quality of results.
         # We do this by seeing if the result contains one of our predefined "acceptable_results".
-        # this check is only here to assure us the models output is not totally of kilter
+        # This check is only here to assure us the models output is not totally of kilter
         # (and crucially does not get worse with our changes over time),
         # and therefore we can assume model loading and execution is working correctly.
-        # a plan to make this check deterministic in the future exists.
+        # We to make this check deterministic in the future.
         acceptable_results = ["love", "miss", "want", "need"]
         number_accepted_results = 0
 

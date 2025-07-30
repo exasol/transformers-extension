@@ -51,12 +51,12 @@ def test_translation_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # lenient test for quality of results.
+    # Lenient test for quality of results.
     # We do this by seeing if the result is one of our predefined "acceptable_results".
-    # this check is only here to assure us the models output is not totally of kilter
+    # This check is only here to assure us the models output is not totally of kilter
     # (and crucially does not get worse with our changes over time),
     # and therefore we can assume model loading and execution is working correctly.
-    # a plan to make this check deterministic in the future exists.
+    # We plan to make this check deterministic in the future.
     results = [result[i][7] for i in range(len(result))]
     acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
     number_accepted_results = 0

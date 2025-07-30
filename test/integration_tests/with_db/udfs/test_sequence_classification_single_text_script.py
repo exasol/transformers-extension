@@ -44,18 +44,17 @@ def test_sequence_classification_single_text_script(
     n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
     assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # lenient test for quality of results,
-    # checks whether enough of the results are of "good quality".
+    # Checks whether enough of the results are of "good quality".
     # Since in this test the input is a sentence with positive sentiment, which the test model can detect,
     # the "acceptable_results" here is the label "positive" with a reasonably high score.
-    # we want high confidence on good results, and low confidence on bad results. however, cutoffs for
+    # We want high confidence on good results, and low confidence on bad results. However, cutoffs for
     # high and low confidence where not set in an elaborate scientific way.
-    # this check is only here to assure us the models output is not totally of kilter
+    # This check is only here to assure us the models output is not totally of kilter
     # (and crucially does not get worse with our changes over time),
     # and therefore we can assume model loading and execution is working correctly.
-    # a plan to make this check deterministic in the future exists.
+    # We to make this check deterministic in the future.
 
-    # An accepted results is defined as follows:
+    # An accepted result is defined as follows:
     #                       | label acceptable  | label unacceptable
     # --------------------------------------------------------------
     # high confidence       | acceptable        |  bad result
@@ -68,7 +67,7 @@ def test_sequence_classification_single_text_script(
     # low confidence        | bad result        |  acceptable
     # (result_score < 0.2)  |                   |
 
-    # we only sum up acceptable results below, because we already know we
+    # We only sum up acceptable results below, because we already know we
     # have the correct number of results from the other checks.
     number_accepted_results = 0
     for i in range(len(result)):
