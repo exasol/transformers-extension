@@ -20,7 +20,7 @@ T.B.D
 
 ### Bugs
 
- n/a
+ - #285: Fixed logic in model output quality checks of udf integration test
 
 ### Dependency Updates
 
