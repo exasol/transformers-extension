@@ -1,4 +1,5 @@
-"""Utils for TE deployment, it contains function to render SQL statements from Jinja2 templates"""
+"""Utils for TE deployment, it contains function to render SQL
+statements from Jinja2 templates"""
 
 import logging
 

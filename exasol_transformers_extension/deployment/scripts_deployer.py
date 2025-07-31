@@ -53,7 +53,9 @@ class ScriptsDeployer:
                 f'CREATE SCHEMA IF NOT EXISTS "{self._schema}";'
             )
         except pyexasol.ExaQueryError as e:
-            logger.warning("Could not create schema %s. Got error: %s", self._schema, e)
+            logger.warning(
+                "Could not create schema %s. " "Got error: %s", self._schema, e
+            )
             logger.info("Trying to open schema %s instead.", self._schema)
         self._set_current_schema(self._schema)
         logger.info("Schema %s is opened.", self._schema)
@@ -84,7 +86,8 @@ class ScriptsDeployer:
         """
         Deploy udf according to use_spans and install_all_scripts.
         Per default UDFs with and without spans are installed mutually exclusive.
-        but setting install_all_scripts to true overrides this and installs all. This can be useful for testing.
+        but setting install_all_scripts to true overrides this and installs all.
+         This can be useful for testing.
         """
         install_scripts_constants = [constants]
         if self._use_spans or self._install_all_scripts:

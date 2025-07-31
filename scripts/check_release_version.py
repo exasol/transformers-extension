@@ -33,8 +33,10 @@ def get_change_log_version():
         Path(__file__).parent / ".." / "doc" / "changes" / "changelog.md"
     ) as changelog:
         changelog_str = changelog.read()
-        # Search for the FIRST pattern like: "* [0.5.0](changes_0.5.0.md)" in the changelog file.
-        # Note that we encapsulate the [(0.5.0)] with parenthesis, which tells re to return the matching string as group
+        # Search for the FIRST pattern like: "* [0.5.0](changes_0.5.0.md)"
+        # in the changelog file.
+        # Note that we encapsulate the [(0.5.0)] with parenthesis, which tells
+        # re to return the matching string as group
         version_match = re.search(r"\* \[([0-9]+.[0-9]+.[0-9]+)]\(\S+\)", changelog_str)
         return version_match.groups()[0]
 
@@ -48,7 +50,8 @@ if __name__ == "__main__":
     print(f'Current version: "{poetry_version}"')
     print(f'Latest git tag: "{latest_tag}"')
 
-    # We expect that the current version in pyproject.toml is always greater than the latest tag.
+    # We expect that the current version in pyproject.toml is always greater
+    # than the latest tag.
     # Thus we avoid creating a release without having the version number updated.
     if not version.parse(poetry_version) > version.parse(latest_tag):
         raise ValueError("Poetry version needs to be updated!")

@@ -183,7 +183,8 @@ class TokenClassificationUDF(BaseModelUDF):
         for result in predictions:
             if result and result[0]:
                 result_df = pd.DataFrame(result)
-                # need to save before trying to rename, otherwise they get lost and cant be printed in error message
+                # need to save before trying to rename,
+                # otherwise they get lost and cant be printed in error message
                 result_df_column_names = result_df.columns
                 try:
                     result_df = result_df[self._desired_fields_in_prediction].rename(

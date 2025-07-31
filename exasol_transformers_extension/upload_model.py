@@ -57,7 +57,8 @@ opts.append(
         help="directory where the model is stored in the BucketFS",
     )
 )
-opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignore
+# type: ignore
+opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))
 
 
 def upload_model(**kwargs) -> None:
@@ -88,7 +89,8 @@ def upload_model_to_bfs_location(
     huggingface_token: str | None = None,
 ) -> Path:
     """
-    Downloads model from Huggingface hub and the transfers model to database at bucketfs_location
+    Downloads model from Huggingface hub and the transfers model to
+    database at bucketfs_location
 
     params:
         model_name: name of the model

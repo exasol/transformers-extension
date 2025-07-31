@@ -1,4 +1,5 @@
-"""Utils related to downloading/moving models to Local BucketFS or BucketFS or Local Directory"""
+"""Utils related to downloading/moving models to Local
+BucketFS or BucketFS or Local Directory"""
 
 import time
 from contextlib import contextmanager
@@ -61,7 +62,8 @@ def prepare_model_for_local_bucketfs(
     model_specification: ModelSpecification, tmpdir_factory
 ):
     """
-    Saves model specified in model_specification at tempdir/task_type/model_specific_path and returns model path.
+    Saves model specified in model_specification at
+    tempdir/task_type/model_specific_path and returns model path.
     """
     current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
         model_specification, "", model_params.sub_dir
@@ -82,7 +84,8 @@ def upload_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike,
 ) -> Path:
     """
-    Load model defined in model_specification and saves it to bucketfs_location at model_path, returns model_path.
+    Load model defined in model_specification and saves it to bucketfs_location
+    at model_path, returns model_path.
     local_model_save_path should be a tempdir. this is where the model will be
     downloaded to before uploading it to BucketFS.
     """
@@ -108,7 +111,8 @@ def upload_model(
     model_dir: Path,
 ) -> Path:
     """
-    Loads locally saved model from model_dir into bucketfs_location at model specific path.
+    Loads locally saved model from model_dir into bucketfs_location at model
+    specific path.
     The model specific path is defined by current_model_specification, so make sure it
     matches with the model in model_dir.
     Returns model specific path.

@@ -30,7 +30,8 @@ def prepare_question_answering_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard question answering model into it, returns tmpdir-path.
+    Create tmpdir and save standard question answering model into it,
+    returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.q_a_model_specs
@@ -45,7 +46,8 @@ def prepare_sequence_classification_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard sequence classification model into it, returns tmpdir-path.
+    Create tmpdir and save standard sequence classification model into it,
+    returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.sequence_class_model_specs
@@ -60,7 +62,8 @@ def prepare_sequence_classification_pair_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard sequence classification text pair model into it, returns tmpdir-path.
+    Create tmpdir and save standard sequence classification text pair model
+    into it, returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.sequence_class_pair_model_specs
@@ -88,7 +91,8 @@ def prepare_token_classification_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard token classification model into it, returns tmpdir-path.
+    Create tmpdir and save standard token classification model into it,
+    returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.token_model_specs
@@ -116,7 +120,8 @@ def prepare_zero_shot_classification_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard zero shot classification model into it, returns tmpdir-path.
+    Create tmpdir and save standard zero shot classification model into it,
+    returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.zero_shot_model_specs
@@ -131,7 +136,8 @@ def upload_filling_mask_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard filling mask model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard filling mask model into BucketFS at bucketfs_location,
+    returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
     base_model_specs = model_params.base_model_specs
@@ -146,7 +152,8 @@ def upload_question_answering_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard question answering model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard question answering model into BucketFS at bucketfs_location,
+    returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.q_a_model_specs
@@ -160,7 +167,8 @@ def upload_sequence_classification_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard sequence classification model into BucketFS at bucketfs_location, returns BucketFS path
+    Load standard sequence classification model into BucketFS at bucketfs_location,
+    returns BucketFS path
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.sequence_class_model_specs
@@ -174,7 +182,8 @@ def upload_sequence_classification_pair_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard sequence classification text pair model into BucketFS at bucketfs_location,
+    Load standard sequence classification text pair model into BucketFS at
+    bucketfs_location,
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
@@ -189,7 +198,8 @@ def upload_text_generation_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard text generation model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard text generation model into BucketFS at bucketfs_location,
+    returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.text_gen_model_specs
@@ -203,7 +213,8 @@ def upload_token_classification_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard token classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard token classification model into BucketFS at bucketfs_location,
+    returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.token_model_specs
@@ -217,7 +228,8 @@ def upload_translation_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard translation model into BucketFS at bucketfs_location, returns BucketFS path
+    Load standard translation model into BucketFS at bucketfs_location,
+    returns BucketFS path
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.seq2seq_model_specs
@@ -231,7 +243,8 @@ def upload_zero_shot_classification_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard zero shot classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard zero shot classification model into BucketFS at bucketfs_location,
+    returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.zero_shot_model_specs

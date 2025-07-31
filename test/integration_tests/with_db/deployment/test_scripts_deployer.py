@@ -80,7 +80,8 @@ def test_scripts_deployer_no_schema_creation_permission(
     if backend != BACKEND_ONPREM:
         pytest.skip(
             "We run this test only with the Docker-DB, "
-            "since the script deployer doesn't use the DB user login and password in SaaS."
+            "since the script deployer doesn't use the DB user login "
+            "and password in SaaS."
         )
 
     with temp_schema(pyexasol_connection) as schema_name:

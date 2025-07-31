@@ -46,7 +46,8 @@ class TeLanguageContainerDeployer(LanguageContainerDeployer):
         allow_override: bool = False,
         wait_for_completion: bool = True,
     ) -> None:
-        """Deploy the Language Container. If no bucket_file_path is given, use the static SLC name of TeLanguageContainerDeployer."""
+        """Deploy the Language Container. If no bucket_file_path is given,
+        use the static SLC name of TeLanguageContainerDeployer."""
         if not bucket_file_path:
             bucket_file_path = self.SLC_NAME
         super().run(
