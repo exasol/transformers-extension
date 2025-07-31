@@ -1,7 +1,11 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality_with_score,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
-from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality_with_score
-from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
 
 
 def setup_common_input_data():
@@ -11,6 +15,7 @@ def setup_common_input_data():
     n_rows_result = n_rows * n_labels
     text_data = "The database software company Exasol is based in Nuremberg"
     return n_rows, candidate_labels, n_labels, n_rows_result, text_data
+
 
 def test_zero_shot_classification_single_text_script_without_spans(
     setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs
@@ -56,8 +61,9 @@ def test_zero_shot_classification_single_text_script_without_spans(
     assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
     acceptable_results = ["Analytics", "Database", "Germany"]
-    assert_lenient_check_of_output_quality_with_score(result, n_rows_result,
-                                                      acceptable_results, 1.8)
+    assert_lenient_check_of_output_quality_with_score(
+        result, n_rows_result, acceptable_results, 1.8
+    )
 
 
 def test_zero_shot_classification_single_text_script_with_spans(
@@ -111,5 +117,6 @@ def test_zero_shot_classification_single_text_script_with_spans(
     assert_correct_number_of_results(4, 3, input_data[0], result, n_rows_result)
 
     acceptable_results = ["Analytics", "Database", "Germany"]
-    assert_lenient_check_of_output_quality_with_score(result, n_rows_result,
-                                                      acceptable_results, 1.8, label_index=6)
+    assert_lenient_check_of_output_quality_with_score(
+        result, n_rows_result, acceptable_results, 1.8, label_index=6
+    )

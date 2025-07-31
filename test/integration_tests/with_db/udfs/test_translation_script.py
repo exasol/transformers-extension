@@ -1,7 +1,11 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
-from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
 from test.utils.parameters import model_params
-from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
 
 
 def test_translation_script(
@@ -49,13 +53,11 @@ def test_translation_script(
     assert result[0][-1] is None
     added_columns = 2  # translation_text,error_message
     removed_columns = 1  # device_id
-    assert_correct_number_of_results(added_columns,
-                                     removed_columns,
-                                     input_data[0],
-                                     result,
-                                     n_rows)
+    assert_correct_number_of_results(
+        added_columns, removed_columns, input_data[0], result, n_rows
+    )
 
     acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
     assert_lenient_check_of_output_quality(
-            result, n_rows, acceptable_results, acceptance_factor=2, label_index = 7)
-
+        result, n_rows, acceptable_results, acceptance_factor=2, label_index=7
+    )

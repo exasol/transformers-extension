@@ -1,6 +1,7 @@
 import time
-
-from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
 from test.utils import postprocessing
 
 TASK_TYPE = "filling_mask"
@@ -54,7 +55,6 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
 
         acceptable_results = ["love", "miss", "want", "need"]
         assert_lenient_check_of_output_quality(result, top_k, acceptable_results, 2, 5)
-
 
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, SUB_DIR)

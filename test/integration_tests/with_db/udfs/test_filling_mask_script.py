@@ -1,5 +1,9 @@
-from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
-from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -46,8 +50,9 @@ def test_filling_mask_script(
     n_rows_result = n_rows * top_k
     # added_columns = filled_text,score,rank,error_message
     # removed_columns = device_id
-    assert_correct_number_of_results(4, 1, input_data[0],
-                                     result, n_rows_result)
+    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
     acceptable_results = ["love", "miss", "want", "need"]
-    assert_lenient_check_of_output_quality(result, n_rows_result, acceptable_results,2, 5)
+    assert_lenient_check_of_output_quality(
+        result, n_rows_result, acceptable_results, 2, 5
+    )

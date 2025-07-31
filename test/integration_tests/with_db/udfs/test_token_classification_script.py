@@ -1,7 +1,9 @@
-from test.integration_tests.utils.model_output_quality_checkers import \
-    assert_lenient_check_of_output_quality_for_result_set
-from test.integration_tests.utils.model_output_result_number_checker import \
-    assert_correct_number_of_results_multiple_results_per_input
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality_for_result_set,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results_multiple_results_per_input,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -50,11 +52,9 @@ def test_token_classification_script_without_spans(
     assert result[0][-1] is None
     # added_columns: start_pos,end_pos,word,entity,score,error_message
     # removed_columns: device_id
-    assert_correct_number_of_results_multiple_results_per_input(6,
-                                                                1,
-                                                                input_data[0],
-                                                                result,
-                                                                n_rows)
+    assert_correct_number_of_results_multiple_results_per_input(
+        6, 1, input_data[0], result, n_rows
+    )
 
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [[result[i][7], result[i][8]] for i in range(len(result))]
@@ -62,7 +62,8 @@ def test_token_classification_script_without_spans(
     # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     assert_lenient_check_of_output_quality_for_result_set(
-        result, acceptable_result_sets, acceptance_factor=2, label_index=7)
+        result, acceptable_result_sets, acceptance_factor=2, label_index=7
+    )
 
 
 def test_token_classification_script_with_span(
@@ -109,13 +110,11 @@ def test_token_classification_script_with_span(
     assert result[0][-1] is None
     # added_columns: entity_covered_text, entity_type, score, entity_doc_id, entity_char_begin, entity_char_end, error_message
     # removed_columns: # device_id, text_data
-    assert_correct_number_of_results_multiple_results_per_input(7,
-                                                                2,
-                                                                input_data[0],
-                                                                result,
-                                                                n_rows)
+    assert_correct_number_of_results_multiple_results_per_input(
+        7, 2, input_data[0], result, n_rows
+    )
     # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     assert_lenient_check_of_output_quality_for_result_set(
-        result, acceptable_result_sets, acceptance_factor=2, label_index=7)
-
+        result, acceptable_result_sets, acceptance_factor=2, label_index=7
+    )

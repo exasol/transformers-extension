@@ -1,5 +1,9 @@
-from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
-from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -51,5 +55,4 @@ def test_question_answering_script(
     assert_correct_number_of_results(4, 1, input_data[0], result, n_rows)
 
     acceptable_results = ["Nuremberg", "Germany"]
-    assert_lenient_check_of_output_quality(result, top_k, acceptable_results,2, 6)
-
+    assert_lenient_check_of_output_quality(result, top_k, acceptable_results, 2, 6)

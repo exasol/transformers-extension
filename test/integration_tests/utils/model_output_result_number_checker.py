@@ -12,6 +12,7 @@ def assert_correct_number_of_results(
         f"actual: {len(result)} rows, {len(result[0])} columns"
     )
 
+
 def assert_correct_number_of_results_multiple_results_per_input(
     added_columns: int,
     removed_columns: int,

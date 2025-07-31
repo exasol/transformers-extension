@@ -1,7 +1,9 @@
-
 def assert_lenient_check_of_output_quality_with_score(
-    result: list, n_rows_result: int, acceptable_results: list,
-        acceptance_factor: float, label_index: int = 5,
+    result: list,
+    n_rows_result: int,
+    acceptable_results: list,
+    acceptance_factor: float,
+    label_index: int = 5,
 ):
     """
     Checks whether enough of the results are of "good quality".
@@ -47,9 +49,13 @@ def assert_lenient_check_of_output_quality_with_score(
         number_accepted_results > n_rows_result / acceptance_factor
     ), f"Not enough acceptable labels ({acceptable_results}) in results {result}"
 
+
 def assert_lenient_check_of_output_quality(
-        result: list, n_rows_result: int, acceptable_results: list,
-        acceptance_factor: float, label_index: int = 5,
+    result: list,
+    n_rows_result: int,
+    acceptable_results: list,
+    acceptance_factor: float,
+    label_index: int = 5,
 ):
     """
     Lenient test for quality of results.
@@ -70,9 +76,12 @@ def assert_lenient_check_of_output_quality(
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / acceptance_factor
 
+
 def assert_lenient_check_of_output_quality_for_result_set(
-        result: list, acceptable_result_sets: list[list],
-        acceptance_factor: float, label_index: int = 5,
+    result: list,
+    acceptable_result_sets: list[list],
+    acceptance_factor: float,
+    label_index: int = 5,
 ):
     """
     Lenient test for quality of results.
@@ -82,7 +91,9 @@ def assert_lenient_check_of_output_quality_for_result_set(
     and therefore we can assume model loading and execution is working correctly.
     We to make this check deterministic in the future.
     """
-    results = [[result[i][label_index], result[i][label_index+1]] for i in range(len(result))]
+    results = [
+        [result[i][label_index], result[i][label_index + 1]] for i in range(len(result))
+    ]
     number_accepted_results = 0
 
     for i in range(len(results)):
