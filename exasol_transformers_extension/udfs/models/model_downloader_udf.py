@@ -48,7 +48,7 @@ class ModelDownloaderUDF:
             if not ctx.next():
                 break
 
-    def _download_model(self, ctx) -> Tuple[str, str]:
+    def _download_model(self, ctx) -> tuple[str, str]:
         # parameters
         bfs_conn = ctx.bfs_conn  # BucketFS connection
         token_conn = ctx.token_conn  # name of token connection

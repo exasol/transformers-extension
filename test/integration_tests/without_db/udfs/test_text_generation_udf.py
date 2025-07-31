@@ -21,7 +21,7 @@ from exasol_transformers_extension.udfs.models.text_generation_udf import (
 
 
 class ExaEnvironment:
-    def __init__(self, connections: Dict[str, Connection] = None):
+    def __init__(self, connections: dict[str, Connection] = None):
         self._connections = connections
         if self._connections is None:
             self._connections = {}

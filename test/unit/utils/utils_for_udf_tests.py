@@ -29,7 +29,7 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 
 
 def create_mock_udf_context(
-    input_data: List[Tuple[Any, ...]], mock_meta: MockMetaData
+    input_data: list[tuple[Any, ...]], mock_meta: MockMetaData
 ) -> StandaloneMockContext:
     mock_ctx = StandaloneMockContext(
         inp=input_data,
@@ -46,8 +46,8 @@ def create_mock_exa_environment(
 
 
 def create_bfs_connections_with_token_con(
-    bfs_conn_names: List[str],
-    bucketfs_connections: List[Connection],
+    bfs_conn_names: list[str],
+    bucketfs_connections: list[Connection],
     token_conn_name: str,
     token_conn_obj: Connection,
 ) -> dict[str, Connection]:
@@ -57,8 +57,8 @@ def create_bfs_connections_with_token_con(
 
 
 def create_mock_exa_environment_with_token_con(
-    bfs_conn_names: List[str],
-    bucketfs_connections: List[Connection],
+    bfs_conn_names: list[str],
+    bucketfs_connections: list[Connection],
     mock_meta: MockMetaData,
     token_conn_name: str,
     token_conn_obj: Connection,
@@ -90,7 +90,7 @@ def create_mock_model_factories_with_models(number_of_intended_used_models: int)
     """
     mock_tokenizer_factory, mock_base_model_factory = create_base_mock_model_factories()
 
-    mock_models: List[Union[AutoModel, MagicMock]] = [
+    mock_models: list[Union[AutoModel, MagicMock]] = [
         create_autospec(AutoModel) for i in range(number_of_intended_used_models)
     ]
     mock_cast(mock_base_model_factory.from_pretrained).side_effect = mock_models
@@ -106,7 +106,7 @@ def create_mock_pipeline_factory(
     Ths mock gets a list of tokenizer_models_outputs as side_effect, enabling it to return them in order when called.
     This mock_pipeline is feed into a mock_pipeline_factory.
     """
-    mock_pipeline: List[Union[AutoModel, MagicMock]] = [
+    mock_pipeline: list[Union[AutoModel, MagicMock]] = [
         create_autospec(Pipeline, side_effect=tokenizer_models_output_df[i])
         for i in range(0, number_of_intended_used_models)
     ]

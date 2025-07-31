@@ -80,7 +80,7 @@ def test_model_downloader(
     mock_model_downloader_factory: Union[
         HuggingFaceHubBucketFSModelTransferSPFactory, MagicMock
     ] = create_autospec(HuggingFaceHubBucketFSModelTransferSPFactory)
-    mock_model_downloaders: List[
+    mock_model_downloaders: list[
         Union[HuggingFaceHubBucketFSModelTransferSP, MagicMock]
     ] = [create_autospec(HuggingFaceHubBucketFSModelTransferSP) for i in range(count)]
     for i in range(count):

@@ -5,7 +5,7 @@ from typing import (
     Tuple,
 )
 
-Row = List[Tuple[Any, ...]]
+Row = list[tuple[Any, ...]]
 
 
 class Output:
@@ -42,7 +42,7 @@ class OutputMatcher:
         """Returns error message from error column"""
         return row[self._error_message_index]
 
-    def input_columns(self, row) -> Tuple[Any]:
+    def input_columns(self, row) -> tuple[Any]:
         """Returns only the part of the Output from the first up until n_input_columns.
         the assumption being that those correspond to the input columns"""
         return row[: self._n_input_columns]

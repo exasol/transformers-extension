@@ -3,9 +3,9 @@ from abc import (
     ABC,
     abstractmethod,
 )
+from collections.abc import Iterator
 from typing import (
     Any,
-    Iterator,
     List,
 )
 
@@ -136,7 +136,7 @@ class BaseModelUDF(ABC):
 
     def get_prediction_from_unique_param_based_dataframes(
         self, model_df
-    ) -> List[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Performs separate predictions for data with the same parameters
         in the same model dataframe.
@@ -289,8 +289,8 @@ class BaseModelUDF(ABC):
 
     @abstractmethod
     def create_dataframes_from_predictions(
-        self, predictions: List[Any]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[Any]
+    ) -> list[pd.DataFrame]:
         pass
 
     @abstractmethod
@@ -300,12 +300,12 @@ class BaseModelUDF(ABC):
         pass
 
     @abstractmethod
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         pass
 
     @abstractmethod
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         pass
 

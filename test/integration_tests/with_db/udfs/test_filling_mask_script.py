@@ -63,4 +63,3 @@ def test_filling_mask_script(
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 2
-

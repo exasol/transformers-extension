@@ -1,7 +1,7 @@
+from collections.abc import Iterator
 from typing import (
     Any,
     Dict,
-    Iterator,
     List,
 )
 
@@ -44,7 +44,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
 
         yield model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[List[Dict[str, Any]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -58,7 +58,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -80,8 +80,8 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: List[List[Dict[str, Any]]]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[list[dict[str, Any]]]
+    ) -> list[pd.DataFrame]:
         """
         Convert predictions to dataframe. If the prediction results can be
         presented as is, the results are converted directly into the dataframe.

@@ -1,7 +1,7 @@
+from collections.abc import Iterator
 from typing import (
     Any,
     Dict,
-    Iterator,
     List,
     Union,
 )
@@ -47,7 +47,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
 
     def execute_prediction(
         self, model_df: pd.DataFrame
-    ) -> List[Union[Dict[str, Any], List[Dict[str, Any]]]]:
+    ) -> list[Union[dict[str, Any], list[dict[str, Any]]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -73,7 +73,7 @@ class QuestionAnsweringUDF(BaseModelUDF):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -95,8 +95,8 @@ class QuestionAnsweringUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: List[Union[Dict[str, Any], List[Dict[str, Any]]]]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[Union[dict[str, Any], list[dict[str, Any]]]]
+    ) -> list[pd.DataFrame]:
         """
         Convert predictions to dataframe.
 

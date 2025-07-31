@@ -9,8 +9,8 @@ import pandas as pd
 
 
 def get_unique_values(
-    df: pd.DataFrame, columns: List[str], sort: bool = False
-) -> List[List[Any]]:
+    df: pd.DataFrame, columns: list[str], sort: bool = False
+) -> list[list[Any]]:
     """
     Filter given dataframe and return the unique values. Sorts the unique values
     if the sort parameter is set to True

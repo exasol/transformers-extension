@@ -66,7 +66,7 @@ def assert_lenient_check_of_output_quality(
             contains(result_label, acceptable_results) and result_score > 0.8
         ):  # check if confidence on good results is reasonably high
             number_accepted_results += 1
-        elif result_score < 0.2 and not contains(result_label, acceptable_results) :
+        elif result_score < 0.2 and not contains(result_label, acceptable_results):
             number_accepted_results += 1
     assert (
         number_accepted_results > n_rows_result / 1.8

@@ -52,7 +52,7 @@ sample_df = pd.DataFrame(
     ],
 )
 def test_get_sorted_unique_values(
-    description: str, columns: List[str], expected: List[List[int]]
+    description: str, columns: list[str], expected: list[list[int]]
 ):
     sorted_unique_values = dataframe_operations.get_unique_values(
         sample_df, columns, sort=True
@@ -96,7 +96,7 @@ def test_get_sorted_unique_values(
     ],
 )
 def test_get_unique_values(
-    description: str, columns: List[str], expected: List[List[int]]
+    description: str, columns: list[str], expected: list[list[int]]
 ):
     unique_values = dataframe_operations.get_unique_values(sample_df, columns)
 
@@ -113,7 +113,7 @@ def test_get_unique_values(
     ],
 )
 def test_sorting_cell_values(
-    description: str, seperator: str, dataframe: pd.DataFrame, expected: List[str]
+    description: str, seperator: str, dataframe: pd.DataFrame, expected: list[str]
 ):
 
     dataframe = dataframe_operations.sort_cell_values(dataframe, "col", seperator)

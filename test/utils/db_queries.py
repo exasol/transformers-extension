@@ -48,7 +48,7 @@ class ExaParameter:
 
 class DBQueries:
     @staticmethod
-    def get_all_scripts(db_conn, schema_name) -> List[int]:
+    def get_all_scripts(db_conn, schema_name) -> list[int]:
         query_all_scripts = f"""
                 SELECT SCRIPT_NAME
                 FROM EXA_ALL_SCRIPTS

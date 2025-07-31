@@ -23,7 +23,7 @@ class MockTranslationModel:
 
 
 class MockTranslationFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath, MockTranslationModel]):
+    def __init__(self, mock_models: dict[PurePosixPath, MockTranslationModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -50,7 +50,7 @@ class MockPipeline:
         self.lang_translation = {"German:": "übersetzt", "French:": "traduit"}
         MockPipeline.counter += 1
 
-    def __call__(self, text_data: List[str], **kwargs) -> List[Dict[str, str]]:
+    def __call__(self, text_data: list[str], **kwargs) -> list[dict[str, str]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 
