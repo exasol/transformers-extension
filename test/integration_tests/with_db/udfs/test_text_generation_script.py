@@ -1,3 +1,5 @@
+from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
+from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -43,26 +45,11 @@ def test_text_generation_script(
 
     # assertions
     assert result[0][-1] is None
-    added_columns = 2  # generated_text,error_message
-    removed_columns = 1  # device_id
-    n_rows_result = n_rows
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # Lenient test for quality of results.
-    # We do this by seeing if the result contains one of our predefined "acceptable_results".
-    # This check is only here to assure us the models output is not totally of kilter
-    # (and crucially does not get worse with our changes over time),
-    # and therefore we can assume model loading and execution is working correctly.
-    # We to make this check deterministic in the future.
-    results = [result[i][6] for i in range(len(result))]
+    # added_columns = generated_text,error_message
+    # removed_columns = device_id
+    assert_correct_number_of_results(2, 1, input_data[0], result, n_rows)
+
     acceptable_results = ["software", "system", "solution", "tool"]
-    number_accepted_results = 0
+    assert_lenient_check_of_output_quality(result, n_rows, acceptable_results,2, 6)
 
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
-    for i in range(len(results)):
-        if contains(results[i], acceptable_results):
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 2

@@ -1,5 +1,7 @@
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
+from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
 from test.utils.parameters import model_params
+from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
 
 
 def test_translation_script(
@@ -47,24 +49,13 @@ def test_translation_script(
     assert result[0][-1] is None
     added_columns = 2  # translation_text,error_message
     removed_columns = 1  # device_id
-    n_rows_result = n_rows
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+    assert_correct_number_of_results(added_columns,
+                                     removed_columns,
+                                     input_data[0],
+                                     result,
+                                     n_rows)
 
-    # Lenient test for quality of results.
-    # We do this by seeing if the result is one of our predefined "acceptable_results".
-    # This check is only here to assure us the models output is not totally of kilter
-    # (and crucially does not get worse with our changes over time),
-    # and therefore we can assume model loading and execution is working correctly.
-    # We plan to make this check deterministic in the future.
-    results = [result[i][7] for i in range(len(result))]
     acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
-    number_accepted_results = 0
+    assert_lenient_check_of_output_quality(
+            result, n_rows, acceptable_results, acceptance_factor=2, label_index = 7)
 
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
-    for i in range(len(results)):
-        if contains(results[i], acceptable_results):
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 2

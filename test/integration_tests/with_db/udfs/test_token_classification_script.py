@@ -1,3 +1,7 @@
+from test.integration_tests.utils.model_output_quality_checkers import \
+    assert_lenient_check_of_output_quality_for_result_set
+from test.integration_tests.utils.model_output_result_number_checker import \
+    assert_correct_number_of_results_multiple_results_per_input
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -7,39 +11,6 @@ def setup_common_input_data():
     n_rows = 100
     text_data = "The database software company Exasol is based in Nuremberg"
     return aggregation_strategy, n_rows, text_data
-
-
-def assert_correct_number_of_results(
-    added_columns: int,
-    removed_columns: int,
-    input_data_row: tuple,
-    result: list,
-    n_rows: int,
-):
-    n_cols_result = len(input_data_row) + (added_columns - removed_columns)
-    assert len(result) >= n_rows and len(result[0]) == n_cols_result, (
-        f"format of result is not correct,"
-        f"expected >= {n_rows} rows, {n_cols_result} columns."
-        f"actual: {len(result)} rows, {len(result[0])} columns"
-    )
-
-
-def assert_lenient_check_of_output_quality(results: list):
-    # Lenient test for quality of results.
-    # We do this by seeing if the result is one of our predefined "acceptable_results".
-    # This check is only here to assure us the models output is not totally of kilter
-    # (and crucially does not get worse with our changes over time),
-    # and therefore we can assume model loading and execution is working correctly.
-    # We to make this check deterministic in the future.
-    acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
-    number_accepted_results = 0
-
-    for i in range(len(results)):
-        if results[i] in acceptable_result_sets:
-            number_accepted_results += 1
-    assert (
-        number_accepted_results > len(results) / 1.5
-    ), f"Not enough acceptable results {acceptable_result_sets} in results {results}"
 
 
 def test_token_classification_script_without_spans(
@@ -79,11 +50,19 @@ def test_token_classification_script_without_spans(
     assert result[0][-1] is None
     # added_columns: start_pos,end_pos,word,entity,score,error_message
     # removed_columns: device_id
-    assert_correct_number_of_results(6, 1, input_data[0], result, n_rows)
+    assert_correct_number_of_results_multiple_results_per_input(6,
+                                                                1,
+                                                                input_data[0],
+                                                                result,
+                                                                n_rows)
 
     # lenient test for quality of results, will be replaced by deterministic test later
     results = [[result[i][7], result[i][8]] for i in range(len(result))]
-    assert_lenient_check_of_output_quality(results)
+
+    # lenient test for quality of results, will be replaced by deterministic test later
+    acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
+    assert_lenient_check_of_output_quality_for_result_set(
+        result, acceptable_result_sets, acceptance_factor=2, label_index=7)
 
 
 def test_token_classification_script_with_span(
@@ -130,7 +109,13 @@ def test_token_classification_script_with_span(
     assert result[0][-1] is None
     # added_columns: entity_covered_text, entity_type, score, entity_doc_id, entity_char_begin, entity_char_end, error_message
     # removed_columns: # device_id, text_data
-    assert_correct_number_of_results(7, 2, input_data[0], result, n_rows)
+    assert_correct_number_of_results_multiple_results_per_input(7,
+                                                                2,
+                                                                input_data[0],
+                                                                result,
+                                                                n_rows)
     # lenient test for quality of results, will be replaced by deterministic test later
-    results = [[result[i][7], result[i][8]] for i in range(len(result))]
-    assert_lenient_check_of_output_quality(results)
+    acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
+    assert_lenient_check_of_output_quality_for_result_set(
+        result, acceptable_result_sets, acceptance_factor=2, label_index=7)
+

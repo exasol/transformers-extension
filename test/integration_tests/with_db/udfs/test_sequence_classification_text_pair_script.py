@@ -1,3 +1,5 @@
+from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality_with_score
+from test.integration_tests.utils.model_output_result_number_checker import assert_correct_number_of_results
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -39,47 +41,16 @@ def test_sequence_classification_text_pair_script(
 
     # assertions
     assert result[0][-1] is None
-    added_columns = 3  # label,score,error_message
-    removed_columns = 1  # device_id
-    n_rows_result = n_rows * n_labels
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # Checks whether enough of the results are of "good quality".
+    n_rows_result = n_rows * n_labels
+    # added_columns: label,score,error_message
+    # removed_columns: device_id,
+    assert_correct_number_of_results(3, 1, input_data[0], result, n_rows_result)
+
     # Since in this test the input is two sentences which contradict each other, which the test model can detect,
     # the "acceptable_results" here is the label "contradiction" with a reasonably high score.
-    # We want high confidence on good results, and low confidence on bad results. However, cutoffs for
-    # high and low confidence where not set in an elaborate scientific way.
-    # This check is only here to assure us the models output is not totally of kilter
-    # (and crucially does not get worse with our changes over time),
-    # and therefore we can assume model loading and execution is working correctly.
-    # We to make this check deterministic in the future.
+    # possible labels: contradiction, entailment, neutral
+    acceptable_results = ["contradiction"]
+    assert_lenient_check_of_output_quality_with_score(result, n_rows_result,
+                                                      acceptable_results, 1.5, label_index=5)
 
-    # An accepted result is defined as follows:
-    #                       | label acceptable  | label unacceptable
-    # --------------------------------------------------------------
-    # high confidence       | acceptable        |  bad result
-    # (result_score > 0.8)  |                   |
-    # --------------------------------------------------------------
-    # other confidence      | result not        |  result not
-    # (result_score between | good enough to    |  good enough to
-    # high and low)         | be accepted       |  be accepted
-    # --------------------------------------------------------------
-    # low confidence        | bad result        |  acceptable
-    # (result_score < 0.2)  |                   |
-
-    # We only sum up acceptable results below, because we already know we
-    # have the correct number of results from the other checks.
-    number_accepted_results = 0
-    for i in range(len(result)):
-        result_score = result[i][6]
-        result_label = result[i][5]
-        if (
-            result_label
-            == "contradiction"  # possible labels: contradiction, entailment, neutral
-            and result_score > 0.8
-        ):  # check if confidence reasonably high
-            number_accepted_results += 1
-        elif result_score < 0.2 and result_label != "contradiction":
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 1.5

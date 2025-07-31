@@ -1,4 +1,6 @@
 import time
+
+from test.integration_tests.utils.model_output_quality_checkers import assert_lenient_check_of_output_quality
 from test.utils import postprocessing
 
 TASK_TYPE = "filling_mask"
@@ -50,24 +52,9 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
         assert len(result) == top_k
         assert all(row[-1] is None for row in result)
 
-        results = [result[i][5] for i in range(len(result))]
-
-        # Lenient test for quality of results.
-        # We do this by seeing if the result contains one of our predefined "acceptable_results".
-        # This check is only here to assure us the models output is not totally of kilter
-        # (and crucially does not get worse with our changes over time),
-        # and therefore we can assume model loading and execution is working correctly.
-        # We to make this check deterministic in the future.
         acceptable_results = ["love", "miss", "want", "need"]
-        number_accepted_results = 0
+        assert_lenient_check_of_output_quality(result, top_k, acceptable_results, 2, 5)
 
-        def contains(string, list):
-            return any(map(lambda x: x in string, list))
-
-        for i in range(len(results)):
-            if contains(results[i], acceptable_results):
-                number_accepted_results += 1
-        assert number_accepted_results > top_k / 2
 
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, SUB_DIR)
