@@ -58,8 +58,7 @@ opts.append(
     )
 )
 
-opts.append(click.Option(
-    [get_opt_name(TOKEN_ARG)], **opt_token)) # type: ignore
+opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignore
 
 
 def upload_model(**kwargs) -> None:
