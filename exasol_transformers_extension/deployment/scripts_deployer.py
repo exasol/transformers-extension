@@ -54,7 +54,7 @@ class ScriptsDeployer:
             )
         except pyexasol.ExaQueryError as e:
             logger.warning(
-                "Could not create schema %s. " "Got error: %s", self._schema, e
+                "Could not create schema %s. Got error: %s", self._schema, e
             )
             logger.info("Trying to open schema %s instead.", self._schema)
         self._set_current_schema(self._schema)
