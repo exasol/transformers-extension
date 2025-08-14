@@ -44,7 +44,9 @@ class ListModelsUDF:
 
     def _list_models(self, ctx):#todo type hints
         # parameters
-        bfs_conn = ctx.bfs_conn  # BucketFS connection
+        bfs_conn = ctx.bucketfs_conn  # BucketFS connection
+        print(bfs_conn)
+        #bfs_conn = ctx.get_dataframe(1).iloc[0]["bucketfs_conn"]
         sub_dir = ctx.sub_dir
         # create bucketfs location
         bfs_conn_obj = self._exa.get_connection(bfs_conn)
@@ -55,13 +57,13 @@ class ListModelsUDF:
         )
         import json
 
-        URL = json.loads(bfs_conn_obj.address)
-        CREDENTIALS = {"default": {"username": json.loads(bfs_conn_obj.user), "password": json.loads(bfs_conn_obj.password)}}
-        bucketfs = Service(URL, CREDENTIALS)
+        #URL = json.loads(bfs_conn_obj.address)
+        #CREDENTIALS = {"default": {"username": json.loads(bfs_conn_obj.user), "password": json.loads(bfs_conn_obj.password)}}
+        #bucketfs = Service(URL, CREDENTIALS)
 
-        default_bucket = MappedBucket(bucketfs["default"])
-        files = [file for file in default_bucket]
-        print(files)
+        #default_bucket = MappedBucket(bucketfs["default"])
+        #files = [file for file in default_bucket]
+        #print(files)
 
         bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
             bfs_conn_obj
