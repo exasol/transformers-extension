@@ -1,21 +1,20 @@
 from test.unit.utils.utils_for_base_udf_tests import (
     create_mock_metadata,
-    create_mock_metadata_with_span,
-    run_test,
 )
+from test.utils.parameters import model_params
+from exasol_transformers_extension.udfs.models.ls_models_udf import (
+    ListModelsUDF,
+)
+from pathlib import Path
+
+from exasol_udf_mock_python.column import Column
+from exasol_udf_mock_python.connection import Connection
+from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from test.unit.utils.utils_for_udf_tests import (
-    assert_correct_number_of_results,
-    assert_result_matches_expected_output,
     create_mock_exa_environment,
-    create_mock_model_factories_with_models,
-    create_mock_pipeline_factory,
     create_mock_udf_context,
 )
-from test.utils.mock_bucketfs_location import (
-    fake_bucketfs_location_from_conn_object,
-    fake_local_bucketfs_path,
-)
-from unittest.mock import patch
+
 
 import pytest
 
@@ -42,65 +41,77 @@ def create_mock_metadata():
     )
     return meta
 
-def setup_base_udf_tests_and_run(
-    bfs_connections,
-    input_data,
-):
+
+def test_ls_function():
+    # get specs for a valid huggingface model
+
+
+    token_model_specs = model_params.token_model_specs
+    qa_model_specs = model_params.qa_model_specs #todo these could be mocks
+    sub_dir = Path("subdir")
+
+    mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
+    # real bucketfs would create these dirs, but tempdir does not
+    mock_bucketfs_location.mkdir(sub_dir)
+    mock_bucketfs_location.mkdir(sub_dir / "dslim")
+    mock_bucketfs_location.mkdir(sub_dir / "deepset")
+
+
+    #actual_tar_path = call_udf(#todo test function here?
+    #    subdir=sub_dir,
+    #    bucketfs_location=mock_bucketfs_location,
+    #)
+
+    expected_tar_path = [
+        sub_dir / (token_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz"),
+        sub_dir / (qa_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz")
+    ]
+    #print("actual_tar_path:", actual_tar_path)
+    print("expected_tar_path:", expected_tar_path)
+    assert (mock_bucketfs_location / expected_tar_path[0]).exists()
+    #assert expected_tar_path == actual_tar_path
+
+
+def test_ls_udf(tmpdir_factory):
+    # get specs for a valid huggingface model
+
+
+    token_model_specs = model_params.token_model_specs
+    qa_model_specs = model_params.q_a_model_specs #todo these could be mocks
+    sub_dir = "subdir"
+
+    mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
+    # real bucketfs would create these dirs, but tempdir does not
+    mock_bucketfs_location.mkdir(Path(sub_dir))
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "dslim")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")
+
+    bucketfs_connection = Connection(address=str(mock_bucketfs_location))#f"file:///test_ls")
+    bfs_conn_name = "bfs_conn"
 
     mock_meta = create_mock_metadata()
-    mock_exa = create_mock_exa_environment(mock_meta, bfs_connections)
+    mock_exa = create_mock_exa_environment(
+        mock_meta, {bfs_conn_name: bucketfs_connection}
+    )
+    input_data = [(bfs_conn_name, sub_dir)]
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
-    #res = run_test(
-    #    mock_exa,
-    #    mock_ctx,
-    #)
-    udf = DummyImplementationUDF(
-        exa=mock_exa,
-        base_model=mock_base_model_factory,
-        batch_size=batch_size,
-        tokenizer=mock_tokenizer_factory,
-        pipeline=mock_pipeline,
-        work_with_spans=work_with_span,
+
+    udf = ListModelsUDF(
+        exa=mock_exa
     )
     udf.run(mock_ctx)
-    res = mock_ctx.output
-    return res, mock_meta
+
+    expected_tar_path = [
+        sub_dir / (token_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz"),
+        sub_dir / (qa_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz")
+    ]
+    print(mock_ctx.output)
+    actual_tar_path = mock_ctx.output
+    print("actual_tar_path:", actual_tar_path)
+    print("expected_tar_path:", expected_tar_path)
+    assert (mock_bucketfs_location / expected_tar_path[0]).exists()
+    assert expected_tar_path == actual_tar_path
 
 
-)
-@patch(
-    "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
-)
-@patch(
-    "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
-)
-def test_base_model_udf(mock_local_path, mock_create_loc, params):
-
-    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
-    mock_local_path.side_effect = fake_local_bucketfs_path
-
-    input_data = params.input_data
-    bfs_connections = params.bfs_connections
-    expected_model_counter = params.expected_model_counter
-    tokenizer_models_output_df = params.tokenizer_models_output_df
-
-    batch_size = params.batch_size
-    expected_output_data = params.output_data
-
-    res, mock_meta, mock_pipeline_factory = setup_base_udf_tests_and_run(
-        bfs_connections,
-        input_data,
-        expected_model_counter,
-        tokenizer_models_output_df,
-        batch_size,
-    )
-
-    assert_correct_number_of_results(
-        res, mock_meta.output_columns, expected_output_data
-    )
-    assert_result_matches_expected_output(
-        res, expected_output_data, mock_meta.input_columns
-    )
-    assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
 
 
