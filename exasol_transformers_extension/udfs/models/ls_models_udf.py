@@ -1,8 +1,11 @@
+import os
+from pathlib import Path
 from typing import Tuple
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 import transformers
 
+from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecificationFactory,
 )
@@ -44,22 +47,25 @@ class ListModelsUDF:
 
     def _list_models(self, ctx):#todo type hints
         # parameters
-        bfs_conn = ctx.bucketfs_conn  # BucketFS connection
-        print(bfs_conn)
-        #bfs_conn = ctx.get_dataframe(1).iloc[0]["bucketfs_conn"]
+        bfs_conn_name = ctx.bucketfs_conn  # BucketFS connection
+        print("bfs_conn_name:")
+        print(bfs_conn_name)
+        #bfs_conn_name = ctx.get_dataframe(1).iloc[0]["bucketfs_conn"]
         sub_dir = ctx.sub_dir
         # create bucketfs location
-        bfs_conn_obj = self._exa.get_connection(bfs_conn)
-
+        bfs_conn_obj = self._exa.get_connection(bfs_conn_name)
+        print("bfs_conn_obj:")
+        print(bfs_conn_obj)
         from exasol.bucketfs import (
             MappedBucket,
             Service,
         )
         import json
 
-        #URL = json.loads(bfs_conn_obj.address)
+        #Address = json.loads(bfs_conn_obj.address)
+        #URL = Address["base_path"]
         #CREDENTIALS = {"default": {"username": json.loads(bfs_conn_obj.user), "password": json.loads(bfs_conn_obj.password)}}
-        #bucketfs = Service(URL, CREDENTIALS)
+        #bucketfs = Service(URL, CREDENTIALS)#does not ork with file as mock
 
         #default_bucket = MappedBucket(bucketfs["default"])
         #files = [file for file in default_bucket]
@@ -68,13 +74,17 @@ class ListModelsUDF:
         bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
             bfs_conn_obj
         )
-        models_list = []
-        #while True:
-        if bucketfs_location.is_file():
-             models_list.append(bucketfs_location.as_udf_path())
-        elif bucketfs_location.is_dir():
-             for item in bucketfs_location.iterdir():
-                 models_list.append(bucketfs_location.as_udf_path())
 
-        print(models_list)
+        #check_path = bucketfs_operations.get_local_bucketfs_path(
+        #    bucketfs_location=bucketfs_location, model_path=str(sub_dir)
+        #)
+        models_list = []
+        for main_dir, sub_dirs, files in os.walk(Path(bucketfs_location.as_udf_path())):#todo this gives us all tar files in bucketfs location. do we want to restrict it to subdir?
+            if files != []:#this means there is at least 1 file here
+                for file in files:
+                    if file.endswith(".tar.gz"):
+                        models_list.append(main_dir + "/"+ file)
+
+
+        print(models_list)#todo format this into something usefull
         return models_list
