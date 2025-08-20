@@ -24,7 +24,7 @@ class ListModelsUDF:
 
     | sub_dir                 | bfs_conn            |
     -------------------------------------------------
-    | directory to save model | BucketFS connection |
+    | directory where models are | BucketFS connection |
 
     returns a table of  <sub_dir/model_name> , <path of model BucketFS>
     path, subdir, version, task_name, model_name ?
@@ -43,7 +43,7 @@ class ListModelsUDF:
     def run(self, ctx) -> None:
         model_path_list = self._list_models(ctx)
         for model in model_path_list:
-            ctx.emit(*model)
+            ctx.emit(model)
 
     def _list_models(self, ctx):#todo type hints
         # parameters
@@ -80,7 +80,7 @@ class ListModelsUDF:
         #)
         models_list = []
         for main_dir, sub_dirs, files in os.walk(Path(bucketfs_location.as_udf_path())):#todo this gives us all tar files in bucketfs location. do we want to restrict it to subdir?
-            if files != []:#this means there is at least 1 file here
+            if files:#this means there is at least 1 file here
                 for file in files:
                     if file.endswith(".tar.gz"):
                         models_list.append(main_dir + "/"+ file)

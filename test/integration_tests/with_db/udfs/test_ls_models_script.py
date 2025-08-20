@@ -21,7 +21,7 @@ def test_list_models_script(
     upload_filling_mask_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
-    input_data = [["", bucketfs_conn_name, str(model_params.sub_dir)]]# todo do one with actuall subdir?
+    input_data = [[bucketfs_conn_name, str(model_params.sub_dir)]]# todo do one with actuall subdir?
     expected_result = [] #todo
     input_data_subdir_not_exist = ["non-existend-subdir", bucketfs_conn_name, str(model_params.sub_dir)]
     input_data_subdir_empty = []
@@ -29,7 +29,7 @@ def test_list_models_script(
     query = (
         f"SELECT TE_LS_MODELS_UDF("
         f"t.bucketfs_conn_name, "
-        f"t.sub_dir, "
+        f"t.sub_dir "
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(bucketfs_conn_name, "
         f"sub_dir));"
