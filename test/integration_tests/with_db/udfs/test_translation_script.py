@@ -63,3 +63,6 @@ def test_translation_script(
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
     assert number_accepted_results > n_rows_result / 2
+
+    #        poetry run -- nox -s start_database
+     #   poetry run -- nox -s onprem_integration_tests
