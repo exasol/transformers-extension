@@ -1,6 +1,6 @@
 """Class ModelSpecification describing a specific model."""
 
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath, Path
 
 import transformers
 
@@ -17,6 +17,7 @@ class ModelSpecification:
         """
         self.model_name = model_name
         self.task_type = self._set_task_type_from_udf_name(task_type)
+
 
     def _set_task_type_from_udf_name(self, text):
         """
@@ -55,6 +56,7 @@ class ModelSpecification:
             self.model_name.replace(".", "_") + "_" + self.task_type
         )  # model_name-version-task#
 
+
     def get_model_factory(self):
         """
         sets model factory depending on the task_type of the specific model
@@ -77,3 +79,18 @@ class ModelSpecification:
         else:
             model_factory = transformers.AutoModel
         return model_factory
+
+def create_model_spcs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
+        path_parts = model_path.parts
+        subdir_index = path_parts.index(sub_dir)#todo what do we return if no subdir is given? or add "find all subdirs" function?
+        # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
+        # therefor we assume the name of the tar file to be the model_specific_path_suffix,
+        # and everything between this and the sub-dir to be the model_name_prefix
+        name_prefix = "/".join(path_parts[subdir_index+1:-1])
+        model_specific_path_suffix = path_parts[-1].split('.')[0]
+        # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
+        model_specific_path_suffix_split = model_specific_path_suffix.split("_")
+        model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])# todo cant easily convert "_" back to ".", cause dont know which ones
+        #todo do we re-switch the task type? -> create model spec parameters task_name and "inernal_task_name/transformers_task_name"
+        task_name = model_specific_path_suffix_split[-1]
+        return ModelSpecification(model_name, task_name)

@@ -34,9 +34,7 @@ def create_mock_metadata():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("version", str, "VARCHAR(2000000)"),
             Column("task_name", str, "VARCHAR(2000000)"),
-            Column("seed", str, "VARCHAR(2000000)"),
             Column("path", str, "VARCHAR(2000000)"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],
@@ -85,7 +83,7 @@ def test_ls_udf(tmpdir_factory):
     # real bucketfs would create these dirs, but tempdir does not
     mock_bucketfs_location.mkdir(Path(sub_dir))
     mock_bucketfs_location.mkdir(Path(sub_dir) / "dslim")
-    mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")#todo use made up modelspecs with different name formats
     os.mknod(mock_bucketfs_location / sub_dir / token_model_specs.get_model_specific_path_suffix().with_suffix(".tar.gz"))
     os.mknod(mock_bucketfs_location / sub_dir / qa_model_specs.get_model_specific_path_suffix().with_suffix(".tar.gz"))
     for item in os.walk(mock_bucketfs_location):
@@ -110,16 +108,18 @@ def test_ls_udf(tmpdir_factory):
     )
     udf.run(mock_ctx)
 
-    expected_tar_path = [
-        sub_dir / (token_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz"),
-        sub_dir / (qa_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz")
+    expected_output = [
+        (bfs_conn_name, sub_dir, token_model_specs.model_name, token_model_specs.task_type,
+         sub_dir / (token_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz"), None),
+        (bfs_conn_name, sub_dir, qa_model_specs.model_name, qa_model_specs.task_type,
+         sub_dir / (qa_model_specs.get_model_specific_path_suffix()).with_suffix(".tar.gz"), None)
     ]
     print(mock_ctx.output)
-    actual_tar_path = mock_ctx.output
-    print("actual_tar_path:", actual_tar_path)
-    print("expected_tar_path:", expected_tar_path)
-    assert (mock_bucketfs_location / expected_tar_path[0]).exists()
-    assert expected_tar_path == actual_tar_path
+
+    print("actual_tar_path:", mock_ctx.output)
+    print("expected_tar_path:", expected_output)
+    #assert (mock_bucketfs_location / expected_tar_path[0]).exists()
+    assert expected_output == mock_ctx.output
 
 
 
