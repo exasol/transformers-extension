@@ -70,11 +70,13 @@ class ListModelsUDF:
         #    bucketfs_location=bucketfs_location, model_path=str(sub_dir)
         #)
         model_paths_list = []
-        for main_dir, sub_dirs, files in os.walk(Path(bucketfs_location.as_udf_path())):#todo this gives us all tar files in bucketfs location. do we want to restrict it to subdir?
+        for main_dir, sub_dirs, files in os.walk(Path(bucketfs_location.as_udf_path())):
+            #todo this gives us all tar files in bucketfs location. do we want to restrict it to subdir?
+            # todo maybe input has multiple subdirs?
             if files: #this means there is at least 1 file here
                 for file in files:
-                    if file.endswith(".tar.gz"):
-                        model_paths_list.append(main_dir + "/"+ file)
+                    #if file.endswith(".tar.gz"): #todo do they get unzipped?
+                    model_paths_list.append(main_dir + "/"+ file)
 
 
         print(model_paths_list)#todo format this into something usefull
