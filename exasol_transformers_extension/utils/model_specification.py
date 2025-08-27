@@ -54,7 +54,7 @@ class ModelSpecification:
         """Returns pyth suffix specific to the model"""
         return PurePosixPath(
             self.model_name.replace(".", "_") + "_" + self.task_type
-        )  # model_name-version-task#todo just replace the slashes too?
+        )  # model_name-version-task
 
 
     def get_model_factory(self):
@@ -80,24 +80,24 @@ class ModelSpecification:
             model_factory = transformers.AutoModel
         return model_factory
 
-def create_model_spcs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
-    #todo or do we just make it so you ned subdir to save? or collect model specs in a file somewhere? and the just check if still correct?
-    # this could  get out of sinc if user uses something different to delete or upload nmodels
+def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
         path_parts = model_path.parts
-        try:
-            subdir_index = path_parts.index(sub_dir)#todo what do we return if no subdir is given? or add "find all subdirs" function?
-            #todo return error if subdir not in path_parts, what happens if models not in subdir, or subdir = ""
-
         # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
-        # therefor we assume the name of the tar file to be the model_specific_path_suffix,
+        # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
         # and everything between this and the sub-dir to be the model_name_prefix
+        try:
+            subdir_index = path_parts.index(sub_dir)#todo what do we return if subdir=""?
+
         except:
-            subdir_index = -2#todo if there is only modelname this will create wrong results
+            #todo return error here
+            print("subdir not found in path")
+
         name_prefix = "/".join(path_parts[subdir_index+1:-1])
         model_specific_path_suffix = path_parts[-1].split('.')[0]
         # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
+        # todo check for "_known_task_type" first, if not found split at last "_"
         model_specific_path_suffix_split = model_specific_path_suffix.split("_")
-        model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])# todo cant easily convert "_" back to ".", cause dont know which ones
-        #todo do we re-switch the task type? -> create model spec parameters task_name and "inernal_task_name/transformers_task_name"
+        model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
+
         task_name = model_specific_path_suffix_split[-1]
         return ModelSpecification(model_name, task_name)
