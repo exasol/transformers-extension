@@ -21,8 +21,9 @@ def test_list_models_script(
     setup_database, db_conn, upload_tiny_model_to_bucketfs#, upload_translation_model_to_bucketfs,
     #upload_filling_mask_model_to_bucketfs#todo add fixture which just creates placeholder files instead of using models here?
 ):
+    print(upload_tiny_model_to_bucketfs)
     bucketfs_conn_name, _ = setup_database
-    subdir = ""
+    subdir = "model_sub_dir"
     #subdir = str(model_params.sub_dir) # this is not set for most models in our params
     input_data = [[bucketfs_conn_name, subdir]]# todo do one with actuall subdir?
     expected_result = [] #todo
@@ -42,7 +43,8 @@ def test_list_models_script(
     result = db_conn.execute(query).fetchall()
     # assertions
     assert result[0][-1] is None
-    print(result)
+    for item in result:
+        print(item)
     # added_columns: model_name, version, task_name, seed, path, error_message
     assert_correct_number_of_results(6, 0, input_data, result, 1)
     # todo assert output correct
