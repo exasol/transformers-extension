@@ -55,4 +55,4 @@ def test_text_generation_script(
     assert_correct_number_of_results(2, 1, input_data[0], result, n_rows)
 
     acceptable_results = ["software", "system", "solution", "tool"]
-    assert_lenient_check_of_output_quality(result, n_rows, acceptable_results, 2, 6)
+    assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 6)

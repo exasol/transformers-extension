@@ -62,7 +62,7 @@ def test_token_classification_script_without_spans(
     # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     assert_lenient_check_of_output_quality_for_result_set(
-        result, acceptable_result_sets, acceptance_factor=2, label_index=7
+        result, acceptable_result_sets, acceptance_factor=0.5, label_index=7
     )
 
 
@@ -116,5 +116,5 @@ def test_token_classification_script_with_span(
     # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     assert_lenient_check_of_output_quality_for_result_set(
-        result, acceptable_result_sets, acceptance_factor=2, label_index=7
+        result, acceptable_result_sets, acceptance_factor=0.5, label_index=7
     )

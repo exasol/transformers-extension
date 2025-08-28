@@ -59,5 +59,5 @@ def test_translation_script(
 
     acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
     assert_lenient_check_of_output_quality(
-        result, n_rows, acceptable_results, acceptance_factor=2, label_index=7
+        result, acceptable_results, acceptance_factor=0.5, label_index=7
     )

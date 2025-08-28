@@ -1,6 +1,8 @@
+def contains(string, list_of_strings):
+    return any(map(lambda x: x in string, list_of_strings))
+
 def assert_lenient_check_of_output_quality_with_score(
     result: list,
-    n_rows_result: int,
     acceptable_results: list,
     acceptance_factor: float,
     label_index: int = 5,
@@ -30,10 +32,10 @@ def assert_lenient_check_of_output_quality_with_score(
 
     We only sum up acceptable results below, because we already know we
     have the correct number of results from the other checks.
-    """
 
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
+    we then check if at least a minimum fraction of the results are acceptable.
+    this fraction is defied by the acceptance_factor.
+    """
 
     number_accepted_results = 0
     for result_i in result:
@@ -46,13 +48,12 @@ def assert_lenient_check_of_output_quality_with_score(
         elif result_score < 0.2 and not contains(result_label, acceptable_results):
             number_accepted_results += 1
     assert (
-        number_accepted_results > n_rows_result / acceptance_factor
+        number_accepted_results > len(result) * acceptance_factor
     ), f"Not enough acceptable labels ({acceptable_results}) in results {result}"
 
 
 def assert_lenient_check_of_output_quality(
     result: list,
-    n_rows_result: int,
     acceptable_results: list,
     acceptance_factor: float,
     label_index: int = 5,
@@ -64,17 +65,17 @@ def assert_lenient_check_of_output_quality(
     (and crucially does not get worse with our changes over time),
     and therefore we can assume model loading and execution is working correctly.
     We plan to make this check deterministic in the future.
+
+    we then check if at least a minimum fraction of the results are acceptable.
+    this fraction is defied by the acceptance_factor.
     """
     results = [result[i][label_index] for i in range(len(result))]
     number_accepted_results = 0
 
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
     for i in range(len(results)):
         if contains(results[i], acceptable_results):
             number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / acceptance_factor
+    assert number_accepted_results > len(result) * acceptance_factor
 
 
 def assert_lenient_check_of_output_quality_for_result_set(
@@ -90,15 +91,18 @@ def assert_lenient_check_of_output_quality_for_result_set(
     (and crucially does not get worse with our changes over time),
     and therefore we can assume model loading and execution is working correctly.
     We to make this check deterministic in the future.
+
+    we then check if at least a minimum fraction of the results are acceptable.
+    this fraction is defied by the acceptance_factor.
     """
-    results = [
-        [result[i][label_index], result[i][label_index + 1]] for i in range(len(result))
+    results_labels = [
+        [res[label_index], res[label_index + 1]] for res in result
     ]
     number_accepted_results = 0
 
-    for i in range(len(results)):
-        if results[i] in acceptable_result_sets:
+    for res in results_labels:
+        if res in acceptable_result_sets:
             number_accepted_results += 1
     assert (
-        number_accepted_results > len(results) / acceptance_factor
-    ), f"Not enough acceptable results {acceptable_result_sets} in results {results}"
+        number_accepted_results > len(results_labels) * acceptance_factor
+    ), f"Not enough acceptable results {acceptable_result_sets} in results {results_labels}"

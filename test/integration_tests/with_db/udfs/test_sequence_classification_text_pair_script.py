@@ -56,5 +56,5 @@ def test_sequence_classification_text_pair_script(
     # possible labels: contradiction, entailment, neutral
     acceptable_results = ["contradiction"]
     assert_lenient_check_of_output_quality_with_score(
-        result, n_rows_result, acceptable_results, 1.5, label_index=5
+        result, acceptable_results, 1/1.5, label_index=5
     )

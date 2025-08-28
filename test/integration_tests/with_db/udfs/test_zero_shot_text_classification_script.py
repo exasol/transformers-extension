@@ -62,7 +62,7 @@ def test_zero_shot_classification_single_text_script_without_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, n_rows_result, acceptable_results, 1.8
+        result, acceptable_results, 1/1.8
     )
 
 
@@ -118,5 +118,5 @@ def test_zero_shot_classification_single_text_script_with_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, n_rows_result, acceptable_results, 1.8, label_index=6
+        result, acceptable_results, 1/1.8, label_index=6
     )

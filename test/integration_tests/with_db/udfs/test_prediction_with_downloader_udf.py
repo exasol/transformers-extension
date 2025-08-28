@@ -54,7 +54,7 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
         assert all(row[-1] is None for row in result)
 
         acceptable_results = ["love", "miss", "want", "need"]
-        assert_lenient_check_of_output_quality(result, top_k, acceptable_results, 2, 5)
+        assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 5)
 
     finally:
         postprocessing.cleanup_buckets(bucketfs_location, SUB_DIR)
