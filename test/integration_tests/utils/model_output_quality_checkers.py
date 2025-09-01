@@ -1,6 +1,7 @@
 def contains(string, list_of_strings):
     return any(map(lambda x: x in string, list_of_strings))
 
+
 def assert_lenient_check_of_output_quality_with_score(
     result: list,
     acceptable_results: list,
@@ -95,9 +96,7 @@ def assert_lenient_check_of_output_quality_for_result_set(
     we then check if at least a minimum fraction of the results are acceptable.
     this fraction is defied by the acceptance_factor.
     """
-    results_labels = [
-        [res[label_index], res[label_index + 1]] for res in result
-    ]
+    results_labels = [[res[label_index], res[label_index + 1]] for res in result]
     number_accepted_results = 0
 
     for res in results_labels:

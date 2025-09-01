@@ -53,9 +53,7 @@ class ScriptsDeployer:
                 f'CREATE SCHEMA IF NOT EXISTS "{self._schema}";'
             )
         except pyexasol.ExaQueryError as e:
-            logger.warning(
-                "Could not create schema %s. Got error: %s", self._schema, e
-            )
+            logger.warning("Could not create schema %s. Got error: %s", self._schema, e)
             logger.info("Trying to open schema %s instead.", self._schema)
         self._set_current_schema(self._schema)
         logger.info("Schema %s is opened.", self._schema)

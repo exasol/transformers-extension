@@ -54,5 +54,5 @@ def test_sequence_classification_single_text_script(
     # the "acceptable_results" here is the label "positive" with a reasonably high score.
     acceptable_results = ["positive"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1/1.5, label_index=4
+        result, acceptable_results, 1 / 1.5, label_index=4
     )

@@ -53,6 +53,4 @@ def test_filling_mask_script(
     assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
     acceptable_results = ["love", "miss", "want", "need"]
-    assert_lenient_check_of_output_quality(
-        result, acceptable_results, 0.5, 5
-    )
+    assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 5)
