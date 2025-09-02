@@ -65,7 +65,7 @@ class ModelSpecification:
         return False
 
     def get_model_specific_path_suffix(self) -> PurePosixPath:
-        """Returns pyth suffix specific to the model"""
+        """Returns path suffix specific to the model"""
         return PurePosixPath(
             self.model_name.replace(".", "_") + "_" + self.task_type
         )  # model_name-version-task
@@ -93,8 +93,9 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
             subdir_index = path_parts.index(sub_dir)#todo what do we return if subdir=""?
 
         except:
-            #todo return error here
-            print("subdir not found in path")
+            error_message = ("subdir not found in path, or subdir is empty string. "
+                             "given subdir is: %s, looked in path: %s", sub_dir, model_path)
+            raise ValueError(error_message)  # todo error type?
 
         name_prefix = "/".join(path_parts[subdir_index+1:-1])
         model_specific_path_suffix = path_parts[-1].split('.')[0]
@@ -112,18 +113,20 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
                 task_name = model_specific_path_suffix_split[-1]
                 return model_name, task_name
             except:
-                # todo return error here
-                print("couldn't find task name in path")
+                error_message = ("couldn't find task name in path")#todo better
+                raise ValueError(error_message)#todo error type?
+
         if not found_task_names:
             try:
                 model_name, task_name = best_guess_model_specs(model_specific_path_suffix)
             except:
                 # todo rethrow?
-                print("couldn't find task name in path")
+                error_message = ("couldn't find task name in path")  # todo better
+                raise ValueError(error_message)  # todo error type?
 
         # if we found known_task_type in the path, check if one is on the end of the model_specific_path_suffix,
         # and declare this one as the task_type.
-        # disregard found_task_names form other positions in the model_specific_path_suffix
+        # disregard found_task_types form other positions in the model_specific_path_suffix
         for found_task_name in found_task_names:
             if model_specific_path_suffix.endswith("_" + found_task_name):
                 model_name = "/".join([name_prefix, model_specific_path_suffix.removesuffix("_" + task_name)])
@@ -134,6 +137,8 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
                 model_name, task_name = best_guess_model_specs(model_specific_path_suffix)
             except:
                 # todo rethrow?
-                print("couldn't find task name in path")
+                error_message = ("couldn't find task name in path")  # todo better
+                raise ValueError(error_message)  # todo error type?
 
         return ModelSpecification(model_name, task_name)
+
