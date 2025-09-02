@@ -1,4 +1,5 @@
 import os
+import traceback
 from pathlib import Path
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
@@ -39,7 +40,7 @@ class ListModelsUDF:
 
     def _list_models(self, ctx):#todo type hints
         # parameters
-
+        output = []
         bfs_conn_name = ctx.bucketfs_conn  # BucketFS connection
         sub_dir = str(ctx.sub_dir)
 
@@ -54,7 +55,12 @@ class ListModelsUDF:
         #check_path = bucketfs_operations.get_local_bucketfs_path(
         #    bucketfs_location=bucketfs_location, model_path=str(sub_dir))
         #)
-        #todo check if subdir is "". -> dissallow this in creation of path?
+        if not sub_dir:
+            self._error_message = "sub_dir cant be an empty string" #-> disallow "" this in creation of path?
+            #raise RuntimeError(self._error_message)
+            #self._error_message = traceback.format_exc()#todo raise before append?
+            output.append([bfs_conn_name, sub_dir, "", "", "", self._error_message])
+
         model_paths_list = []
         for main_dir, sub_dirs, files in os.walk(Path((bucketfs_location.as_udf_path() + "/" + sub_dir))):
             if files: #this means there is at least 1 file here
@@ -65,11 +71,20 @@ class ListModelsUDF:
                     # todo main_dir might be different
                         if not main_dir in model_paths_list:
                             model_paths_list.append(main_dir)
-
+            else:
+                self._error_message = "no models in this subdir" #todo do we want this message? or just return
+                # raise RuntimeError(self._error_message)
+                # self._error_message = traceback.format_exc()#todo raise before append?
+                output.append([bfs_conn_name, sub_dir, "", "", "", self._error_message])
+                return output
 
         print(model_paths_list)
-        output = []
         for model_path in model_paths_list:
-            model_spec = create_model_specs_from_path(Path(model_path), sub_dir)
-            output.append([bfs_conn_name, sub_dir, model_spec.model_name, model_spec.task_type, model_path, self._error_message])
+            try:
+                model_spec = create_model_specs_from_path(Path(model_path), sub_dir)
+                output.append([bfs_conn_name, sub_dir, model_spec.model_name, model_spec.task_type, model_path,
+                               self._error_message])
+            except Exception as exc:
+                self._error_message = traceback.format_exc()#todo
+                output.append([bfs_conn_name, sub_dir, "", "", model_path, self._error_message])
         return output
