@@ -10,19 +10,15 @@ from exasol_transformers_extension.utils.model_specification import create_model
 
 class ListModelsUDF:
     """
-    UDF which list all transformers models installed with the Transformers Extension in the BucketFS.
+    UDF which list all transformers models installed with the Transformers Extension in the BucketFS/subdir.
     Must be called with the following Input Parameter:
 
-    | sub_dir                 | bfs_conn            |
+    | sub_dir                     | bfs_conn            |
     -------------------------------------------------
     | directory where models are | BucketFS connection |
 
-    returns a table of  <sub_dir/model_name> , <path of model BucketFS>
-    path, subdir, version, task_name, model_name ?
-
-    udf bekommt bucketfs-connection
-
-    function bekommt bucketfs-model-path?
+    returns a table of:
+    bucketfs_conn, sub_dir, model_name, task_name, path of model BucketFS
     """
 
     def __init__(
@@ -30,7 +26,7 @@ class ListModelsUDF:
         exa,
     ):
         self._exa = exa
-        self._error_message = None#todo where to set
+        self._error_message = None
 
     def run(self, ctx) -> None:
         model_path_list = self._list_models(ctx)
@@ -38,7 +34,7 @@ class ListModelsUDF:
         for model_info in model_path_list:
             ctx.emit(*model_info)
 
-    def _list_models(self, ctx):#todo type hints
+    def _list_models(self, ctx):
         # parameters
         output = []
         bfs_conn_name = ctx.bucketfs_conn  # BucketFS connection
@@ -48,7 +44,6 @@ class ListModelsUDF:
         bfs_conn_obj = self._exa.get_connection(bfs_conn_name)
         print("bfs_conn_obj:")
         print(bfs_conn_obj)
-
         bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
             bfs_conn_obj
         )
