@@ -110,11 +110,12 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
         def best_guess_model_specs(model_specific_path_suffix):
             try:
                 model_specific_path_suffix_split = model_specific_path_suffix.split("_")
-                model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
-                task_name = model_specific_path_suffix_split[-1]
+                if len(model_specific_path_suffix_split) > 1:
+                    model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
+                    task_name = model_specific_path_suffix_split[-1]
                 return model_name, task_name
             except:
-                error_message = ("couldn't find a known task name in path suffix %s", model_specific_path_suffix)
+                error_message = ("couldn't find a task name in path suffix %s", model_specific_path_suffix)
                 raise ValueError(error_message)#todo or KeyError
 
         if not found_task_names:
