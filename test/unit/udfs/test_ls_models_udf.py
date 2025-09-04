@@ -41,6 +41,37 @@ def create_mock_metadata():
     )
     return meta
 
+def setup_fake_model_files(mock_bucketfs_location, sub_dir, token_model_specs, qa_model_specs):
+    # real bucketfs would create these dirs, but tempdir does not
+    mock_bucketfs_location.mkdir(Path(sub_dir))
+
+    #these should not be found
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "not_a_model_dir")
+    # outside sub_dir
+    mock_bucketfs_location.mkdir("dslim")
+    mock_bucketfs_location.mkdir(token_model_specs.get_model_specific_path_suffix())
+    os.mknod(mock_bucketfs_location / token_model_specs.get_model_specific_path_suffix() + "/config.json")
+
+    # these should be found
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "dslim")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / token_model_specs.get_model_specific_path_suffix())
+    os.mknod(mock_bucketfs_location / sub_dir / token_model_specs.get_model_specific_path_suffix() + "/config.json")
+
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / qa_model_specs.get_model_specific_path_suffix())
+    os.mknod(mock_bucketfs_location / sub_dir / qa_model_specs.get_model_specific_path_suffix() + "/renamed_config.json")
+
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_unknown_task_type")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_unknown_task_type/model-name_unknown-task")
+    os.mknod(mock_bucketfs_location / sub_dir / "model_with_unknown_task_type/model-name_unknown-task" + "/config.json")
+
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_no_task_type")
+    mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_no_task_type/model-name-no-task")
+    os.mknod(mock_bucketfs_location / sub_dir / "model_with_no_task_type/model-name-no-task" + "/config.json")
+
+'''
+
+'''
 
 def test_ls_udf(tmpdir_factory):
     # get specs for a valid huggingface model
@@ -49,14 +80,8 @@ def test_ls_udf(tmpdir_factory):
     qa_model_specs = model_params.q_a_model_specs #todo these could be mocks
     sub_dir = "subdir"
     mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
-    # real bucketfs would create these dirs, but tempdir does not
-    mock_bucketfs_location.mkdir(Path(sub_dir))
-    mock_bucketfs_location.mkdir(Path(sub_dir) / "dslim")
-    mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")#todo use made up modelspecs with different name formats
-    mock_bucketfs_location.mkdir(Path(sub_dir) / token_model_specs.get_model_specific_path_suffix())
-    mock_bucketfs_location.mkdir(Path(sub_dir) / qa_model_specs.get_model_specific_path_suffix())
-    os.mknod(mock_bucketfs_location / sub_dir / token_model_specs.get_model_specific_path_suffix() + "/config.json")
-    os.mknod(mock_bucketfs_location / sub_dir / qa_model_specs.get_model_specific_path_suffix() + "/renamed_config.json")
+    setup_fake_model_files(mock_bucketfs_location, sub_dir, token_model_specs, qa_model_specs)
+
     for item in os.walk(mock_bucketfs_location):
         print(item)
 

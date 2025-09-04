@@ -86,6 +86,8 @@ class ModelSpecification:
 
 def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
         path_parts = model_path.parts
+        task_name = ""
+        model_name = ""
         # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
         # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
         # and everything between this and the sub-dir to be the model_name_prefix
@@ -100,7 +102,7 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
         model_specific_path_suffix = path_parts[-1].split('.')[0]
 
         # find known task_names in the model_specific_path_suffix:
-        found_task_names = [key for key, _ in ModelTypeData.model_factory_dict if key in model_specific_path_suffix]
+        found_task_names = [key for key in ModelTypeData.model_factory_dict.keys() if key in model_specific_path_suffix]
 
         # if no known_task_type was found, our best guess is tp split the model_specific_path_suffix on "_"
         # and select task_type and model_name accordingly, because
@@ -126,7 +128,7 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
         # disregard found_task_types form other positions in the model_specific_path_suffix
         for found_task_name in found_task_names:
             if model_specific_path_suffix.endswith("_" + found_task_name):
-                model_name = "/".join([name_prefix, model_specific_path_suffix.removesuffix("_" + task_name)])
+                model_name = "/".join([name_prefix, model_specific_path_suffix.removesuffix("_" + found_task_name)])
                 task_name = found_task_name
                 break
 
