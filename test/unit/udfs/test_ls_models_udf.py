@@ -13,7 +13,7 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from test.unit.utils.utils_for_udf_tests import (
     create_mock_exa_environment,
-    create_mock_udf_context,
+    create_mock_udf_context, assert_result_matches_expected_output,
 )
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 
@@ -41,7 +41,7 @@ def create_mock_metadata():
     )
     return meta
 
-def setup_fake_model_files(mock_bucketfs_location, sub_dir, token_model_specs, qa_model_specs):
+def setup_fake_model_files(mock_bucketfs_location, bfs_conn_name, sub_dir, token_model_specs, qa_model_specs):
     # real bucketfs would create these dirs, but tempdir does not
     mock_bucketfs_location.mkdir(Path(sub_dir))
 
@@ -69,9 +69,18 @@ def setup_fake_model_files(mock_bucketfs_location, sub_dir, token_model_specs, q
     mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_no_task_type/model-name-no-task")
     os.mknod(mock_bucketfs_location / sub_dir / "model_with_no_task_type/model-name-no-task" + "/config.json")
 
-'''
+    expected_output = [
+        (bfs_conn_name, sub_dir, token_model_specs.model_name, token_model_specs.task_type,
+         mock_bucketfs_location /sub_dir / (token_model_specs.get_model_specific_path_suffix()), None),
+        (bfs_conn_name, sub_dir, 'model_with_unknown_task_type/model-name', 'unknown-task',
+         mock_bucketfs_location /sub_dir /'model_with_unknown_task_type/model-name_unknown-task', None),
+        (bfs_conn_name, sub_dir, qa_model_specs.model_name, qa_model_specs.task_type,
+         mock_bucketfs_location / sub_dir / (qa_model_specs.get_model_specific_path_suffix()), None),
+        (bfs_conn_name, sub_dir, '', '',
+         sub_dir + '/model_with_no_task_type/model-name-no-task', "couldn\'t find a task name in path suffix")
+    ]
+    return expected_output
 
-'''
 
 def test_ls_udf(tmpdir_factory):
     # get specs for a valid huggingface model
@@ -80,14 +89,15 @@ def test_ls_udf(tmpdir_factory):
     qa_model_specs = model_params.q_a_model_specs #todo these could be mocks
     sub_dir = "subdir"
     mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
-    setup_fake_model_files(mock_bucketfs_location, sub_dir, token_model_specs, qa_model_specs)
+
 
     for item in os.walk(mock_bucketfs_location):
         print(item)
 
-    bucketfs_conn = create_mounted_bucketfs_connection(base_path=mock_bucketfs_location)
-
     bfs_conn_name = "bfs_conn"
+    bucketfs_conn = create_mounted_bucketfs_connection(base_path=mock_bucketfs_location)
+    expected_output = setup_fake_model_files(mock_bucketfs_location, bfs_conn_name,
+                                             sub_dir, token_model_specs, qa_model_specs)
 
     mock_meta = create_mock_metadata()
     mock_exa = create_mock_exa_environment(
@@ -100,19 +110,7 @@ def test_ls_udf(tmpdir_factory):
         exa=mock_exa
     )
     udf.run(mock_ctx)
-
-    expected_output = [
-        (bfs_conn_name, sub_dir, token_model_specs.model_name, token_model_specs.task_type,
-         sub_dir / (token_model_specs.get_model_specific_path_suffix()), None),
-        (bfs_conn_name, sub_dir, qa_model_specs.model_name, qa_model_specs.task_type,
-         sub_dir / (qa_model_specs.get_model_specific_path_suffix()), None)
-    ]
-    print(mock_ctx.output)
-
-    print("actual_path:", mock_ctx.output)
-    print("expected_path:", expected_output)
-    #assert (mock_bucketfs_location / expected_path[0]).exists()
-    assert expected_output == mock_ctx.output
+    assert_result_matches_expected_output(mock_ctx.output, expected_output, ["bucketfs_conn", "sub_dir"])
 
 
 
