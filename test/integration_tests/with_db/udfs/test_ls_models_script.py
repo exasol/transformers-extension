@@ -21,45 +21,36 @@ def test_list_models_script(
     setup_database, db_conn, upload_tiny_model_to_bucketfs#, upload_translation_model_to_bucketfs,
     #upload_filling_mask_model_to_bucketfs#todo add fixture which just creates placeholder files instead of using models here?
 ):
-    print(upload_tiny_model_to_bucketfs)
     bucketfs_conn_name, _ = setup_database
     subdir = "model_sub_dir"
+
+
     #subdir = str(model_params.sub_dir) # this is not set for most models in our params
-    input_data = [[bucketfs_conn_name, subdir]]# todo do one with actuall subdir?
-    expected_result = [] #todo
-    input_data_subdir_not_exist = ["non-existend-subdir", bucketfs_conn_name, str(model_params.sub_dir)]
-    input_data_subdir_empty = []
+    input_data = [(bucketfs_conn_name, subdir)]
+    expected_result = [(bucketfs_conn_name, 'model_sub_dir', 'prajjwal1/bert-tiny', 'task', '/buckets/bfsdefault/default/container/model_sub_dir/prajjwal1/bert-tiny_task', None)] #todo
+    input_data_subdir_not_exist = [(bucketfs_conn_name, "non-existend-subdir")]
+    expected_result_non_existend_subdir = [(bucketfs_conn_name, 'non-existend-subdir', None, None, None, 'no models in this subdir')]#todo do we wat different message
+    input_data_subdir_empty_string = [(bucketfs_conn_name, "")]
+    expected_result_data_subdir_empty_string = [(bucketfs_conn_name, 'None', None, None, None, 'no models in this subdir')]
 
-    query = (
-        f"SELECT TE_LS_MODELS_UDF("
-        f"t.bucketfs_conn_name, "
-        f"t.sub_dir "
-        f") FROM (VALUES {python_rows_to_sql(input_data)} "
-        f"AS t(bucketfs_conn_name, "
-        f"sub_dir));"
-    )
+    input_data_sets = [input_data, input_data_subdir_not_exist, input_data_subdir_empty_string]
 
-    # execute UDF
-    result = db_conn.execute(query).fetchall()
-    # assertions
-    assert result[0][-1] is None
-    for item in result:
-        print(item)
-    # added_columns: model_name, version, task_name, seed, path, error_message
-    assert_correct_number_of_results(6, 0, input_data, result, 1)
+    for input_data_set in input_data_sets:
+        query = (
+            f"SELECT TE_LS_MODELS_UDF("
+            f"t.bucketfs_conn_name, "
+            f"t.sub_dir "
+            f") FROM (VALUES {python_rows_to_sql(input_data_set)} "
+            f"AS t(bucketfs_conn_name, "
+            f"sub_dir));"
+        )
+
+        # execute UDF
+        result = db_conn.execute(query).fetchall()
+        for item in result:
+            print(item)
+        # added_columns: model_name, task_name, path, error_message
+        assert_correct_number_of_results(4, 0, input_data[0], result, 1)
     # todo assert output correct
-
-'''
-        test/integration_tests/with_db/udfs/test_ls_models_script.py::test_list_models_script[onprem] 
-
-         [('TEST_TE_BFS_CONNECTION', 'container', 
-         'exasol_transformers_extension_container-release-BGFZPNRUCX4GIGFCNHFHJ2RIB6BUBIUTLYNDSHPY2PMJWGTRDUCQ/usr/local/lib/python3.10/dist-packages/dateutil/zoneinfo/', 
-         'dateutil-zoneinfo', 
-         '/buckets/bfsdefault/default/container/exasol_transformers_extension_container-release-BGFZPNRUCX4GIGFCNHFHJ2RIB6BUBIUTLYNDSHPY2PMJWGTRDUCQ/usr/local/lib/python3.10/dist-packages/dateutil/zoneinfo/dateutil-zoneinfo.tar.gz', None), 
-         
-         ('TEST_TE_BFS_CONNECTION', 'container', 
-         'exasol_transformers_extension_container-release-6SWLUZ6QB7PSXSU62OKB7AQXV6RNQPUIW3E3YH4QKXNZPET5MO5Q/usr/local/lib/python3.10/dist-packages/dateutil/zoneinfo/', 
-         'dateutil-zoneinfo', 
-         '/buckets/bfsdefault/default/container/exasol_transformers_extension_container-release-6SWLUZ6QB7PSXSU62OKB7AQXV6RNQPUIW3E3YH4QKXNZPET5MO5Q/usr/local/lib/python3.10/dist-packages/dateutil/zoneinfo/dateutil-zoneinfo.tar.gz', 
-         None)]
-'''
+    # assertions
+    #assert result[0][-1] is None
