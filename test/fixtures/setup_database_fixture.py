@@ -41,7 +41,7 @@ def language_alias(project_short_tag):
 @pytest.fixture(scope="session")
 def setup_database(
     backend, pyexasol_connection, bucketfs_connection_factory, deployed_slc
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     """Gets a connection to the test-db and installs UDFs"""
     # This is a temporary workaround for the problem with slow slc file extraction
     # at a SaaS database. To be removed when a proper completion check is in place.

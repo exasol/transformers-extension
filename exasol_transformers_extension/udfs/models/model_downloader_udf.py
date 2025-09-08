@@ -16,8 +16,9 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 
 class ModelDownloaderUDF:
     """
-    UDF which downloads a pretrained model from Huggingface using Huggingface's transformers API,
-    and uploads it to the BucketFS, from where it can then be loaded without accessing Huggingface again.
+    UDF which downloads a pretrained model from Huggingface using Huggingface's
+    transformers API, and uploads it to the BucketFS, from where it can then be
+    loaded without accessing Huggingface again.
     Must be called with the following Input Parameter:
 
     model_name                | sub_dir                 | bfs_conn            | token_conn
@@ -48,7 +49,7 @@ class ModelDownloaderUDF:
             if not ctx.next():
                 break
 
-    def _download_model(self, ctx) -> Tuple[str, str]:
+    def _download_model(self, ctx) -> tuple[str, str]:
         # parameters
         bfs_conn = ctx.bfs_conn  # BucketFS connection
         token_conn = ctx.token_conn  # name of token connection

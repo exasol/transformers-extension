@@ -16,7 +16,7 @@ class LabelScore:
 
 
 class MockSequenceClassificationModel:
-    def __init__(self, label_scores: List[LabelScore]):
+    def __init__(self, label_scores: list[LabelScore]):
         self.label_scores = label_scores
 
     @classmethod
@@ -27,7 +27,7 @@ class MockSequenceClassificationModel:
 class MockSequenceClassificationFactory:
 
     def __init__(
-        self, mock_models: Dict[PurePosixPath, MockSequenceClassificationModel]
+        self, mock_models: dict[PurePosixPath, MockSequenceClassificationModel]
     ):
         self.mock_models = mock_models
 
@@ -53,7 +53,7 @@ class MockPipeline:
         self.framework = framework
         MockPipeline.counter += 1
 
-    def __call__(self, sequences: List[str], **kwargs):
+    def __call__(self, sequences: list[str], **kwargs):
         if (
             "error" in sequences[0]
             or isinstance(sequences[0], dict)

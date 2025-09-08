@@ -25,7 +25,7 @@ class MockFillingMaskModel:
 
 
 class MockFillingMaskFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath, MockFillingMaskModel]):
+    def __init__(self, mock_models: dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -52,8 +52,8 @@ class MockPipeline:
         MockPipeline.counter += 1
 
     def __call__(
-        self, text_data: List[str], top_k: int
-    ) -> List[Dict[str, Union[str, float]]]:
+        self, text_data: list[str], top_k: int
+    ) -> list[dict[str, Union[str, float]]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 

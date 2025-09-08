@@ -1,3 +1,9 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -47,19 +53,11 @@ def test_translation_script(
     assert result[0][-1] is None
     added_columns = 2  # translation_text,error_message
     removed_columns = 1  # device_id
-    n_rows_result = n_rows
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+    assert_correct_number_of_results(
+        added_columns, removed_columns, input_data[0], result, n_rows
+    )
 
-    # lenient test for quality of results, will be replaced by deterministic test later
-    results = [result[i][7] for i in range(len(result))]
     acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg"]
-    number_accepted_results = 0
-
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
-    for i in range(len(results)):
-        if contains(results[i], acceptable_results):
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 2
+    assert_lenient_check_of_output_quality(
+        result, acceptable_results, acceptance_factor=0.5, label_index=7
+    )

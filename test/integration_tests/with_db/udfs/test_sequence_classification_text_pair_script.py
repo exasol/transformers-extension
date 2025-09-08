@@ -1,3 +1,9 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality_with_score,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -39,21 +45,16 @@ def test_sequence_classification_text_pair_script(
 
     # assertions
     assert result[0][-1] is None
-    added_columns = 3  # label,score,error_message
-    removed_columns = 1  # device_id
-    n_rows_result = n_rows * n_labels
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
 
-    # lenient test for quality of results, will be replaced by deterministic test later
-    number_accepted_results = 0
-    for i in range(len(result)):
-        if (
-            result[i][5]
-            == "contradiction"  # possible labels: contradiction, entailment, neutral
-            and result[i][6] > 0.8
-        ):  # check if confidence resonably high
-            number_accepted_results += 1
-        elif result[i][6] < 0.2:
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 1.5
+    n_rows_result = n_rows * n_labels
+    # added_columns: label,score,error_message
+    # removed_columns: device_id,
+    assert_correct_number_of_results(3, 1, input_data[0], result, n_rows_result)
+
+    # Since in this test the input is two sentences which contradict each other, which the test model can detect,
+    # the "acceptable_results" here is the label "contradiction" with a reasonably high score.
+    # possible labels: contradiction, entailment, neutral
+    acceptable_results = ["contradiction"]
+    assert_lenient_check_of_output_quality_with_score(
+        result, acceptable_results, 1 / 1.5, label_index=5
+    )

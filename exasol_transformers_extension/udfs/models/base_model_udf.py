@@ -3,9 +3,9 @@ from abc import (
     ABC,
     abstractmethod,
 )
+from collections.abc import Iterator
 from typing import (
     Any,
-    Iterator,
     List,
 )
 
@@ -45,7 +45,8 @@ class BaseModelUDF(ABC):
         - execute_prediction
         - append_predictions_to_input_dataframe
 
-    If your UDF changes output format depending on work_with_spans, consider also implementing:
+    If your UDF changes output format depending on work_with_spans,
+    consider also implementing:
         - drop_old_data_for_span_execution
         - create_new_span_columns
     These can be used to help making sure df output format is correct even if an error
@@ -136,7 +137,7 @@ class BaseModelUDF(ABC):
 
     def get_prediction_from_unique_param_based_dataframes(
         self, model_df
-    ) -> List[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Performs separate predictions for data with the same parameters
         in the same model dataframe.
@@ -165,7 +166,8 @@ class BaseModelUDF(ABC):
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
         if not (model_name and bucketfs_conn and sub_dir):
             error_message = (
-                f"For each model model_name, bucketfs_conn and sub_dir need to be provided. "
+                f"For each model model_name, bucketfs_conn and sub_dir need to be "
+                f"provided. "
                 f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
             )
             raise ValueError(error_message)
@@ -243,7 +245,8 @@ class BaseModelUDF(ABC):
 
         elif not self.model_loader.last_model_loaded_successfully:
             raise Exception(
-                f"Model loading failed previously with : {self.model_loader.model_load_error}"
+                f"Model loading failed previously with : "
+                f"{self.model_loader.model_load_error}"
             )
 
     def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
@@ -289,8 +292,8 @@ class BaseModelUDF(ABC):
 
     @abstractmethod
     def create_dataframes_from_predictions(
-        self, predictions: List[Any]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[Any]
+    ) -> list[pd.DataFrame]:
         pass
 
     @abstractmethod
@@ -300,12 +303,12 @@ class BaseModelUDF(ABC):
         pass
 
     @abstractmethod
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         pass
 
     @abstractmethod
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         pass
 

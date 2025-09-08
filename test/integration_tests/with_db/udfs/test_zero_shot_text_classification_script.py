@@ -1,3 +1,9 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality_with_score,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -9,44 +15,6 @@ def setup_common_input_data():
     n_rows_result = n_rows * n_labels
     text_data = "The database software company Exasol is based in Nuremberg"
     return n_rows, candidate_labels, n_labels, n_rows_result, text_data
-
-
-def assert_correct_number_of_results(
-    added_columns: int,
-    removed_columns: int,
-    input_data_row: tuple,
-    result: list,
-    n_rows_result: int,
-):
-    n_cols_result = len(input_data_row) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result, (
-        f"format of result is not correct,"
-        f"expected {n_rows_result} rows, {n_cols_result} columns."
-        f"actual: {len(result)} rows, {len(result[0])} columns"
-    )
-
-
-def assert_lenient_check_of_output_quality(
-    result: list, n_rows_result: int, label_index: int = 5
-):
-    acceptable_results = ["Analytics", "Database", "Germany"]
-
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
-    number_accepted_results = 0
-    for result_i in result:
-        result_label = result_i[label_index]
-        result_score = result_i[label_index + 1]
-        if (
-            contains(result_label, acceptable_results) and result_score > 0.8
-        ):  # check if confidence reasonably high
-            number_accepted_results += 1
-        elif result_score < 0.2:
-            number_accepted_results += 1
-    assert (
-        number_accepted_results > n_rows_result / 1.5
-    ), f"Not enough acceptable labels ({acceptable_results}) in results {result}"
 
 
 def test_zero_shot_classification_single_text_script_without_spans(
@@ -92,8 +60,10 @@ def test_zero_shot_classification_single_text_script_without_spans(
     # removed_columns: device_id
     assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
-    # lenient test for quality of results, will be replaced by deterministic test later
-    assert_lenient_check_of_output_quality(result, n_rows_result)
+    acceptable_results = ["Analytics", "Database", "Germany"]
+    assert_lenient_check_of_output_quality_with_score(
+        result, acceptable_results, 1 / 1.8
+    )
 
 
 def test_zero_shot_classification_single_text_script_with_spans(
@@ -146,5 +116,7 @@ def test_zero_shot_classification_single_text_script_with_spans(
     # removed_columns: device_id, text_data, candidate_labels
     assert_correct_number_of_results(4, 3, input_data[0], result, n_rows_result)
 
-    # lenient test for quality of results, will be replaced by deterministic test later
-    assert_lenient_check_of_output_quality(result, n_rows_result, label_index=6)
+    acceptable_results = ["Analytics", "Database", "Germany"]
+    assert_lenient_check_of_output_quality_with_score(
+        result, acceptable_results, 1 / 1.8, label_index=6
+    )

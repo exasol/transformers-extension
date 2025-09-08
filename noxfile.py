@@ -30,9 +30,11 @@ def export_slc(session: nox.Session):
 @nox.session(name="test:integration", python=False)
 def te_integration_test_overwrite(session) -> None:
     """Runs all integration tests with all backends"""
-    # Overwrite for python toolbox tests:integration task, because we need additional parameters
+    # Overwrite for python toolbox tests:integration task,
+    # because we need additional parameters
 
-    # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
+    # We need to use an external database here, because the itde plugin doesn't
+    # provide all necessary options to
     # configure the database. See the start_database session.
 
     session.run(
@@ -50,7 +52,8 @@ def saas_integration_tests(session):
     """
     Runs all integration tests with saas backend
     """
-    # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
+    # We need to use an external database here, because the itde plugin doesn't
+    # provide all necessary options to
     # configure the database. See the start_database session.
     session.run(
         "pytest",
@@ -66,7 +69,8 @@ def onprem_integration_tests(session):
     """
     Runs all integration tests with onprem backend
     """
-    # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
+    # We need to use an external database here, because the itde plugin doesn't
+    # provide all necessary options to
     # configure the database. See the start_database session.
     session.run(
         "pytest",
@@ -83,7 +87,8 @@ def without_db_integration_tests(session):
     """
     Runs only non-db integration tests
     """
-    # We need to use an external database here, because the itde plugin doesn't provide all necessary options to
+    # We need to use an external database here, because the itde plugin doesn't
+    # provide all necessary options to
     # configure the database. See the start_database session.
     session.run(
         "pytest",

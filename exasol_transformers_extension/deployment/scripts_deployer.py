@@ -84,7 +84,8 @@ class ScriptsDeployer:
         """
         Deploy udf according to use_spans and install_all_scripts.
         Per default UDFs with and without spans are installed mutually exclusive.
-        but setting install_all_scripts to true overrides this and installs all. This can be useful for testing.
+        but setting install_all_scripts to true overrides this and installs all.
+         This can be useful for testing.
         """
         install_scripts_constants = [constants]
         if self._use_spans or self._install_all_scripts:

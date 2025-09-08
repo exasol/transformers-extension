@@ -44,7 +44,8 @@ def get_local_bucketfs_path(
     bucketfs_location: bfs.path.PathLike, model_path: str
 ) -> PurePosixPath:
     """
-    returns path model defined by model_path can be found at in bucket defined by bucketfs_location
+    returns path model defined by model_path can be found at in
+    bucket defined by bucketfs_location
     """
     bucketfs_model_location = bucketfs_location / model_path
     return PurePosixPath(bucketfs_model_location.as_udf_path())

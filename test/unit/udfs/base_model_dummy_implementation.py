@@ -1,9 +1,9 @@
 """a dummy implementation for the base udf. used for testing base udf functionality."""
 
+from collections.abc import Iterator
 from typing import (
     Any,
     Dict,
-    Iterator,
     List,
     Union,
 )
@@ -46,13 +46,13 @@ class DummyImplementationUDF(BaseModelUDF):
 
     def execute_prediction(
         self, model_df: pd.DataFrame
-    ) -> List[Union[Dict[str, Any], List[Dict[str, Any]]]]:
+    ) -> list[Union[dict[str, Any], list[dict[str, Any]]]]:
         input_data = list(model_df["input_data"])
         results = self.last_created_pipeline(input_data)
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
 
         model_df = model_df.reset_index(drop=True)
@@ -65,8 +65,8 @@ class DummyImplementationUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: List[Union[Dict[str, Any], List[Dict[str, Any]]]]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[Union[dict[str, Any], list[dict[str, Any]]]]
+    ) -> list[pd.DataFrame]:
         results_df_list = []
         for result in predictions:
             result_df = pd.DataFrame(result)

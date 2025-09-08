@@ -1,3 +1,9 @@
+from test.integration_tests.utils.model_output_quality_checkers import (
+    assert_lenient_check_of_output_quality,
+)
+from test.integration_tests.utils.model_output_result_number_checker import (
+    assert_correct_number_of_results,
+)
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
@@ -37,23 +43,14 @@ def test_filling_mask_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
+
     # assertions
     assert result[0][-1] is None
-    added_columns = 4  # filled_text,score,rank,error_message
-    removed_columns = 1  # device_id col
+
     n_rows_result = n_rows * top_k
-    n_cols_result = len(input_data[0]) + (added_columns - removed_columns)
-    assert len(result) == n_rows_result and len(result[0]) == n_cols_result
+    # added_columns = filled_text,score,rank,error_message
+    # removed_columns = device_id
+    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
-    # lenient test for quality of results, will be replaced by deterministic test later
-    results = [result[i][5] for i in range(len(result))]
     acceptable_results = ["love", "miss", "want", "need"]
-    number_accepted_results = 0
-
-    def contains(string, list):
-        return any(map(lambda x: x in string, list))
-
-    for i in range(len(results)):
-        if contains(results[i], acceptable_results):
-            number_accepted_results += 1
-    assert number_accepted_results > n_rows_result / 2
+    assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 5)

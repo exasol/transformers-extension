@@ -20,10 +20,10 @@ T.B.D
 
 ### Bugs
 
- n/a
+ - #285: Fixed logic in model output quality checks of udf integration test
+ - #285: Deactivated Saas test because of a broken API
 
 ### Dependency Updates
 
 - Updated  tornado (6.4.2 -> 6.5.1)
 - #311: Updated transitive dependencies urllib3 (2.4.0 -> 2.5.0) & requests (2.32.3 -> 2.32.4)
-

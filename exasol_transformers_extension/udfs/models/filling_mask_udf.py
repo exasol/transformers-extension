@@ -1,7 +1,7 @@
+from collections.abc import Iterator
 from typing import (
     Any,
     Dict,
-    Iterator,
     List,
 )
 
@@ -45,7 +45,7 @@ class FillingMaskUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[List[Dict[str, Any]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and filled texts
@@ -70,7 +70,7 @@ class FillingMaskUDF(BaseModelUDF):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -92,8 +92,8 @@ class FillingMaskUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: List[List[Dict[str, Any]]]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[list[dict[str, Any]]]
+    ) -> list[pd.DataFrame]:
         """
         Convert predictions to dataframe.
 
@@ -114,8 +114,8 @@ class FillingMaskUDF(BaseModelUDF):
         return results_df_list
 
     def _get_text_data_with_valid_mask_token(
-        self, text_data_raw: List[str]
-    ) -> List[str]:
+        self, text_data_raw: list[str]
+    ) -> list[str]:
         """
         Replace user provided mask tokens with valid ones
         """

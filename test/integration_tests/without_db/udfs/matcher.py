@@ -73,7 +73,7 @@ class RankMonotonicMatcher:
 
 class ColumnsMatcher:
 
-    def __init__(self, columns: List[str], new_columns: List[str]):
+    def __init__(self, columns: list[str], new_columns: list[str]):
         self._new_columns = new_columns
         self._columns = columns
         self._expected_columns = self._columns + self._new_columns
@@ -93,8 +93,8 @@ class ShapeMatcher:
 
     def __init__(
         self,
-        columns: List[str],
-        new_columns: List[str],
+        columns: list[str],
+        new_columns: list[str],
         n_rows: int,
         results_per_row: int = 1,
     ):
@@ -133,7 +133,7 @@ class NoErrorMessageMatcher:
 
 class NewColumnsEmptyMatcher:
 
-    def __init__(self, new_columns: List[str]):
+    def __init__(self, new_columns: list[str]):
         self._new_columns = new_columns
 
     def __eq__(self, other):

@@ -1,4 +1,5 @@
-"""Deploy command which installs Transformers extension SLC, scripts, creates connection objects"""
+"""Deploy command which installs Transformers extension SLC,
+scripts, creates connection objects"""
 
 import logging
 
@@ -47,7 +48,8 @@ formatters = {StdParams.version: ver_formatter}
 
 def get_opt_name(arg_name: str) -> str:
     """get opt_name for arg_name"""
-    # This and the next function should have been implemented in the PEC.#todo make ticket and remove this comment
+    # This and the next function should have been implemented in the PEC.
+    # #todo make ticket and remove this comment
     return f'--{arg_name.replace("_", "-")}'
 
 
@@ -92,11 +94,13 @@ opts.append(
         help="Create token connection object with this name",
     )
 )
+
 opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignore
 
 
 def deploy(**kwargs):
-    """Deploy TE slc, scripts, create bucketfs connection object and token connection object."""
+    """Deploy TE slc, scripts, create bucketfs connection object and
+    token connection object."""
     # Deploy the SLC
     if kwargs[DEPLOY_SLC_ARG]:
         slc_deployer = LanguageContainerDeployerCli(

@@ -14,13 +14,14 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 
 class LoadLocalModel:
     """
-    Class for loading locally saved models and tokenizers. Also stores information regarding the model and pipeline.
+    Class for loading locally saved models and tokenizers. Also stores information
+    regarding the model and pipeline.
 
-    :param pipeline_factory:      A function to create a transformers pipeline
-    :param task_type:             Name of the current task
-    :param device:                Device to be used for pipeline creation, i.e "CPU"
-    :param base_model_factory:    A ModelFactoryProtocol for creating the loaded model
-    :param tokenizer_factory:     A ModelFactoryProtocol for creating the loaded tokenizer
+    :param pipeline_factory:    A function to create a transformers pipeline
+    :param task_type:           Name of the current task
+    :param device:              Device to be used for pipeline creation, i.e "CPU"
+    :param base_model_factory:  A ModelFactoryProtocol for creating the loaded model
+    :param tokenizer_factory:   A ModelFactoryProtocol for creating the loaded tokenizer
     """
 
     def __init__(

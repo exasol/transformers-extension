@@ -54,8 +54,9 @@ def test_deploy_cli(
             )
             assert result.exit_code == 0
 
-            # This is a temporary workaround for the problem with slow slc file extraction
-            # at a SaaS database. To be removed when a proper completion check is in place.
+            # This is a temporary workaround for the problem with slow slc
+            # file extraction at a SaaS database.
+            # To be removed when a proper completion check is in place.
             if backend == "saas":
                 import time
 

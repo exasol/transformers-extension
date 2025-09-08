@@ -1,7 +1,7 @@
+from collections.abc import Iterator
 from typing import (
     Any,
     Dict,
-    Iterator,
     List,
 )
 
@@ -74,7 +74,7 @@ class TokenClassificationUDF(BaseModelUDF):
 
             yield param_based_model_df
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> List[List[Dict[str, Any]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
         Predict the given text list using recently loaded models, return
         probability scores, entities and associated words
@@ -137,7 +137,7 @@ class TokenClassificationUDF(BaseModelUDF):
         return pd.Series([token_doc_id, token_char_begin, token_char_end])
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: List[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -169,8 +169,8 @@ class TokenClassificationUDF(BaseModelUDF):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: List[List[Dict[str, Any]]]
-    ) -> List[pd.DataFrame]:
+        self, predictions: list[list[dict[str, Any]]]
+    ) -> list[pd.DataFrame]:
         """
         Convert predictions to dataframe. Only score and answer fields are
         presented.
@@ -183,7 +183,8 @@ class TokenClassificationUDF(BaseModelUDF):
         for result in predictions:
             if result and result[0]:
                 result_df = pd.DataFrame(result)
-                # need to save before trying to rename, otherwise they get lost and cant be printed in error message
+                # need to save before trying to rename,
+                # otherwise they get lost and cant be printed in error message
                 result_df_column_names = result_df.columns
                 try:
                     result_df = result_df[self._desired_fields_in_prediction].rename(

@@ -20,7 +20,7 @@ class MockQuestionAnsweringModel:
 
 
 class MockQuestionAnsweringFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath, MockQuestionAnsweringModel]):
+    def __init__(self, mock_models: dict[PurePosixPath, MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -28,7 +28,7 @@ class MockQuestionAnsweringFactory:
 
 
 class MockPipeline:
-    ResultDict = NewType("ResultDict", Dict[str, Union[str, float]])
+    ResultDict = NewType("ResultDict", dict[str, Union[str, float]])
     counter = 0
 
     def __init__(
@@ -47,8 +47,8 @@ class MockPipeline:
         MockPipeline.counter += 1
 
     def __call__(
-        self, question: List[str], context: List[str], top_k: int
-    ) -> Union[ResultDict, List[ResultDict], List[List[ResultDict]]]:
+        self, question: list[str], context: list[str], top_k: int
+    ) -> Union[ResultDict, list[ResultDict], list[list[ResultDict]]]:
         if "error" in context[0]:
             raise Exception("Error while performing prediction.")
 

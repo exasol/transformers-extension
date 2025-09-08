@@ -1,4 +1,5 @@
-"""HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace Hub to the BucketFS."""
+"""HuggingFaceHubBucketFSModelTransferSP transfers a model from HuggingFace Hub
+to the BucketFS."""
 
 from pathlib import Path
 from typing import Optional
@@ -21,7 +22,8 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
 
 
 def make_parameters_of_model_contiguous_tensors(model):
-    """Fix for "ValueError: You are trying to save a non-contiguous tensor" when calling save_pretrained."""
+    """Fix for "ValueError: You are trying to save a non-contiguous tensor"
+    when calling save_pretrained."""
     if hasattr(model, "parameters"):
         for param in model.parameters():
             param.data = param.data.contiguous()
@@ -29,15 +31,21 @@ def make_parameters_of_model_contiguous_tensors(model):
 
 class HuggingFaceHubBucketFSModelTransferSP:
     """
-    Class for downloading a model using the Huggingface Transformers API, saving it locally using
-    transformers save_pretrained, and loading the saved model files into the BucketFS.
+    Class for downloading a model using the Huggingface Transformers API,
+    saving it locally using transformers save_pretrained,
+    and loading the saved model files into the BucketFS.
 
     :bucketfs_location:                 BucketFSLocation the model should be loaded to
-    :model_specification:        Holds information specifying details of Huggingface model to be downloaded
-    :bucketfs_model_path:               Path the model will be loaded into the BucketFS at
-    :token:                             Huggingface token, only needed for private models
-    :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory. Mainly change for testing.
-    :bucketfs_model_uploader_factory:   Optional. Default is BucketFSModelUploaderFactory. Mainly change for testing.
+    :model_specification:               Holds information specifying details of
+                                        Huggingface model to be downloaded
+    :bucketfs_model_path:               Path the model will be loaded into the BucketFS
+    :token:                             at Huggingface token, only needed for private
+                                        models
+    :temporary_directory_factory:       Optional. Default is TemporaryDirectoryFactory.
+                                        Mainly change for testing.
+    :bucketfs_model_uploader_factory:   Optional.
+                                        Default is BucketFSModelUploaderFactory.
+                                        Mainly change for testing.
     """
 
     def __init__(
@@ -72,8 +80,8 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
     def download_from_huggingface_hub(self, model_factory: ModelFactoryProtocol):
         """
-        Download a model from HuggingFace Hub into a temporary directory and save it with save_pretrained
-        in a temporary directory.
+        Download a model from HuggingFace Hub into a temporary directory and save
+        it with save_pretrained in a temporary directory.
         """
         model_name = self._model_specification.model_name
         model = model_factory.from_pretrained(
@@ -109,7 +117,8 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
         Creates a HuggingFaceHubBucketFSModelTransferSP object.
 
         :bucketfs_location:     BucketFSLocation the model should be loaded to
-        :model_specification:   Holds information specifying details of Huggingface model
+        :model_specification:   Holds information specifying details of
+                                Huggingface model
         :model_path:            Path the model will be loaded into the BucketFS at
         :token:                 Huggingface token, only needed for private models
 

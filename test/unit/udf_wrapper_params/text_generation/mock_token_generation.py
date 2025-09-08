@@ -23,7 +23,7 @@ class MockTextGenerationModel:
 
 
 class MockTextGenerationFactory:
-    def __init__(self, mock_models: Dict[PurePosixPath, MockTextGenerationModel]):
+    def __init__(self, mock_models: dict[PurePosixPath, MockTextGenerationModel]):
         self.mock_models = mock_models
 
     def from_pretrained(self, model_path):
@@ -50,8 +50,8 @@ class MockPipeline:
         MockPipeline.counter += 1
 
     def __call__(
-        self, text_data: List[str], **kwargs
-    ) -> List[Dict[str, Union[str, float]]]:
+        self, text_data: list[str], **kwargs
+    ) -> list[dict[str, Union[str, float]]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 
