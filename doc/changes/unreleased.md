@@ -21,6 +21,7 @@ T.B.D
 ### Bugs
 
  - #285: Fixed logic in model output quality checks of udf integration test
+ - #285: Deactivated Saas test because of a broken API
 
 ### Dependency Updates
 
