@@ -238,3 +238,16 @@ def upload_zero_shot_classification_model_to_bucketfs(
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
+
+@pytest.fixture(scope="session")
+def upload_tiny_model_to_bucketfs(#todo also use in other tests?
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> PurePosixPath:
+    """
+    Load standard zero shot classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Model is defined in test/utils/parameters.py.
+    """
+    model_specs = model_params.tiny_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
+        yield path
