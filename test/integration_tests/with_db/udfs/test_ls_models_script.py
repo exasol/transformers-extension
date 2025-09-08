@@ -1,4 +1,5 @@
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
+from test.unit.utils.utils_for_udf_tests import assert_result_matches_expected_output
 from test.utils.parameters import model_params
 from test.utils.parameters import PATH_IN_BUCKET
 
@@ -18,24 +19,26 @@ def assert_correct_number_of_results(
 
 
 def test_list_models_script(
-    setup_database, db_conn, upload_tiny_model_to_bucketfs#, upload_translation_model_to_bucketfs,
-    #upload_filling_mask_model_to_bucketfs#todo add fixture which just creates placeholder files instead of using models here?
+    setup_database, db_conn, upload_tiny_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
     subdir = "model_sub_dir"
 
-
-    #subdir = str(model_params.sub_dir) # this is not set for most models in our params
     input_data = [(bucketfs_conn_name, subdir)]
-    expected_result = [(bucketfs_conn_name, 'model_sub_dir', 'prajjwal1/bert-tiny', 'task', '/buckets/bfsdefault/default/container/model_sub_dir/prajjwal1/bert-tiny_task', None)] #todo
+    expected_result = [(bucketfs_conn_name, subdir, 'prajjwal1/bert-tiny', 'task',
+                        '/buckets/bfsdefault/default/container/model_sub_dir/prajjwal1/bert-tiny_task', None)] #todo
     input_data_subdir_not_exist = [(bucketfs_conn_name, "non-existend-subdir")]
-    expected_result_non_existend_subdir = [(bucketfs_conn_name, 'non-existend-subdir', None, None, None, 'no models in this subdir')]#todo do we wat different message
+    expected_result_subdir_not_exist = [(bucketfs_conn_name, 'non-existend-subdir',
+                                         None, None, None, 'no models in this subdir')]#todo do we wat different message
     input_data_subdir_empty_string = [(bucketfs_conn_name, "")]
     expected_result_data_subdir_empty_string = [(bucketfs_conn_name, 'None', None, None, None, 'no models in this subdir')]
 
-    input_data_sets = [input_data, input_data_subdir_not_exist, input_data_subdir_empty_string]
+    test_data_sets = [(input_data, expected_result),
+                      (input_data_subdir_not_exist, expected_result_subdir_not_exist),
+                      (input_data_subdir_empty_string, expected_result_data_subdir_empty_string)]
 
-    for input_data_set in input_data_sets:
+
+    for input_data_set, expected_result in test_data_sets:
         query = (
             f"SELECT TE_LS_MODELS_UDF("
             f"t.bucketfs_conn_name, "
@@ -50,7 +53,6 @@ def test_list_models_script(
         for item in result:
             print(item)
         # added_columns: model_name, task_name, path, error_message
+        # assertions
         assert_correct_number_of_results(4, 0, input_data[0], result, 1)
-    # todo assert output correct
-    # assertions
-    #assert result[0][-1] is None
+        assert_result_matches_expected_output(result, expected_result, ["bucketfs_conn", "sub_dir"])
