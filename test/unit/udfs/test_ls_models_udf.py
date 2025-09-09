@@ -86,13 +86,9 @@ def test_ls_udf(tmpdir_factory):
     # get specs for a valid huggingface model
 
     token_model_specs = model_params.token_model_specs
-    qa_model_specs = model_params.q_a_model_specs #todo these could be mocks
+    qa_model_specs = model_params.q_a_model_specs
     sub_dir = "subdir"
     mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
-
-
-    for item in os.walk(mock_bucketfs_location):
-        print(item)
 
     bfs_conn_name = "bfs_conn"
     bucketfs_conn = create_mounted_bucketfs_connection(base_path=mock_bucketfs_location)

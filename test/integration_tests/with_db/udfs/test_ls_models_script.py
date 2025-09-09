@@ -23,10 +23,11 @@ def test_list_models_script(
 ):
     bucketfs_conn_name, _ = setup_database
     subdir = "model_sub_dir"
+    model_specification = model_params.tiny_model_specs
 
     input_data = [(bucketfs_conn_name, subdir)]
-    expected_result = [(bucketfs_conn_name, subdir, 'prajjwal1/bert-tiny', 'task',
-                        '/buckets/bfsdefault/default/container/model_sub_dir/prajjwal1/bert-tiny_task', None)] #todo
+    expected_result = [(bucketfs_conn_name, subdir, model_specification.model_name, model_specification.task_type,
+                        "/buckets/bfsdefault/default/container/" + str(upload_tiny_model_to_bucketfs), None)]
     input_data_subdir_not_exist = [(bucketfs_conn_name, "non-existend-subdir")]
     expected_result_subdir_not_exist = [(bucketfs_conn_name, 'non-existend-subdir',
                                          None, None, None, 'no models in this subdir')]#todo do we wat different message

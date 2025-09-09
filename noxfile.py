@@ -74,7 +74,7 @@ def onprem_integration_tests(session):
         "-s",
         "--backend=onprem",
         "--itde-db-version=external",
-        "test/integration_tests/with_db/udfs/test_ls_models_script.py", #todo remove
+        "test/integration_tests/with_db",
     )
 
 

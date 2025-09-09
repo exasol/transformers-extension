@@ -84,60 +84,79 @@ class ModelSpecification:
         return model_factory
 
 
+def split_path_using_subdir(path_parts: tuple[str, ...] ,model_path: Path, sub_dir) -> tuple[str, str]:
+    # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
+    # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
+    # and everything between this and the sub-dir to be the model_name_prefix
+    try:
+        subdir_index = path_parts.index(sub_dir)
+    except ValueError as e:
+        error_message = ("subdir not found in path, or subdir is empty string. "
+                         "given subdir is: %s, not found in path: %s", sub_dir, model_path)
+        raise ValueError(error_message) from e
+    name_prefix = "/".join(path_parts[subdir_index + 1:-1])
+    model_specific_path_suffix = path_parts[-1].split('.')[0]
+    return name_prefix, model_specific_path_suffix
+
+
+def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str, str]:
+    # if no known_task_type was found, our best guess is to split the model_specific_path_suffix on "_"
+    # and select task_type and model_name accordingly, because
+    # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
+    # this might create wrong results if the user choose to use a task_name containing a "_".
+    try:
+        model_specific_path_suffix_split = model_specific_path_suffix.split("_")
+        if len(model_specific_path_suffix_split) > 1:
+            model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
+            task_name = model_specific_path_suffix_split[-1]
+        return model_name, task_name
+    except:
+        error_message = ("couldn't find a task name in path suffix %s", model_specific_path_suffix)
+        raise ValueError(error_message)
+
+def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix):
+    task_name = ""
+    model_name = ""
+    if not found_task_names:
+        try:
+            model_name, task_name = best_guess_model_specs(model_specific_path_suffix, name_prefix)
+        except ValueError as e:
+            raise e
+
+    # if we found known_task_type in the path, check if one is on the end of the model_specific_path_suffix,
+    # and declare this one as the task_type.
+    # disregard found_task_types form other positions in the model_specific_path_suffix
+    for found_task_name in found_task_names:
+        if model_specific_path_suffix.endswith("_" + found_task_name):
+            model_name = "/".join([name_prefix, model_specific_path_suffix.removesuffix("_" + found_task_name)])
+            task_name = found_task_name
+            break
+
+    if not task_name or not model_name:
+        try:
+            model_name, task_name = best_guess_model_specs(model_specific_path_suffix, name_prefix)
+        except ValueError as e:
+            raise e
+    return model_name, task_name
+
+
 def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
         path_parts = model_path.parts
-        task_name = ""
-        model_name = ""
-        # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
-        # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
-        # and everything between this and the sub-dir to be the model_name_prefix
-        try:
-            subdir_index = path_parts.index(sub_dir)#todo what do we return if subdir=""?
-        except ValueError as e:
-            error_message = ("subdir not found in path, or subdir is empty string. "
-                             "given subdir is: %s, not found in path: %s", sub_dir, model_path)
-            raise ValueError(error_message) from e
 
-        name_prefix = "/".join(path_parts[subdir_index+1:-1])
-        model_specific_path_suffix = path_parts[-1].split('.')[0]
+        try:
+            name_prefix, model_specific_path_suffix = split_path_using_subdir(path_parts,
+                                                                              model_path,
+                                                                              sub_dir)
+        except ValueError as e:
+            raise e
 
         # find known task_names in the model_specific_path_suffix:
         found_task_names = [key for key in ModelTypeData.model_factory_dict.keys() if key in model_specific_path_suffix]
 
-        # if no known_task_type was found, our best guess is tp split the model_specific_path_suffix on "_"
-        # and select task_type and model_name accordingly, because
-        # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
-        def best_guess_model_specs(model_specific_path_suffix):
-            try:
-                model_specific_path_suffix_split = model_specific_path_suffix.split("_")
-                if len(model_specific_path_suffix_split) > 1:
-                    model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
-                    task_name = model_specific_path_suffix_split[-1]
-                return model_name, task_name
-            except:
-                error_message = ("couldn't find a task name in path suffix %s", model_specific_path_suffix)
-                raise ValueError(error_message)#todo or KeyError
-
-        if not found_task_names:
-            try:
-                model_name, task_name = best_guess_model_specs(model_specific_path_suffix)
-            except ValueError as e:
-                raise e
-
-        # if we found known_task_type in the path, check if one is on the end of the model_specific_path_suffix,
-        # and declare this one as the task_type.
-        # disregard found_task_types form other positions in the model_specific_path_suffix
-        for found_task_name in found_task_names:
-            if model_specific_path_suffix.endswith("_" + found_task_name):
-                model_name = "/".join([name_prefix, model_specific_path_suffix.removesuffix("_" + found_task_name)])
-                task_name = found_task_name
-                break
-
-        if not task_name or not model_name:
-            try:
-                model_name, task_name = best_guess_model_specs(model_specific_path_suffix)
-            except ValueError as e:
-                raise e
+        try:
+            model_name, task_name = get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix)
+        except ValueError as e:
+            raise e
 
         return ModelSpecification(model_name, task_name)
 
