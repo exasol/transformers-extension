@@ -35,7 +35,7 @@ class ListModelsUDF:
         for model_info in self._output:
             ctx.emit(*model_info)
 
-    def _search_modelpaths_in_dir(self, sub_dir: str, bucketfs_location: PathLike):
+    def _search_modelpaths_in_dir(self, sub_dir: str, bucketfs_location: PathLike) -> list[str]:
         model_paths_list = []
         for main_dir, sub_dirs, files in os.walk(Path((bucketfs_location.as_udf_path() + "/" + sub_dir))):
             if files: #this means there is at least 1 file here
@@ -51,7 +51,7 @@ class ListModelsUDF:
         return model_paths_list
 
 
-    def _parse_model_info_from_path(self, model_paths_list: list[str], sub_dir: str, bfs_conn_name: str):
+    def _parse_model_info_from_path(self, model_paths_list: list[str], sub_dir: str, bfs_conn_name: str) -> None:
         for model_path in model_paths_list:
             try:
                 model_spec = create_model_specs_from_path(Path(model_path), sub_dir)
@@ -60,7 +60,6 @@ class ListModelsUDF:
             except Exception as exc:
                 self._error_message = traceback.format_exc()
                 self._output.append([bfs_conn_name, sub_dir, "", "", model_path, self._error_message])
-
 
     def _list_models(self, ctx):
         # parameters
