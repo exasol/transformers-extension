@@ -7,6 +7,9 @@ from typing import Optional
 import exasol.bucketfs as bfs
 from transformers import AutoTokenizer
 
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
 )

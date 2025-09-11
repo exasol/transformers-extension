@@ -1,15 +1,21 @@
+import contextlib
 from pathlib import Path
 from test.utils.mock_cast import mock_cast
 from test.utils.parameters import model_params
 from typing import Union
 from unittest.mock import (
     MagicMock,
+    Mock,
     call,
     create_autospec,
 )
 
 import exasol.bucketfs as bfs
+import pytest
+from _pytest.monkeypatch import MonkeyPatch
+from transformers import AutoTokenizer
 
+import exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploader,
     BucketFSModelUploaderFactory,
@@ -20,6 +26,7 @@ from exasol_transformers_extension.utils.bucketfs_operations import (
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSP,
     ModelFactoryProtocol,
+    download_transformers_model,
 )
 from exasol_transformers_extension.utils.temporary_directory_factory import (
     TemporaryDirectoryFactory,
@@ -27,6 +34,8 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
 
 
 class TestSetup:
+    __test__ = False
+
     def __init__(self):
         self.bucketfs_location_mock: Union[bfs.path.PathLike, MagicMock] = (
             create_autospec(bfs.path.PathLike)
@@ -128,3 +137,40 @@ def test_upload_function_call():
     assert mock_cast(
         test_setup.bucketfs_model_uploader_mock.upload_directory
     ).mock_calls == [call(model_save_path)]
+
+
+@pytest.fixture
+def bfs_location() -> bfs.path.PathLike:
+    return bfs.path.BucketPath("root", bucket_api=Mock())
+
+
+def test_download_transformers_model(
+        monkeypatch: MonkeyPatch,
+        bfs_location: bfs.path.PathLike,
+) -> None:
+    downloader_mock = Mock()
+    downloader_mock.upload_to_bucketfs.return_value = "some_path"
+
+    @contextlib.contextmanager
+    def context_mock(**kwargs):
+        yield downloader_mock
+
+    pckg = exasol_transformers_extension.utils
+    monkeypatch.setattr(
+        pckg.huggingface_hub_bucketfs_model_transfer_sp,
+        "HuggingFaceHubBucketFSModelTransferSP",
+        context_mock,
+    )
+    model_factory = Mock()
+    actual = download_transformers_model(
+        bucketfs_location=bfs_location,
+        sub_dir="sub-dir",
+        task_type="task type",
+        model_name="model name",
+        model_factory=model_factory,
+        tokenizer_factory=AutoTokenizer,
+        huggingface_token="hf-token",
+    )
+    downloads = downloader_mock.download_from_huggingface_hub.call_args_list
+    assert downloads == [call(model_factory), call(AutoTokenizer)]
+    assert actual == bfs_location / "some_path"
