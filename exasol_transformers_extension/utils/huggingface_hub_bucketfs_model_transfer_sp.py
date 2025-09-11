@@ -4,8 +4,8 @@ to the BucketFS."""
 from pathlib import Path
 from typing import Optional
 
-from transformers import AutoTokenizer
 import exasol.bucketfs as bfs
+from transformers import AutoTokenizer
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
@@ -21,15 +21,16 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
     TemporaryDirectoryFactory,
 )
 
+
 def download_transformers_model(
-        bucketfs_location: bfs.path.PathLike,
-        sub_dir: str,
-        task_type: str,
-        model_name: str,
-        model_factory,
-        tokenizer_factory=AutoTokenizer,
-        huggingface_token: str | None = None,
-    ) -> bfs.path.PathLike:
+    bucketfs_location: bfs.path.PathLike,
+    sub_dir: str,
+    task_type: str,
+    model_name: str,
+    model_factory,
+    tokenizer_factory=AutoTokenizer,
+    huggingface_token: str | None = None,
+) -> bfs.path.PathLike:
     """
     Downloads the specified model from the Huggingface hub into the BucketFS.
     Returns BucketFS location where the model is uploaded.
@@ -54,17 +55,18 @@ def download_transformers_model(
         huggingface_token:
             Optional Huggingface token, required for downloading a private mode.
     """
-    model_spec = BucketFSModelSpecification(model_name, task_type, '', Path(sub_dir))
+    model_spec = BucketFSModelSpecification(model_name, task_type, "", Path(sub_dir))
 
     # Get model path in the BucketFS
     model_path = model_spec.get_bucketfs_model_save_path()
 
     # Download the model and the tokenizer into the model path
     with HuggingFaceHubBucketFSModelTransferSP(
-            bucketfs_location=bucketfs_location,
-            model_specification=model_spec,
-            bucketfs_model_path=model_path,
-            token=huggingface_token) as downloader:
+        bucketfs_location=bucketfs_location,
+        model_specification=model_spec,
+        bucketfs_model_path=model_path,
+        token=huggingface_token,
+    ) as downloader:
         for factory in [model_factory, tokenizer_factory]:
             downloader.download_from_huggingface_hub(factory)
         upload_path = downloader.upload_to_bucketfs()
