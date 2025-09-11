@@ -145,8 +145,8 @@ def bfs_location() -> bfs.path.PathLike:
 
 
 def test_download_transformers_model(
-        monkeypatch: MonkeyPatch,
-        bfs_location: bfs.path.PathLike,
+    monkeypatch: MonkeyPatch,
+    bfs_location: bfs.path.PathLike,
 ) -> None:
     downloader_mock = Mock()
     downloader_mock.upload_to_bucketfs.return_value = "some_path"
