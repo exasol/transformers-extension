@@ -15,13 +15,14 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 # def download_transformers_model(
 def install_huggingface_model(
-        bucketfs_location: bfs.path.PathLike,
-        sub_dir: str,
-        task_type: str,
-        model_name: str,
-        model_factory,
-        tokenizer_factory=AutoTokenizer,
-        huggingface_token: str | None = None) -> bfs.path.PathLike:
+    bucketfs_location: bfs.path.PathLike,
+    sub_dir: str,
+    task_type: str,
+    model_name: str,
+    model_factory,
+    tokenizer_factory=AutoTokenizer,
+    huggingface_token: str | None = None,
+) -> bfs.path.PathLike:
     """
     Downloads the specified model from the Huggingface hub into the BucketFS.
     Returns BucketFS location where the model is uploaded.
@@ -56,21 +57,24 @@ def install_huggingface_model(
             bucketfs_location=bucketfs_location,
             model_specification=model_spec,
             bucketfs_model_path=model_path,
-            token=huggingface_token) as downloader:
+            token=huggingface_token,
+    ) as downloader:
         for factory in [model_factory, tokenizer_factory]:
             downloader.download_from_huggingface_hub(factory)
         upload_path = downloader.upload_to_bucketfs()
     return bucketfs_location / upload_path
 
 
-def load_transformers_pipline(exa,
-                              bucketfs_conn_name: str,
-                              sub_dir: str,
-                              device: int,
-                              task_type: str,
-                              model_name: str,
-                              model_factory,
-                              tokenizer_factory=AutoTokenizer) -> Pipeline:
+def load_transformers_pipline(
+        exa,
+        bucketfs_conn_name: str,
+        sub_dir: str,
+        device: int,
+        task_type: str,
+        model_name: str,
+        model_factory,
+        tokenizer_factory=AutoTokenizer,
+) -> Pipeline:
     """
     Loads the specified model and returns a Haggingface transformers pipeline object,
     This is an instance of a classed derived from the transformers.Pipeline.
@@ -100,15 +104,19 @@ def load_transformers_pipline(exa,
             The tokenizer class, e.g. AutoTokenizer
     """
     device_obj = device_management.get_torch_device(device)
-    model_loader = LoadLocalModel(pipeline,
-                                  base_model_factory=model_factory,
-                                  tokenizer_factory=tokenizer_factory,  # type: ignore
-                                  task_type=task_type,
-                                  device=device_obj)    # type: ignore
-
-    model_spec = BucketFSModelSpecification(model_name, task_type, bucketfs_conn_name,
-                                            Path(sub_dir))
-
+    model_loader = LoadLocalModel(
+        pipeline,
+        base_model_factory=model_factory,
+        tokenizer_factory=tokenizer_factory,  # type: ignore
+        task_type=task_type,
+        device=device_obj,  # type: ignore
+    )
+    model_spec = BucketFSModelSpecification(
+        model_name,
+        task_type,
+        bucketfs_conn_name,
+        Path(sub_dir),
+    )
     bucketfs_location = get_bucketfs_location(exa, bucketfs_conn_name)
 
     model_loader.clear_device_memory()
