@@ -1,15 +1,22 @@
 from pathlib import Path
 
-from transformers import pipeline, AutoTokenizer, Pipeline
 import exasol.bucketfs as bfs
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location_from_conn_object,
+)
+from transformers import (
+    AutoTokenizer,
+    Pipeline,
+    pipeline,
+)
 
 from exasol_transformers_extension.utils import device_management
-from exasol.python_extension_common.connections.bucketfs_location import (
-    create_bucketfs_location_from_conn_object)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecification)
+    BucketFSModelSpecification,
+)
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
-    HuggingFaceHubBucketFSModelTransferSP)
+    HuggingFaceHubBucketFSModelTransferSP,
+)
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
@@ -54,10 +61,10 @@ def install_huggingface_model(
 
     # Download the model and the tokenizer into the model path
     with HuggingFaceHubBucketFSModelTransferSP(
-            bucketfs_location=bucketfs_location,
-            model_specification=model_spec,
-            bucketfs_model_path=model_path,
-            token=huggingface_token,
+        bucketfs_location=bucketfs_location,
+        model_specification=model_spec,
+        bucketfs_model_path=model_path,
+        token=huggingface_token,
     ) as downloader:
         for factory in [model_factory, tokenizer_factory]:
             downloader.download_from_huggingface_hub(factory)
@@ -66,14 +73,14 @@ def install_huggingface_model(
 
 
 def load_transformers_pipline(
-        exa,
-        bucketfs_conn_name: str,
-        sub_dir: str,
-        device: int,
-        task_type: str,
-        model_name: str,
-        model_factory,
-        tokenizer_factory=AutoTokenizer,
+    exa,
+    bucketfs_conn_name: str,
+    sub_dir: str,
+    device: int,
+    task_type: str,
+    model_name: str,
+    model_factory,
+    tokenizer_factory=AutoTokenizer,
 ) -> Pipeline:
     """
     Loads the specified model and returns a Haggingface transformers pipeline object,
@@ -127,4 +134,5 @@ def load_transformers_pipline(
 
 def get_bucketfs_location(exa, bucketfs_conn_name: str) -> bfs.path.PathLike:
     return create_bucketfs_location_from_conn_object(
-        exa.get_connection(bucketfs_conn_name))
+        exa.get_connection(bucketfs_conn_name)
+    )

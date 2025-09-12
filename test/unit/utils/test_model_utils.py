@@ -1,5 +1,9 @@
 import contextlib
-from unittest.mock import Mock, call
+from unittest.mock import (
+    Mock,
+    call,
+)
+
 import exasol.bucketfs as bfs
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
@@ -9,6 +13,7 @@ import exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transf
 from exasol_transformers_extension.utils.model_utils import (
     install_huggingface_model,
 )
+
 
 @pytest.fixture
 def bfs_location() -> bfs.path.PathLike:
