@@ -5,11 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import exasol.bucketfs as bfs
-from transformers import AutoTokenizer
 
-from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecification,
-)
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
 )
@@ -23,57 +19,6 @@ from exasol_transformers_extension.utils.model_specification import ModelSpecifi
 from exasol_transformers_extension.utils.temporary_directory_factory import (
     TemporaryDirectoryFactory,
 )
-
-
-def download_transformers_model(
-    bucketfs_location: bfs.path.PathLike,
-    sub_dir: str,
-    task_type: str,
-    model_name: str,
-    model_factory,
-    tokenizer_factory=AutoTokenizer,
-    huggingface_token: str | None = None,
-) -> bfs.path.PathLike:
-    """
-    Downloads the specified model from the Huggingface hub into the BucketFS.
-    Returns BucketFS location where the model is uploaded.
-
-    Note: This function should NOT be called from a UDF.
-
-    Parameters:
-        bucketfs_location:
-            Root location in the BucketFS.
-        sub_dir:
-            Root subdirectory in the BucketFS location where all models are uploaded.
-        task_type:
-            Name of an NLP task recognized by the Huggingface pipeline(). See
-            https://huggingface.co/docs/transformers/v4.48.2/en/main_classes/pipelines#transformers.pipeline.task
-        model_name:
-            Name of the model. This is the same name as it's seen on the Haggingface
-            model card, for example 'cross-encoder/nli-deberta-base'.
-        model_factory:
-            The model class (AutoModelXXX), e.g. AutoModelForTokenClassification.
-        tokenizer_factory:
-            The tokenizer class, e.g. AutoTokenizer
-        huggingface_token:
-            Optional Huggingface token, required for downloading a private mode.
-    """
-    model_spec = BucketFSModelSpecification(model_name, task_type, "", Path(sub_dir))
-
-    # Get model path in the BucketFS
-    model_path = model_spec.get_bucketfs_model_save_path()
-
-    # Download the model and the tokenizer into the model path
-    with HuggingFaceHubBucketFSModelTransferSP(
-        bucketfs_location=bucketfs_location,
-        model_specification=model_spec,
-        bucketfs_model_path=model_path,
-        token=huggingface_token,
-    ) as downloader:
-        for factory in [model_factory, tokenizer_factory]:
-            downloader.download_from_huggingface_hub(factory)
-        upload_path = downloader.upload_to_bucketfs()
-    return bucketfs_location / upload_path
 
 
 def make_parameters_of_model_contiguous_tensors(model):

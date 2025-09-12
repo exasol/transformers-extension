@@ -15,7 +15,7 @@ import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from transformers import AutoTokenizer
 
-import exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp
+import exasol_transformers_extension.utils.model_utils
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploader,
     BucketFSModelUploaderFactory,
@@ -23,10 +23,12 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import (
 from exasol_transformers_extension.utils.bucketfs_operations import (
     create_save_pretrained_model_path,
 )
+from exasol_transformers_extension.utils.model_utils import (
+    download_transformers_model,
+)
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSP,
     ModelFactoryProtocol,
-    download_transformers_model,
 )
 from exasol_transformers_extension.utils.temporary_directory_factory import (
     TemporaryDirectoryFactory,
