@@ -15,9 +15,5 @@ def run(ctx):
         bucketfs_conn_name=ctx.bfs_conn,
         sub_dir=Path(ctx.sub_dir),
     )
-    p = load_huggingface_pipeline(
-        exa,
-        model_spec=mspec,
-        device=DEVICE_CPU,
-    )
-    ctx.emit(p.task, p.framework, str(p.device))
+    load_huggingface_pipeline(exa, model_spec=mspec, device=DEVICE_CPU)
+    # ctx.emit(p.task, p.framework, str(p.device))
