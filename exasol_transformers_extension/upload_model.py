@@ -119,25 +119,33 @@ def upload_model_to_bfs_location(
         "Please use exasol_transformers_extension.utils"
         ".model_utils.install_huggingface_model() instead."
     )
-    # create BucketFSModelSpecification for model to be loaded
-    current_model_spec = BucketFSModelSpecification(model_name, task_type, "", subdir)
-    # upload the downloaded model files into bucketfs
-    upload_path = current_model_spec.get_bucketfs_model_save_path()
-
-    model_factory = current_model_spec.get_model_factory()
-
-    downloader = HuggingFaceHubBucketFSModelTransferSP(
+    mspec = BucketFSModelSpecification(model_name, task_type, "", subdir)
+    upload_path = install_huggingface_model(
         bucketfs_location=bucketfs_location,
-        model_specification=current_model_spec,
-        bucketfs_model_path=upload_path,
-        token=huggingface_token,
+        model_spec=mspec,
+        huggingface_token=huggingface_token,
     )
+    return Path(str(upload_path))
 
-    for model in [model_factory, huggingface.AutoTokenizer]:
-        downloader.download_from_huggingface_hub(model)
-    # upload model files to BucketFS
-    model_tar_file_path = downloader.upload_to_bucketfs()
-    return model_tar_file_path
+    # # create BucketFSModelSpecification for model to be loaded
+    # current_model_spec = BucketFSModelSpecification(model_name, task_type, "", subdir)
+    # # upload the downloaded model files into bucketfs
+    # upload_path = current_model_spec.get_bucketfs_model_save_path()
+    #
+    # model_factory = current_model_spec.get_model_factory()
+    #
+    # downloader = HuggingFaceHubBucketFSModelTransferSP(
+    #     bucketfs_location=bucketfs_location,
+    #     model_specification=current_model_spec,
+    #     bucketfs_model_path=upload_path,
+    #     token=huggingface_token,
+    # )
+    #
+    # for model in [model_factory, huggingface.AutoTokenizer]:
+    #     downloader.download_from_huggingface_hub(model)
+    # # upload model files to BucketFS
+    # model_tar_file_path = downloader.upload_to_bucketfs()
+    # return model_tar_file_path
 
 
 upload_model_command = click.Command(None, params=opts, callback=upload_model)
