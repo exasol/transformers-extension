@@ -90,11 +90,11 @@ def test_load_huggingface_pipeline(monkeypatch: MonkeyPatch):
     )
     expected_device = device_management.get_torch_device(-1)
     assert loader_constructor.call_args == call(
-       pipeline_factory=huggingface.pipeline,
-       base_model_factory=model_spec.get_model_factory(),
-       tokenizer_factory=huggingface.AutoTokenizer,
-       task_type=model_spec.task_type,
-       device=expected_device,
+        pipeline_factory=huggingface.pipeline,
+        base_model_factory=model_spec.get_model_factory(),
+        tokenizer_factory=huggingface.AutoTokenizer,
+        task_type=model_spec.task_type,
+        device=expected_device,
     )
     loader_mock.clear_device_memory.called
     loader_mock.set_current_model_specification.call_args = call(model_spec)
