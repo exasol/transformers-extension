@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import click
-import transformers
+import transformers as huggingface
 from exasol.bucketfs._path import PathLike
 from exasol.python_extension_common.cli.std_options import (
     StdTags,
@@ -133,7 +133,7 @@ def upload_model_to_bfs_location(
         token=huggingface_token,
     )
 
-    for model in [model_factory, transformers.AutoTokenizer]:
+    for model in [model_factory, huggingface.AutoTokenizer]:
         downloader.download_from_huggingface_hub(model)
     # upload model files to BucketFS
     model_tar_file_path = downloader.upload_to_bucketfs()
