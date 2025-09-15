@@ -11,6 +11,7 @@ import pytest
 from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.utils.bucketfs_operations import (
+    NotParentError,
     create_tar_of_directory,
     relative_to,
     upload_model_files_to_bucketfs,
@@ -116,5 +117,5 @@ def test_relative_to(a, b, expected):
 def test_not_relative_to(a, b):
     parent = bfs._path.BucketPath(a, Mock())
     child = bfs._path.BucketPath(b, Mock())
-    with pytest.raises(Exception):
+    with pytest.raises(NotParentError):
         relative_to(parent, child)

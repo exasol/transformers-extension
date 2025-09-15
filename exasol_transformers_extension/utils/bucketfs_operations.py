@@ -62,6 +62,12 @@ def create_save_pretrained_model_path(
     return Path(_tmpdir_name, "pretrained", model_specific_path_suffix)
 
 
+class NotParentError(Exception):
+    """
+    If the specified PathLike is not a parent of the other.
+    """
+
+
 def relative_to(parent: bfs.path.PathLike, child: bfs.path.PathLike) -> Path:
     prefix = str(parent)
     if not prefix.endswith("/"):
@@ -69,4 +75,4 @@ def relative_to(parent: bfs.path.PathLike, child: bfs.path.PathLike) -> Path:
     absolute = str(child)
     if absolute.startswith(prefix):
         return Path(absolute.removeprefix(prefix))
-    raise Exception(f"{parent} is not a parent of {child}.")
+    raise NotParentError(f"{parent} is not a parent of {child}.")
