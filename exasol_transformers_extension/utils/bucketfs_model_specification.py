@@ -18,11 +18,12 @@ class BucketFSModelSpecification(ModelSpecification):
     ):
         """
         model_name:
-            Name of the model. This is the same name as it's seen on the Haggingface
+            Name of the model. This is the same name as it's seen on the Huggingface
             model card, for example 'cross-encoder/nli-deberta-base'.
         task_type:
-            Name of an NLP task recognized by the huggingface.pipeline(). See
-            https://huggingface.co/docs/transformers/v4.48.2/en/main_classes/pipelines#transformers.pipeline.task
+            Name of an NLP task, filling_mask, question_answering,
+            sequence_classification, text_generation, token_classification,
+            translation, zero_shot_classification.
         bucketfs_conn_name:
             Name of the BucketFS connection to retrieve the BucketFS location from.
         sub_dir:
