@@ -1,8 +1,10 @@
 import transformers as huggingface
+
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 from exasol_transformers_extension.utils.model_utils import load_huggingface_pipline
 
 DEVICE_CPU = -1
+
 
 def run(ctx):
     mspec = ModelSpecification(ctx.model_name, ctx.task_type)
