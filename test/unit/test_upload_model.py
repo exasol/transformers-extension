@@ -48,10 +48,10 @@ def test_upload_model(monkeypatch: MonkeyPatch, capsys):
         token="my token",
     )
     assert install_mock.call_args == call(
-         bucketfs_location=bfs_location,
-         model_spec=mspec,
-         tokenizer_factory=huggingface.AutoTokenizer,
-         huggingface_token="my token",
+        bucketfs_location=bfs_location,
+        model_spec=mspec,
+        tokenizer_factory=huggingface.AutoTokenizer,
+        huggingface_token="my token",
     )
     captured = capsys.readouterr()
     assert re.match(r"Your model .* has been saved .* at: Some path", captured.out)

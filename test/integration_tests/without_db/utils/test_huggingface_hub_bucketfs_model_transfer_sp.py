@@ -64,6 +64,7 @@ class TestSetup:
     def reset_mocks(self):
         self.bucketfs_model_uploader_mock.reset_mock()
 
+
 @pytest.fixture
 def bucketfs_location_mock():
     return Mock()
