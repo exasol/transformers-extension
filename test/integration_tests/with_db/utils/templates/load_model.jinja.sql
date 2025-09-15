@@ -1,4 +1,4 @@
-CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_MODEL_LOADER_UDF"(
+CREATE OR REPLACE {{ language_alias }} SET SCRIPT "{{ schema }}"."TE_LOAD_MODEL"(
     model_name VARCHAR(2000000),
     task_type VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
