@@ -1,7 +1,7 @@
 import io
 import tarfile
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 import exasol.bucketfs as bfs
 import pytest
@@ -9,6 +9,7 @@ from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.utils.bucketfs_operations import (
     create_tar_of_directory,
+    relative_to,
     upload_model_files_to_bucketfs,
 )
 
@@ -80,3 +81,32 @@ def test_create_tar_of_directory(test_content):
             "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
             "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json",
         ]
+
+
+@pytest.mark.parametrize ("a, b, expected", [
+    ("a/b", "a/b/c", "c"),
+    ("a/b", "a/b/c/d", "c/d"),
+    ("/", "/a/b", "a/b"),
+    ("/a/b", "/a/b/c", "c"),
+    ("/a/b/", "/a/b/c/", "c"),
+])
+def test_relative_to(a, b, expected):
+    parent = bfs._path.BucketPath(a, Mock())
+    child = bfs._path.BucketPath(b, Mock())
+    assert relative_to(parent, child) == Path(expected)
+
+
+@pytest.mark.parametrize ("a, b", [
+    ("a/b", "d"),
+    ("a/b", "/d"),
+    ("a/b", "a/c"),
+    ("/a/b", "/a/c"),
+    ("/a/b/", "/a/c/"),
+    ("a/b/", "a/c/"),
+])
+def test_not_relative_to(a, b):
+    parent = bfs._path.BucketPath(a, Mock())
+    child = bfs._path.BucketPath(b, Mock())
+    with pytest.raises(Exception):
+        relative_to(parent, child)
+
