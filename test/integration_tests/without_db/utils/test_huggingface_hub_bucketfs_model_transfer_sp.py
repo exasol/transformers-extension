@@ -5,9 +5,11 @@ from test.utils.parameters import model_params
 from typing import Union
 from unittest.mock import (
     MagicMock,
+    Mock,
     create_autospec,
 )
 
+import pytest
 from transformers import AutoModel
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
@@ -62,10 +64,14 @@ class TestSetup:
     def reset_mocks(self):
         self.bucketfs_model_uploader_mock.reset_mock()
 
+@pytest.fixture
+def bucketfs_location_mock():
+    return Mock()
 
-def test_download_with_model(mock_bucketfs_location):
+
+def test_download_with_model(bucketfs_location_mock):
     with tempfile.TemporaryDirectory() as folder:
-        test_setup = TestSetup(mock_bucketfs_location)
+        test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
             model_factory=base_model_factory
@@ -78,9 +84,9 @@ def test_download_with_model(mock_bucketfs_location):
         del test_setup.downloader
 
 
-def test_download_with_duplicate_model(mock_bucketfs_location):
+def test_download_with_duplicate_model(bucketfs_location_mock):
     with tempfile.TemporaryDirectory() as folder:
-        test_setup = TestSetup(mock_bucketfs_location)
+        test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
             model_factory=base_model_factory
