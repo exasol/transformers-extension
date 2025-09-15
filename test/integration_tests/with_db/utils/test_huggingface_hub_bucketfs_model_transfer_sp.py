@@ -17,12 +17,14 @@ from exasol_transformers_extension.utils.model_utils import install_huggingface_
 
 DEVICE_CPU = -1
 
+
 @contextlib.contextmanager
 def not_raises(exception):
     try:
         yield
     except exception:
         raise pytest.fail(f"Did raise {exception}")
+
 
 '''
 @pytest.fixture(scope="session")
