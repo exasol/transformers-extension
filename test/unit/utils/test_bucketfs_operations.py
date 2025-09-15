@@ -1,7 +1,10 @@
 import io
 import tarfile
 from pathlib import Path
-from unittest.mock import patch, Mock
+from unittest.mock import (
+    Mock,
+    patch,
+)
 
 import exasol.bucketfs as bfs
 import pytest
@@ -83,30 +86,35 @@ def test_create_tar_of_directory(test_content):
         ]
 
 
-@pytest.mark.parametrize ("a, b, expected", [
-    ("a/b", "a/b/c", "c"),
-    ("a/b", "a/b/c/d", "c/d"),
-    ("/", "/a/b", "a/b"),
-    ("/a/b", "/a/b/c", "c"),
-    ("/a/b/", "/a/b/c/", "c"),
-])
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        ("a/b", "a/b/c", "c"),
+        ("a/b", "a/b/c/d", "c/d"),
+        ("/", "/a/b", "a/b"),
+        ("/a/b", "/a/b/c", "c"),
+        ("/a/b/", "/a/b/c/", "c"),
+    ],
+)
 def test_relative_to(a, b, expected):
     parent = bfs._path.BucketPath(a, Mock())
     child = bfs._path.BucketPath(b, Mock())
     assert relative_to(parent, child) == Path(expected)
 
 
-@pytest.mark.parametrize ("a, b", [
-    ("a/b", "d"),
-    ("a/b", "/d"),
-    ("a/b", "a/c"),
-    ("/a/b", "/a/c"),
-    ("/a/b/", "/a/c/"),
-    ("a/b/", "a/c/"),
-])
+@pytest.mark.parametrize(
+    "a, b",
+    [
+        ("a/b", "d"),
+        ("a/b", "/d"),
+        ("a/b", "a/c"),
+        ("/a/b", "/a/c"),
+        ("/a/b/", "/a/c/"),
+        ("a/b/", "a/c/"),
+    ],
+)
 def test_not_relative_to(a, b):
     parent = bfs._path.BucketPath(a, Mock())
     child = bfs._path.BucketPath(b, Mock())
     with pytest.raises(Exception):
         relative_to(parent, child)
-
