@@ -1,5 +1,6 @@
 from pathlib import Path
 from test.utils.parameters import model_params
+from test.utils.matchers import suffix
 
 from exasol_transformers_extension.upload_model import upload_model_to_bfs_location
 
@@ -26,4 +27,4 @@ def test_model_upload_python_api(tmpdir_factory):
     ).with_suffix(".tar.gz")
 
     assert (mock_bucketfs_location / expected_tar_path).exists()
-    assert expected_tar_path == actual_tar_path
+    assert suffix(actual_tar_path) == expected_tar_path
