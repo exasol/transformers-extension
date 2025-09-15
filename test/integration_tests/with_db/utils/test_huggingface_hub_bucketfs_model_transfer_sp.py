@@ -100,12 +100,12 @@ def test_install_huggingface_model(
         bucketfs_conn_name=bucketfs_conn_name,
         sub_dir=Path("sub_dir"),
     )
-    # install_huggingface_model(
-    #     bucketfs_location=bucketfs_location,
-    #     model_spec=mspec,
-    #     tokenizer_factory=huggingface.AutoTokenizer,
-    #     huggingface_token=None,
-    # )
+    install_huggingface_model(
+        bucketfs_location=bucketfs_location,
+        model_spec=mspec,
+        tokenizer_factory=huggingface.AutoTokenizer,
+        huggingface_token=None,
+    )
     query = cleandoc(
         f"""
         SELECT "{db_schema_name}"."TE_MODEL_LOADER_UDF"(
