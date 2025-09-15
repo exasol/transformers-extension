@@ -58,10 +58,10 @@ def install_huggingface_model(
         model_specification=model_spec,
         bucketfs_model_path=model_path,
         token=huggingface_token,
-    ) as downloader:
+    ) as installer:
         for factory in [model_factory, tokenizer_factory]:
-            downloader.download_from_huggingface_hub(factory)
-        upload_path = downloader.upload_to_bucketfs()
+            installer.download_from_huggingface_hub(factory)
+        upload_path = installer.upload_to_bucketfs()
     return bucketfs_location / upload_path
 
 
