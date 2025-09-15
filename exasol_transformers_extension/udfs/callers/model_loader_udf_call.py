@@ -16,4 +16,4 @@ def run(ctx):
         sub_dir=Path(ctx.sub_dir),
     )
     load_huggingface_pipeline(exa, model_spec=mspec, device=DEVICE_CPU)
-    # ctx.emit(p.task, p.framework, str(p.device))
+    return True

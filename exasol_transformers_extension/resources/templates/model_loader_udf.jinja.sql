@@ -3,7 +3,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_MODEL_LOADER_UDF"(
     task_type VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
     bfs_conn VARCHAR(2000000)
-) AS
+) RETURNS BOOL AS
 
 {{ script_content }}
 
