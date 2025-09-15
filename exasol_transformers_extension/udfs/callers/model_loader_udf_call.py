@@ -1,21 +1,23 @@
-import transformers as huggingface
+from pathlib import Path
 
-from exasol_transformers_extension.utils.model_specification import ModelSpecification
-from exasol_transformers_extension.utils.model_utils import load_huggingface_pipline
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
+from exasol_transformers_extension.utils.model_utils import load_huggingface_pipeline
 
 DEVICE_CPU = -1
 
 
 def run(ctx):
-    mspec = ModelSpecification(ctx.model_name, ctx.task_type)
-    p = load_huggingface_pipeline(
-        ctx,
-        bucketfs_conn_name=ctx.bfs_conn,
-        sub_dir=ctx.sub_dir,
-        device=DEVICE_CPU,
-        task_type=ctx.task_type,
+    mspec = BucketFSModelSpecification(
         model_name=ctx.model_name,
-        model_factory=mspec.get_model_factory(),
-        tokenizer_factory=huggingface.AutoTokenizer,
+        task_type=ctx.task_type,
+        bucketfs_conn_name=ctx.bfs_conn,
+        sub_dir=Path(ctx.sub_dir),
     )
-    return p.task, p.framework, p.device
+    p = load_huggingface_pipeline(
+        exa,
+        model_spec=mspec,
+        device=DEVICE_CPU,
+    )
+    ctx.emit(p.task, p.framework, str(p.device))

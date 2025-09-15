@@ -6,10 +6,13 @@ from unittest.mock import (
 
 import exasol.bucketfs as bfs
 import pytest
+import transformers as huggingface
 from _pytest.monkeypatch import MonkeyPatch
-from transformers import AutoTokenizer
 
 import exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
 from exasol_transformers_extension.utils.model_utils import (
     install_huggingface_model,
 )
@@ -36,16 +39,18 @@ def test_install_huggingface_model(
         "HuggingFaceHubBucketFSModelTransferSP",
         context_mock,
     )
-    model_factory = Mock()
+    mspec = BucketFSModelSpecification(
+        model_name="model name",
+        task_type="task type",
+        bucketfs_conn_name="",
+        sub_dir="sub-dir",
+    )
     actual = install_huggingface_model(
         bucketfs_location=bfs_location,
-        sub_dir="sub-dir",
-        task_type="task type",
-        model_name="model name",
-        model_factory=model_factory,
-        tokenizer_factory=AutoTokenizer,
+        model_spec=mspec,
+        tokenizer_factory=huggingface.AutoTokenizer,
         huggingface_token="hf-token",
     )
     downloads = downloader_mock.download_from_huggingface_hub.call_args_list
-    assert downloads == [call(model_factory), call(AutoTokenizer)]
+    assert downloads == [call(huggingface.AutoModel), call(huggingface.AutoTokenizer)]
     assert actual == bfs_location / "some_path"

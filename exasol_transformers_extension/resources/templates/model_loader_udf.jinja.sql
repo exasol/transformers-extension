@@ -6,7 +6,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_MODEL_LOADER_UDF"(
 ) EMITS (
     task VARCHAR(2000000),
     framework VARCHAR(2000000),
-    device DECIMAL(18,0)
+    device VARCHAR(2000000)
 ) AS
 
 {{ script_content }}
