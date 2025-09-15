@@ -1,6 +1,6 @@
 from pathlib import Path
-from test.utils.parameters import model_params
 from test.utils.matchers import suffix
+from test.utils.parameters import model_params
 
 from exasol_transformers_extension.upload_model import upload_model_to_bfs_location
 

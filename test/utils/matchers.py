@@ -26,6 +26,5 @@ class suffix:
     def __init__(self, bucketfs_location: bfs.path.PathLike):
         self._bucketfs_location = bucketfs_location
 
-    def __eq__(self, other: Path|bfs.path.PathLike|str) -> bool:
+    def __eq__(self, other: Path | bfs.path.PathLike | str) -> bool:
         return str(self._bucketfs_location).endswith(str(other))
-
