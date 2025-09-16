@@ -8,13 +8,27 @@ from exasol_transformers_extension.utils.model_specification import ModelSpecifi
 
 class BucketFSModelSpecification(ModelSpecification):
     """
-    Class describing a model with additional information about
-    the bucketFS connection and the subdir in the bucketfs the model can be found at.
+    Describes a model with additional information about the BucketFS
+    connection and the subdir in the BucketFS the model should be uploaded to
+    or can be found at after uploading.
     """
 
     def __init__(
         self, model_name: str, task_type: str, bucketfs_conn_name: str, sub_dir: Path
     ):
+        """
+        model_name:
+            Name of the model. This is the same name as it's seen on the Huggingface
+            model card, for example 'cross-encoder/nli-deberta-base'.
+        task_type:
+            Name of an NLP task, filling_mask, question_answering,
+            sequence_classification, text_generation, token_classification,
+            translation, zero_shot_classification.
+        bucketfs_conn_name:
+            Name of the BucketFS connection to retrieve the BucketFS location from.
+        sub_dir:
+            Subdirectory in the BucketFS where the model can be found at.
+        """
         ModelSpecification.__init__(self, model_name, task_type)
         self.bucketfs_conn_name = bucketfs_conn_name
         self.sub_dir = sub_dir

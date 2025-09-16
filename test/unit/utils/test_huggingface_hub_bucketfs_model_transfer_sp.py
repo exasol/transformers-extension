@@ -27,6 +27,8 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
 
 
 class TestSetup:
+    __test__ = False
+
     def __init__(self):
         self.bucketfs_location_mock: Union[bfs.path.PathLike, MagicMock] = (
             create_autospec(bfs.path.PathLike)

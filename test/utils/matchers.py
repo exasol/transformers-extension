@@ -1,4 +1,7 @@
 from collections.abc import Iterable
+from pathlib import Path
+
+import exasol.bucketfs as bfs
 
 
 class AnyOrder:
@@ -17,3 +20,11 @@ class AnyOrder:
     def __repr__(self) -> str:
         joined = ",\n ".join(str(item) for item in self._expected)
         return f"[{joined}]"
+
+
+class suffix:
+    def __init__(self, bucketfs_location: bfs.path.PathLike):
+        self._bucketfs_location = bucketfs_location
+
+    def __eq__(self, other: Path | bfs.path.PathLike | str) -> bool:
+        return str(self._bucketfs_location).endswith(str(other))

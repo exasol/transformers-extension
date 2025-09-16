@@ -5,9 +5,11 @@ from test.utils.parameters import model_params
 from typing import Union
 from unittest.mock import (
     MagicMock,
+    Mock,
     create_autospec,
 )
 
+import pytest
 from transformers import AutoModel
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
@@ -27,11 +29,15 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
 
 
 class TestSetup:
+    __test__ = False
+
     def __init__(self, bucketfs_location):
+        """
+        This setup mocks the uploading to BucketFS via
+        bucketfs_model_uploader_factory_mock hence avoiding to use an actual
+        database.
+        """
         self.bucketfs_location = bucketfs_location
-        self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = (
-            create_autospec(ModelFactoryProtocol)
-        )
         self.temporary_directory_factory = TemporaryDirectoryFactory()
         self.bucketfs_model_uploader_factory_mock: Union[
             BucketFSModelUploaderFactory, MagicMock
@@ -56,13 +62,17 @@ class TestSetup:
         )
 
     def reset_mocks(self):
-        self.model_factory_mock.reset_mock()
         self.bucketfs_model_uploader_mock.reset_mock()
 
 
-def test_download_with_model(bucketfs_location):
+@pytest.fixture
+def bucketfs_location_mock():
+    return Mock()
+
+
+def test_download_with_model(bucketfs_location_mock):
     with tempfile.TemporaryDirectory() as folder:
-        test_setup = TestSetup(bucketfs_location)
+        test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
             model_factory=base_model_factory
@@ -75,9 +85,9 @@ def test_download_with_model(bucketfs_location):
         del test_setup.downloader
 
 
-def test_download_with_duplicate_model(bucketfs_location):
+def test_download_with_duplicate_model(bucketfs_location_mock):
     with tempfile.TemporaryDirectory() as folder:
-        test_setup = TestSetup(bucketfs_location)
+        test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
             model_factory=base_model_factory
