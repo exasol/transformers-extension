@@ -21,7 +21,6 @@ The extension provides two types of UDFs:
 ## Table of Contents
 
 <!-- TOC -->
-* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Getting Started](#getting-started)
   * [Exasol DB](#exasol-db)
