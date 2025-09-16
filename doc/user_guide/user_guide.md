@@ -7,8 +7,8 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 
 The extension provides two types of UDFs:
 
-* DownloaderUDF :  It is responsible to download the specified pre-defined model into the Exasol BucketFS.
-* Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and perform prediction. These are the supported tasks:
+* DownloaderUDF :  It is responsible for downloading a specified pre-defined model into the Exasol BucketFS.
+* Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
    1. Sequence Classification for Single Text
    2. Sequence Classification for Text Pair
    3. Question Answering
@@ -36,24 +36,24 @@ The extension provides two types of UDFs:
 
 ## Introduction
 
-This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API in order to use pre-trained models on an Exasol Cluster.
+This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol Cluster.
 
-User Defined Functions, UDFs for short, are scripts in various programming languages that can be executed in the Exasol Database. They can be used by the user for more flexibility in data processing. In this Extension we provide multiple UDFs for you to use on your Exasol Database. You can find a more detailed documentation on UDFs [here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
+User Defined Functions (UDFs) are scripts in various programming languages that can be executed in the Exasol Database. They can be used by a user for more flexibility in data processing. With the Transformers Extension, we provide multiple UDFs for you to use on your Exasol Database. You can find more detailed documentation on UDFs on the [UDF Scripts page](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
 
 UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face models on the Exasol Cluster.
 
-More information on The BucketFS can be found [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
+More information on the BucketFS can be found [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
 
 ### Exasol DB
 
 * The Exasol cluster must already be running with version 7.1 or later.
-* DB connection information and credentials are needed.
+* The database connection information and credentials are needed.
 
 ### BucketFS Connection
 
-An Exasol connection object must be created with Exasol BucketFS connection information and credentials.
+An Exasol connection object must be created with the Exasol BucketFS connection information and credentials.
 
 Normally, the connection object is created as part of the Transformers Extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below).
 
@@ -75,7 +75,7 @@ The distribution of the parameters among those three JSON strings do not matter.
 
 However, we recommend to put secrets like passwords and or access tokens into the `<BUCKETFS_PASSWORD>` part.
 
-#### Parameters of the Adress Part of the Connection Object
+#### Parameters of the Address Part of the Connection Object
 
 `<BUCKET_ADDRESS>` contains various subparameters, e.g.
 
@@ -83,7 +83,7 @@ However, we recommend to put secrets like passwords and or access tokens into th
 {"url": "https://my_cluster_11:6583", "bucket_name": "default", "service_name": "bfsdefault"}
 ```
 
-The number of subparameters and their names depended on the type of database you are connecting to:
+The number of subparameters and their names depends on the type of database you are connecting to:
 
 **SaaS Database**:
 
@@ -110,19 +110,19 @@ CREATE OR REPLACE CONNECTION "MyBucketFSConnection"
     IDENTIFIED BY '{"password":"wrx1t09x9e"}';
 ```
 
-For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
+For more information, please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
 
 #### Custom Certificates and Certificate Authorities
 
-For using a custom CA bundle you first need to upload it to the BucketFS.
+For using a custom CA bundle, you first need to upload it to the BucketFS.
 
-The following command puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
+The following command puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in the subdirectory `tls`:
 
 ```Shell
 curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
 ```
 
-For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
+For more details on uploading files to the BucketFS, see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
 
 Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database. The CA bundle path should have the following format:
 
@@ -134,7 +134,7 @@ For example, if the service name is ``bfs_service1`` and the bundle was uploaded
 
 ### Huggingface token
 
-A valid token is required to download private models from the Huggingface hub and run prediction on them.  This token is considered sensitive information, hence it should be stored in an Exasol Connection object. The easiest way to do this is to provide the token as an option during the extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below).  It can also be created manually by running the following SQL command.
+A valid token is required to download private models from the Hugging Face hub and later generate predictions with them.  This token is considered sensitive information; hence, it should be stored in an Exasol Connection object. The easiest way to do this is to provide the token as an option during the extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below).  It can also be created manually by running the following SQL command:
 
 ```sql
 CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
@@ -148,10 +148,10 @@ CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
 
 There are multiple ways to install the Python package:
 * [Pip install](#pip)
-* [Download the Wheel from GitHub](#download-and-install-the-python-wheel-package)
+* [Download the wheel from GitHub](#download-and-install-the-python-wheel-package)
 * [Build the project yourself](#build-the-project-yourself)
 
-Additionally, you will need a Script Language Container, see [The Pre-built Language Container](#the-pre-built-language-container) for instructions.
+Additionally, you will need a Script Language Container. For instructions, see [The Pre-built Language Container](#the-pre-built-language-container) section.
 
 #### Pip
 
@@ -174,7 +174,7 @@ You can also get the wheel from a GitHub release.
 
 If you need to use a version < 0.5.0, the build archive is called `transformers_extension.whl`.
 
-Then install the packaged transformers-extension project as follows:
+Then, install the packaged `transformers-extension` project as follows:
 
 ```shell
 pip install <path/wheel-filename.whl>
@@ -182,7 +182,7 @@ pip install <path/wheel-filename.whl>
 
 #### Build the project yourself
 
-In order to build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/) (>= 2.1.0) package manager installed. Clone the GitHub Repository, and install and build the `transformers-extension` as follows:
+To build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/) (>= 2.1.0) package manager installed. Then, you will need to clone the GitHub repository and install and build the `transformers-extension` as follows:
 
 ```bash
 poetry install
@@ -199,11 +199,11 @@ python -m exasol_transformers_extension.deploy <options>
 
 #### The Pre-built Language Container
 
-The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install the required programming language and necessary dependencies in the Exasol Database so that UDF scripts can be executed. The version of the installed SLC must match the version of the Transformers Extension Package.  See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
+The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install the required programming language and necessary dependencies in the Exasol Database so that UDF scripts can be executed. The version of the installed SLC must match the version of the Transformers Extension package.  See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
 
-#### List of options
+#### List of Options
 
-For information about the available options common to all Exasol extensions please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
+For information about the available options common to all Exasol extensions, please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
 
 In addition, this extension provides the following installation options:
 
@@ -219,36 +219,36 @@ The connection objects will not be created if their names are not provided.
 
 ## Common UDF Parameters
 
-Many UDFs are using a set of common parameters which are described in this section.
+Many UDFs use a set of common parameters:
 
-* `device_id`: To run on a GPU, specify the valid cuda device ID. Value `NULL` means use the CPU instead.
+* `device_id`: To run on a GPU, specify the valid cuda device ID. Value `NULL` means to use the CPU instead.
 * `bucketfs_conn`: The BucketFS connection name.
 * `sub_dir`: The directory where the model is stored in the BucketFS.
-* `model_name`: The name of the model to use for prediction. You can find the details of the models on the [huggingface models page](https://huggingface.co/models).
+* `model_name`: The name of the model to use for prediction. You can find the details of the models on the [Hugging Face models page](https://huggingface.co/models).
 
 ## Store Models in BucketFS
 
-Before you can use pre-trained models, the models must be stored in the BucketFS, which can be by one of the following two options:
+Before you can use pre-trained models, the models must be stored in the BucketFS, which can done with one of the these two options:
 * O1) The [Model Downloader UDF](#model-downloader-udf) downloads a Hugging Face transformers model directly into the Exasol Database.
-* O2) The [Model Uploader Script](#model-uploader-script) uploads a model to the Database, requiring the model to be downloaded to your local file system in advance.
+* O2) The [Model Uploader Script](#model-uploader-script) uploads a model to the database, requiring the model to be downloaded to your local file system in advance.
 
-O2 is required in case you don't want to connect your Exasol Database directly to the internet. Otherwise O1 is the simpler option.
+O2 is required in case you do not want to connect your Exasol Database directly to the internet. Otherwise, O1 is the simpler option.
 
 Note that the extension currently only supports the `PyTorch` framework. Please make sure that the selected models are in the `Pytorch` model library section.
 
 ### Model Downloader UDF
 
-Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model from the huggingface hub and upload it to BucketFS.
+Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model from the Hugging Face hub and upload it to the BucketFS.
 
-This requires the Exasol Database to have internet access, since the UDF will download the model from Hugging Face to the Database without saving it somewhere else intermittently.
+This requires the Exasol database to have internet access, since the UDF will download the model from Hugging Face to the database without saving it somewhere else intermittently.
 
 #### Name Server
 
-If you are using the Exasol DockerDB or an Exasol version 8 setup via [c4](https://docs.exasol.com/db/latest/administration/on-premise/admin_interface/c4.htm), this is not the case by default, and you need to specify a name server. For example, setting `nameserver = 8.8.8.8` will use Google's DNS.
+If you are using the Exasol DockerDB or an Exasol version 8 setup via [c4](https://docs.exasol.com/db/latest/administration/on-premise/admin_interface/c4.htm), this is not set by default, and you need to specify a name server. For example, setting `nameserver = 8.8.8.8` will use Google's DNS.
 
-You will need to use [ConfD](https://docs.exasol.com/db/latest/confd/confd.htm) to do this, you can use the [general_settings](https://docs.exasol.com/db/latest/confd/jobs/general_settings.htm) command.
+You will need to use [ConfD](https://docs.exasol.com/db/latest/confd/confd.htm) to perform this setup. Specifically, you should use the [general_settings](https://docs.exasol.com/db/latest/confd/jobs/general_settings.htm) command.
 
-If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment), you can just set the nameserver parameter like this: `--nameserver 8.8.8.8`.
+If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment), you can set the name server by passing in: `--nameserver 8.8.8.8`.
 
 #### Running the UDF
 
@@ -270,36 +270,36 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   * `sub_dir`
   * `bucketfs_conn`
 * Specific parameters:
-  * `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check [here](#getting-started).
+  * `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](#getting-started) section.
 
-`task_type` specifies the type of task you plan to use the model for.
+`task_type` specifies the type of task for which you plan to use the model.
 
-Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an Incorrect task_type, o leaving the task_type empty may affect the models performance severely. Available task_types are the same as the names of our available UDFs, namely: `filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, `translation` and`zero_shot_classification`.
+Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect `task_type` or leaving the `task_type` empty may affect the models performance severely. Available `task_types` are the same as the names of our available UDFs, namely: `filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, `translation` and`zero_shot_classification`.
 
 ### Model Uploader Script
 
-You can invoke the Python script below which downloads the transformer models from The Hugging Face hub to the local filesystem, and uploads it to the BucketFS.
+You can invoke the Python script below to download the transformer models from the Hugging Face hub to the local filesystem and upload it to the BucketFS.
 
 ```shell
 python -m exasol_transformers_extension.upload_model <options>
 ```
 
-For information about the available options common to all Exasol extensions please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
+For information about the available options common to all Exasol extensions, please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
 
 In addition, this command provides the following options:
 
 | Option name      | Comment                                                           |
 |------------------|-------------------------------------------------------------------|
-| `--model-name`   | Name of the model, as it's seen in the Huggingface hub            |
+| `--model-name`   | Name of the model, as seen in the Hugging Face hub            |
 | `--task-type`    | See the explanations below                                        |
 | `--sub-dir`      | Sub-directory in the BucketFS where this model should be stored   |
-| `--token`        | The [Huggingface token](#huggingface-token) if required           |
+| `--token`        | The [Hugging Face token](#huggingface-token), if required           |
 
 #### Selecting the Task Type
 
 `--task-type` specifies the type of task you plan to use the model for.
 
-Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an Incorrect task type, or leaving the task type empty may affect the models performance severely.
+Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
 
 Available task types are the same as the names of our available UDFs, namely:
 * `filling_mask`
@@ -312,7 +312,7 @@ Available task types are the same as the names of our available UDFs, namely:
 
 #### Installation via a Python Function
 
-Alternatively you can install a Huggingface model using a python function instead of a shell command.
+Alternatively, you can install a Hugging Face model using a Python function instead of a shell command.
 
 Function
 `exasol_transformers_extension.utils.model_utils.install_huggingface_model()` expects the following arguments
@@ -331,7 +331,7 @@ Function
 
 ## Using Prediction UDFs
 
-We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to BucketFS and run inference using the user-supplied inputs.
+We provide 7 prediction UDFs in the Transformers Extension package. Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to the BucketFS and run inference using the user-supplied inputs.
 
 ### Sequence Classification for Single Text UDF
 
@@ -502,7 +502,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 * Specific parameters:
   * `text_data`: The context text.
   * `max_length`: The maximum total length of text to be generated.
-  * `return_full_text`:  If set to False only added text is returned, otherwise the full text is returned.
+  * `return_full_text`:  If set to False, only added text is returned, otherwise the full text is returned.
 
 The inference results are presented with _GENERATED_TEXT_ column, combined with the inputs used when calling this UDF.
 
@@ -510,7 +510,7 @@ In case of any error during model loading or prediction, these new columns are s
 
 ### Token Classification UDF
 
-The main goal of this UDF is to  assign a label to individual tokens in a  given text.
+The main goal of this UDF is to assign a label to individual tokens in a given text.
 
 There are two popular subtasks of token classification:
 
@@ -537,7 +537,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   * `text_data`: The text to analyze.
   * `aggregation_strategy`:  The strategy to fuse (or not) tokens based on the model prediction. It is set to `simple` strategy by default, if you supply NULL. Please check [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
 
-The inference results are presented by combining with the inputs used when calling this UDF with
+The inference results are presented by combining with the inputs used when calling this UDF with:
 * _START_POS_ indicating the index of the starting character of the token,
 * _END_POS_ indicating the index of the ending character of the token,
 * _WORD_ indicating the token,
@@ -593,9 +593,9 @@ In case of any error during model loading or prediction, these new columns are s
 
 ### Zero-Shot Text Classification UDF
 
-This UDF simply provide the task of predicting a class that wasn't seen by the model during training.
+This UDF provides the task of predicting a class that was not seen by the model during training.
 
-The UDF takes candidate labels as a comma-separated string, and generate probability scores prediction for each label.
+The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
 ```sql
 SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
