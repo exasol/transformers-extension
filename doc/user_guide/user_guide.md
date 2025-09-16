@@ -143,6 +143,8 @@ Each certificate is issued by a Certificate Agency (CA) guaranteeing its validy 
 
 For using a custom CA bundle, you first need to upload it to the BucketFS.
 
+##### Uploading to the BucketFS of an On-Prem Database
+
 The following command puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in the subdirectory `tls`:
 
 ```Shell
@@ -150,6 +152,8 @@ curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bund
 ```
 
 For more details on uploading files to the BucketFS, see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
+
+##### Uploading to the BucketFS of a SaaS Database
 
 Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database. The CA bundle path should have the following format:
 
