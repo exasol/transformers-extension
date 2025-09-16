@@ -145,3 +145,6 @@ doc/_build
 
 # Emacs
 TAGS
+
+# Exported SLC
+/export
