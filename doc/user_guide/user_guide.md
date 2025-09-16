@@ -174,7 +174,7 @@ You can also get the wheel from a GitHub release.
 
 If you need to use a version < 0.5.0, the build archive is called `transformers_extension.whl`.
 
-Then, install the packaged `transformers-extension` project as follows:
+Then, install the packaged Transformers Extension project as follows:
 
 ```shell
 pip install <path/wheel-filename.whl>
@@ -182,7 +182,9 @@ pip install <path/wheel-filename.whl>
 
 #### Build the project yourself
 
-To build Transformers Extension yourself, you need to have the [Poetry](https://python-poetry.org/) (>= 2.1.0) package manager installed. Then, you will need to clone the GitHub repository and install and build the `transformers-extension` as follows:
+To build Transformers Extension yourself, you need to have [Poetry](https://python-poetry.org/) (>= 2.1.0) installed.
+
+Then, you will need to clone the GitHub repository https://github.com/exasol/transformers-extension/ and install and build the project as follows:
 
 ```bash
 poetry install
@@ -271,10 +273,20 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
   * `bucketfs_conn`
 * Specific parameters:
   * `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](#getting-started) section.
+  * `task_type`: See below.
 
-`task_type` specifies the type of task for which you plan to use the model.
+#### Selecting the Task Type
 
-Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect `task_type` or leaving the `task_type` empty may affect the models performance severely. Available `task_types` are the same as the names of our available UDFs, namely: `filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, `translation` and`zero_shot_classification`.
+Some models can be used for multiple types of tasks, but Hugging Face Transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
+
+Available task types are the same as the names of our available UDFs, namely:
+* `filling_mask`
+* `question_answering`
+* `sequence_classification`
+* `text_generation`
+* `token_classification`
+* `translation`
+* `zero_shot_classification`
 
 ### Model Uploader Script
 
@@ -295,20 +307,7 @@ In addition, this command provides the following options:
 | `--sub-dir`      | Sub-directory in the BucketFS where this model should be stored   |
 | `--token`        | The [Hugging Face token](#huggingface-token), if required           |
 
-#### Selecting the Task Type
-
-`--task-type` specifies the type of task you plan to use the model for.
-
-Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
-
-Available task types are the same as the names of our available UDFs, namely:
-* `filling_mask`
-* `question_answering`
-* `sequence_classification`
-* `text_generation`
-* `token_classification`
-* `translation`
-* `zero_shot_classification`
+`--task-type` specifies the type of task you plan to use the model for, see [Selecting the Task Type](#selecting-the-task-type).
 
 #### Installation via a Python Function
 
@@ -502,7 +501,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 * Specific parameters:
   * `text_data`: The context text.
   * `max_length`: The maximum total length of text to be generated.
-  * `return_full_text`:  If set to False, only added text is returned, otherwise the full text is returned.
+  * `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
 
 The inference results are presented with _GENERATED_TEXT_ column, combined with the inputs used when calling this UDF.
 
