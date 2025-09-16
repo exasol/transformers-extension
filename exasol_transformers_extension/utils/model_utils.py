@@ -17,7 +17,6 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
-# Former name: download_transformers_model()
 def install_huggingface_model(
     bucketfs_location: bfs.path.PathLike,
     model_spec: BucketFSModelSpecification,

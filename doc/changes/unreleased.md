@@ -24,4 +24,4 @@ T.B.D
 * #295: Activated type check in .pre-commit-config.yaml
 * #296: Activated code formatting in .pre-commit-config.yaml
 * #311: Updated transitive dependencies urllib3 (2.4.0 -> 2.5.0) & requests (2.32.3 -> 2.32.4)
-* #317: Added function `download_transformers_model()`
+* #317: Added functions `install_huggingface_model()` and `load_huggingface_pipeline()`.

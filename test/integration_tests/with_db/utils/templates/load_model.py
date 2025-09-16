@@ -1,3 +1,6 @@
+# This file is to be included into UDF definition in the adjacent file
+# load_model.jinja.sql used in integration tests.
+
 from pathlib import Path
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (

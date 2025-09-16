@@ -292,12 +292,17 @@ Alternatively you can install a Huggingface model using a python function instea
 Function
 `exasol_transformers_extension.utils.model_utils.install_huggingface_model()` expects the following arguments
 * A BucketFS location
-* Some of the arguments wrapped into a `BucketFSModelSpecification`
+* Argument `model_spec` of type `BucketFSModelSpecification` containing
+  * `model_name`
+  * `task_type`
+  * `sub_dir`
 * An optional `model_factory`
 * An optional `tokenizer_factory`
 * An optional `huggingface_token`
 
-**Please note**: The former function `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()` is now deprecated and internally now also uses the function `install_huggingface_model()` described above.
+**Please note**:
+* The former function `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()` is now deprecated and internally now also uses the function `install_huggingface_model()` described above.
+* The former function returned type `Path`, while the new implementation returns type `bfs.path.PathLike`.
 
 ## Using Prediction UDFs
 We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP
