@@ -101,6 +101,8 @@ The number of subparameters and their names depends on the type of database you 
 * `service_name`: Name of the BucketFS service, e.g. `bfsdefault`.
 * `verify`: Optional parameter that can be either a boolean, in which case it controls whether the server's TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
 
+See section [Custom Certificates and Certificate Authorities](#custom-certificates-and-certificate-authorities) explaining the terms TLS and CA.
+
 Here is an example of a connection object for an On-Prem database.
 
 ```sql
@@ -110,9 +112,13 @@ CREATE OR REPLACE CONNECTION "MyBucketFSConnection"
     IDENTIFIED BY '{"password":"wrx1t09x9e"}';
 ```
 
-For more information, please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
+For more information, please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm) document.
 
 #### Custom Certificates and Certificate Authorities
+
+Certificates are required for secure network communication using Transport Layer Security (TLS).
+
+Each certificate is issued by a Certificate Agency (CA) guaranteeing its validy and security in a chain of trusted certificates, see also the [TLS Tutorial](https://github.com/exasol/exasol-java-tutorial/blob/main/tls-tutorial/doc/tls_introduction.md#certificates-and-certification-agencies).
 
 For using a custom CA bundle, you first need to upload it to the BucketFS.
 
@@ -132,15 +138,23 @@ Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.htm
 
 For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``. Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at respectively ``upload`` and ``default``.
 
-### Huggingface token
+### Huggingface Token
 
-A valid token is required to download private models from the Hugging Face hub and later generate predictions with them.  This token is considered sensitive information; hence, it should be stored in an Exasol Connection object. The easiest way to do this is to provide the token as an option during the extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below).  It can also be created manually by running the following SQL command:
+A valid token is required to download private models from the Hugging Face hub and later generate predictions with them.
+
+This token is considered sensitive information; hence, it should be stored in an Exasol Connection object.
+
+The easiest way to do this is to provide the token as an option during the extension deployment, see section [Setup section](#deploy-the-extension-to-the-database) below.
+
+You can also create a connection manually:
 
 ```sql
 CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
     TO ''
     IDENTIFIED BY '<PRIVATE_MODEL_TOKEN>'
 ```
+
+For more information, please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm) document.
 
 ## Setup
 
