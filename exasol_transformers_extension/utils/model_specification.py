@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import transformers
 
 
-@dataclass
+@dataclass(frozen=True)
 class ModelTypeData:
         model_factory_dict = {
             "fill-mask": transformers.AutoModelForMaskedLM,
@@ -84,7 +84,7 @@ class ModelSpecification:
         return model_factory
 
 
-def split_path_using_subdir(path_parts: tuple[str, ...] ,model_path: Path, sub_dir) -> tuple[str, str]:
+def split_path_using_subdir(path_parts: tuple[str, ...] ,model_path: pathlib.Path, sub_dir: str) -> tuple[str, str]:
     # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
     # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
     # and everything between this and the sub-dir to be the model_name_prefix
