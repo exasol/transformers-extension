@@ -20,19 +20,41 @@ The extension provides two types of UDFs:
 
 ## Table of Contents
 
+<!-- TOC -->
+* [Table of Contents](#table-of-contents)
 * [Introduction](#introduction)
 * [Getting Started](#getting-started)
+  * [Exasol DB](#exasol-db)
+  * [BucketFS Connection](#bucketfs-connection)
+    * [Parameters of the Address Part of the Connection Object](#parameters-of-the-address-part-of-the-connection-object)
+    * [Custom Certificates and Certificate Authorities](#custom-certificates-and-certificate-authorities)
+  * [Huggingface token](#huggingface-token)
 * [Setup](#setup)
-* [Model Downloader UDF](#model-downloader-udf)
-* [Prediction UDFs](#using-prediction-udfs)
-  1. [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
-  2. [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
-  3. [Question Answering UDF](#question-answering-udf)
-  4. [Masked Language Modelling UDF](#masked-language-modelling-udf)
-  5. [Text Generation UDF](#text-generation-udf)
-  6. [Token Classification UDF](#token-classification-udf)
-  7. [Text Translation UDF](#text-translation-udf)
-  8. [Zero-Shot Text Classification](#zero-shot-text-classification-udf)
+  * [Install the Python Package](#install-the-python-package)
+    * [Pip](#pip)
+    * [Download and Install the Python Wheel Package](#download-and-install-the-python-wheel-package)
+    * [Build the project yourself](#build-the-project-yourself)
+  * [Deploy the Extension to the Database](#deploy-the-extension-to-the-database)
+    * [The Pre-built Language Container](#the-pre-built-language-container)
+    * [List of Options](#list-of-options)
+* [Common UDF Parameters](#common-udf-parameters)
+* [Store Models in BucketFS](#store-models-in-bucketfs)
+  * [Model Downloader UDF](#model-downloader-udf)
+    * [Name Server](#name-server)
+    * [Running the UDF](#running-the-udf)
+    * [Selecting the Task Type](#selecting-the-task-type)
+  * [Model Uploader Script](#model-uploader-script)
+    * [Installation via a Python Function](#installation-via-a-python-function)
+* [Using Prediction UDFs](#using-prediction-udfs)
+  * [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
+  * [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
+  * [Question Answering UDF](#question-answering-udf)
+  * [Masked Language Modelling UDF](#masked-language-modelling-udf)
+  * [Text Generation UDF](#text-generation-udf)
+  * [Token Classification UDF](#token-classification-udf)
+  * [Text Translation UDF](#text-translation-udf)
+  * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
+<!-- TOC -->
 
 ## Introduction
 
@@ -138,7 +160,7 @@ Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.htm
 
 For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``. Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at respectively ``upload`` and ``default``.
 
-### Huggingface Token
+### Hugging Face Token
 
 A valid token is required to download private models from the Hugging Face hub and later generate predictions with them.
 
@@ -264,7 +286,7 @@ If you are using the Exasol DockerDB or an Exasol version 8 setup via [c4](https
 
 You will need to use [ConfD](https://docs.exasol.com/db/latest/confd/confd.htm) to perform this setup. Specifically, you should use the [general_settings](https://docs.exasol.com/db/latest/confd/jobs/general_settings.htm) command.
 
-If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment), you can set the name server by passing in: `--nameserver 8.8.8.8`.
+If you are using the [Integration Test Docker Environment](https://github.com/exasol/integration-test-docker-environment) to control the DockerDB, you can set the name server by passing in: `--nameserver 8.8.8.8`.
 
 #### Running the UDF
 
@@ -321,7 +343,7 @@ In addition, this command provides the following options:
 | `--sub-dir`      | Sub-directory in the BucketFS where this model should be stored   |
 | `--token`        | The [Hugging Face token](#huggingface-token), if required           |
 
-`--task-type` specifies the type of task you plan to use the model for, see [Selecting the Task Type](#selecting-the-task-type).
+`--task-type` specifies the type of task for which you plan to use the model, see [Selecting the Task Type](#selecting-the-task-type).
 
 #### Installation via a Python Function
 
