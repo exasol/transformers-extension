@@ -285,9 +285,24 @@ severely. Available task_types are the same as the names of our available UDFs, 
 `filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`,
 `translation` and`zero_shot_classification`.
 
-If you need to do ths task using a python function instead of ta shell command,
-we provide `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()`. This function takes the same
-arguments, and additionally a bucketfs_location to upload the model to.
+#### Installation via a Python Function
+
+Alternatively you can install a Huggingface model using a python function instead of a shell command.
+
+Function
+`exasol_transformers_extension.utils.model_utils.install_huggingface_model()` expects the following arguments
+* A BucketFS location
+* Argument `model_spec` of type `BucketFSModelSpecification` containing
+  * `model_name`
+  * `task_type`
+  * `sub_dir`
+* An optional `model_factory`
+* An optional `tokenizer_factory`
+* An optional `huggingface_token`
+
+**Please note**:
+* The former function `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()` is now deprecated and internally now also uses the function `install_huggingface_model()` described above.
+* The former function returned type `Path`, while the new implementation returns type `bfs.path.PathLike`.
 
 ## Using Prediction UDFs
 We provide 7 prediction UDFs in this Transformers Extension, each performing an NLP

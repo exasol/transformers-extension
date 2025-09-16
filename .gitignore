@@ -142,3 +142,9 @@ doc/_build
 .vagrant
 
 .html-documentation
+
+# Emacs
+TAGS
+
+# Exported SLC
+/export

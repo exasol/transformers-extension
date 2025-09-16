@@ -32,8 +32,8 @@ def make_parameters_of_model_contiguous_tensors(model):
 class HuggingFaceHubBucketFSModelTransferSP:
     """
     Class for downloading a model using the Huggingface Transformers API,
-    saving it locally using transformers save_pretrained,
-    and loading the saved model files into the BucketFS.
+    saving it locally using transformers save_pretrained (SP), and uploading
+    the saved model files into the BucketFS.
 
     :bucketfs_location:                 BucketFSLocation the model should be loaded to
     :model_specification:               Holds information specifying details of

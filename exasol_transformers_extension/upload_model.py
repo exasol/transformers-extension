@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Optional
 
 import click
-import transformers
+import transformers as huggingface
 from exasol.bucketfs._path import PathLike
 from exasol.python_extension_common.cli.std_options import (
     StdTags,
@@ -22,13 +23,17 @@ from exasol_transformers_extension.deploy import (
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
+from exasol_transformers_extension.utils.bucketfs_operations import relative_to
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSP,
 )
+from exasol_transformers_extension.utils.model_utils import install_huggingface_model
 
 MODEL_NAME_ARG = "model_name"
 TASK_TYPE_ARG = "task_type"
 SUBDIR_ARG = "sub_dir"
+
+LOG = logging.getLogger(__name__)
 
 opt_token = {"type": str, "help": "Huggingface token for private models"}
 make_option_secret(opt_token, prompt="Huggingface token")
@@ -65,19 +70,21 @@ def upload_model(**kwargs) -> None:
     """
     Downloads model from Huggingface hub and the transfers model to database
     """
-    # create bucketfs location
     bucketfs_location = create_bucketfs_location(**kwargs)
-
-    model_tar_file_path = upload_model_to_bfs_location(
+    spec = BucketFSModelSpecification(
         kwargs[MODEL_NAME_ARG],
         kwargs[TASK_TYPE_ARG],
+        "",
         Path(kwargs[SUBDIR_ARG]),
-        bucketfs_location,
-        kwargs[TOKEN_ARG],
+    )
+    upload_path = install_huggingface_model(
+        bucketfs_location=bucketfs_location,
+        model_spec=spec,
+        tokenizer_factory=huggingface.AutoTokenizer,
+        huggingface_token=kwargs[TOKEN_ARG],
     )
     print(
-        "Your model or tokenizer has been saved in the BucketFS at: "
-        + str(model_tar_file_path)
+        "Your model or tokenizer has been saved in the BucketFS at: " + str(upload_path)
     )
 
 
@@ -89,6 +96,12 @@ def upload_model_to_bfs_location(
     huggingface_token: str | None = None,
 ) -> Path:
     """
+    Deprecated.
+
+    Please use
+    exasol_transformers_extension.utils.model_utils.install_huggingface_model()
+    instead.
+
     Downloads model from Huggingface hub and the transfers model to
     database at bucketfs_location
 
@@ -102,25 +115,20 @@ def upload_model_to_bfs_location(
     returns
         path model/tokenizer is saved at in the BucketFS
     """
-    # create BucketFSModelSpecification for model to be loaded
-    current_model_spec = BucketFSModelSpecification(model_name, task_type, "", subdir)
-    # upload the downloaded model files into bucketfs
-    upload_path = current_model_spec.get_bucketfs_model_save_path()
-
-    model_factory = current_model_spec.get_model_factory()
-
-    downloader = HuggingFaceHubBucketFSModelTransferSP(
-        bucketfs_location=bucketfs_location,
-        model_specification=current_model_spec,
-        bucketfs_model_path=upload_path,
-        token=huggingface_token,
+    LOG.warning(
+        "This function is deprecated. "
+        "Please use exasol_transformers_extension.utils"
+        ".model_utils.install_huggingface_model() instead."
     )
-
-    for model in [model_factory, transformers.AutoTokenizer]:
-        downloader.download_from_huggingface_hub(model)
-        # upload model files to BucketFS
-    model_tar_file_path = downloader.upload_to_bucketfs()
-    return model_tar_file_path
+    mspec = BucketFSModelSpecification(model_name, task_type, "", subdir)
+    upload_path = install_huggingface_model(
+        bucketfs_location=bucketfs_location,
+        model_spec=mspec,
+        huggingface_token=huggingface_token,
+    )
+    # Return instance of Path representing the upload_path relative to
+    # bucketfs_location.
+    return relative_to(bucketfs_location, upload_path)
 
 
 upload_model_command = click.Command(None, params=opts, callback=upload_model)
