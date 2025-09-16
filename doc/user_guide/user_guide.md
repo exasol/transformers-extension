@@ -269,11 +269,18 @@ Many UDFs use a set of common parameters:
 
 ## Store Models in BucketFS
 
-Before you can use pre-trained models, the models must be stored in the BucketFS, which can done with one of the these two options:
-* O1) The [Model Downloader UDF](#model-downloader-udf) downloads a Hugging Face transformers model directly into the Exasol database.
-* O2) The [Model Uploader Script](#model-uploader-script) uploads a model to the database, requiring the model to be downloaded to your local file system in advance.
+Before you can use pre-trained models, the models must be stored in the BucketFS.
 
-O2 is required in case you do not want to connect your Exasol database directly to the internet. Otherwise, O1 is the simpler option.
+There are two options to download a Hugging Face transformers model and upload it to the BucketFS of an Exasol database.
+
+|                                                        | [Model Downloader UDF](#model-downloader-udf) | [Model Uploader Script](#model-uploader-script) |
+|--------------------------------------------------------|-----------------------------------------------|-------------------------------------------------|
+| Convenience                                            | High                                          | Low                                             |
+| Exasol database must be enabled to access the internet | Yes                                           | No                                              |
+| Execution                                              | UDF inside the database                       | Python script outside the database              |
+| Temporary storage                                      | UDF's file system                             | Local file system outside the database          |
+
+The Uploader Script is required in case you do not want to connect your Exasol database directly to the internet. Otherwise, the UDF is more convenient.
 
 Note that the extension currently only supports the `PyTorch` framework. Please make sure that the selected models are in the `Pytorch` model library section.
 
