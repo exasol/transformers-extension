@@ -24,7 +24,7 @@ The extension provides two types of UDFs:
 * [Getting Started](#getting-started)
 * [Setup](#setup)
 * [Model Downloader UDF](#model-downloader-udf)
-* [Prediction UDFs](#prediction-udfs)
+* [Prediction UDFs](#using-prediction-udfs)
   1. [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
   2. [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
   3. [Question Answering UDF](#question-answering-udf)
@@ -36,13 +36,13 @@ The extension provides two types of UDFs:
 
 ## Introduction
 
-This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol Cluster.
+This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol cluster.
 
-User Defined Functions (UDFs) are scripts in various programming languages that can be executed in the Exasol Database. They can be used by a user for more flexibility in data processing. With the Transformers Extension, we provide multiple UDFs for you to use on your Exasol Database. You can find more detailed documentation on UDFs on the [UDF Scripts page](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
+User Defined Functions (UDFs) are scripts in various programming languages that can be executed in the Exasol database. They can be used by a user for more flexibility in data processing. With the Transformers Extension, we provide multiple UDFs for you to use on your Exasol database. You can find more detailed documentation on UDFs on the [UDF Scripts page](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
 
-UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face models on the Exasol Cluster.
+UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face models on the Exasol cluster.
 
-More information on the BucketFS can be found [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
+More information on the BucketFS can be found at [docs.exasol.com](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
 
@@ -199,7 +199,7 @@ python -m exasol_transformers_extension.deploy <options>
 
 #### The Pre-built Language Container
 
-The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install the required programming language and necessary dependencies in the Exasol Database so that UDF scripts can be executed. The version of the installed SLC must match the version of the Transformers Extension package.  See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
+The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install the required programming language and necessary dependencies in the Exasol database so that UDF scripts can be executed. The version of the installed SLC must match the version of the Transformers Extension package.  See [the latest release](https://github.com/exasol/transformers-extension/releases) on GitHub.
 
 #### List of Options
 
@@ -229,10 +229,10 @@ Many UDFs use a set of common parameters:
 ## Store Models in BucketFS
 
 Before you can use pre-trained models, the models must be stored in the BucketFS, which can done with one of the these two options:
-* O1) The [Model Downloader UDF](#model-downloader-udf) downloads a Hugging Face transformers model directly into the Exasol Database.
+* O1) The [Model Downloader UDF](#model-downloader-udf) downloads a Hugging Face transformers model directly into the Exasol database.
 * O2) The [Model Uploader Script](#model-uploader-script) uploads a model to the database, requiring the model to be downloaded to your local file system in advance.
 
-O2 is required in case you do not want to connect your Exasol Database directly to the internet. Otherwise, O1 is the simpler option.
+O2 is required in case you do not want to connect your Exasol database directly to the internet. Otherwise, O1 is the simpler option.
 
 Note that the extension currently only supports the `PyTorch` framework. Please make sure that the selected models are in the `Pytorch` model library section.
 
@@ -357,7 +357,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 * Specific parameters:
   * `text_data`: The input text to be classified
 
-The inference results are presented with predicted _LABEL_ and confidence _SCORE_ columns, combined with the inputs used when calling this UDF. In case of any error during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+The inference results are presented with predicted _LABEL_ and confidence _SCORE_ columns, combined with the inputs used when calling this UDF. In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|---------|-------|---------------|
@@ -392,7 +392,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 
 The inference results are presented with predicted _LABEL_ and confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
 
-In case of any error during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
 ### Question Answering UDF
 
@@ -428,7 +428,7 @@ The inference results are presented with predicted _ANSWER_, confidence _SCORE_,
 
 If `top_k` > 1, each input row is repeated for each answer.
 
-In case of any error during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
 Example:
 
@@ -468,7 +468,7 @@ SELECT TE_FILLING_MASK_UDF(
 
 The inference results are presented with _FILLED_TEXT_, confidence _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.  If `top_k` > 1, each input row is repeated for each prediction.
 
-In case of any error during model loading or prediction, these new columns are set to `null` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
@@ -506,7 +506,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 
 The inference results are presented with _GENERATED_TEXT_ column, combined with the inputs used when calling this UDF.
 
-In case of any error during model loading or prediction, these new columns are set to `null`, and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column.
+In case of any error during model loading or prediction, these new columns are set to `NULL`, and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column.
 
 ### Token Classification UDF
 
@@ -535,7 +535,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   * `model_name`
 * Specific parameters:
   * `text_data`: The text to analyze.
-  * `aggregation_strategy`:  The strategy to fuse (or not) tokens based on the model prediction. It is set to `simple` strategy by default, if you supply NULL. Please check [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
+  * `aggregation_strategy`: The strategy about whether to fuse tokens based on the model prediction. `NULL` means "simple" strategy, see [huggingface.co](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
 
 The inference results are presented by combining with the inputs used when calling this UDF with:
 * _START_POS_ indicating the index of the starting character of the token,
@@ -545,7 +545,7 @@ The inference results are presented by combining with the inputs used when calli
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 
-In case of any error during model loading or prediction, these new columns are set to `null`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
 Example:
 
@@ -584,7 +584,7 @@ SELECT TE_TRANSLATION_UDF(
 
 The inference results are presented with _TRANSLATION_TEXT_ column, combined with the inputs used when calling this UDF.
 
-In case of any error during model loading or prediction, these new columns are set to `null`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
@@ -619,7 +619,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 
 The inference results are presented with predicted _LABEL_, _SCORE_ and _RANK_ columns, combined with the inputs used when calling this UDF.
 
-In case of any error during model loading or prediction, these new columns are set to `null`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|-----------|------------------|--------|-------|------|---------------|
