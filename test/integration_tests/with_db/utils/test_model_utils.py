@@ -31,7 +31,7 @@ def not_raises(exception):
         raise pytest.fail(f"Did raise {exception}")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def load_model_udf(
     language_alias: str,
     db_schema_name: str,
