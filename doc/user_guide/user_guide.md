@@ -395,7 +395,11 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 * Specific parameters:
   * `text_data`: The input text to be classified
 
-The inference results are presented with predicted _LABEL_ and confidence _SCORE_ columns, combined with the inputs used when calling this UDF. In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+The output presents the input columns passed to the UDF plus additiuonal columns containing the inference results predicted _LABEL_ and confidence _SCORE_.
+
+In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+
+Example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|---------|-------|---------------|
