@@ -38,9 +38,11 @@ The extension provides two types of UDFs:
 
 This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API in order to use pre-trained models on an Exasol Cluster.
 
-User Defined Function, UDFs for short, are scripts in various programming languages that can be executed in the Exasol Database. They can be used by the user for more flexibility in data processing.  In this Extension we provide multiple UDFs for you to use on your Exasol Database.  You can find a more detailed documentation on UDFs [here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
+User Defined Functions, UDFs for short, are scripts in various programming languages that can be executed in the Exasol Database. They can be used by the user for more flexibility in data processing. In this Extension we provide multiple UDFs for you to use on your Exasol Database. You can find a more detailed documentation on UDFs [here](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
 
-UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face models on the Exasol Cluster. More information on The BucketFS can be found [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
+UDFs and the necessary [Script language Container](https://docs.exasol.com/db/latest/database_concepts/udf_scripts/adding_new_packages_script_languages.htm) are stored in Exasol's file system BucketFS, and we also use this to store the Hugging Face models on the Exasol Cluster.
+
+More information on The BucketFS can be found [here](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 ## Getting Started
 
@@ -51,7 +53,11 @@ UDFs and the necessary [Script language Container](https://docs.exasol.com/db/la
 
 ### BucketFS Connection
 
-An Exasol connection object must be created with Exasol BucketFS connection information and credentials.  Normally, the connection object is created as part of the Transformers Extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below). This section describes how this object can be created manually.
+An Exasol connection object must be created with Exasol BucketFS connection information and credentials.
+
+Normally, the connection object is created as part of the Transformers Extension deployment (see the [Setup section](#deploy-the-extension-to-the-database) below).
+
+This section describes how this object can be created manually.
 
 The format of the connection object is as following:
   ```sql
@@ -61,30 +67,39 @@ The format of the connection object is as following:
       IDENTIFIED BY '<BUCKETFS_PASSWORD>'
   ```
 
-`<BUCKETFS_ADDRESS>`, `<BUCKETFS_USER>` and `<BUCKETFS_PASSWORD>` are JSON strings whose content depends on the storage backend.  Below is the description of the parameters that need to be passed for On-Prem and SaaS databases. The distribution of the parameters among those three JSON strings do not matter. However, we recommend to put secrets like passwords and or access tokens into the `<BUCKETFS_PASSWORD>` part.
+`<BUCKETFS_ADDRESS>`, `<BUCKETFS_USER>` and `<BUCKETFS_PASSWORD>` are JSON strings whose content depends on the storage backend.
 
-**On-Prem Database**
-* url: URL of the BucketFS service, e.g. "http(s)://127.0.0.1:2580".
-* username: BucketFS username (generally, different from the DB username).
-* password: BucketFS user password.
-* bucket_name: Name of the bucket in the BucketFS.
-* verify: Optional parameter that can be either a boolean, in which case it controls whether the server's
-    TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``. To use a custom CA bundle, firstly it needs to be uploaded to the BucketFS. Below is an example curl command that puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
-    ```commandline
-    curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
-    ```
-    For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm). Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database. The CA bundle path should have the following format:
-    ```
-    /buckets/<service-name>/<bucket-name>/<path-to-the-file-or-directory>
-    ```
-    For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``. Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at respectively ``upload`` and ``default``.
-* service_name: Name of the BucketFS service.
+Below is the description of the parameters that need to be passed for On-Prem and SaaS databases.
 
-**SaaS Database**
-* url: Optional URL of the Exasol SaaS. Defaults to 'https://cloud.exasol.com'.
-* account_id: SaaS user account ID.
-* database_id: Database ID.
-* pat: Personal Access Token.
+The distribution of the parameters among those three JSON strings do not matter.
+
+However, we recommend to put secrets like passwords and or access tokens into the `<BUCKETFS_PASSWORD>` part.
+
+#### Parameters of the Adress Part of the Connection Object
+
+`<BUCKET_ADDRESS>` contains various subparameters, e.g.
+
+```sql
+{"url": "https://my_cluster_11:6583", "bucket_name": "default", "service_name": "bfsdefault"}
+```
+
+The number of subparameters and their names depended on the type of database you are connecting to:
+
+**SaaS Database**:
+
+* `url`: Optional URL of the Exasol SaaS. Defaults to https://cloud.exasol.com.
+* `account_id`: SaaS user account ID.
+* `database_id`: Database ID.
+* `pat`: Personal access token.
+
+**On-Prem Database**:
+
+* `url`: URL of the BucketFS service, e.g. `http(s)://127.0.0.1:2580`.
+* `username`: BucketFS username (generally, different from the DB username, e.g. `w` for writing).
+* `password`: BucketFS user password.
+* `bucket_name`: Name of the bucket in the BucketFS, e.g. `default`.
+* `service_name`: Name of the BucketFS service, e.g. `bfsdefault`.
+* `verify`: Optional parameter that can be either a boolean, in which case it controls whether the server's TLS certificate is verified, or a string, in which case it must be a path to a CA bundle to use. Defaults to ``true``.
 
 Here is an example of a connection object for an On-Prem database.
 
@@ -96,6 +111,26 @@ CREATE OR REPLACE CONNECTION "MyBucketFSConnection"
 ```
 
 For more information please check the [Create Connection in Exasol](https://docs.exasol.com/sql/create_connection.htm?Highlight=connection) document.
+
+#### Custom Certificates and Certificate Authorities
+
+For using a custom CA bundle you first need to upload it to the BucketFS.
+
+The following command puts a bundle in a single file called `ca_bundle.pem` to the bucket `bucket1` in a subdirectory `tls`:
+
+```Shell
+curl -T ca_bundle.pem https://w:w-password@192.168.6.75:1234/bucket1/tls/ca_bundle.pem
+```
+
+For more details on uploading files to the BucketFS see the [Exasol documentation](https://docs.exasol.com/db/latest/database_concepts/bucketfs/file_access.htm).
+
+Please use the [Exasol SaaS REST API](https://cloud.exasol.com/openapi/index.html#/Files) for uploading files to the BucketFS on a SaaS database. The CA bundle path should have the following format:
+
+```
+/buckets/<service-name>/<bucket-name>/<path-to-the-file-or-directory>
+```
+
+For example, if the service name is ``bfs_service1`` and the bundle was uploaded with the above curl command, the path should look like ``/buckets/bfs_service1/bucket1/tls/ca_bundle.pem``. Please note that for the BucketFS on a SaaS database, the service and bucket names are fixed at respectively ``upload`` and ``default``.
 
 ### Huggingface token
 
@@ -111,7 +146,12 @@ CREATE OR REPLACE CONNECTION <TOKEN_CONNECTION_NAME>
 
 ### Install the Python Package
 
-There are multiple ways to install the Python Package. You can use Pip install, Download the Wheel from GitHub or build the project yourself.  Additionally, you will need a Script Language Container. Find the how-to below.
+There are multiple ways to install the Python package:
+* [Pip install](#pip)
+* [Download the Wheel from GitHub](#download-and-install-the-python-wheel-package)
+* [Build the project yourself](#build-the-project-yourself)
+
+Additionally, you will need a Script Language Container, see [The Pre-built Language Container](#the-pre-built-language-container) for instructions.
 
 #### Pip
 
@@ -157,11 +197,11 @@ The Transformers Extension must be deployed to the database using the following 
 python -m exasol_transformers_extension.deploy <options>
 ```
 
-### The Pre-built Language Container
+#### The Pre-built Language Container
 
 The deployment includes the installation of the Script Language Container (SLC). The SLC is a way to install the required programming language and necessary dependencies in the Exasol Database so that UDF scripts can be executed. The version of the installed SLC must match the version of the Transformers Extension Package.  See [the latest release](https://github.com/exasol/transformers-extension/releases) on Github.
 
-### List of options
+#### List of options
 
 For information about the available options common to all Exasol extensions please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
 
@@ -188,11 +228,15 @@ Many UDFs are using a set of common parameters which are described in this secti
 
 ## Store Models in BucketFS
 
-Before you can use pre-trained models, the models must be stored in the BucketFS. We provide two different ways to load transformers models into the BucketFS. You may either use the Model Downloader UDF to download a Hugging Face transformers model directly from the Exasol Database, or you can download the model to your local file system and upload it to the Database using the Model Uploader Script.  The Model Downloader UDF is the simpler option, but if you do not want to connect your Exasol Database directly to the internet, the Model Uploader Script is an option for you.
+Before you can use pre-trained models, the models must be stored in the BucketFS, which can be by one of the following two options:
+* O1) The [Model Downloader UDF](#model-downloader-udf) downloads a Hugging Face transformers model directly into the Exasol Database.
+* O2) The [Model Uploader Script](#model-uploader-script) uploads a model to the Database, requiring the model to be downloaded to your local file system in advance.
 
-Note that the extension currently only supports the `PyTorch` framework.  Please make sure that the selected models are in the `Pytorch` model library section.
+O2 is required in case you don't want to connect your Exasol Database directly to the internet. Otherwise O1 is the simpler option.
 
-### 1. Model Downloader UDF
+Note that the extension currently only supports the `PyTorch` framework. Please make sure that the selected models are in the `Pytorch` model library section.
+
+### Model Downloader UDF
 
 Using the `TE_MODEL_DOWNLOADER_UDF` below, you can download the desired model from the huggingface hub and upload it to BucketFS.
 
@@ -232,7 +276,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 
 Some models can be used for multiple types of tasks, but transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an Incorrect task_type, o leaving the task_type empty may affect the models performance severely. Available task_types are the same as the names of our available UDFs, namely: `filling_mask`, `question_answering`, `sequence_classification`, `text_generation`, `token_classification`, `translation` and`zero_shot_classification`.
 
-### 2. Model Uploader Script
+### Model Uploader Script
 
 You can invoke the Python script below which downloads the transformer models from The Hugging Face hub to the local filesystem, and uploads it to the BucketFS.
 
