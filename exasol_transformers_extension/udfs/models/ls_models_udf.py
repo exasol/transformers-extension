@@ -31,7 +31,7 @@ class ListModelsUDF:
         self._output = []
         self._error_message = None
 
-    def run(self, ctx) -> None:
+    def run(self, ctx) -> None:#todo input scalar emits
         self._list_models(ctx)
         for model_info in self._output:
             ctx.emit(*model_info)
@@ -54,7 +54,6 @@ class ListModelsUDF:
                             pass
 
         return model_paths_list
-
 
     def _parse_model_info_from_path(self, model_paths_list: set[str], sub_dir: str, bfs_conn_name: str) -> None:
         for model_path in model_paths_list:
