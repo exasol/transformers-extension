@@ -27,7 +27,9 @@ The extension provides two types of UDFs:
   * [BucketFS Connection](#bucketfs-connection)
     * [Parameters of the Address Part of the Connection Object](#parameters-of-the-address-part-of-the-connection-object)
     * [Custom Certificates and Certificate Authorities](#custom-certificates-and-certificate-authorities)
-  * [Huggingface token](#huggingface-token)
+      * [Uploading to the BucketFS of an On-Prem Database](#uploading-to-the-bucketfs-of-an-on-prem-database)
+      * [Uploading to the BucketFS of a SaaS Database](#uploading-to-the-bucketfs-of-a-saas-database)
+  * [Hugging Face Token](#hugging-face-token)
 * [Setup](#setup)
   * [Install the Python Package](#install-the-python-package)
     * [Pip](#pip)
@@ -37,6 +39,7 @@ The extension provides two types of UDFs:
     * [The Pre-built Language Container](#the-pre-built-language-container)
     * [List of Options](#list-of-options)
 * [Common UDF Parameters](#common-udf-parameters)
+* [Common Output Behavior](#common-output-behavior)
 * [Store Models in BucketFS](#store-models-in-bucketfs)
   * [Model Downloader UDF](#model-downloader-udf)
     * [Name Server](#name-server)
@@ -54,6 +57,7 @@ The extension provides two types of UDFs:
   * [Text Translation UDF](#text-translation-udf)
   * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
 <!-- TOC -->
+
 
 ## Introduction
 
