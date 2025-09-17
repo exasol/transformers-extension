@@ -346,12 +346,12 @@ For information about the available options common to all Exasol extensions, ple
 
 In addition, this command provides the following options:
 
-| Option name      | Comment                                                           |
-|------------------|-------------------------------------------------------------------|
-| `--model-name`   | Name of the model, as seen in the Hugging Face hub            |
-| `--task-type`    | See the explanations below                                        |
-| `--sub-dir`      | Sub-directory in the BucketFS where this model should be stored   |
-| `--token`        | The [Hugging Face token](#huggingface-token), if required           |
+| Option name    | Comment                                                         |
+|----------------|-----------------------------------------------------------------|
+| `--model-name` | Name of the model, as seen in the Hugging Face hub              |
+| `--task-type`  | See the explanations below                                      |
+| `--sub-dir`    | Sub-directory in the BucketFS where this model should be stored |
+| `--token`      | The [Hugging Face token](#huggingface-token), if required       |
 
 `--task-type` specifies the type of task for which you plan to use the model, see [Selecting the Task Type](#selecting-the-task-type).
 
@@ -439,7 +439,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
   * `first_text`: The first input text
   * `second_text`: The second input text
 
-The inference results are presented with predicted _LABEL_ and confidence _SCORE_ columns, combined with the inputs used when calling this UDF.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _LABEL_ and its confidence _SCORE_.
 
 In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
@@ -473,7 +473,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
      * Note that, `k` number of answers are not guaranteed.
      * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk).
 
-The inference results are presented with predicted _ANSWER_, confidence _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _ANSWER_, confidence _SCORE_, and _RANK_.
 
 If `top_k` > 1, each input row is repeated for each answer.
 
@@ -515,7 +515,9 @@ SELECT TE_FILLING_MASK_UDF(
   * `text_data`: The text data containing masking tokens
   * `top_k`: The number of predictions to return.
 
-The inference results are presented with _FILLED_TEXT_, confidence _SCORE_, and _RANK_ columns, combined with the inputs used when calling this UDF.  If `top_k` > 1, each input row is repeated for each prediction.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _FILLED_TEXT_, confidence _SCORE_, and _RANK_.
+
+If `top_k` > 1, each input row is repeated for each prediction.
 
 In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
@@ -553,7 +555,7 @@ SELECT TE_TEXT_GENERATION_UDF(
   * `max_length`: The maximum total length of text to be generated.
   * `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
 
-The inference results are presented with _GENERATED_TEXT_ column, combined with the inputs used when calling this UDF.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _GENERATED_TEXT_.
 
 In case of any error during model loading or prediction, these new columns are set to `NULL`, and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column.
 
@@ -586,11 +588,12 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
   * `text_data`: The text to analyze.
   * `aggregation_strategy`: The strategy about whether to fuse tokens based on the model prediction. `NULL` means "simple" strategy, see [huggingface.co](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
 
-The inference results are presented by combining with the inputs used when calling this UDF with:
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e.
 * _START_POS_ indicating the index of the starting character of the token,
 * _END_POS_ indicating the index of the ending character of the token,
 * _WORD_ indicating the token,
-* predicted _ENTITY_, and confidence _SCORE_ columns.
+* predicted _ENTITY_,
+* and confidence _SCORE_.
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 
@@ -631,7 +634,7 @@ SELECT TE_TRANSLATION_UDF(
   * `target_language`:  The language of the desired output. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
   * `max_length`: The maximum total length of the translated text.
 
-The inference results are presented with _TRANSLATION_TEXT_ column, combined with the inputs used when calling this UDF.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _TRANSLATION_TEXT_.
 
 In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
@@ -666,7 +669,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
   * `text_data`: The text to be classified.
   * `candidate labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
 
-The inference results are presented with predicted _LABEL_, _SCORE_ and _RANK_ columns, combined with the inputs used when calling this UDF.
+The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _LABEL_, _SCORE_ and _RANK_.
 
 In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
 
