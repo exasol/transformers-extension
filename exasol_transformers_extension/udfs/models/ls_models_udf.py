@@ -59,9 +59,9 @@ class ListModelsUDF:
     def _parse_model_info_from_path(self, model_paths_list: set[str], sub_dir: str, bfs_conn_name: str) -> None:
         for model_path in model_paths_list:
             try:
-                model_spec = create_model_specs_from_path(Path(model_path), sub_dir)
+                model_spec, warning = create_model_specs_from_path(Path(model_path), sub_dir)
                 self._output.append([bfs_conn_name, sub_dir, model_spec.model_name, model_spec.task_type, model_path,
-                               self._error_message])
+                               self._error_message + warning])
             except Exception as exc:
                 self._error_message = traceback.format_exc()
                 self._output.append([bfs_conn_name, sub_dir, "", "", model_path, self._error_message])

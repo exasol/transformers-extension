@@ -99,17 +99,19 @@ def split_path_using_subdir(path_parts: tuple[str, ...] ,model_path: pathlib.Pat
     return name_prefix, model_specific_path_suffix
 
 
-def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str, str]:
+def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str, str, str]:
     # if no known_task_type was found, our best guess is to split the model_specific_path_suffix on "_"
     # and select task_type and model_name accordingly, because
     # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
     # this might create wrong results if the user choose to use a task_name containing a "_".
+    warning = ("We found a model, which was saved using a task_name we don't recognize. "
+               "As a result, we can only give a best guess on how to parse the model_name and task.")
     try:
         model_specific_path_suffix_split = model_specific_path_suffix.split("_")
         if len(model_specific_path_suffix_split) > 1:
             model_name = "/".join([name_prefix, "".join(model_specific_path_suffix_split[0:-1])])
             task_name = model_specific_path_suffix_split[-1]
-        return model_name, task_name
+        return model_name, task_name, warning
     except:
         error_message = ("couldn't find a task name in path suffix %s", model_specific_path_suffix)
         raise ValueError(error_message)
@@ -117,9 +119,10 @@ def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str
 def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix):
     task_name = ""
     model_name = ""
+    warning = None
     if not found_task_names:
         try:
-            model_name, task_name = best_guess_model_specs(model_specific_path_suffix, name_prefix)
+            model_name, task_name, warning = best_guess_model_specs(model_specific_path_suffix, name_prefix)
         except ValueError as e:
             raise e
 
@@ -134,14 +137,15 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
 
     if not task_name or not model_name:
         try:
-            model_name, task_name = best_guess_model_specs(model_specific_path_suffix, name_prefix)
+            model_name, task_name, warning = best_guess_model_specs(model_specific_path_suffix, name_prefix)
         except ValueError as e:
             raise e
-    return model_name, task_name
+    return model_name, task_name, warning
 
 
-def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecification:
+def create_model_specs_from_path(model_path: Path, sub_dir) -> tuple[ModelSpecification, str]:
         path_parts = model_path.parts
+        warning = None
 
         try:
             name_prefix, model_specific_path_suffix = split_path_using_subdir(path_parts,
@@ -154,9 +158,9 @@ def create_model_specs_from_path(model_path: Path, sub_dir) -> ModelSpecificatio
         found_task_names = [key for key in ModelTypeData.model_factory_dict.keys() if key in model_specific_path_suffix]
 
         try:
-            model_name, task_name = get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix)
+            model_name, task_name, warning = get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix)
         except ValueError as e:
             raise e
 
-        return ModelSpecification(model_name, task_name)
+        return ModelSpecification(model_name, task_name), warning
 
