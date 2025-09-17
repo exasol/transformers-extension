@@ -1,5 +1,5 @@
 """Class ModelSpecification describing a specific model."""
-
+import pathlib
 from pathlib import PurePosixPath, Path
 from dataclasses import dataclass
 

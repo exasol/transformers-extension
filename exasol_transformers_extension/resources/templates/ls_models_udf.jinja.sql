@@ -1,4 +1,4 @@
-CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_LIST_MODELS_UDF"(
+CREATE OR REPLACE {{ language_alias }} SCALAR SCRIPT "TE_LIST_MODELS_UDF"(
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000)
 ) EMITS (
