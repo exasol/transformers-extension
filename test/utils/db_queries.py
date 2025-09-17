@@ -12,6 +12,7 @@ expected_script_list_without_span = [
     "TE_TOKEN_CLASSIFICATION_UDF",
     "TE_TRANSLATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF",
+    "TE_LIST_MODELS_UDF",
 ]
 
 expected_script_list_with_span = [
@@ -25,6 +26,7 @@ expected_script_list_with_span = [
     "TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN",
     "TE_TRANSLATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF_WITH_SPAN",
+    "TE_LIST_MODELS_UDF",
 ]
 
 expected_script_list_all = [
@@ -40,6 +42,7 @@ expected_script_list_all = [
     "TE_TRANSLATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF",
     "TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF_WITH_SPAN",
+    "TE_LIST_MODELS_UDF",
 ]
 
 

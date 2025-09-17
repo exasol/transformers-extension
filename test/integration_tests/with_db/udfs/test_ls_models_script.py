@@ -41,7 +41,7 @@ def test_list_models_script(
 
     for input_data_set, expected_result in test_data_sets:
         query = (
-            f"SELECT TE_LS_MODELS_UDF("
+            f"SELECT TE_LIST_MODELS_UDF("
             f"t.bucketfs_conn_name, "
             f"t.sub_dir "
             f") FROM (VALUES {python_rows_to_sql(input_data_set)} "
