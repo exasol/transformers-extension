@@ -267,6 +267,12 @@ Many UDFs use a set of common parameters:
 * `sub_dir`: The directory where the model is stored in the BucketFS.
 * `model_name`: The name of the model to use for prediction. You can find the details of the models on the [Hugging Face models page](https://huggingface.co/models).
 
+## Common Output Behavior
+
+Each of the UDFs generates an output containing the original input columns passed to the UDF plus additional columns containing the inference results.
+
+In case of any error during model loading or prediction, the additional output columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+
 ## Store Models in BucketFS
 
 Before you can use pre-trained models, the models must be stored in the BucketFS.
@@ -312,14 +318,15 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `model_name`
-  * `task_type`
-  * `sub_dir`
-  * `bucketfs_conn`
-* Specific parameters:
-  * `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](#getting-started) section.
-  * `task_type`: See below.
+[Common Parameters](#common-udf-parameters)
+* `model_name`
+* `task_type`
+* `sub_dir`
+* `bucketfs_conn`
+
+Specific parameters
+* `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](#getting-started) section.
+* `task_type`: See below.
 
 #### Selecting the Task Type
 
@@ -394,17 +401,18 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The input text to be classified
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _LABEL_ and its confidence _SCORE_.
+Specific parameters
+* `text_data`: The input text to be classified
 
-In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+Additional output columns
+* _LABEL_: the prediction
+* _SCORE_: the confidence
 
 Example:
 
@@ -430,18 +438,19 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `first_text`: The first input text
-  * `second_text`: The second input text
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _LABEL_ and its confidence _SCORE_.
+Specific parameters
+* `first_text`: The first input text
+* `second_text`: The second input text
 
-In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+Additional output columns
+* _LABEL_: the prediction
+* _SCORE_: the confidence
 
 ### Question Answering UDF
 
@@ -461,23 +470,25 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `question`: The question text
-  * `context_text`: The context text, associated with question
-  * `top_k`: The number of answers to return.
-     * Note that, `k` number of answers are not guaranteed.
-     * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk).
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _ANSWER_, confidence _SCORE_, and _RANK_.
+Specific parameters
+* `question`: The question text
+* `context_text`: The context text, associated with question
+* `top_k`: The number of answers to return.
+   * Note that, `k` number of answers are not guaranteed.
+   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk).
+
+Additional output columns
+* _ANSWER_: the prediction
+* _SCORE_: the confidence
+* _RANK_: the rank of the answer
 
 If `top_k` > 1, each input row is repeated for each answer.
-
-In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
 Example:
 
@@ -489,9 +500,7 @@ Example:
 
 ### Masked Language Modelling UDF
 
-This UDF is responsible for masking tokens in a given text with a masking token,
-and then filling that masks with appropriate tokens. The masking token of
-this UDF is ```<mask>```.
+This UDF is responsible for masking tokens in a given text with a masking token, and then filling that masks with appropriate tokens. The masking token of this UDF is ```<mask>```.
 
 Example usage:
 
@@ -506,20 +515,24 @@ SELECT TE_FILLING_MASK_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The text data containing masking tokens
-  * `top_k`: The number of predictions to return.
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _FILLED_TEXT_, confidence _SCORE_, and _RANK_.
+Specific parameters
+* `text_data`: The text data containing masking tokens
+* `top_k`: The number of predictions to return.
+
+Additional output columns
+* _FILLED_TEXT_: the filled text
+* _SCORE_: the confidence
+* _RANK_: the rank of the answer
 
 If `top_k` > 1, each input row is repeated for each prediction.
 
-In case of any error during model loading or prediction, these new columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+Example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
@@ -545,19 +558,19 @@ SELECT TE_TEXT_GENERATION_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The context text.
-  * `max_length`: The maximum total length of text to be generated.
-  * `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _GENERATED_TEXT_.
+Specific parameters
+* `text_data`: The context text.
+* `max_length`: The maximum total length of text to be generated.
+* `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
 
-In case of any error during model loading or prediction, these new columns are set to `NULL`, and you can see the stacktrace of the error in the _ERROR_MESSAGE_ column.
+Additional output columns
+* _GENERATED_TEXT_: the generated text
 
 ### Token Classification UDF
 
@@ -579,25 +592,24 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The text to analyze.
-  * `aggregation_strategy`: The strategy about whether to fuse tokens based on the model prediction. `NULL` means "simple" strategy, see [huggingface.co](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e.
-* _START_POS_ indicating the index of the starting character of the token,
-* _END_POS_ indicating the index of the ending character of the token,
-* _WORD_ indicating the token,
-* predicted _ENTITY_,
-* and confidence _SCORE_.
+Specific parameters
+* `text_data`: The text to analyze.
+* `aggregation_strategy`: The strategy about whether to fuse tokens based on the model prediction. `NULL` means "simple" strategy, see [huggingface.co](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
+
+Additional output columns
+* _START_POS_: the index of the starting character of the token
+* _END_POS_: index of the ending character of the token
+* _WORD_: the token
+* _ENTITY_: the prediciton
+* _SCORE_: the confidence
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
-
-In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
 
 Example:
 
@@ -623,20 +635,22 @@ SELECT TE_TRANSLATION_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The text to translate.
-  * `source_language`: The language of the input. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-  * `target_language`:  The language of the desired output. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-  * `max_length`: The maximum total length of the translated text.
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. _TRANSLATION_TEXT_.
+Specific parameters
+* `text_data`: The text to translate.
+* `source_language`: The language of the input. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+* `target_language`:  The language of the desired output. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+* `max_length`: The maximum total length of the translated text.
 
-In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+Additional output columns
+* _TRANSLATION_TEXT_: the translated text
+
+Example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
@@ -660,18 +674,22 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 )
 ```
 
-* [Common Parameters](#common-udf-parameters):
-  * `device_id`
-  * `bucketfs_conn`
-  * `sub_dir`
-  * `model_name`
-* Specific parameters:
-  * `text_data`: The text to be classified.
-  * `candidate labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
+[Common Parameters](#common-udf-parameters)
+* `device_id`
+* `bucketfs_conn`
+* `sub_dir`
+* `model_name`
 
-The output presents the input columns passed to the UDF plus additional columns containing the inference results, i.e. the predicted _LABEL_, _SCORE_ and _RANK_.
+Specific parameters
+* `text_data`: The text to be classified.
+* `candidate labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
 
-In case of any error during model loading or prediction, these new columns are set to `NULL`, and column _ERROR_MESSAGE_ is set to the stacktrace of the error. For example:
+Additional output columns
+* _LABEL_: the prediction
+* _SCORE_: the confidence
+* _RANK_: the rank of the label
+
+Example:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|-----------|------------------|--------|-------|------|---------------|
