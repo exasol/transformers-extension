@@ -1,9 +1,11 @@
 import os
+import pathlib
 import traceback
 from pathlib import Path
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 from exasol.bucketfs._path import PathLike
+from sympy.logic.boolalg import Boolean
 from transformers import AutoConfig
 
 from exasol_transformers_extension.utils import bucketfs_operations
@@ -36,6 +38,13 @@ class ListModelsUDF:
         for model_info in self._output:
             ctx.emit(*model_info)
 
+    def _check_if_model_config(self, filepath: Path) -> bool:
+        try:
+            config = AutoConfig.from_pretrained(filepath)
+            return True
+        except Exception:
+            return False
+
     def _search_modelpaths_in_dir(self, sub_dir: str, bucketfs_location: PathLike) -> set[str]:
         model_paths_list = set()
         for main_dir, sub_dirs, files in os.walk(Path(bucketfs_location.as_udf_path()) / sub_dir):
@@ -44,26 +53,25 @@ class ListModelsUDF:
                     # models saved with .from_pretrained can have different file types and directory structures,
                     # but always have a config.json
                     # https://huggingface.co/docs/diffusers/main/using-diffusers/other-formats
-                    if file == "config.json":
-                        try:
-                            config = AutoConfig.from_pretrained(Path(main_dir)/file)
-                            # some models have multiple config files
-                            # todo main_dir might be different for different config_files. take highest level one?
-                            model_paths_list.add(main_dir)
-                        except:
-                            pass
+                    if file == "config.json" and self._check_if_model_config(Path(main_dir) / file):
+                        # todo main_dir might be different for different config_files. take highest level one?
+                        model_paths_list.add(main_dir)
 
         return model_paths_list
 
     def _parse_model_info_from_path(self, model_paths_list: set[str], sub_dir: str, bfs_conn_name: str) -> None:
         for model_path in model_paths_list:
             try:
-                model_spec, warning = create_model_specs_from_path(Path(model_path), sub_dir)
+                model_spec, warning = create_model_specs_from_path(pathlib.Path(model_path), sub_dir)
+                if warning:
+                    self._error_message = warning
                 self._output.append([bfs_conn_name, sub_dir, model_spec.model_name, model_spec.task_type, model_path,
-                               self._error_message + warning])
+                               self._error_message])
+                self._error_message = None
             except Exception as exc:
                 self._error_message = traceback.format_exc()
                 self._output.append([bfs_conn_name, sub_dir, "", "", model_path, self._error_message])
+                self._error_message = None
 
     def _list_models(self, ctx):
         # parameters
