@@ -1,4 +1,6 @@
 import os
+import pathlib
+from unittest.mock import patch
 
 from test.unit.utils.utils_for_base_udf_tests import (
     create_mock_metadata,
@@ -14,6 +16,7 @@ from exasol_udf_mock_python.mock_meta_data import MockMetaData
 from test.unit.utils.utils_for_udf_tests import (
     create_mock_exa_environment,
     create_mock_udf_context, assert_result_matches_expected_output,
+    assert_result_matches_expected_output_order_agnostic,
 )
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 
@@ -59,7 +62,7 @@ def setup_fake_model_files(mock_bucketfs_location, bfs_conn_name, sub_dir, token
 
     mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")
     mock_bucketfs_location.mkdir(Path(sub_dir) / qa_model_specs.get_model_specific_path_suffix())
-    os.mknod(mock_bucketfs_location / sub_dir / qa_model_specs.get_model_specific_path_suffix() + "/renamed_config.json")
+    os.mknod(mock_bucketfs_location / sub_dir / qa_model_specs.get_model_specific_path_suffix() + "/config.json")
 
     mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_unknown_task_type")
     mock_bucketfs_location.mkdir(Path(sub_dir) / "model_with_unknown_task_type/model-name_unknown-task")
@@ -71,20 +74,21 @@ def setup_fake_model_files(mock_bucketfs_location, bfs_conn_name, sub_dir, token
 
     expected_output = [
         (bfs_conn_name, sub_dir, token_model_specs.model_name, token_model_specs.task_type,
-         mock_bucketfs_location /sub_dir / (token_model_specs.get_model_specific_path_suffix()), None),
+         str(mock_bucketfs_location /sub_dir / (token_model_specs.get_model_specific_path_suffix())), None),
         (bfs_conn_name, sub_dir, 'model_with_unknown_task_type/model-name', 'unknown-task',
-         mock_bucketfs_location /sub_dir /'model_with_unknown_task_type/model-name_unknown-task', None),
+         str(mock_bucketfs_location /sub_dir /'model_with_unknown_task_type/model-name_unknown-task'),
+         "WARNING: We found a model which was saved using a task_name we don't recognize."),
         (bfs_conn_name, sub_dir, qa_model_specs.model_name, qa_model_specs.task_type,
-         mock_bucketfs_location / sub_dir / (qa_model_specs.get_model_specific_path_suffix()), None),
+         str(mock_bucketfs_location / sub_dir / (qa_model_specs.get_model_specific_path_suffix())), None),
         (bfs_conn_name, sub_dir, '', '',
-         sub_dir + '/model_with_no_task_type/model-name-no-task', "couldn\'t find a task name in path suffix")
+         str(mock_bucketfs_location /sub_dir / 'model_with_no_task_type/model-name-no-task'),
+         "ValueError: couldn't find a task name in path suffix model-name-no-task")
     ]
     return expected_output
 
 
 def test_ls_udf(tmpdir_factory):
-    # get specs for a valid huggingface model
-
+    # get specs for valid huggingface models
     token_model_specs = model_params.token_model_specs
     qa_model_specs = model_params.q_a_model_specs
     sub_dir = "subdir"
@@ -102,12 +106,12 @@ def test_ls_udf(tmpdir_factory):
     input_data = [(bfs_conn_name, sub_dir)]
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
-    udf = ListModelsUDF(
-        exa=mock_exa
-    )
-    udf.run(mock_ctx)
-    assert_result_matches_expected_output(mock_ctx.output, expected_output, ["bucketfs_conn", "sub_dir"])
-
+    with patch.object(ListModelsUDF, '_check_if_model_config', return_value=True) as _check_if_model_config:
+        udf = ListModelsUDF(
+            exa=mock_exa
+        )
+        udf.run(mock_ctx)
+    assert_result_matches_expected_output_order_agnostic(mock_ctx.output, expected_output, ["bucketfs_conn", "sub_dir"], sort_by_column=4)
 
 
 

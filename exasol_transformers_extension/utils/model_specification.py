@@ -84,7 +84,7 @@ class ModelSpecification:
         return model_factory
 
 
-def split_path_using_subdir(path_parts: tuple[str, ...] ,model_path: pathlib.Path, sub_dir: str) -> tuple[str, str]:
+def split_path_using_subdir(path_parts: tuple[str, ...], model_path: pathlib.Path, sub_dir: str) -> tuple[str, str]:
     # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
     # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
     # and everything between this and the sub-dir to be the model_name_prefix
@@ -104,7 +104,7 @@ def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str
     # and select task_type and model_name accordingly, because
     # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
     # this might create wrong results if the user choose to use a task_name containing a "_".
-    warning = ("We found a model, which was saved using a task_name we don't recognize. "
+    warning = ("WARNING: We found a model which was saved using a task_name we don't recognize. "
                "As a result, we can only give a best guess on how to parse the model_name and task.")
     try:
         model_specific_path_suffix_split = model_specific_path_suffix.split("_")
@@ -113,7 +113,7 @@ def best_guess_model_specs(model_specific_path_suffix, name_prefix) -> tuple[str
             task_name = model_specific_path_suffix_split[-1]
         return model_name, task_name, warning
     except:
-        error_message = ("couldn't find a task name in path suffix %s", model_specific_path_suffix)
+        error_message = ("couldn't find a task name in path suffix %s" % model_specific_path_suffix)
         raise ValueError(error_message)
 
 def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix):
@@ -143,7 +143,7 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
     return model_name, task_name, warning
 
 
-def create_model_specs_from_path(model_path: Path, sub_dir) -> tuple[ModelSpecification, str]:
+def create_model_specs_from_path(model_path: pathlib.Path, sub_dir) -> tuple[ModelSpecification, str]:
         path_parts = model_path.parts
         warning = None
 
