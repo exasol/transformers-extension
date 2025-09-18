@@ -8,12 +8,16 @@ T.B.D
 
 ## Features
 
-* #149: Added Python API for uploading a model to a given bucketfs location
+* #149: Added Python API for uploading a model to a given BucketFS location
 
 ## Bugfixes
 
-* #285: Fixed logic in model output quality checks of udf integration test
-* #285: Deactivated Saas tests because of a broken API
+* #285: Fixed logic in model output quality checks of UDF integration test
+* #285: Deactivated SaaS tests because of a broken API
+
+## Documentation
+
+* #319: Updated TE User Guide
 
 ## Refactorings
 
