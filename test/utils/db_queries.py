@@ -3,6 +3,7 @@ from typing import List
 
 expected_script_list_without_span = [
     "TE_MODEL_DOWNLOADER_UDF",
+    "TE_DELETE_MODEL_UDF",
     "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
     "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
     "TE_QUESTION_ANSWERING_UDF",
@@ -15,6 +16,7 @@ expected_script_list_without_span = [
 
 expected_script_list_with_span = [
     "TE_MODEL_DOWNLOADER_UDF",
+    "TE_DELETE_MODEL_UDF",
     "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
     "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
     "TE_QUESTION_ANSWERING_UDF",
@@ -27,6 +29,7 @@ expected_script_list_with_span = [
 
 expected_script_list_all = [
     "TE_MODEL_DOWNLOADER_UDF",
+    "TE_DELETE_MODEL_UDF",
     "TE_TOKEN_CLASSIFICATION_UDF",
     "TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF",
     "TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF",
