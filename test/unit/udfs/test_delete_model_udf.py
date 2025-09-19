@@ -20,7 +20,7 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
+from exasol_transformers_extension.udfs.models.delete_model_udf import DeleteModelUDF
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
     BucketFSModelSpecificationFactory,
@@ -54,7 +54,7 @@ def create_mock_metadata() -> MockMetaData:
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
-@patch("exasol_transformers_extension.udfs.models.delete_models_udf.delete_model")
+@patch("exasol_transformers_extension.udfs.models.delete_model_udf.delete_model")
 def test_delete_model(mock_delete_model, mock_create_loc, count):
     mock_bucketfs_locations = [Mock() for i in range(count)]
     mock_create_loc.side_effect = mock_bucketfs_locations

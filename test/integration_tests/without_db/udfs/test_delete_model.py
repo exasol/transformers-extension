@@ -12,7 +12,7 @@ from exasol.python_extension_common.connections.bucketfs_location import (
 )
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
+from exasol_transformers_extension.udfs.models.delete_model_udf import DeleteModelUDF
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )

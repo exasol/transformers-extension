@@ -1,4 +1,4 @@
-from exasol_transformers_extension.udfs.models.delete_models_udf import (
+from exasol_transformers_extension.udfs.models.delete_model_udf import (
     DeleteModelUDF,
 )
 
