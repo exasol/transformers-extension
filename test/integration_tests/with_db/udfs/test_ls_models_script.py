@@ -27,12 +27,13 @@ def test_list_models_script(
 
     input_data = [(bucketfs_conn_name, subdir)]
     expected_result = [(bucketfs_conn_name, subdir, model_specification.model_name, model_specification.task_type,
-                        "/buckets/bfsdefault/default/container/" + str(upload_tiny_model_to_bucketfs), None)]
+                        "/buckets/bfsdefault/default/container/" + str(upload_tiny_model_to_bucketfs),
+                        "WARNING: We found a model which was saved using a task_name we don't recognize.")]
     input_data_subdir_not_exist = [(bucketfs_conn_name, "non-existend-subdir")]
     expected_result_subdir_not_exist = [(bucketfs_conn_name, 'non-existend-subdir',
-                                         None, None, None, 'no models in this subdir')]#todo do we wat different message
+                                         None, None, None, None)]
     input_data_subdir_empty_string = [(bucketfs_conn_name, "")]
-    expected_result_data_subdir_empty_string = [(bucketfs_conn_name, 'None', None, None, None, 'no models in this subdir')]
+    expected_result_data_subdir_empty_string = [(bucketfs_conn_name, 'None', None, None, None, None)]
 
     test_data_sets = [(input_data, expected_result),
                       (input_data_subdir_not_exist, expected_result_subdir_not_exist),
