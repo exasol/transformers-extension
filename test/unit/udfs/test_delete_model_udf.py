@@ -1,8 +1,7 @@
 from pathlib import Path
-
-from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
 from test.unit.utils.utils_for_udf_tests import (
-    create_mock_udf_context, create_mock_exa_environment,
+    create_mock_exa_environment,
+    create_mock_udf_context,
 )
 from test.utils.matchers import AnyOrder
 from typing import (
@@ -21,8 +20,10 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecificationFactory, BucketFSModelSpecification,
+    BucketFSModelSpecification,
+    BucketFSModelSpecificationFactory,
 )
 
 
@@ -48,16 +49,13 @@ def create_mock_metadata() -> MockMetaData:
     )
     return meta
 
+
 @pytest.mark.parametrize("count", list(range(1, 10)))
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
-@patch(
-    "exasol_transformers_extension.udfs.models.delete_models_udf.delete_model"
-)
-def test_delete_model(
-    mock_delete_model, mock_create_loc, count
-):
+@patch("exasol_transformers_extension.udfs.models.delete_models_udf.delete_model")
+def test_delete_model(mock_delete_model, mock_create_loc, count):
     mock_bucketfs_locations = [Mock() for i in range(count)]
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
@@ -84,7 +82,9 @@ def test_delete_model(
         for i in range(count)
     ]
     mock_meta = create_mock_metadata()
-    mock_exa = create_mock_exa_environment(mock_meta, dict(zip(bfs_conn_name, bucketfs_connections)))
+    mock_exa = create_mock_exa_environment(
+        mock_meta, dict(zip(bfs_conn_name, bucketfs_connections))
+    )
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
     udf = DeleteModelUDF(
@@ -102,7 +102,10 @@ def test_delete_model(
         )
         for i in range(count)
     ]
-    assert mock_current_model_specification_factory.create.mock_calls == expected_bucketfs_model_specs_calls
+    assert (
+        mock_current_model_specification_factory.create.mock_calls
+        == expected_bucketfs_model_specs_calls
+    )
 
     called_loc_addresses = [
         arg_list[0][0].address for arg_list in mock_create_loc.call_args_list
@@ -116,7 +119,7 @@ def test_delete_model(
             sub_directory_names[i],
             bfs_conn_name[i],
             True,
-            ''
+            "",
         )
         for i in range(count)
     ]

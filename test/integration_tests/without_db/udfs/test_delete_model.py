@@ -1,26 +1,23 @@
 from __future__ import annotations
 
 from pathlib import Path
-
-import pytest
-
-from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
-from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import \
-    HuggingFaceHubBucketFSModelTransferSPFactory
-
 from test.utils.mock_connections import (
     create_mounted_bucketfs_connection,
 )
 from test.utils.parameters import model_params
 
-
+import pytest
 from exasol.python_extension_common.connections.bucketfs_location import (
     create_bucketfs_location_from_conn_object,
 )
 from exasol_udf_mock_python.connection import Connection
 
+from exasol_transformers_extension.udfs.models.delete_models_udf import DeleteModelUDF
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
+)
+from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
+    HuggingFaceHubBucketFSModelTransferSPFactory,
 )
 
 
@@ -88,12 +85,14 @@ class TestEnvironmentSetup:
         )
 
     def upload(self):
-        huggingface_hub_bucketfs_model_transfer = HuggingFaceHubBucketFSModelTransferSPFactory()
+        huggingface_hub_bucketfs_model_transfer = (
+            HuggingFaceHubBucketFSModelTransferSPFactory()
+        )
         with huggingface_hub_bucketfs_model_transfer.create(
-                bucketfs_location=self.bucketfs_location,
-                model_specification=self.current_model_specs,
-                model_path=self.model_path,
-                token=None
+            bucketfs_location=self.bucketfs_location,
+            model_specification=self.current_model_specs,
+            model_path=self.model_path,
+            token=None,
         ) as downloader:
             model_factory = self.current_model_specs.get_model_factory()
             downloader.download_from_huggingface_hub(model_factory)
@@ -102,14 +101,12 @@ class TestEnvironmentSetup:
 
     @property
     def bucketfs_location(self):
-        return create_bucketfs_location_from_conn_object(
-            self.bucketfs_connection
-        )
+        return create_bucketfs_location_from_conn_object(self.bucketfs_connection)
+
 
 @pytest.fixture()
 def make_test_environment(tmp_path):
     return TestEnvironmentSetup("1", tmp_path)
-
 
 
 def test_delete_model_udf_implementation(make_test_environment):

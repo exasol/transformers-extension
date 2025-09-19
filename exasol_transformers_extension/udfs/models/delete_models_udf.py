@@ -24,7 +24,7 @@ class DeleteModelUDF:
         self,
         exa,
         current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory(),
-   ):
+    ):
         self._exa = exa
         self._current_model_specification_factory = current_model_specification_factory
 
@@ -35,10 +35,14 @@ class DeleteModelUDF:
             if not ctx.next():
                 break
 
-
     def _delete_model(self, ctx) -> tuple[str, str, str, str, bool, str]:
         # parameters
-        model_name, task_type, sub_dir, bfs_conn = ctx.model_name, ctx.task_type, ctx.sub_dir, ctx.bfs_conn
+        model_name, task_type, sub_dir, bfs_conn = (
+            ctx.model_name,
+            ctx.task_type,
+            ctx.sub_dir,
+            ctx.bfs_conn,
+        )
 
         current_model_specification = self._current_model_specification_factory.create(
             model_name, task_type, bfs_conn, Path(sub_dir)

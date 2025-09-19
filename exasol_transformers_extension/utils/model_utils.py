@@ -116,6 +116,7 @@ def get_bucketfs_location(exa, bucketfs_conn_name: str) -> bfs.path.PathLike:
         exa.get_connection(bucketfs_conn_name)
     )
 
+
 def delete_model(
     bucketfs_location: bfs.path.PathLike,
     model_spec: BucketFSModelSpecification,
