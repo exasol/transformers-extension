@@ -36,7 +36,6 @@ def create_mock_metadata() -> MockMetaData:
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("task_type", str, "VARCHAR(2000000)"),
-
         ],
         output_type="EMITS",
         output_columns=[
