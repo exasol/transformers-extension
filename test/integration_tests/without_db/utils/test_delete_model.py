@@ -8,7 +8,6 @@ from exasol.python_extension_common.connections.bucketfs_location import (
 )
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecification,
     get_BucketFSModelSpecification_from_model_Specs,
 )
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (

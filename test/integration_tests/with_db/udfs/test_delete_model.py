@@ -80,10 +80,10 @@ def validate_model_not_in_bucketfs(
 
 def astuple(model_spec: BucketFSModelSpecification) -> tuple[str, str, str, str]:
     return (
+        model_spec.bucketfs_conn_name,
+        str(model_spec.sub_dir),
         model_spec.model_name,
         model_spec.task_type,
-        str(model_spec.sub_dir),
-        model_spec.bucketfs_conn_name,
     )
 
 
@@ -93,22 +93,22 @@ def test_delete_model(populate_models, db_conn, bucketfs_location):
         removed_model = populate_models.pop()
         query = f"""
             SELECT TE_DELETE_MODEL_UDF(
-            t.model_name,
-            t.task_type,
+            t.bucketfs_conn_name,
             t.sub_dir,
-            t.bucketfs_conn_name
+            t.model_name,
+            t.task_type
             ) FROM (VALUES {astuple(removed_model)} AS
-            t(model_name, task_type, sub_dir, bucketfs_conn_name));
+            t(bucketfs_conn_name, sub_dir, model_name, task_type));
             """
 
         # execute downloader UDF
         res = db_conn.execute(query).fetchall()
         expected_res = [
             (
+                removed_model.bucketfs_conn_name,
+                str(removed_model.sub_dir),
                 removed_model.model_name,
                 removed_model.task_type,
-                str(removed_model.sub_dir),
-                removed_model.bucketfs_conn_name,
                 True,
                 None,
             )
@@ -131,21 +131,21 @@ def test_delete_model_error_wrong_bfs_conn(db_conn):
 
     query = f"""
             SELECT TE_DELETE_MODEL_UDF(
-            t.model_name,
-            t.task_type,
+            t.bucketfs_conn_name,
             t.sub_dir,
-            t.bucketfs_conn_name
+            t.model_name,
+            t.task_type
             ) FROM (VALUES {astuple(model_location)} AS
-            t(model_name, task_type, sub_dir, bucketfs_conn_name));
+            t(bucketfs_conn_name, sub_dir, model_name, task_type));
             """
 
     # execute downloader UDF
     res = db_conn.execute(query).fetchall()
     expected_res = (
+        model_location.bucketfs_conn_name,
+        str(model_location.sub_dir),
         model_location.model_name,
         model_location.task_type,
-        str(model_location.sub_dir),
-        model_location.bucketfs_conn_name,
         False,
     )
     assert len(res) == 1, res
@@ -168,21 +168,21 @@ def test_delete_model_error_wrong_model(db_conn, setup_database):
 
     query = f"""
             SELECT TE_DELETE_MODEL_UDF(
-            t.model_name,
-            t.task_type,
+            t.bucketfs_conn_name,
             t.sub_dir,
-            t.bucketfs_conn_name
+            t.model_name,
+            t.task_type
             ) FROM (VALUES {astuple(model_location)} AS
-            t(model_name, task_type, sub_dir, bucketfs_conn_name));
+            t(bucketfs_conn_name, sub_dir, model_name, task_type));
             """
 
     # execute downloader UDF
     res = db_conn.execute(query).fetchall()
     expected_res = (
+        model_location.bucketfs_conn_name,
+        str(model_location.sub_dir),
         model_location.model_name,
         model_location.task_type,
-        str(model_location.sub_dir),
-        model_location.bucketfs_conn_name,
         False,
     )
     assert len(res) == 1, res

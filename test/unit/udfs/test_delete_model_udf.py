@@ -32,19 +32,20 @@ def create_mock_metadata() -> MockMetaData:
         script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
-            Column("model_name", str, "VARCHAR(2000000)"),
-            Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("task_type", str, "VARCHAR(2000000)"),
             Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("model_name", str, "VARCHAR(2000000)"),
+            Column("task_type", str, "VARCHAR(2000000)"),
+
         ],
         output_type="EMITS",
         output_columns=[
-            Column("model_name", str, "VARCHAR(2000000)"),
-            Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("task_type", str, "VARCHAR(2000000)"),
             Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("sub_dir", str, "VARCHAR(2000000)"),
+            Column("model_name", str, "VARCHAR(2000000)"),
+            Column("task_type", str, "VARCHAR(2000000)"),
             Column("success", bool, "BOOLEAN"),
-            Column("err_msg", str, "VARCHAR(2000000)"),
+            Column("error_message", str, "VARCHAR(2000000)"),
         ],
     )
     return meta
@@ -74,10 +75,10 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
 
     input_data = [
         (
-            base_model_names[i],
-            sub_directory_names[i],
-            task_type[i],
             bfs_conn_name[i],
+            sub_directory_names[i],
+            base_model_names[i],
+            task_type[i],
         )
         for i in range(count)
     ]
@@ -114,10 +115,10 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
     assert expected_loc_addresses == AnyOrder(called_loc_addresses)
     assert mock_ctx.output == [
         (
+            bfs_conn_name[i],
+            sub_directory_names[i],
             base_model_names[i],
             task_type[i],
-            sub_directory_names[i],
-            bfs_conn_name[i],
             True,
             "",
         )

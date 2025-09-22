@@ -13,11 +13,11 @@ class DeleteModelUDF:
     UDF which deletes a pretrained model from BucketFS.
     Must be called with the following Input Parameter:
 
-    model_name                | task_type              | sub_dir                 | bfs_conn
-    ---------------------------------------------------------------------------------------------------
-    name of Huggingface model | type of model          | directory to save model | BucketFS connection
+    bfs_conn            | sub_dir                 | model_name                | task_type
+    -----------------------------------------------------------------------------------------
+    BucketFS connection | directory to save model | name of Huggingface model | type of model
 
-    returns <model_name> , <task_type>, <sub_dir>, <bfs_conn>, <success>, <error_msg>
+    returns <bfs_conn>, <sub_dir>, <model_name>, <task_type>, <success>, <error_msg>
     """
 
     def __init__(
@@ -37,11 +37,11 @@ class DeleteModelUDF:
 
     def _delete_model(self, ctx) -> tuple[str, str, str, str, bool, str]:
         # parameters
-        model_name, task_type, sub_dir, bfs_conn = (
+        bfs_conn, sub_dir, model_name, task_type = (
+            ctx.bfs_conn,
+            ctx.sub_dir,
             ctx.model_name,
             ctx.task_type,
-            ctx.sub_dir,
-            ctx.bfs_conn,
         )
 
         current_model_specification = self._current_model_specification_factory.create(
@@ -56,6 +56,6 @@ class DeleteModelUDF:
             )
             delete_model(bucketfs_location, current_model_specification)
         except Exception as e:
-            return model_name, task_type, sub_dir, bfs_conn, False, str(e)
+            return bfs_conn, sub_dir, model_name, task_type, False, str(e)
 
-        return model_name, task_type, sub_dir, bfs_conn, True, ""
+        return bfs_conn, sub_dir, model_name, task_type, True, ""

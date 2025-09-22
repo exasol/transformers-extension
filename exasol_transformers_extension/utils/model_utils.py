@@ -129,7 +129,7 @@ def delete_model(
             Root location in the BucketFS.
         model_spec:
             BucketFSModelSpecification containing the model name, task type,
-            and the subdirectory in the BucketFS for uploading the model to.
+            and the subdirectory in the BucketFS the model is saved at.
             Also provides the default model factory derived from the task type
             in case argument model_factory is None.
     """
