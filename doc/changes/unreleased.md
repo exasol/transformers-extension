@@ -9,7 +9,7 @@ T.B.D
 ## Features
 
 * #149: Added Python API for uploading a model to a given BucketFS location
-* #138: Add new UDF to delete an uploaded model
+* #138: Added new UDF to delete an uploaded model
 
 ## Bugfixes
 

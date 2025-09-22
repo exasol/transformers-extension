@@ -8,6 +8,7 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 The extension provides two types of UDFs:
 
 * DownloaderUDF :  It is responsible for downloading a specified pre-defined model into the Exasol BucketFS.
+* DeleteModelUDF:  Can be used to delete models from Exasol BucketFS, which were already installed by using DownloaderUDF. 
 * Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
    1. Sequence Classification for Single Text
    2. Sequence Classification for Text Pair
@@ -384,6 +385,61 @@ Function
 **Please note**:
 * The former function `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()` is now deprecated and internally now also uses the function `install_huggingface_model()` described above.
 * The former function returned type `Path`, while the new implementation returns type `bfs.path.PathLike`.
+
+## Delete Models from BucketFS
+
+Similar to [Store Models in BucketFS](#store-models-in-bucketfs), you have two options to delete an uploaded model from BucketFS:
+- via a UDF call. This is more convenient as you can call it via SQL.
+- via a Python API call. This is useful when you have an automated toolchain, e.g. a CI build.
+
+
+### Delete Model UDF
+
+Using the `TE_DELETE_MODEL_UDF` below, you can delete a model from BucketFS. The parameter values are similar to that one used in [Store Models in BucketFS](#store-models-in-bucketfs).
+
+
+#### Running the UDF
+
+Run the UDF with:
+
+```sql
+SELECT TE_DELETE_MODEL_UDF(
+    bfs_conn,
+    sub_dir,
+    model_name,
+    task_type
+)
+```
+
+See [Common Parameters](#common-udf-parameters) for information about `bfs_conn`, `sub_dir` and `model_name`. All values, including the [Task Type](#selecting-the-task-type), should have the same value as used during the model installation.
+
+Additional output columns
+* success: True if deletion was successful, False otherwise
+* error_message: None if deletion was successful, a string containing detailed error information otherwise
+
+Example output:
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME   | TASK_TYPE   | SUCCESS | ERROR_MESSAGE  |
+| ------------- |---------|--------------|-------------|---------|----------------|
+| conn_name     | dir/    | model_name_a | task_type_a | False   | file not found |
+| conn_name     | dir/    | model_name_a | task_type_b | True    |                |
+| ...           | ...     | ...          | ...         | ...     | ...            |
+
+
+#### Delete model via a Python Function
+
+Alternatively, you can delete a Hugging Face model using a Python function instead of the UDF.
+
+Function
+`exasol_transformers_extension.utils.model_utils.delete_model()` expects the following arguments
+* A BucketFS location
+* Argument `model_spec` of type `BucketFSModelSpecification` containing
+  * `model_name`
+  * `task_type`
+  * `sub_dir`
+
+The function will raise an exception if the parameters refer to a none-existing file in BucketFS.
+
 
 ## Using Prediction UDFs
 
