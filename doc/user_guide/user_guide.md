@@ -8,7 +8,7 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 The extension provides two types of UDFs:
 
 * DownloaderUDF :  It is responsible for downloading a specified pre-defined model into the Exasol BucketFS.
-* DeleteModelUDF:  Can be used to delete models from Exasol BucketFS, which were already installed by using DownloaderUDF. 
+* DeleteModelUDF:  Can be used to delete models from Exasol BucketFS, which were already installed by using the Transformers Extension. 
 * Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
    1. Sequence Classification for Single Text
    2. Sequence Classification for Text Pair
