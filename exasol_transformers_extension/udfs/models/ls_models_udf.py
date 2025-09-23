@@ -33,7 +33,7 @@ class ListModelsUDF:
         self._output = []
         self._error_message = None
 
-    def run(self, ctx) -> None:#todo input scalar emits
+    def run(self, ctx) -> None:
         self._list_models(ctx)
         for model_info in self._output:
             ctx.emit(*model_info)
@@ -54,7 +54,6 @@ class ListModelsUDF:
                     # but always have a config.json
                     # https://huggingface.co/docs/diffusers/main/using-diffusers/other-formats
                     if file == "config.json" and self._check_if_model_config(Path(main_dir) / file):
-                        # todo main_dir might be different for different config_files. take highest level one?
                         model_paths_list.add(main_dir)
 
         return model_paths_list
