@@ -115,3 +115,26 @@ def get_bucketfs_location(exa, bucketfs_conn_name: str) -> bfs.path.PathLike:
     return create_bucketfs_location_from_conn_object(
         exa.get_connection(bucketfs_conn_name)
     )
+
+
+def delete_model(
+    bucketfs_location: bfs.path.PathLike,
+    model_spec: BucketFSModelSpecification,
+):
+    """
+    Deletes the specified model from BucketFS.
+
+    Parameters:
+        bucketfs_location:
+            Root location in the BucketFS.
+        model_spec:
+            BucketFSModelSpecification containing the model name, task type,
+            and the subdirectory in the BucketFS the model is saved at.
+            Also provides the default model factory derived from the task type
+            in case argument model_factory is None.
+    """
+    model_path = model_spec.get_bucketfs_model_save_path()
+
+    delete_path = bucketfs_location / model_path.with_suffix(".tar.gz")
+
+    delete_path.rm()
