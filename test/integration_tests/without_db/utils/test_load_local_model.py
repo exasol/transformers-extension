@@ -67,17 +67,9 @@ def download_model_with_huggingface_transfer(test_setup, mock_bucketfs_location)
     return downloader.upload_to_bucketfs()
 
 
-def test_load_local_model(tmp_path):
+def test_load_local_model(upload_tiny_model_to_bucketfs):
     test_setup = TestSetup()
-
-    model_specification = test_setup.model_specification
-    model_save_path = create_save_pretrained_model_path(tmp_path, model_specification)
-    # download a model
-    model = AutoModel.from_pretrained(model_specification.model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_specification.model_name)
-    make_parameters_of_model_contiguous_tensors(model)
-    model.save_pretrained(model_save_path)
-    tokenizer.save_pretrained(model_save_path)
+    model_save_path = upload_tiny_model_to_bucketfs
 
     test_setup.loader.set_current_model_specification(
         current_model_specification=test_setup.mock_current_model_specification

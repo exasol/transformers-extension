@@ -132,6 +132,21 @@ def prepare_zero_shot_classification_model_for_local_bucketfs(
 
 
 @pytest.fixture(scope="session")
+def prepare_tiny_model_for_local_bucketfs(
+    tmpdir_factory,
+) -> PurePosixPath:
+    """
+    Create tmpdir and save tiny model into it, returns tmpdir-path.
+    Model is defined in test/utils/parameters.py.
+    """
+    model_specification = model_params.tiny_model_specs
+    bucketfs_path = prepare_model_for_local_bucketfs(
+        model_specification, tmpdir_factory
+    )
+    yield bucketfs_path
+
+
+@pytest.fixture(scope="session")
 def upload_filling_mask_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
@@ -248,6 +263,20 @@ def upload_zero_shot_classification_model_to_bucketfs(
     Model is defined in test/utils/parameters.py.
     """
     model_specs = model_params.zero_shot_model_specs
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+
+@pytest.fixture(scope="session")
+def upload_tiny_model_to_bucketfs(
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> PurePosixPath:
+    """
+    Load standard zero shot classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Model is defined in test/utils/parameters.py.
+    """
+    model_specs = model_params.tiny_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path

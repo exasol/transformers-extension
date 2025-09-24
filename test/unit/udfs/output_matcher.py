@@ -1,3 +1,4 @@
+from operator import itemgetter
 from typing import (
     Any,
     List,
@@ -56,6 +57,17 @@ class OutputMatcher:
             for actual_row, expected in zip(
                 self.actual_output.data, expected_output.data
             )
+        )
+        return result
+
+    def equal_order_agnostic(
+        self, expected_output: Output, sort_by_column: int
+    ) -> bool:
+        sorted_expected = sorted(expected_output.data, key=itemgetter(sort_by_column))
+        sorted_actual = sorted(self.actual_output.data, key=itemgetter(sort_by_column))
+        result = all(
+            self.compare_row(expected_row=expected, actual_row=actual_row)
+            for actual_row, expected in zip(sorted_actual, sorted_expected)
         )
         return result
 
