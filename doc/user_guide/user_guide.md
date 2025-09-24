@@ -7,8 +7,7 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 
 The extension provides two types of UDFs:
 
-* DownloaderUDF :  It is responsible for downloading a specified pre-defined model into the Exasol BucketFS.
-* DeleteModelUDF:  Can be used to delete models from Exasol BucketFS, which were already installed by using the Transformers Extension. 
+* Utility UDFs: UDFs which deal with installation and deletion of pretrained Transformers models in the Exasol BucketFS.
 * Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
    1. Sequence Classification for Single Text
    2. Sequence Classification for Text Pair
@@ -48,6 +47,10 @@ The extension provides two types of UDFs:
     * [Selecting the Task Type](#selecting-the-task-type)
   * [Model Uploader Script](#model-uploader-script)
     * [Installation via a Python Function](#installation-via-a-python-function)
+* [Delete Models from BucketFS](#delete-models-from-bucketfs)
+  * [Delete Model UDF](#delete-model-udf)
+  * [Delete model via a Python Function](#delete-model-via-a-python-function)
+  * [List Models UDF](#list-models-udf)
 * [Using Prediction UDFs](#using-prediction-udfs)
   * [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
   * [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
@@ -391,14 +394,13 @@ Function
 Similar to [Store Models in BucketFS](#store-models-in-bucketfs), you have two options to delete an uploaded model from BucketFS:
 - via a UDF call. This is more convenient as you can call it via SQL.
 - via a Python API call. This is useful when you have an automated toolchain, e.g. a CI build.
+In order to do this, you might need to find out which models are safed in the Exasol BucketFS. To do this, 
+we provide the `TE_LIST_MODELS_UDF`. See details at the end of this section.
 
 
 ### Delete Model UDF
 
 Using the `TE_DELETE_MODEL_UDF` below, you can delete a model from BucketFS. The parameter values are similar to that one used in [Store Models in BucketFS](#store-models-in-bucketfs).
-
-
-#### Running the UDF
 
 Run the UDF with:
 
@@ -426,7 +428,7 @@ Example output:
 | ...           | ...     | ...          | ...         | ...     | ...            |
 
 
-#### Delete model via a Python Function
+### Delete model via a Python Function
 
 Alternatively, you can delete a Hugging Face model using a Python function instead of the UDF.
 
@@ -439,6 +441,35 @@ Function
   * `sub_dir`
 
 The function will raise an exception if the parameters refer to a none-existing file in BucketFS.
+
+### List Models UDF
+
+The `TE_LIST_MODELS_UDF` lists all the models installed with the Transformers Extension in a given directory in the BucketFS.
+It takes a BucketFS connection and a director as input, and will return a list of models found in thet directory.
+The output will contain the `model_name`, `task_type` and path of the model in the BucketFS, as well as a column 
+for potential error messages, in addition to the input.
+
+[Common Parameters](#common-udf-parameters)
+* `bucketfs_conn`
+* `sub_dir`
+
+This UDF will fail to return a model if it was saved with the sub_dir parameter empty, 
+or if no config.json file can be found in the model files.
+
+Call the UDF like this:
+
+```sql
+SELECT TE_LIST_MODELS_UDF(
+    bucketfs_conn,
+    sub_dir,
+)
+```
+Example Output:
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TASK_NAME | MODEL_PATH               | ERROR_MESSAGE |
+|---------------|---------|------------|-----------|--------------------------|---------------|
+| conn_name     | dir/    | model_name | task_name | dir/model_name_task_name |  None         |
+| ...           | ...     | ...        | ...       | ...                      |  ...          |
 
 
 ## Using Prediction UDFs
