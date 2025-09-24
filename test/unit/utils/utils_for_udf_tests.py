@@ -141,11 +141,16 @@ def assert_result_matches_expected_output(result, expected_output_data, input_co
         f"{actual_output}"
     )
 
-def assert_result_matches_expected_output_order_agnostic(result, expected_output_data, input_columns, sort_by_column):
+
+def assert_result_matches_expected_output_order_agnostic(
+    result, expected_output_data, input_columns, sort_by_column
+):
     expected_output = Output(expected_output_data)
     actual_output = Output(result)
     n_input_columns = len(input_columns) - 1
-    assert OutputMatcher(actual_output, n_input_columns).equal_order_agnostic(expected_output, sort_by_column), (
+    assert OutputMatcher(actual_output, n_input_columns).equal_order_agnostic(
+        expected_output, sort_by_column
+    ), (
         "OutputMatcher found expected_output_data "
         "and result not matching:"
         "expected_output_data: \n"

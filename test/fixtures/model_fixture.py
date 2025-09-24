@@ -267,6 +267,7 @@ def upload_zero_shot_classification_model_to_bucketfs(
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
+
 @pytest.fixture(scope="session")
 def upload_tiny_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
