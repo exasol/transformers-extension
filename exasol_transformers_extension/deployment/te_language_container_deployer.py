@@ -45,6 +45,7 @@ class TeLanguageContainerDeployer(LanguageContainerDeployer):
         alter_system: bool = True,
         allow_override: bool = False,
         wait_for_completion: bool = True,
+        print_activation_statements: bool = True,
     ) -> None:
         """Deploy the Language Container. If no bucket_file_path is given,
         use the static SLC name of TeLanguageContainerDeployer."""
