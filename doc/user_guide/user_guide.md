@@ -47,7 +47,7 @@ The extension provides two types of UDFs:
     * [Selecting the Task Type](#selecting-the-task-type)
   * [Model Uploader Script](#model-uploader-script)
     * [Installation via a Python Function](#installation-via-a-python-function)
-* [Delete Models from BucketFS](#delete-models-from-bucketfs)
+* [Manage Models in the BucketFS](#manage-models-in-the-bucketfs)
   * [Delete Model UDF](#delete-model-udf)
   * [Delete model via a Python Function](#delete-model-via-a-python-function)
   * [List Models UDF](#list-models-udf)
@@ -389,7 +389,7 @@ Function
 * The former function `exasol_transformers_extension.upload_model.upload_model_to_bfs_location()` is now deprecated and internally now also uses the function `install_huggingface_model()` described above.
 * The former function returned type `Path`, while the new implementation returns type `bfs.path.PathLike`.
 
-## Delete Models from BucketFS
+## Manage Models in the BucketFS
 
 Similar to [Store Models in BucketFS](#store-models-in-bucketfs), you have two options to delete an uploaded model from BucketFS:
 - via a UDF call. This is more convenient as you can call it via SQL.
