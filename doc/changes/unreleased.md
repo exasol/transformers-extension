@@ -13,3 +13,5 @@ T.B.D
 ## Documentation
 
 ## Refactorings
+
+* #311: Updated transitive dependencies
