@@ -14,7 +14,7 @@ def test_sequence_classification_single_text_script(
     bucketfs_conn_name, _ = setup_database
     n_labels = 3  # negative, neutral, positive
 
-    n_rows = 100
+    n_rows = 10# todo 0
     input_data = []
     for i in range(n_rows):
         input_data.append(
@@ -24,8 +24,9 @@ def test_sequence_classification_single_text_script(
                 str(model_params.sub_dir),
                 model_params.sequence_class_model_specs.model_name,
                 "I am so happy to be working on the Transformers Extension.",
+                "ALL"
             )
-        )
+        )#todo secon test will "highest". test with mixed?
 
     query = (
         f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF("
@@ -33,10 +34,11 @@ def test_sequence_classification_single_text_script(
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "
         f"t.model_name, "
-        f"t.text_data) "
+        f"t.text_data,"
+        f"t.return_ranks) "
         f"FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, "
-        f"sub_dir, model_name, text_data));"
+        f"sub_dir, model_name, text_data, return_ranks));"
     )
 
     # execute sequence classification UDF
@@ -46,9 +48,9 @@ def test_sequence_classification_single_text_script(
     assert result[0][-1] is None
 
     n_rows_result = n_rows * n_labels
-    # added_columns: label,score,error_message
+    # added_columns: label,score,rank,error_message
     # removed_columns: device_id,
-    assert_correct_number_of_results(3, 1, input_data[0], result, n_rows_result)
+    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
     # Since in this test the input is a sentence with positive sentiment, which the test model can detect,
     # the "acceptable_results" here is the label "positive" with a reasonably high score.

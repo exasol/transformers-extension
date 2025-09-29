@@ -10,7 +10,9 @@ import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
-
+#todo update docu
+#todo add test for "all" and fir "highest"
+#todo change tests to check for rank
 class SequenceClassificationSingleTextUDF(BaseModelUDF):
     def __init__(
         self,
@@ -28,7 +30,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
             tokenizer,
             task_type="text-classification",
         )
-        self.new_columns = ["label", "score", "error_message"]
+        self.new_columns = ["label", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -54,7 +56,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         sequences = list(model_df["text_data"])
-        results = self.last_created_pipeline(sequences, return_all_scores=True)
+        results = self.last_created_pipeline(sequences, return_all_scores=True)#todo can give top_k, but that will return k scores per label?
         return results
 
     def append_predictions_to_input_dataframe(
@@ -76,7 +78,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-
+        # todo if return all highest set, dont repeats=n_labels, drop results. do this per input?
         return model_df
 
     def create_dataframes_from_predictions(
@@ -94,7 +96,11 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         """
         results_df_list = []
         for result in predictions:
+            print(result)
             result_df = pd.DataFrame(result)
+            result_df["rank"] = (
+                result_df["score"].rank(ascending=False, method="dense").astype(int)
+            )
             results_df_list.append(result_df)
 
         return results_df_list

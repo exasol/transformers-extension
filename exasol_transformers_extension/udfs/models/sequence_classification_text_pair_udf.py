@@ -10,7 +10,9 @@ import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
-
+#todo update docu
+#todo add test for "all" and fir "highest"
+#todo change tests to check for rank
 class SequenceClassificationTextPairUDF(BaseModelUDF):
     def __init__(
         self,
