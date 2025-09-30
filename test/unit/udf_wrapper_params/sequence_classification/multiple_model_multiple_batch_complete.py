@@ -1,208 +1,79 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.sequence_classification.mock_sequence_classification_factory import (
-    LabelScore,
-    MockPipeline,
-    MockSequenceClassificationFactory,
-    MockSequenceClassificationModel,
-)
+
+from test.unit.udf_wrapper_params.sequence_classification.make_data_row_functions import bucketfs_conn, \
+    sub_dir, make_input_row_single_text, model_name, make_input_row_text_pair, \
+    make_model_output_for_one_input_row_single_text, make_model_output_for_one_input_row_text_pair
+from test.unit.udf_wrapper_params.sequence_classification.make_data_row_functions import make_number_of_strings
 
 from exasol_udf_mock_python.connection import Connection
-
-
-def udf_wrapper_single_text():
-    from test.unit.udf_wrapper_params.sequence_classification.mock_sequence_tokenizer import (
-        MockSequenceTokenizer,
-    )
-    from test.unit.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import (
-        MultipleModelMultipleBatchComplete as params,
-    )
-
-    from exasol_udf_mock_python.udf_context import UDFContext
-
-    from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import (
-        SequenceClassificationSingleTextUDF,
-    )
-
-    udf = SequenceClassificationSingleTextUDF(
-        exa,
-        batch_size=params.batch_size,
-        pipeline=params.mock_pipeline,
-        base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer,
-    )
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
-
-
-def udf_wrapper_text_pair():
-    from test.unit.udf_wrapper_params.sequence_classification.mock_sequence_tokenizer import (
-        MockSequenceTokenizer,
-    )
-    from test.unit.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import (
-        MultipleModelMultipleBatchComplete as params,
-    )
-
-    from exasol_udf_mock_python.udf_context import UDFContext
-
-    from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import (
-        SequenceClassificationTextPairUDF,
-    )
-
-    udf = SequenceClassificationTextPairUDF(
-        exa,
-        batch_size=params.batch_size,
-        pipeline=params.mock_pipeline,
-        base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer,
-    )
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
 
 
 class MultipleModelMultipleBatchComplete:
     """
     multiple model, multiple batch, last batch complete
     """
-
+    #todo rename to multiple model return_rank ALL
     expected_single_text_model_counter = 2
     expected_text_pair_model_counter = 2
     batch_size = 2
     data_size = 2
 
-    label_scores = [
-        LabelScore("label1", 0.21),
-        LabelScore("label2", 0.24),
-        LabelScore("label3", 0.26),
-        LabelScore("label4", 0.29),
-    ]
+    bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2)
+    subdir1, subdir2 = make_number_of_strings(sub_dir, 2)
+    model1, model2 = make_number_of_strings(model_name, 2)
+
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
-    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)
+    base_cache_dir2 = PurePosixPath(tmpdir_name, bfs_conn2)
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+        bfs_conn1: Connection(address=f"file://{base_cache_dir1}"),
+        bfs_conn2: Connection(address=f"file://{base_cache_dir2}"),
     }
-    mock_factory = MockSequenceClassificationFactory(
-        {
-            PurePosixPath(
-                base_cache_dir1, "sub_dir1", "model1_text-classification"
-            ): MockSequenceClassificationModel(label_scores=label_scores),
-            PurePosixPath(
-                base_cache_dir2, "sub_dir2", "model2_text-classification"
-            ): MockSequenceClassificationModel(label_scores=label_scores),
-        }
+    inputs_single_text = (
+        make_input_row_single_text(bucketfs_conn=bfs_conn1,
+                                   sub_dir=subdir1,
+                                   model_name=model1) * data_size
+        + make_input_row_single_text(bucketfs_conn=bfs_conn2,
+                                     sub_dir=subdir2,
+                                     model_name=model2) * data_size
     )
 
-    inputs_single_text = [
-        (None, "bfs_conn1", "sub_dir1", "model1", "My test text")
-    ] * data_size + [
-        (None, "bfs_conn2", "sub_dir2", "model2", "My test text")
-    ] * data_size
-    inputs_pair_text = [
-        (None, "bfs_conn1", "sub_dir1", "model1", "My text 1", "My text 2")
-    ] * data_size + [
-        (None, "bfs_conn2", "sub_dir2", "model2", "My text 1", "My text 2")
-    ] * data_size
+    output_single_text_1 = make_model_output_for_one_input_row_single_text(
+        bucketfs_conn=bfs_conn1,
+        sub_dir=subdir1,
+        model_name=model1
+    )
+    output_single_text_2 = make_model_output_for_one_input_row_single_text(
+        bucketfs_conn=bfs_conn2,
+        sub_dir=subdir2,
+        model_name=model2
+    )
 
-    outputs_single_text = [
-        ("bfs_conn1", "sub_dir1", "model1", "My test text", "label1", 0.21, None),
-        ("bfs_conn1", "sub_dir1", "model1", "My test text", "label2", 0.24, None),
-        ("bfs_conn1", "sub_dir1", "model1", "My test text", "label3", 0.26, None),
-        ("bfs_conn1", "sub_dir1", "model1", "My test text", "label4", 0.29, None),
-    ] * data_size + [
-        ("bfs_conn2", "sub_dir2", "model2", "My test text", "label1", 0.21, None),
-        ("bfs_conn2", "sub_dir2", "model2", "My test text", "label2", 0.24, None),
-        ("bfs_conn2", "sub_dir2", "model2", "My test text", "label3", 0.26, None),
-        ("bfs_conn2", "sub_dir2", "model2", "My test text", "label4", 0.29, None),
-    ] * data_size
+    outputs_single_text = output_single_text_1 * data_size + output_single_text_2 * data_size
+    sequence_models_output_df_single_text = [outputs_single_text]
 
-    outputs_text_pair = [
-        (
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "My text 1",
-            "My text 2",
-            "label1",
-            0.21,
-            None,
-        ),
-        (
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "My text 1",
-            "My text 2",
-            "label2",
-            0.24,
-            None,
-        ),
-        (
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "My text 1",
-            "My text 2",
-            "label3",
-            0.26,
-            None,
-        ),
-        (
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "My text 1",
-            "My text 2",
-            "label4",
-            0.29,
-            None,
-        ),
-    ] * data_size + [
-        (
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "My text 1",
-            "My text 2",
-            "label1",
-            0.21,
-            None,
-        ),
-        (
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "My text 1",
-            "My text 2",
-            "label2",
-            0.24,
-            None,
-        ),
-        (
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "My text 1",
-            "My text 2",
-            "label3",
-            0.26,
-            None,
-        ),
-        (
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "My text 1",
-            "My text 2",
-            "label4",
-            0.29,
-            None,
-        ),
-    ] * data_size
+    # ----------------------------------------------------------------
 
-    udf_wrapper_single_text = udf_wrapper_single_text
-    udf_wrapper_text_pair = udf_wrapper_text_pair
-    mock_pipeline = MockPipeline
+    inputs_pair_text = (
+        make_input_row_text_pair(bucketfs_conn=bfs_conn1,
+                                 sub_dir=subdir1,
+                                 model_name=model1) * data_size
+        + make_input_row_text_pair(bucketfs_conn=bfs_conn2,
+                                   sub_dir=subdir2,
+                                   model_name=model2) * data_size
+    )
+
+    output_text_pair_1 = make_model_output_for_one_input_row_text_pair(
+        bucketfs_conn=bfs_conn1,
+        sub_dir=subdir1,
+        model_name=model1
+    )
+    output_text_pair_2 = make_model_output_for_one_input_row_single_text(
+        bucketfs_conn=bfs_conn2,
+        sub_dir=subdir2,
+        model_name=model2
+    )
+
+    outputs_text_pair = output_text_pair_1 * data_size + output_text_pair_2 * data_size
+    sequence_models_output_df_text_pair = [outputs_text_pair]

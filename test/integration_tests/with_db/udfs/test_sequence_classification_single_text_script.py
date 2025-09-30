@@ -15,46 +15,47 @@ def test_sequence_classification_single_text_script(
     n_labels = 3  # negative, neutral, positive
 
     n_rows = 10# todo 0
-    input_data = []
-    for i in range(n_rows):
-        input_data.append(
-            (
-                "",
-                bucketfs_conn_name,
-                str(model_params.sub_dir),
-                model_params.sequence_class_model_specs.model_name,
-                "I am so happy to be working on the Transformers Extension.",
-                "ALL"
+    for return_rank, n_result_per_input in [("ALL", n_labels), ("HIGHEST", 1)]:
+        input_data = []
+        for i in range(n_rows):
+            input_data.append(
+                (
+                    "",
+                    bucketfs_conn_name,
+                    str(model_params.sub_dir),
+                    model_params.sequence_class_model_specs.model_name,
+                    "I am so happy to be working on the Transformers Extension.",
+                    return_rank
+                )
             )
-        )#todo secon test will "highest". test with mixed?
 
-    query = (
-        f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF("
-        f"t.device_id, "
-        f"t.bucketfs_conn_name, "
-        f"t.sub_dir, "
-        f"t.model_name, "
-        f"t.text_data,"
-        f"t.return_ranks) "
-        f"FROM (VALUES {python_rows_to_sql(input_data)} "
-        f"AS t(device_id, bucketfs_conn_name, "
-        f"sub_dir, model_name, text_data, return_ranks));"
-    )
+        query = (
+            f"SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF("
+            f"t.device_id, "
+            f"t.bucketfs_conn_name, "
+            f"t.sub_dir, "
+            f"t.model_name, "
+            f"t.text_data,"
+            f"t.return_ranks) "
+            f"FROM (VALUES {python_rows_to_sql(input_data)} "
+            f"AS t(device_id, bucketfs_conn_name, "
+            f"sub_dir, model_name, text_data, return_ranks));"
+        )
 
-    # execute sequence classification UDF
-    result = db_conn.execute(query).fetchall()
+        # execute sequence classification UDF
+        result = db_conn.execute(query).fetchall()
+        print(result)
+        # assertions
+        assert result[0][-1] is None
 
-    # assertions
-    assert result[0][-1] is None
+        n_rows_result = n_rows * n_result_per_input
+        # added_columns: label,score,rank,error_message
+        # removed_columns: device_id,
+        assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
-    n_rows_result = n_rows * n_labels
-    # added_columns: label,score,rank,error_message
-    # removed_columns: device_id,
-    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
-
-    # Since in this test the input is a sentence with positive sentiment, which the test model can detect,
-    # the "acceptable_results" here is the label "positive" with a reasonably high score.
-    acceptable_results = ["positive"]
-    assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.5, label_index=4
-    )
+        # Since in this test the input is a sentence with positive sentiment, which the test model can detect,
+        # the "acceptable_results" here is the label "positive" with a reasonably high score.
+        acceptable_results = ["positive"]
+        assert_lenient_check_of_output_quality_with_score(
+            result, acceptable_results, 1 / 1.5, label_index=5
+        )
