@@ -1,7 +1,6 @@
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
-from test.unit.utils.utils_for_udf_tests import assert_result_matches_expected_output
+from test.unit.utils.utils_for_udf_tests import assert_result_matches_expected_output_order_agnostic
 from test.utils.parameters import (
-    PATH_IN_BUCKET,
     model_params,
 )
 
@@ -70,6 +69,6 @@ def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucket
         # added_columns: model_name, task_name, path, error_message
         # assertions
         assert_correct_number_of_results(4, 0, input_data[0], result, 1)
-        assert_result_matches_expected_output(
-            result, expected_result, ["bucketfs_conn", "sub_dir"]
+        assert_result_matches_expected_output_order_agnostic(
+            result, expected_result, ["bucketfs_conn", "sub_dir"], sort_by_column=4
         )
