@@ -13,6 +13,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_SEQUENCE_CLASSIFICATION_TE
     model_name VARCHAR(2000000),
     first_text VARCHAR(2000000),
     second_text VARCHAR(2000000),
+    return_ranks VARCHAR(2000000),
     label VARCHAR(2000000),
     score DOUBLE,
     rank INTEGER,

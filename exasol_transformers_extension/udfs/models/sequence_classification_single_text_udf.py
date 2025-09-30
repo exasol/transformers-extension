@@ -13,6 +13,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 #todo update docu
 #todo add test for "all" and fir "highest"
 #todo change tests to check for rank
+#todo what happens for rank highest if error on pred? cant get rank then, so what do?
 class SequenceClassificationSingleTextUDF(BaseModelUDF):
     def __init__(
         self,
