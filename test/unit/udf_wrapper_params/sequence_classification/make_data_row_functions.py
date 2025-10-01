@@ -14,6 +14,7 @@ text_data_2 = "My test text 2"
 class LabelScore:
     label: Union[str, None]
     score: Union[float, None]
+    rank: Union[int, None]
 
 @dataclass
 class LabelScores:
@@ -21,10 +22,10 @@ class LabelScores:
 
 LABEL_SCORES = LabelScores(
         [
-            LabelScore("label1", 0.21),
-            LabelScore("label2", 0.24),
-            LabelScore("label3", 0.26),
-            LabelScore("label4", 0.29)
+            LabelScore("label1", 0.21, 4),
+            LabelScore("label2", 0.24, 3),
+            LabelScore("label3", 0.26, 2),
+            LabelScore("label4", 0.29, 1)
         ])
 
 return_rank = "ALL"
@@ -66,35 +67,7 @@ def make_input_row_text_pair(
     ]
 
 
-def make_output_row_single_text(
-    bucketfs_conn=bucketfs_conn,
-    sub_dir=sub_dir,
-    model_name=model_name,
-    text_data=text_data,
-    return_rank=return_rank,
-    label=LABEL_SCORES.label_scores[3].label,#defaults are highest score
-    score=LABEL_SCORES.label_scores[3].score,
-    error_msg=error_msg,
-):
-    """
-    Creates an output row for sequence classification as a list,
-    using default values for all parameters that are not specified.
-    """
-    return [
-        (
-            bucketfs_conn,
-            sub_dir,
-            model_name,
-            text_data,
-            return_rank,
-            label,
-            score,
-            error_msg,
-        )
-    ]
-
-
-def make_model_output_for_one_input_row_single_text(
+def make_udf_output_for_one_input_row_single_text(
     bucketfs_conn=bucketfs_conn,
     sub_dir=sub_dir,
     model_name=model_name,
@@ -104,17 +77,14 @@ def make_model_output_for_one_input_row_single_text(
     error_msg=error_msg,
 ):
     """
-    Makes the output the model returns to the udf for one input row.
+    Makes the output the udf should return one input row.
     depending on how return_rank is specified.
-    Unless aggregation_strategy == "none", then the type/class of the found
-    token is called "entity" in the model output.
-    returns a list of number_entities times the model output row.
     each model output row is a dictionary.
     """
-    if return_rank == "ALL":
-        model_output = []
+    if return_rank == "ALL" and not error_msg:
+        udf_output = []
         for label_score in label_scores.label_scores:
-            model_output.append(make_output_row_single_text(
+            udf_output_row = ((
                 bucketfs_conn,
                 sub_dir,
                 model_name,
@@ -122,56 +92,50 @@ def make_model_output_for_one_input_row_single_text(
                 return_rank,
                 label_score.label,
                 label_score.score,
+                label_score.rank,
                 error_msg)
             )
+            udf_output.append(udf_output_row)
 
-    elif return_rank == "HIGHEST":
-        model_output = [
-            make_output_row_single_text(
-                bucketfs_conn=bucketfs_conn,
-                sub_dir=sub_dir,
-                model_name=model_name,
-                text_data=text_data,
-                return_rank=return_rank,
-                label=label_scores.label_scores[3].label,#todo what do if not default input?
-                score=label_scores.label_scores[3].score,
-                error_msg=error_msg)
-        ]
-    return model_output
+    elif return_rank == "HIGHEST" or error_msg:
+        udf_output = [
+            (
+                bucketfs_conn,
+                sub_dir,
+                model_name,
+                text_data,
+                return_rank,
+                label_scores.label_scores[3].label,#todo what do if not default input?
+                label_scores.label_scores[3].score,
+                label_scores.label_scores[3].rank,
+                error_msg)
+            ]
+
+    return udf_output
 
 
-def make_output_row_text_pair(#todo this should not include the inputs! just model outputs
-        bucketfs_conn=bucketfs_conn,
-        sub_dir=sub_dir,
-        model_name=model_name,
-        text_data1=text_data,
-        text_data2=text_data_2,
-        return_rank=return_rank,
-        label=LABEL_SCORES.label_scores[3].label,  # defaults are highest score
-        score=LABEL_SCORES.label_scores[3].score,
-        error_msg=error_msg,
+
+def make_model_output_for_one_input_row(
+    label_scores=LABEL_SCORES,
 ):
     """
-    Creates an output row for sequence classification as a list,
-    using default values for all parameters that are not specified.
+    Makes the output the model returns to the udf for one input row.
+    each model output row is a dictionary.
     """
-    return [
-        (
-            bucketfs_conn,
-            sub_dir,
-            model_name,
-            text_data1,
-            text_data2,
-            return_rank,
-            label,
-            score,
-            error_msg,
+    model_output = []
+    for label_score in label_scores.label_scores:
+        model_output.append(
+            {
+                "label":label_score.label,
+                "score":label_score.score
+            }
         )
-    ]
+
+    return [model_output]
 
 
-def make_model_output_for_one_input_row_text_pair(#todo this should not include the inputs! just model outputs
-        bucketfs_conn=bucketfs_conn,#todo rename this to expected output, and make second one for model output. also for single text
+def make_udf_output_for_one_input_row_text_pair(
+        bucketfs_conn=bucketfs_conn,
         sub_dir=sub_dir,
         model_name=model_name,
         text_data_1=text_data,
@@ -181,17 +145,14 @@ def make_model_output_for_one_input_row_text_pair(#todo this should not include 
         error_msg=error_msg,
 ):
     """
-    Makes the output the model returns to the udf for one input row.
+    Makes the output the udf should return for one input row.
     depending on how return_rank is specified.
-    Unless aggregation_strategy == "none", then the type/class of the found
-    token is called "entity" in the model output.
-    returns a list of number_entities times the model output row.
     each model output row is a dictionary.
     """
-    if return_rank == "ALL":
-        model_output = []
+    if return_rank == "ALL" and not error_msg:
+        udf_output = []
         for label_score in label_scores.label_scores:
-            model_output.append(make_output_row_text_pair(
+            udf_output.append((
                 bucketfs_conn,
                 sub_dir,
                 model_name,
@@ -200,23 +161,29 @@ def make_model_output_for_one_input_row_text_pair(#todo this should not include 
                 return_rank,
                 label_score.label,
                 label_score.score,
+                label_score.rank,
                 error_msg)
             )
 
-    elif return_rank == "HIGHEST":
-        model_output = [
-            make_output_row_text_pair(
-                bucketfs_conn=bucketfs_conn,
-                sub_dir=sub_dir,
-                model_name=model_name,
-                text_data1=text_data_1,
-                text_data2=text_data_2,
-                return_rank=return_rank,
-                label=label_scores.label_scores[3].label,  # todo what do if not default input?
-                score=label_scores.label_scores[3].score,
-                error_msg=error_msg)
+    elif return_rank == "HIGHEST" or error_msg:
+        # if there was an error during prediction,
+        # only one result with traceback gets returned per input,
+        # because the rank cant be computed
+
+        udf_output = [
+            (
+                bucketfs_conn,
+                sub_dir,
+                model_name,
+                text_data_1,
+                text_data_2,
+                return_rank,
+                label_scores.label_scores[3].label,  # todo what do if not default input?
+                label_scores.label_scores[3].score,
+                label_scores.label_scores[3].rank,
+                error_msg)
         ]
-    return model_output
+    return udf_output
 
 def make_number_of_strings(input_str: str, desired_number: int):
     """

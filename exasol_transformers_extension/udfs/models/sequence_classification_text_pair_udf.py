@@ -30,7 +30,7 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
             tokenizer,
             task_type="text-classification",
         )
-        self.new_columns = ["label", "score", "error_message"]
+        self.new_columns = ["label", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -85,7 +85,7 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-
+        # todo if return all highest set, dont repeats=n_labels, drop results. do this per input?
         return model_df
 
     def create_dataframes_from_predictions(
@@ -104,6 +104,9 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         results_df_list = []
         for result in predictions:
             result_df = pd.DataFrame(result)
+            result_df["rank"] = (
+                result_df["score"].rank(ascending=False, method="dense").astype(int)
+            )
             results_df_list.append(result_df)
 
         return results_df_list

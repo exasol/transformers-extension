@@ -10,7 +10,6 @@ from test.unit.udf_wrapper_params.sequence_classification.multiple_model_multipl
 from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
     create_mock_model_factories_with_models, create_mock_pipeline_factory, assert_correct_number_of_results, \
     assert_result_matches_expected_output
-from test.utils import postprocessing
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
     fake_local_bucketfs_path,
@@ -19,10 +18,7 @@ from unittest.mock import patch
 
 import pytest
 from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.group import Group
-from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
-from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
 
 
 def create_mock_metadata():
@@ -106,7 +102,7 @@ def test_sequence_classification_single_text(mock_local_path, mock_create_loc, p
 
     udf.run(mock_ctx)
     result = mock_ctx.output
-    #rounded_actual_result = postprocessing.get_rounded_result(result)#todo need?
+
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
     )

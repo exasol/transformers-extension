@@ -97,7 +97,6 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         """
         results_df_list = []
         for result in predictions:
-            print(result)
             result_df = pd.DataFrame(result)
             result_df["rank"] = (
                 result_df["score"].rank(ascending=False, method="dense").astype(int)

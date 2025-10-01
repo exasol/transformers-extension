@@ -3,8 +3,8 @@ from pathlib import PurePosixPath
 from exasol_udf_mock_python.connection import Connection
 
 from test.unit.udf_wrapper_params.sequence_classification.make_data_row_functions import bucketfs_conn, \
-    make_input_row_single_text, make_input_row_text_pair, make_model_output_for_one_input_row_single_text, LabelScores, \
-    make_model_output_for_one_input_row_text_pair, LabelScore
+    make_input_row_single_text, make_input_row_text_pair, LabelScores, LabelScore, make_model_output_for_one_input_row, \
+    make_udf_output_for_one_input_row_single_text, make_udf_output_for_one_input_row_text_pair
 
 
 class ErrorOnPredictionSingleModelMultipleBatch:
@@ -20,10 +20,10 @@ class ErrorOnPredictionSingleModelMultipleBatch:
 
     label_scores = LabelScores(
         [
-            LabelScore(None, None),
-            LabelScore(None, None),
-            LabelScore(None, None),
-            LabelScore(None, None)
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
         ])
 
     error_msg = "Traceback"
@@ -40,12 +40,15 @@ class ErrorOnPredictionSingleModelMultipleBatch:
         make_input_row_single_text(text_data=text_data) * data_size
     )
 
-    outputs_single_text = make_model_output_for_one_input_row_single_text(
+    outputs_single_text = make_udf_output_for_one_input_row_single_text(
         text_data=text_data,
         error_msg=error_msg,
         label_scores=label_scores,
     ) * data_size
-    sequence_models_output_df_single_text = [outputs_single_text]
+
+    sequence_models_output_df_single_text = [[make_model_output_for_one_input_row(
+        label_scores=label_scores,
+    )] * data_size]
 
 # -------------------------------------------------------
 
@@ -53,9 +56,13 @@ class ErrorOnPredictionSingleModelMultipleBatch:
         make_input_row_text_pair(text_data_1=text_data) * data_size
     )
 
-    outputs_text_pair = make_model_output_for_one_input_row_text_pair(
+    outputs_text_pair = make_udf_output_for_one_input_row_text_pair(
         text_data_1=text_data,
         error_msg=error_msg,
         label_scores=label_scores,
     ) * data_size
-    sequence_models_output_df_text_pair = [outputs_text_pair]
+
+    sequence_models_output_df_text_pair = [[make_model_output_for_one_input_row(
+        label_scores=label_scores,
+    )] * data_size]
+
