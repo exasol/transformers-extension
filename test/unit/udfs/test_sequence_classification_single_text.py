@@ -3,9 +3,13 @@ from exasol_transformers_extension.udfs.models.sequence_classification_single_te
 from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import (
-    MultipleModelMultipleBatchComplete,
+from test.unit.udf_wrapper_params.sequence_classification.return_ALL_multiple_model_multiple_batch_complete import (
+    ReturnAllMultipleModelMultipleBatchComplete,
 )
+from test.unit.udf_wrapper_params.sequence_classification.return_HIGHEST_multiple_model_multiple_batch_complete import \
+    ReturnHighestMultipleModelMultipleBatchComplete
+from test.unit.udf_wrapper_params.sequence_classification.return_mixed_single_model_multiple_batch import \
+    ReturnMixedMultipleModelMultipleBatchComplete
 
 from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
     create_mock_model_factories_with_models, create_mock_pipeline_factory, assert_correct_number_of_results, \
@@ -51,16 +55,17 @@ def create_mock_metadata():
 
 @pytest.mark.parametrize(
     "params",
-    [MultipleModelMultipleBatchComplete, ErrorOnPredictionSingleModelMultipleBatch],
+    [ReturnAllMultipleModelMultipleBatchComplete,
+     ReturnHighestMultipleModelMultipleBatchComplete,
+     ReturnMixedMultipleModelMultipleBatchComplete,
+     ErrorOnPredictionSingleModelMultipleBatch],
 )#todo add test cases with differen return rank
 # return_ALL_single_model_single_batch
 # return_ALL_single_model_multiple_batch
 # return_ALL_multiple_model_single_batch
-# return_ALL_multiple_model_multiple_batch
 # return_HIGHEST_single_model_single_batch
 # return_HIGHEST_single_model_multiple_batch
 # return_HIGHEST_multiple_model_single_batch
-# return_HIGHEST_multiple_model_multiple_batch
 # return_mixed_single_model_single_batch #todo more here?
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
@@ -102,6 +107,7 @@ def test_sequence_classification_single_text(mock_local_path, mock_create_loc, p
 
     udf.run(mock_ctx)
     result = mock_ctx.output
+    print(expected_output_data)
 
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data

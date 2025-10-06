@@ -85,7 +85,10 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-        # todo if return all highest set, dont repeats=n_labels, drop results. do this per input?
+        # return all results for inputs with return_rank == "ALL",
+        # and only best(rank=1) result for inputs with return_rank == "HIGHEST"
+        model_df = model_df.query('(return_rank == "ALL") or ((rank == 1) and (return_rank == "HIGHEST"))')
+        model_df.reset_index()
         return model_df
 
     def create_dataframes_from_predictions(

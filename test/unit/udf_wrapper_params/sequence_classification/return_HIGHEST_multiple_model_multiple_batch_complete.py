@@ -9,15 +9,17 @@ from test.unit.udf_wrapper_params.sequence_classification.make_data_row_function
 from exasol_udf_mock_python.connection import Connection
 
 
-class MultipleModelMultipleBatchComplete:
+class ReturnHighestMultipleModelMultipleBatchComplete:
     """
     multiple model, multiple batch, last batch complete
     """
-    #todo rename to multiple model return_rank ALL
+    #todo
     expected_single_text_model_counter = 2
     expected_text_pair_model_counter = 2
     batch_size = 2
     data_size = 2
+
+    return_rank = "HIGHEST"
 
     bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2)
     subdir1, subdir2 = make_number_of_strings(sub_dir, 2)
@@ -36,21 +38,25 @@ class MultipleModelMultipleBatchComplete:
     inputs_single_text = (
         make_input_row_single_text(bucketfs_conn=bfs_conn1,
                                    sub_dir=subdir1,
-                                   model_name=model1) * data_size
+                                   model_name=model1,
+                                   return_rank=return_rank) * data_size
         + make_input_row_single_text(bucketfs_conn=bfs_conn2,
                                      sub_dir=subdir2,
-                                     model_name=model2) * data_size
+                                     model_name=model2,
+                                     return_rank=return_rank) * data_size
     )
 
     output_single_text_model_1 = make_udf_output_for_one_input_row_single_text(
         bucketfs_conn=bfs_conn1,
         sub_dir=subdir1,
-        model_name=model1
+        model_name=model1,
+        return_rank=return_rank
     )
     output_single_text_model_2 = make_udf_output_for_one_input_row_single_text(
         bucketfs_conn=bfs_conn2,
         sub_dir=subdir2,
-        model_name=model2
+        model_name=model2,
+        return_rank=return_rank
     )
 
     outputs_single_text = output_single_text_model_1 * data_size + output_single_text_model_2 * data_size
@@ -64,21 +70,25 @@ class MultipleModelMultipleBatchComplete:
     inputs_pair_text = (
         make_input_row_text_pair(bucketfs_conn=bfs_conn1,
                                  sub_dir=subdir1,
-                                 model_name=model1) * data_size
+                                 model_name=model1,
+                                 return_rank=return_rank) * data_size
         + make_input_row_text_pair(bucketfs_conn=bfs_conn2,
                                    sub_dir=subdir2,
-                                   model_name=model2) * data_size
+                                   model_name=model2,
+                                   return_rank=return_rank) * data_size
     )
 
     output_text_pair_1 = make_udf_output_for_one_input_row_text_pair(
         bucketfs_conn=bfs_conn1,
         sub_dir=subdir1,
-        model_name=model1
+        model_name=model1,
+        return_rank=return_rank
     )
     output_text_pair_2 = make_udf_output_for_one_input_row_text_pair(
         bucketfs_conn=bfs_conn2,
         sub_dir=subdir2,
-        model_name=model2
+        model_name=model2,
+        return_rank=return_rank
     )
 
     outputs_text_pair = output_text_pair_1 * data_size + output_text_pair_2 * data_size
