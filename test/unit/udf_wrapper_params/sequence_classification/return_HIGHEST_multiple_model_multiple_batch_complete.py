@@ -19,7 +19,7 @@ class ReturnHighestMultipleModelMultipleBatchComplete:
     batch_size = 2
     data_size = 2
 
-    return_rank = "HIGHEST"
+    return_ranks = "HIGHEST"
 
     bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2)
     subdir1, subdir2 = make_number_of_strings(sub_dir, 2)
@@ -39,24 +39,24 @@ class ReturnHighestMultipleModelMultipleBatchComplete:
         make_input_row_single_text(bucketfs_conn=bfs_conn1,
                                    sub_dir=subdir1,
                                    model_name=model1,
-                                   return_rank=return_rank) * data_size
+                                   return_ranks=return_ranks) * data_size
         + make_input_row_single_text(bucketfs_conn=bfs_conn2,
                                      sub_dir=subdir2,
                                      model_name=model2,
-                                     return_rank=return_rank) * data_size
+                                     return_ranks=return_ranks) * data_size
     )
 
     output_single_text_model_1 = make_udf_output_for_one_input_row_single_text(
         bucketfs_conn=bfs_conn1,
         sub_dir=subdir1,
         model_name=model1,
-        return_rank=return_rank
+        return_ranks=return_ranks
     )
     output_single_text_model_2 = make_udf_output_for_one_input_row_single_text(
         bucketfs_conn=bfs_conn2,
         sub_dir=subdir2,
         model_name=model2,
-        return_rank=return_rank
+        return_ranks=return_ranks
     )
 
     outputs_single_text = output_single_text_model_1 * data_size + output_single_text_model_2 * data_size
@@ -71,24 +71,24 @@ class ReturnHighestMultipleModelMultipleBatchComplete:
         make_input_row_text_pair(bucketfs_conn=bfs_conn1,
                                  sub_dir=subdir1,
                                  model_name=model1,
-                                 return_rank=return_rank) * data_size
+                                 return_ranks=return_ranks) * data_size
         + make_input_row_text_pair(bucketfs_conn=bfs_conn2,
                                    sub_dir=subdir2,
                                    model_name=model2,
-                                   return_rank=return_rank) * data_size
+                                   return_ranks=return_ranks) * data_size
     )
 
     output_text_pair_1 = make_udf_output_for_one_input_row_text_pair(
         bucketfs_conn=bfs_conn1,
         sub_dir=subdir1,
         model_name=model1,
-        return_rank=return_rank
+        return_ranks=return_ranks
     )
     output_text_pair_2 = make_udf_output_for_one_input_row_text_pair(
         bucketfs_conn=bfs_conn2,
         sub_dir=subdir2,
         model_name=model2,
-        return_rank=return_rank
+        return_ranks=return_ranks
     )
 
     outputs_text_pair = output_text_pair_1 * data_size + output_text_pair_2 * data_size

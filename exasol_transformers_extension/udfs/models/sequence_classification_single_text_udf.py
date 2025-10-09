@@ -55,7 +55,10 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         sequences = list(model_df["text_data"])
-        results = self.last_created_pipeline(sequences, return_all_scores=True)#todo can give top_k, but that will return k scores per label?
+        # todo apparently top_k is now supported. so we could also solve the ranks ALL/Highest like for example in filling mask udf
+        # todo in both approaches we need to go over inputs to look for ho many results to return, to be able sort results to inputs.
+        # todo personally i think this way is easier to read
+        results = self.last_created_pipeline(sequences, top_k=None)
         return results
 
     def append_predictions_to_input_dataframe(
@@ -77,9 +80,9 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-        # return all results for inputs with return_rank == "ALL",
-        # and only best(rank=1) result for inputs with return_rank == "HIGHEST"
-        model_df = model_df.query('(return_rank == "ALL") or ((rank == 1) and (return_rank == "HIGHEST"))')
+        # return all results for inputs with return_ranks == "ALL",
+        # and only best(rank=1) result for inputs with return_ranks == "HIGHEST"
+        model_df = model_df.query('(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))')
         model_df.reset_index()
         return model_df
 

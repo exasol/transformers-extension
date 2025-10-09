@@ -35,7 +35,7 @@ def create_mock_metadata():
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("return_rank", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -43,7 +43,7 @@ def create_mock_metadata():
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("return_rank", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
             Column("rank", int, "INTEGER"),

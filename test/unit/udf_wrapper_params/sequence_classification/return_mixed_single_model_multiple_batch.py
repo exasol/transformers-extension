@@ -27,23 +27,23 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
 
 
     inputs_single_text = (
-        make_input_row_single_text(return_rank="ALL") * data_size
-        + make_input_row_single_text(return_rank="HIGHEST") * data_size
-        + make_input_row_single_text(return_rank="HIGHEST") * data_size
-        + make_input_row_single_text(return_rank="ALL") * data_size
+        make_input_row_single_text(return_ranks="ALL") * data_size
+        + make_input_row_single_text(return_ranks="HIGHEST") * data_size
+        + make_input_row_single_text(return_ranks="HIGHEST") * data_size
+        + make_input_row_single_text(return_ranks="ALL") * data_size
     )
 
     output_single_text_row_1 = make_udf_output_for_one_input_row_single_text(
-        return_rank="ALL"
+        return_ranks="ALL"
     )
     output_single_text_row_2 = make_udf_output_for_one_input_row_single_text(
-        return_rank="HIGHEST"
+        return_ranks="HIGHEST"
     )
     output_single_text_row_3 = make_udf_output_for_one_input_row_single_text(
-        return_rank="HIGHEST"
+        return_ranks="HIGHEST"
     )
     output_single_text_row_4 = make_udf_output_for_one_input_row_single_text(
-        return_rank="ALL"
+        return_ranks="ALL"
     )
 
     outputs_single_text_batch_1 = output_single_text_row_1 * data_size + output_single_text_row_2 * data_size
@@ -56,24 +56,24 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
     # ----------------------------------------------------------------
     #todo
     inputs_pair_text = (
-        make_input_row_text_pair(return_rank="ALL") * data_size
-        + make_input_row_text_pair(return_rank="HIGHEST") * data_size
-        + make_input_row_text_pair(return_rank="HIGHEST") * data_size
-        + make_input_row_text_pair(return_rank="ALL") * data_size
+        make_input_row_text_pair(return_ranks="ALL") * data_size
+        + make_input_row_text_pair(return_ranks="HIGHEST") * data_size
+        + make_input_row_text_pair(return_ranks="HIGHEST") * data_size
+        + make_input_row_text_pair(return_ranks="ALL") * data_size
 
     )
 
     output_text_pair_row_1 = make_udf_output_for_one_input_row_text_pair(
-        return_rank="ALL"
+        return_ranks="ALL"
     )
     output_text_pair_row_2 = make_udf_output_for_one_input_row_text_pair(
-        return_rank="HIGHEST"
+        return_ranks="HIGHEST"
     )
     output_text_pair_row_3 = make_udf_output_for_one_input_row_text_pair(
-        return_rank="HIGHEST"
+        return_ranks="HIGHEST"
     )
     output_text_pair_row_4 = make_udf_output_for_one_input_row_text_pair(
-        return_rank="ALL"
+        return_ranks="ALL"
     )
 
     outputs_text_pair_batch_1 = output_text_pair_row_1 * data_size + output_text_pair_row_2 * data_size

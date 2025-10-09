@@ -28,7 +28,7 @@ LABEL_SCORES = LabelScores(
             LabelScore("label4", 0.29, 1)
         ])
 
-return_rank = "ALL"
+return_ranks = "ALL"
 
 error_msg = None
 
@@ -39,7 +39,7 @@ def make_input_row_single_text(
     sub_dir=sub_dir,
     model_name=model_name,
     text_data=text_data,
-    return_rank=return_rank
+    return_ranks=return_ranks
 ):
     """
     Creates an input row for sequence classification single text usage as a list,
@@ -78,10 +78,10 @@ def make_udf_output_for_one_input_row_single_text(
 ):
     """
     Makes the output the udf should return one input row.
-    depending on how return_rank is specified.
+    depending on how return_ranks is specified.
     each model output row is a dictionary.
     """
-    if return_rank == "ALL" and not error_msg:
+    if return_ranks == "ALL" and not error_msg:
         udf_output = []
         for label_score in label_scores.label_scores:
             udf_output_row = ((
@@ -89,7 +89,7 @@ def make_udf_output_for_one_input_row_single_text(
                 sub_dir,
                 model_name,
                 text_data,
-                return_rank,
+                return_ranks,
                 label_score.label,
                 label_score.score,
                 label_score.rank,
@@ -97,14 +97,14 @@ def make_udf_output_for_one_input_row_single_text(
             )
             udf_output.append(udf_output_row)
 
-    elif return_rank == "HIGHEST" or error_msg:
+    elif return_ranks == "HIGHEST" or error_msg:
         udf_output = [
             (
                 bucketfs_conn,
                 sub_dir,
                 model_name,
                 text_data,
-                return_rank,
+                return_ranks,
                 label_scores.label_scores[3].label,#todo what do if not default input?
                 label_scores.label_scores[3].score,
                 label_scores.label_scores[3].rank,
@@ -140,16 +140,16 @@ def make_udf_output_for_one_input_row_text_pair(
         model_name=model_name,
         text_data_1=text_data,
         text_data_2=text_data_2,
-        return_rank=return_rank,
+        return_rank=return_ranks,
         label_scores=LABEL_SCORES,
         error_msg=error_msg,
 ):
     """
     Makes the output the udf should return for one input row.
-    depending on how return_rank is specified.
+    depending on how return_ranks is specified.
     each model output row is a dictionary.
     """
-    if return_rank == "ALL" and not error_msg:
+    if return_ranks == "ALL" and not error_msg:
         udf_output = []
         for label_score in label_scores.label_scores:
             udf_output.append((
@@ -158,14 +158,14 @@ def make_udf_output_for_one_input_row_text_pair(
                 model_name,
                 text_data_1,
                 text_data_2,
-                return_rank,
+                return_ranks,
                 label_score.label,
                 label_score.score,
                 label_score.rank,
                 error_msg)
             )
 
-    elif return_rank == "HIGHEST" or error_msg:
+    elif return_ranks == "HIGHEST" or error_msg:
         # if there was an error during prediction,
         # only one result with traceback gets returned per input,
         # because the rank cant be computed
@@ -177,7 +177,7 @@ def make_udf_output_for_one_input_row_text_pair(
                 model_name,
                 text_data_1,
                 text_data_2,
-                return_rank,
+                return_ranks,
                 label_scores.label_scores[3].label,  # todo what do if not default input?
                 label_scores.label_scores[3].score,
                 label_scores.label_scores[3].rank,

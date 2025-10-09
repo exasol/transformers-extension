@@ -80,6 +80,7 @@ def test_sequence_classification_text_pair_udf(
             model_params.sequence_class_pair_model_specs.model_name,
             model_params.text_data + str(i),
             model_params.text_data + str(i * i),
+            "ALL"
         )
         for i in range(n_rows)
     ]
@@ -91,6 +92,7 @@ def test_sequence_classification_text_pair_udf(
         "model_name",
         "first_text",
         "second_text",
+        "return_ranks"
     ]
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -101,7 +103,7 @@ def test_sequence_classification_text_pair_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ["label", "score", "error_message"]
+    new_columns = ["label", "score", "rank", "error_message"]
 
     grouped_by_inputs = result_df.groupby("first_text")
     n_unique_labels_per_input = grouped_by_inputs["label"].nunique().to_list()
@@ -148,6 +150,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
             "not existing model",
             model_params.text_data + str(i),
             model_params.text_data + str(i * i),
+            "ALL"
         )
         for i in range(n_rows)
     ]
@@ -159,6 +162,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
         "model_name",
         "first_text",
         "second_text",
+        "return_ranks"
     ]
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -169,7 +173,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ["label", "score", "error_message"]
+    new_columns = ["label", "score", "rank", "error_message"]
 
     result = Result(result_df)
     assert (
