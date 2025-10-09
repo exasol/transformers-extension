@@ -20,20 +20,20 @@ def assert_correct_number_of_results(
     )
 
 
-def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucketfs):
+def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucketfs_ls_test_subdir):
     bucketfs_conn_name, _ = setup_database
-    subdir = "model_sub_dir"
+    subdir = model_params.ls_test_subdir
     model_specification = model_params.tiny_model_specs
 
-    input_data = [(bucketfs_conn_name, subdir)]
-    expected_result = [
+    input_data_unkown_task = [(bucketfs_conn_name, subdir)]
+    expected_result_unkown_task = [
         (
             bucketfs_conn_name,
             subdir,
             model_specification.model_name,
             model_specification.task_type,
             "/buckets/bfsdefault/default/container/"
-            + str(upload_tiny_model_to_bucketfs),
+            + str(upload_tiny_model_to_bucketfs_ls_test_subdir),
             "WARNING: We found a model which was saved using a task_name we don't recognize.",
         )
     ]
@@ -47,7 +47,7 @@ def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucket
     ]
 
     test_data_sets = [
-        (input_data, expected_result),
+        (input_data_unkown_task, expected_result_unkown_task),
         (input_data_subdir_not_exist, expected_result_subdir_not_exist),
         (input_data_subdir_empty_string, expected_result_data_subdir_empty_string),
     ]
@@ -66,9 +66,11 @@ def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucket
         result = db_conn.execute(query).fetchall()
         for item in result:
             print(item)
+        print("_________")
+        print(expected_result)
         # added_columns: model_name, task_name, path, error_message
         # assertions
-        assert_correct_number_of_results(4, 0, input_data[0], result, 1)
+        assert_correct_number_of_results(4, 0, input_data_set[0], result, 1)
         assert_result_matches_expected_output_order_agnostic(
             result, expected_result, ["bucketfs_conn", "sub_dir"], sort_by_column=4
         )

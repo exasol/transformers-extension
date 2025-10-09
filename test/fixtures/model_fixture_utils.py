@@ -82,6 +82,7 @@ def upload_model_to_bucketfs(
     model_specification: ModelSpecification,
     local_model_save_path: Path,
     bucketfs_location: bfs.path.PathLike,
+    bucketfs_model_subdir: Path = model_params.sub_dir
 ) -> Path:
     """
     Load model defined in model_specification and saves it to bucketfs_location
@@ -93,7 +94,7 @@ def upload_model_to_bucketfs(
         model_specification, local_model_save_path
     )
     current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
-        model_specification, "", model_params.sub_dir
+        model_specification, "", bucketfs_model_subdir
     )
     with upload_model(
         bucketfs_location, current_model_specs, local_model_save_path

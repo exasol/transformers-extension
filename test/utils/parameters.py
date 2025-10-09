@@ -28,6 +28,7 @@ class ModelParams:
     tiny_model_specs: ModelSpecification  # this model is used for upload/download test
     text_data: str
     sub_dir: str
+    ls_test_subdir: str
 
 
 model_params = ModelParams(
@@ -54,4 +55,5 @@ model_params = ModelParams(
     tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "task"),
     text_data="The database software company Exasol is based in Nuremberg",
     sub_dir="model_sub_dir",
+    ls_test_subdir="ls_test_subdir",
 )
