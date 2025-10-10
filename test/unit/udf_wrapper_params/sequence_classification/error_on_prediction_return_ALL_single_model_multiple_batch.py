@@ -13,12 +13,10 @@ from test.unit.udf_wrapper_params.sequence_classification.make_data_row_function
 from exasol_udf_mock_python.connection import Connection
 
 
-class ErrorOnPredictionSingleModelMultipleBatch:
+class ErrorOnPredictionReturnAllSingleModelMultipleBatch:
     """
-    error on prediction, single model, multiple batch,
+    error on prediction, single model, multiple batch, return_ranks ALL
     """
-
-    # todo rename rank all, also, make one rank highest
 
     expected_single_text_model_counter = 1
     expected_text_pair_model_counter = 1

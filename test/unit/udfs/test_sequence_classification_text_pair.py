@@ -1,5 +1,5 @@
-from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_single_model_multiple_batch import (
-    ErrorOnPredictionSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_return_HIGHEST_single_model_multiple_batch import (
+    ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
 )
 from test.unit.udf_wrapper_params.sequence_classification.return_ALL_multiple_model_multiple_batch_complete import (
     ReturnAllMultipleModelMultipleBatchComplete,
@@ -69,7 +69,8 @@ def create_mock_metadata():
         ReturnAllMultipleModelMultipleBatchComplete,
         ReturnHighestMultipleModelMultipleBatchComplete,
         ReturnMixedMultipleModelMultipleBatchComplete,
-        ErrorOnPredictionSingleModelMultipleBatch,
+        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
+        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
     ],
 )
 @patch(

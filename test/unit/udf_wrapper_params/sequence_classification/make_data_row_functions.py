@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-device_id = None  # todo rename variables
+device_id = None
 bucketfs_conn = "bfs_conn"
 sub_dir = "sub_dir"
 model_name = "model"
@@ -179,7 +179,7 @@ def make_udf_output_for_one_input_row_text_pair(
         # if there was an error during prediction,
         # only one result with traceback gets returned per input,
         # because the rank cant be computed
-        # todo what do if not default input ofr label score. do i really need another sorting?
+        # todo what do if not default input of label score. do i really need another sorting?
         udf_output = [
             (
                 bucketfs_conn,
@@ -195,12 +195,3 @@ def make_udf_output_for_one_input_row_text_pair(
             )
         ]
     return udf_output
-
-
-def make_number_of_strings(input_str: str, desired_number: int):
-    """
-    Returns desired number of "input_strX", where X is counting up to desired_number.
-    """
-    return (
-        input_str + f"{i}" for i in range(desired_number)
-    )  # todo move these to utils?

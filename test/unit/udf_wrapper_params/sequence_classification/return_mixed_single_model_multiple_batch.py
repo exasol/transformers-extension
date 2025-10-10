@@ -13,10 +13,9 @@ from exasol_udf_mock_python.connection import Connection
 
 class ReturnMixedMultipleModelMultipleBatchComplete:
     """
-    multiple model, multiple batch, last batch complete
+    multiple model, multiple batch, last batch complete, return_ranks mixed HIGHEST and ALL
     """
 
-    # todo desc
     expected_single_text_model_counter = 1
     expected_text_pair_model_counter = 1
     batch_size = 4
@@ -62,7 +61,7 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
     ]
 
     # ----------------------------------------------------------------
-    # todo
+
     inputs_pair_text = (
         make_input_row_text_pair(return_ranks="ALL") * data_size
         + make_input_row_text_pair(return_ranks="HIGHEST") * data_size

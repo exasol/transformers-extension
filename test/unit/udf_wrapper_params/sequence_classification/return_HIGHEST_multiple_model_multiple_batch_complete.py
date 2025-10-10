@@ -4,22 +4,21 @@ from test.unit.udf_wrapper_params.sequence_classification.make_data_row_function
     make_input_row_single_text,
     make_input_row_text_pair,
     make_model_output_for_one_input_row,
-    make_number_of_strings,
     make_udf_output_for_one_input_row_single_text,
     make_udf_output_for_one_input_row_text_pair,
     model_name,
     sub_dir,
 )
+from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 
 from exasol_udf_mock_python.connection import Connection
 
 
 class ReturnHighestMultipleModelMultipleBatchComplete:
     """
-    multiple model, multiple batch, last batch complete
+    multiple model, multiple batch, last batch complete, return_ranks HIGHEST
     """
 
-    # todo
     expected_single_text_model_counter = 2
     expected_text_pair_model_counter = 2
     batch_size = 2
