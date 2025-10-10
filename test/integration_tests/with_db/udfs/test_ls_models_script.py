@@ -1,5 +1,7 @@
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
-from test.unit.utils.utils_for_udf_tests import assert_result_matches_expected_output_order_agnostic
+from test.unit.utils.utils_for_udf_tests import (
+    assert_result_matches_expected_output_order_agnostic,
+)
 from test.utils.parameters import (
     model_params,
 )
@@ -20,7 +22,9 @@ def assert_correct_number_of_results(
     )
 
 
-def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucketfs_ls_test_subdir):
+def test_list_models_script(
+    setup_database, db_conn, upload_tiny_model_to_bucketfs_ls_test_subdir
+):
     bucketfs_conn_name, _ = setup_database
     subdir = model_params.ls_test_subdir
     model_specification = model_params.tiny_model_specs
@@ -64,10 +68,6 @@ def test_list_models_script(setup_database, db_conn, upload_tiny_model_to_bucket
 
         # execute UDF
         result = db_conn.execute(query).fetchall()
-        for item in result:
-            print(item)
-        print("_________")
-        print(expected_result)
         # added_columns: model_name, task_name, path, error_message
         # assertions
         assert_correct_number_of_results(4, 0, input_data_set[0], result, 1)

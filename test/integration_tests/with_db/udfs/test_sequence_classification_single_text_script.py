@@ -16,7 +16,7 @@ def test_sequence_classification_single_text_script(
 
     n_rows = 100
     for return_ranks, n_result_per_input in [("ALL", n_labels), ("HIGHEST", 1)]:
-        #this test does not check for the mixed return ranks case, are we fine with that?
+        # this test does not check for the mixed return ranks case, are we fine with that?
         input_data = []
         for i in range(n_rows):
             input_data.append(
@@ -26,7 +26,7 @@ def test_sequence_classification_single_text_script(
                     str(model_params.sub_dir),
                     model_params.sequence_class_model_specs.model_name,
                     "I am so happy to be working on the Transformers Extension.",
-                    return_ranks
+                    return_ranks,
                 )
             )
 

@@ -10,23 +10,27 @@ model_name = "model"
 text_data = "My test text"
 text_data_2 = "My test text 2"
 
+
 @dataclass
 class LabelScore:
     label: Union[str, None]
     score: Union[float, None]
     rank: Union[int, None]
 
+
 @dataclass
 class LabelScores:
     label_scores: list[LabelScore]
 
+
 LABEL_SCORES = LabelScores(
-        [
-            LabelScore("label1", 0.21, 4),
-            LabelScore("label2", 0.24, 3),
-            LabelScore("label3", 0.26, 2),
-            LabelScore("label4", 0.29, 1)
-        ])
+    [
+        LabelScore("label1", 0.21, 4),
+        LabelScore("label2", 0.24, 3),
+        LabelScore("label3", 0.26, 2),
+        LabelScore("label4", 0.29, 1),
+    ]
+)
 
 return_ranks = "ALL"
 
@@ -39,15 +43,14 @@ def make_input_row_single_text(
     sub_dir=sub_dir,
     model_name=model_name,
     text_data=text_data,
-    return_ranks=return_ranks
+    return_ranks=return_ranks,
 ):
     """
     Creates an input row for sequence classification single text usage as a list,
     using default values for all parameters that are not specified.
     """
-    return [
-        (device_id, bucketfs_conn, sub_dir, model_name, text_data, return_rank)
-    ]
+    return [(device_id, bucketfs_conn, sub_dir, model_name, text_data, return_ranks)]
+
 
 def make_input_row_text_pair(
     device_id=device_id,
@@ -56,14 +59,22 @@ def make_input_row_text_pair(
     model_name=model_name,
     text_data_1=text_data,
     text_data_2=text_data_2,
-    return_rank=return_rank
+    return_ranks=return_ranks,
 ):
     """
     Creates an input row for sequence classification text pair usage as a list,
     using default values for all parameters that are not specified.
     """
     return [
-        (device_id, bucketfs_conn, sub_dir, model_name, text_data_1, text_data_2, return_rank)
+        (
+            device_id,
+            bucketfs_conn,
+            sub_dir,
+            model_name,
+            text_data_1,
+            text_data_2,
+            return_ranks,
+        )
     ]
 
 
@@ -72,7 +83,7 @@ def make_udf_output_for_one_input_row_single_text(
     sub_dir=sub_dir,
     model_name=model_name,
     text_data=text_data,
-    return_rank=return_rank,
+    return_ranks=return_ranks,
     label_scores=LABEL_SCORES,
     error_msg=error_msg,
 ):
@@ -84,7 +95,7 @@ def make_udf_output_for_one_input_row_single_text(
     if return_ranks == "ALL" and not error_msg:
         udf_output = []
         for label_score in label_scores.label_scores:
-            udf_output_row = ((
+            udf_output_row = (
                 bucketfs_conn,
                 sub_dir,
                 model_name,
@@ -93,7 +104,7 @@ def make_udf_output_for_one_input_row_single_text(
                 label_score.label,
                 label_score.score,
                 label_score.rank,
-                error_msg)
+                error_msg,
             )
             udf_output.append(udf_output_row)
 
@@ -105,14 +116,16 @@ def make_udf_output_for_one_input_row_single_text(
                 model_name,
                 text_data,
                 return_ranks,
-                label_scores.label_scores[3].label,#todo what do if not default input?
+                label_scores.label_scores[
+                    3
+                ].label,  # todo what do if not default input?
                 label_scores.label_scores[3].score,
                 label_scores.label_scores[3].rank,
-                error_msg)
-            ]
+                error_msg,
+            )
+        ]
 
     return udf_output
-
 
 
 def make_model_output_for_one_input_row(
@@ -124,25 +137,20 @@ def make_model_output_for_one_input_row(
     """
     model_output = []
     for label_score in label_scores.label_scores:
-        model_output.append(
-            {
-                "label":label_score.label,
-                "score":label_score.score
-            }
-        )
+        model_output.append({"label": label_score.label, "score": label_score.score})
 
     return [model_output]
 
 
 def make_udf_output_for_one_input_row_text_pair(
-        bucketfs_conn=bucketfs_conn,
-        sub_dir=sub_dir,
-        model_name=model_name,
-        text_data_1=text_data,
-        text_data_2=text_data_2,
-        return_rank=return_ranks,
-        label_scores=LABEL_SCORES,
-        error_msg=error_msg,
+    bucketfs_conn=bucketfs_conn,
+    sub_dir=sub_dir,
+    model_name=model_name,
+    text_data_1=text_data,
+    text_data_2=text_data_2,
+    return_ranks=return_ranks,
+    label_scores=LABEL_SCORES,
+    error_msg=error_msg,
 ):
     """
     Makes the output the udf should return for one input row.
@@ -152,24 +160,26 @@ def make_udf_output_for_one_input_row_text_pair(
     if return_ranks == "ALL" and not error_msg:
         udf_output = []
         for label_score in label_scores.label_scores:
-            udf_output.append((
-                bucketfs_conn,
-                sub_dir,
-                model_name,
-                text_data_1,
-                text_data_2,
-                return_ranks,
-                label_score.label,
-                label_score.score,
-                label_score.rank,
-                error_msg)
+            udf_output.append(
+                (
+                    bucketfs_conn,
+                    sub_dir,
+                    model_name,
+                    text_data_1,
+                    text_data_2,
+                    return_ranks,
+                    label_score.label,
+                    label_score.score,
+                    label_score.rank,
+                    error_msg,
+                )
             )
 
     elif return_ranks == "HIGHEST" or error_msg:
         # if there was an error during prediction,
         # only one result with traceback gets returned per input,
         # because the rank cant be computed
-
+        # todo what do if not default input ofr label score. do i really need another sorting?
         udf_output = [
             (
                 bucketfs_conn,
@@ -178,15 +188,19 @@ def make_udf_output_for_one_input_row_text_pair(
                 text_data_1,
                 text_data_2,
                 return_ranks,
-                label_scores.label_scores[3].label,  # todo what do if not default input?
+                label_scores.label_scores[3].label,
                 label_scores.label_scores[3].score,
                 label_scores.label_scores[3].rank,
-                error_msg)
+                error_msg,
+            )
         ]
     return udf_output
+
 
 def make_number_of_strings(input_str: str, desired_number: int):
     """
     Returns desired number of "input_strX", where X is counting up to desired_number.
     """
-    return (input_str + f"{i}" for i in range(desired_number))#todo move these to utils?
+    return (
+        input_str + f"{i}" for i in range(desired_number)
+    )  # todo move these to utils?

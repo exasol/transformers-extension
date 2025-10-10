@@ -19,7 +19,7 @@ from exasol_transformers_extension.udfs.models.sequence_classification_single_te
     SequenceClassificationSingleTextUDF,
 )
 
-#todo
+
 class ExaEnvironment:
     def __init__(self, connections: dict[str, Connection] = None):
         self._connections = connections
@@ -77,11 +77,18 @@ def test_sequence_classification_single_text_udf(
             model_params.sub_dir,
             model_params.sequence_class_model_specs.model_name,
             model_params.text_data + str(i),
-            "ALL"
+            "ALL",
         )
         for i in range(n_rows)
     ]
-    columns = ["device_id", "bucketfs_conn", "sub_dir", "model_name", "text_data", "return_ranks"]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "return_ranks",
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -94,11 +101,7 @@ def test_sequence_classification_single_text_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    with pd.option_context('display.max_rows', None,
-                           'display.max_columns', None,
-                           'display.precision', 3,
-                           ):
-        print(result_df)
+
     new_columns = ["label", "score", "rank", "error_message"]
 
     grouped_by_inputs = result_df.groupby("text_data")
@@ -142,11 +145,18 @@ def test_sequence_classification_single_text_udf_on_error_handling(
             model_params.sub_dir,
             "not existing model",
             model_params.text_data + str(i),
-            "ALL"
+            "ALL",
         )
         for i in range(n_rows)
     ]
-    columns = ["device_id", "bucketfs_conn", "sub_dir", "model_name", "text_data", "return_ranks"]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "return_ranks",
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 

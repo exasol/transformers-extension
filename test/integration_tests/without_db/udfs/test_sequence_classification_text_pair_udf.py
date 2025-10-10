@@ -80,7 +80,7 @@ def test_sequence_classification_text_pair_udf(
             model_params.sequence_class_pair_model_specs.model_name,
             model_params.text_data + str(i),
             model_params.text_data + str(i * i),
-            "ALL"
+            "ALL",
         )
         for i in range(n_rows)
     ]
@@ -92,7 +92,7 @@ def test_sequence_classification_text_pair_udf(
         "model_name",
         "first_text",
         "second_text",
-        "return_ranks"
+        "return_ranks",
     ]
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -150,7 +150,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
             "not existing model",
             model_params.text_data + str(i),
             model_params.text_data + str(i * i),
-            "ALL"
+            "ALL",
         )
         for i in range(n_rows)
     ]
@@ -162,7 +162,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
         "model_name",
         "first_text",
         "second_text",
-        "return_ranks"
+        "return_ranks",
     ]
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 

@@ -26,7 +26,7 @@ def test_sequence_classification_text_pair_script(
                     model_params.sequence_class_pair_model_specs.model_name,
                     "The database software company Exasol is based in Nuremberg",
                     "The main Exasol office is located in Flensburg",
-                    return_ranks
+                    return_ranks,
                 )
             )
 

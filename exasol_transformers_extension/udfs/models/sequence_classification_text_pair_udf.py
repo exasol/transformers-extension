@@ -10,9 +10,8 @@ import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
-#todo update docu
-#todo add test for "all" and fir "highest"
-#todo change tests to check for rank
+
+# todo update docu
 class SequenceClassificationTextPairUDF(BaseModelUDF):
     def __init__(
         self,
@@ -87,7 +86,9 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         model_df = pd.concat([model_df, pred_df], axis=1)
         # return all results for inputs with return_ranks == "ALL",
         # and only best(rank=1) result for inputs with return_ranks == "HIGHEST"
-        model_df = model_df.query('(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))')
+        model_df = model_df.query(
+            '(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))'
+        )
         model_df.reset_index()
         return model_df
 

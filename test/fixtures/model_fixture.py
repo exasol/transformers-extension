@@ -281,6 +281,7 @@ def upload_tiny_model_to_bucketfs(
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
+
 @pytest.fixture(scope="session")
 def upload_tiny_model_to_bucketfs_ls_test_subdir(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
@@ -291,6 +292,10 @@ def upload_tiny_model_to_bucketfs_ls_test_subdir(
     """
     model_specs = model_params.tiny_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
-    with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location,
-                                  bucketfs_model_subdir=model_params.ls_test_subdir) as path:
+    with upload_model_to_bucketfs(
+        model_specs,
+        tmpdir,
+        bucketfs_location,
+        bucketfs_model_subdir=model_params.ls_test_subdir,
+    ) as path:
         yield path

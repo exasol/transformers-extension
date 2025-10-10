@@ -1,19 +1,23 @@
-from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import \
-    SequenceClassificationSingleTextUDF
 from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
 from test.unit.udf_wrapper_params.sequence_classification.return_ALL_multiple_model_multiple_batch_complete import (
     ReturnAllMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.sequence_classification.return_HIGHEST_multiple_model_multiple_batch_complete import \
-    ReturnHighestMultipleModelMultipleBatchComplete
-from test.unit.udf_wrapper_params.sequence_classification.return_mixed_single_model_multiple_batch import \
-    ReturnMixedMultipleModelMultipleBatchComplete
-
-from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
-    create_mock_model_factories_with_models, create_mock_pipeline_factory, assert_correct_number_of_results, \
-    assert_result_matches_expected_output
+from test.unit.udf_wrapper_params.sequence_classification.return_HIGHEST_multiple_model_multiple_batch_complete import (
+    ReturnHighestMultipleModelMultipleBatchComplete,
+)
+from test.unit.udf_wrapper_params.sequence_classification.return_mixed_single_model_multiple_batch import (
+    ReturnMixedMultipleModelMultipleBatchComplete,
+)
+from test.unit.utils.utils_for_udf_tests import (
+    assert_correct_number_of_results,
+    assert_result_matches_expected_output,
+    create_mock_exa_environment,
+    create_mock_model_factories_with_models,
+    create_mock_pipeline_factory,
+    create_mock_udf_context,
+)
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
     fake_local_bucketfs_path,
@@ -23,6 +27,10 @@ from unittest.mock import patch
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import (
+    SequenceClassificationSingleTextUDF,
+)
 
 
 def create_mock_metadata():
@@ -55,18 +63,13 @@ def create_mock_metadata():
 
 @pytest.mark.parametrize(
     "params",
-    [ReturnAllMultipleModelMultipleBatchComplete,
-     ReturnHighestMultipleModelMultipleBatchComplete,
-     ReturnMixedMultipleModelMultipleBatchComplete,
-     ErrorOnPredictionSingleModelMultipleBatch],
-)#todo add test cases with differen return rank
-# return_ALL_single_model_single_batch
-# return_ALL_single_model_multiple_batch
-# return_ALL_multiple_model_single_batch
-# return_HIGHEST_single_model_single_batch
-# return_HIGHEST_single_model_multiple_batch
-# return_HIGHEST_multiple_model_single_batch
-# return_mixed_single_model_single_batch #todo more here?
+    [
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedMultipleModelMultipleBatchComplete,
+        ErrorOnPredictionSingleModelMultipleBatch,
+    ],
+)
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
@@ -78,14 +81,12 @@ def test_sequence_classification_single_text(mock_local_path, mock_create_loc, p
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-
     model_input_data = params.inputs_single_text
     bfs_connections = params.bfs_connections
     expected_model_counter = params.expected_single_text_model_counter
     sequence_models_output_df = params.sequence_models_output_df_single_text
     batch_size = params.batch_size
     expected_output_data = params.outputs_single_text
-
 
     mock_meta = create_mock_metadata()
     mock_ctx = create_mock_udf_context(model_input_data, mock_meta)
@@ -107,7 +108,6 @@ def test_sequence_classification_single_text(mock_local_path, mock_create_loc, p
 
     udf.run(mock_ctx)
     result = mock_ctx.output
-    print(expected_output_data)
 
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
@@ -116,4 +116,3 @@ def test_sequence_classification_single_text(mock_local_path, mock_create_loc, p
         result, expected_output_data, mock_meta.input_columns
     )
     assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
-
