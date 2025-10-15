@@ -17,7 +17,6 @@ from test.utils.parameters import model_params
 import pandas as pd
 import pytest
 import torch
-from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import (
     ZeroShotTextClassificationUDF,
@@ -25,8 +24,7 @@ from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf
 
 
 def prepare_bucketfs(
-    prepare_zero_shot_classification_model_for_local_bucketfs,
-    bfs_conn="bucketfs_connection",
+    prepare_zero_shot_classification_model_for_local_bucketfs
 ):
     bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -62,10 +60,17 @@ def format_result(result_df):
     result = Result(result_df)
     return result, n_unique_labels_per_input
 
-
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [
+        ("ALL", None),
+        ("HIGHEST", 1)# todo does this make it download the model multiple times?
+    ],
+)
 def test_zero_shot_classification_single_text_udf(
-    description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs
+    description, device_id, return_ranks, number_results_per_input,
+    prepare_zero_shot_classification_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -77,6 +82,9 @@ def test_zero_shot_classification_single_text_udf(
     )
 
     n_rows, batch_size, candidate_labels, n_labels = base_params()
+    if not number_results_per_input:
+        number_results_per_input = n_labels
+
     sample_data = [
         (
             None,
@@ -85,6 +93,7 @@ def test_zero_shot_classification_single_text_udf(
             model_params.zero_shot_model_specs.model_name,
             model_params.text_data + str(i),
             candidate_labels + str(i),
+            return_ranks,
         )
         for i in range(n_rows)
     ]
@@ -95,6 +104,7 @@ def test_zero_shot_classification_single_text_udf(
         "model_name",
         "text_data",
         "candidate_labels",
+        "return_ranks",
     ]
 
     result_df = run_test(
@@ -104,26 +114,36 @@ def test_zero_shot_classification_single_text_udf(
     new_columns = ["label", "score", "rank", "error_message"]
 
     # assertions
+    result = Result(result_df)
+    assert result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
     assert (
         result == ScoreMatcher()
         and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=n_labels)
+        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
         and result
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
             n_rows=n_rows,
-            results_per_row=n_labels,
+            results_per_row=number_results_per_input,
         )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NoErrorMessageMatcher()
-        and n_unique_labels_per_input == [n_labels] * n_rows
+        and n_unique_labels_per_input == [number_results_per_input] * n_rows
     )
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [
+        ("ALL", None),
+        ("HIGHEST", 1)
+    ],
+)
 def test_zero_shot_classification_single_text_udf_with_span(
-    description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs
+    description, device_id, return_ranks, number_results_per_input,
+        prepare_zero_shot_classification_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -135,6 +155,9 @@ def test_zero_shot_classification_single_text_udf_with_span(
     )
 
     n_rows, batch_size, candidate_labels, n_labels = base_params()
+    if not number_results_per_input:
+        number_results_per_input = n_labels
+
     sample_data = [
         (
             None,
@@ -147,6 +170,7 @@ def test_zero_shot_classification_single_text_udf_with_span(
             0,
             len(model_params.text_data),
             candidate_labels + str(i),
+            return_ranks,
         )
         for i in range(n_rows)
     ]
@@ -160,6 +184,7 @@ def test_zero_shot_classification_single_text_udf_with_span(
         "text_data_char_begin",
         "text_data_char_end",
         "candidate_labels",
+        "return_ranks",
     ]
 
     result_df = run_test(
@@ -173,36 +198,40 @@ def test_zero_shot_classification_single_text_udf_with_span(
     assert (
         result == ScoreMatcher()
         and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=n_labels)
+        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
         and result
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
             n_rows=n_rows,
-            results_per_row=n_labels,
+            results_per_row=number_results_per_input,
         )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NoErrorMessageMatcher()
-        and n_unique_labels_per_input == [n_labels] * n_rows
+        and n_unique_labels_per_input == [number_results_per_input] * n_rows
     )
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [
+        ("ALL", 1),
+        ("HIGHEST", 1)
+    ],
+)
 def test_zero_shot_classification_single_text_udf_on_error_handling(
-    description, device_id, prepare_zero_shot_classification_model_for_local_bucketfs
+    description, device_id, return_ranks, number_results_per_input,
+        prepare_zero_shot_classification_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
+    bucketfs_conn_name, bucketfs_connection = (
+        prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs))
 
-    bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
-    bucketfs_conn_name = "bucketfs_connection"
-    bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
-
-    n_rows = 3
-    batch_size = 2
-    candidate_labels = "Database,Analytics,Germany,Food,Party"
+    n_rows, batch_size, candidate_labels, _ = base_params()
     sample_data = [
         (
             None,
@@ -211,6 +240,7 @@ def test_zero_shot_classification_single_text_udf_on_error_handling(
             "not existing model",
             model_params.text_data + str(i),
             candidate_labels + str(i),
+            return_ranks,
         )
         for i in range(n_rows)
     ]
@@ -221,21 +251,17 @@ def test_zero_shot_classification_single_text_udf_on_error_handling(
         "model_name",
         "text_data",
         "candidate_labels",
+        "return_ranks",
     ]
-    sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
-    ctx = MockContext(input_df=sample_df)
-    exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
-
-    sequence_classifier = ZeroShotTextClassificationUDF(exa, batch_size=batch_size)
-    sequence_classifier.run(ctx)
-
-    result_df = ctx.get_emitted()[0][0]
+    result_df = run_test(
+        sample_data, columns, bucketfs_conn_name, bucketfs_connection, batch_size
+    )
     new_columns = ["label", "score", "rank", "error_message"]
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows * number_results_per_input)
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NewColumnsEmptyMatcher(new_columns=new_columns)
         and result == ErrorMessageMatcher()
