@@ -7,7 +7,8 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_ZERO_SHOT_TEXT_CLASSIFICAT
     text_data_doc_id INTEGER,
     text_data_char_begin INTEGER,
     text_data_char_end INTEGER,
-    candidate_labels VARCHAR(2000000)
+    candidate_labels VARCHAR(2000000),
+    return_ranks VARCHAR(2000000)
     ORDER BY {{ ordered_columns | join(" ASC,") }} ASC
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
@@ -16,6 +17,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_ZERO_SHOT_TEXT_CLASSIFICAT
     text_data_doc_id INTEGER,
     text_data_char_begin INTEGER,
     text_data_char_end INTEGER,
+    return_ranks VARCHAR(2000000),
     label VARCHAR(2000000),
     score DOUBLE,
     rank INTEGER,

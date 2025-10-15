@@ -134,6 +134,12 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
         merged_df_list = []
         for ix, pred_df in enumerate(pred_df_list):
             merged_df = pd.merge(model_df.iloc[[ix], :], pred_df, how="cross")
+            # return all results for inputs with return_ranks == "ALL",
+            # and only best(rank=1) result for inputs with return_ranks == "HIGHEST"
+            merged_df = merged_df.query(
+                '(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))'
+            )
+            merged_df.reset_index()
             merged_df_list.append(merged_df)
         output_df = pd.concat(merged_df_list)
 
