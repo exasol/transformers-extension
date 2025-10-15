@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import MockExaEnvironment
 from test.utils.mock_connections import (
     create_mounted_bucketfs_connection,
 )
@@ -19,16 +21,6 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSPFactory,
 )
-
-
-class ExaEnvironment:
-    def __init__(self, connections: dict[str, Connection] = None):
-        self._connections = connections
-        if self._connections is None:
-            self._connections = {}
-
-    def get_connection(self, name: str) -> Connection:
-        return self._connections[name]
 
 
 class Context:
@@ -117,7 +109,7 @@ def test_delete_model_udf_implementation(make_test_environment):
     assert abs_path.exists(), abs_path
 
     ctx = Context([test_environment.ctx_data])
-    exa = ExaEnvironment(
+    exa = MockExaEnvironment(
         {
             test_environment.bucketfs_conn_name: test_environment.bucketfs_connection,
         }
