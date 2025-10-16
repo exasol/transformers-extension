@@ -51,6 +51,7 @@ def create_mock_metadata_with_span():
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -60,6 +61,7 @@ def create_mock_metadata_with_span():
             Column("text_data_doc_id", int, "INTEGER"),
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
             Column("rank", int, "INTEGER"),
@@ -81,6 +83,7 @@ def create_mock_metadata():
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -89,6 +92,7 @@ def create_mock_metadata():
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
             Column("rank", int, "INTEGER"),

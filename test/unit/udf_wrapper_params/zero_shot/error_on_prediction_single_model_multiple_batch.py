@@ -2,11 +2,10 @@ import dataclasses
 from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
     bucketfs_conn,
-    label,
     make_input_row,
     make_input_row_with_span,
-    make_output_row,
-    make_output_row_with_span,
+    make_udf_output_for_one_input_row_without_span,
+    make_udf_output_for_one_input_row_with_span, LabelScores, LabelScore, make_model_output_for_one_input_row,
 )
 
 from exasol_udf_mock_python.connection import Connection
@@ -22,40 +21,45 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     batch_size = 2
     data_size = 5
 
+    label_scores = LabelScores(
+        [
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
+            LabelScore(None, None, None),
+        ]
+    )
+
     input_data = (
-        make_input_row(text_data="error on pred", candidate_labels=label) * data_size
+        make_input_row(text_data="error on pred") * data_size
     )
 
     output_data = (
-        make_output_row(
+        make_udf_output_for_one_input_row_without_span(
             text_data="error on pred",
-            candidate_labels=label,
-            label=None,
-            score=None,
-            rank=None,
+            label_scores=label_scores,
             error_msg="Traceback",
         )
-        * data_size
+        * data_size#todo does this need batching=
     )
 
-    zero_shot_model_output_df_batch1 = []
-    zero_shot_model_output_df_batch2 = []
-    zero_shot_model_output_df_batch3 = []
+    zero_shot_model_output_df_one_full_batch = make_model_output_for_one_input_row(label_scores) * batch_size
+    zero_shot_model_output_df_last_batch = make_model_output_for_one_input_row(label_scores)
 
     zero_shot_models_output_df = [
-        zero_shot_model_output_df_batch1,
-        zero_shot_model_output_df_batch2,
-        zero_shot_model_output_df_batch3,
+        zero_shot_model_output_df_one_full_batch,
+        zero_shot_model_output_df_one_full_batch,
+        zero_shot_model_output_df_last_batch,
     ]
 
     work_with_span_input_data = (
-        make_input_row_with_span(text_data="error on pred", candidate_labels=label)
+        make_input_row_with_span(text_data="error on pred")
         * data_size
     )
 
     work_with_span_output_data = (
-        make_output_row_with_span(
-            label=None, score=None, rank=None, error_msg="Traceback"
+        make_udf_output_for_one_input_row_with_span(
+            label_scores=label_scores, error_msg="Traceback"
         )
         * data_size
     )
