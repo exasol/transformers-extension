@@ -19,7 +19,7 @@ def setup_common_input_data():
 
 
 @pytest.mark.parametrize(
-    "return_ranks", "number_results_per_input",
+    "return_ranks, number_results_per_input",
     [
         ("ALL", None),
         ("HIGHEST", 1)
@@ -68,6 +68,8 @@ def test_zero_shot_classification_single_text_script_without_spans(
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
 
+    print(result)
+
     # assertions
     assert result[0][-1] is None
     # added_columns: label,score,rank,error_message
@@ -76,11 +78,11 @@ def test_zero_shot_classification_single_text_script_without_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8
+        result, acceptable_results, 1 / 1.8, label_index = 6,
     )
 
 @pytest.mark.parametrize(
-    "return_ranks", "number_results_per_input",
+    "return_ranks, number_results_per_input",
     [
         ("ALL", None),
         ("HIGHEST", 1)
@@ -144,5 +146,5 @@ def test_zero_shot_classification_single_text_script_with_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8, label_index=6
+        result, acceptable_results, 1 / 1.8, label_index=7
     )

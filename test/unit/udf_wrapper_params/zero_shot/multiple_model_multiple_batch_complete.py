@@ -11,7 +11,7 @@ from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
     model_name,
     sub_dir,
     text_data,
-    LABEL_SCORES, LabelScores, LabelScore
+    LABEL_SCORES, LabelScores, LabelScore, make_candidate_lables_from_lable_scores
 )
 
 from exasol_udf_mock_python.connection import Connection
@@ -45,22 +45,25 @@ class MultipleModelMultipleBatchComplete:
             sub_dir=sub_dir1,
             model_name=model_name1,
             text_data=text_data1,
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores1),
         )
         * data_size
         + make_input_row(
             sub_dir=sub_dir2,
             model_name=model_name2,
             text_data=text_data2,
-        )
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
+    )
         * data_size
     )
 
-    output_data = (
+    output_data = [
         make_udf_output_for_one_input_row_without_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
             text_data=text_data1,
             label_scores=label_scores1,
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores1),
         )
         * data_size
         + make_udf_output_for_one_input_row_without_span(
@@ -68,28 +71,31 @@ class MultipleModelMultipleBatchComplete:
             model_name=model_name2,
             text_data=text_data2,
             label_scores=label_scores2,
-        )
-        * data_size
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
     )
+        * data_size
+    ]
 
     work_with_span_input_data = (
         make_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
             text_data=text_data1,
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores1),
         )
         * data_size
         + make_input_row_with_span(
             sub_dir=sub_dir2,
             model_name=model_name2,
             text_data=text_data2,
-        )
+            candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
+    )
         * data_size
     )
 
     work_with_span_output_data = (
         make_udf_output_for_one_input_row_with_span(
-            sub_dir=sub_dir1, model_name=model_name1, label_scores=label_scores1
+            sub_dir=sub_dir1, model_name=model_name1, label_scores=label_scores1,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -117,3 +123,7 @@ class MultipleModelMultipleBatchComplete:
     bfs_connections = {
         bucketfs_conn: Connection(address=f"file://{base_cache_dir1}"),
     }
+
+
+# [('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Germany', 0.8101921677589417, 1, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Database', 0.17520254850387573, 2, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Analytics', 0.013232517056167126, 3, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Party', 0.0009702265379019082, 4, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Food', 0.00040253743645735085, 5, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Germany', 0.8101921677589417, 1, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Database', 0.17520254850387573, 2, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Analytics', 0.013232517056167126, 3, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Party', 0.0009702265379019082, 4, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Food', 0.00040253743645735085, 5, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Germany', 0.8101921677589417, 1, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Database', 0.17520254850387573, 2, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Analytics', 0.013232517056167126, 3, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Party', 0.0009702265379019082, 4, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Food', 0.00040253743645735085, 5, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Germany', 0.8101921677589417, 1, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Database', 0.17520254850387573, 2, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Analytics', 0.013232517056167126, 3, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Party', 0.0009702265379019082, 4, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Food', 0.00040253743645735085, 5, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party', 'ALL', 'Germany', 0.8101921677589417, 1, None), ('TEST_TE_BFS_CONNECTION', 'model_sub_dir', 'MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33', 'The database software company Exasol is based in Nuremberg', 'Analytics,Database,Food,Germany,Party'
+

@@ -105,7 +105,7 @@ def create_mock_metadata():
 @pytest.mark.parametrize(
     "params",
     [
-        MultipleModelMultipleBatchComplete,
+        MultipleModelMultipleBatchComplete,#todo rename, and add return_ranks=Highest/mixed
         MultipleLabelsSingleModelSingleBatch,
         MultipleLabelsSingleModelMultipleBatch,
         ErrorOnPredictionMultipleModelMultipleBatch,
@@ -153,6 +153,9 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
 
     udf.run(mock_ctx)
     result = mock_ctx.output
+    print(result)
+    print("______________--expected____________________")
+    print(expected_output_data)
 
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
