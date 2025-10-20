@@ -176,7 +176,6 @@ def make_udf_output_for_one_input_row_with_span(
     Creates the output row for zero shot classification with span usage as a list,
     using default values for all parameters that are not specified.
     """
-    candidate_labels_str = ",".join(candidate_labels)
     if return_ranks == "ALL" and not error_msg:
         udf_output = []
         for label_score in label_scores.label_scores:
@@ -187,7 +186,6 @@ def make_udf_output_for_one_input_row_with_span(
                 text_data_doc_id,
                 text_data_char_begin,
                 text_data_char_end,
-                candidate_labels_str,
                 return_ranks,
                 label_score.label,
                 label_score.score,
@@ -206,7 +204,6 @@ def make_udf_output_for_one_input_row_with_span(
                 text_data_doc_id,
                 text_data_char_begin,
                 text_data_char_end,
-                candidate_labels_str,
                 return_ranks,
                 label_scores.label_scores[3].label,
                 label_scores.label_scores[3].score,
