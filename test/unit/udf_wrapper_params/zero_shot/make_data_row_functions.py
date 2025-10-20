@@ -79,7 +79,7 @@ def make_udf_output_for_one_input_row_without_span(
     """
     candidate_labels_str = ",".join(candidate_labels)
     if return_ranks == "ALL" and not error_msg:
-        udf_output = ()#todo klammern changed, i think it is more correct this way. check
+        udf_output = []#todo klammern changed, i think it is more correct this way. check
         for label_score in label_scores.label_scores:
             udf_output_row = (
                 bucketfs_conn,
@@ -94,10 +94,10 @@ def make_udf_output_for_one_input_row_without_span(
                 error_msg,
             )
 
-            udf_output += udf_output_row
+            udf_output.append(udf_output_row)
 
     elif return_ranks == "HIGHEST" or error_msg:
-        udf_output = (
+        udf_output = [
             (
                 bucketfs_conn,
                 sub_dir,
@@ -110,7 +110,7 @@ def make_udf_output_for_one_input_row_without_span(
                 label_scores.label_scores[3].rank,
                 error_msg,
             )
-        )
+        ]
 
     return udf_output
 

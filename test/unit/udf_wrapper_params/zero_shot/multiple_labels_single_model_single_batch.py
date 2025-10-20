@@ -5,12 +5,8 @@ from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
     make_input_row,
     make_input_row_with_span,
     make_model_output_for_one_input_row,
-    make_number_of_strings,
     make_udf_output_for_one_input_row_without_span,
     make_udf_output_for_one_input_row_with_span,
-    model_name,
-    sub_dir,
-    text_data,
 )
 
 from exasol_udf_mock_python.connection import Connection
@@ -26,16 +22,14 @@ class MultipleLabelsSingleModelSingleBatch:
     batch_size = 1
     data_size = 1
 
-    input_data = (
-        make_input_row() * data_size
-    )
+    input_data = make_input_row() * data_size
 
-    output_data = (
-        make_udf_output_for_one_input_row_without_span()) * data_size
 
-    zero_shot_models_output_df = [
-        make_model_output_for_one_input_row() * data_size
-    ]
+    output_data = make_udf_output_for_one_input_row_without_span() * data_size
+
+    zero_shot_models_output_df = [[
+        make_model_output_for_one_input_row() * data_size,
+    ]]
 
     work_with_span_input_data = (
         make_input_row_with_span() * data_size
