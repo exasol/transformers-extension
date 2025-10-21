@@ -1,18 +1,26 @@
-from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_multiple_model_multiple_batch import (
-    ErrorOnPredictionMultipleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_single_model_multiple_batch import (
-    ErrorOnPredictionSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_single_model_multiple_batch import (
+    ReturnAllErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_labels_single_model_multiple_batch import (
-    MultipleLabelsSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_multiple_batch import (
+    ReturnAllMultipleLabelsSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_labels_single_model_single_batch import (
-    MultipleLabelsSingleModelSingleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_single_batch import (
+    ReturnAllMultipleLabelsSingleModelSingleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_complete import (
-    MultipleModelMultipleBatchComplete,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_model_multiple_batch_complete import (
+    ReturnAllMultipleModelMultipleBatchComplete,
 )
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import \
+    ReturnHighestErrorOnPredictionMultipleModelMultipleBatch
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_multiple_model_multiple_batch_complete import \
+    ReturnHighestMultipleModelMultipleBatchComplete
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_error_on_prediction_multiple_model_multiple_batch import \
+    ReturnMixedErrorOnPredictionMultipleModelMultipleBatch
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_multiple_model_multiple_batch import \
+    ReturnMixedMultipleModelMultipleBatchComplete
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
     assert_result_matches_expected_output,
@@ -105,11 +113,15 @@ def create_mock_metadata():
 @pytest.mark.parametrize(
     "params",
     [
-        MultipleModelMultipleBatchComplete,#todo rename, and add return_ranks=Highest/mixed
-        MultipleLabelsSingleModelSingleBatch,
-        MultipleLabelsSingleModelMultipleBatch,
-        ErrorOnPredictionMultipleModelMultipleBatch,
-        ErrorOnPredictionSingleModelMultipleBatch,
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnAllMultipleLabelsSingleModelSingleBatch,
+        ReturnAllMultipleLabelsSingleModelMultipleBatch,
+        ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnAllErrorOnPredictionSingleModelMultipleBatch,
+        ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnMixedMultipleModelMultipleBatchComplete,
     ],
 )
 @patch(
@@ -152,7 +164,11 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
     )
     udf.run(mock_ctx)
     result = mock_ctx.output
-
+    for res in expected_output_data:
+        print(res)
+    print("____res______")
+    for res in result:
+        print(res)
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
     )
@@ -165,11 +181,15 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
 @pytest.mark.parametrize(
     "params",
     [
-        MultipleModelMultipleBatchComplete,
-        MultipleLabelsSingleModelSingleBatch,
-        MultipleLabelsSingleModelMultipleBatch,
-        ErrorOnPredictionMultipleModelMultipleBatch,
-        ErrorOnPredictionSingleModelMultipleBatch,
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnAllMultipleLabelsSingleModelSingleBatch,
+        ReturnAllMultipleLabelsSingleModelMultipleBatch,
+        ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnAllErrorOnPredictionSingleModelMultipleBatch,
+        ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnMixedMultipleModelMultipleBatchComplete,
     ],
 )
 @patch(

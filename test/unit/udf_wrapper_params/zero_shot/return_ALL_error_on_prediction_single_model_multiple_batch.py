@@ -12,7 +12,7 @@ from exasol_udf_mock_python.connection import Connection
 
 
 @dataclasses.dataclass
-class ErrorOnPredictionSingleModelMultipleBatch:
+class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
     """
     Not cached error, single model, multiple batches
     """

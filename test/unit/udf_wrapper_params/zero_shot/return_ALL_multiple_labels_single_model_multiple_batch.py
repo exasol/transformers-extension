@@ -13,7 +13,7 @@ from exasol_udf_mock_python.connection import Connection
 
 
 @dataclasses.dataclass
-class MultipleLabelsSingleModelMultipleBatch:
+class ReturnAllMultipleLabelsSingleModelMultipleBatch:
     """
     Multiple labels, single model, multiple batches
     """
