@@ -1,5 +1,3 @@
-import pytest
-
 from test.integration_tests.utils.model_output_quality_checkers import (
     assert_lenient_check_of_output_quality_with_score,
 )
@@ -8,6 +6,8 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 )
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
+
+import pytest
 
 
 def setup_common_input_data():
@@ -20,19 +20,18 @@ def setup_common_input_data():
 
 @pytest.mark.parametrize(
     "return_ranks, number_results_per_input",
-    [
-        ("ALL", None),
-        ("HIGHEST", 1)
-    ],
+    [("ALL", None), ("HIGHEST", 1)],
 )
 def test_zero_shot_classification_single_text_script_without_spans(
-    setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs, return_ranks, number_results_per_input
+    setup_database,
+    db_conn,
+    upload_zero_shot_classification_model_to_bucketfs,
+    return_ranks,
+    number_results_per_input,
 ):
 
     bucketfs_conn_name, _ = setup_database
-    n_rows, candidate_labels, n_labels, text_data = (
-        setup_common_input_data()
-    )
+    n_rows, candidate_labels, n_labels, text_data = setup_common_input_data()
     if not number_results_per_input:
         number_results_per_input = n_labels
     n_rows_result = n_rows * number_results_per_input
@@ -78,24 +77,27 @@ def test_zero_shot_classification_single_text_script_without_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8, label_index = 6,
+        result,
+        acceptable_results,
+        1 / 1.8,
+        label_index=6,
     )
+
 
 @pytest.mark.parametrize(
     "return_ranks, number_results_per_input",
-    [
-        ("ALL", None),
-        ("HIGHEST", 1)
-    ],
+    [("ALL", None), ("HIGHEST", 1)],
 )
 def test_zero_shot_classification_single_text_script_with_spans(
-    setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs, return_ranks, number_results_per_input
+    setup_database,
+    db_conn,
+    upload_zero_shot_classification_model_to_bucketfs,
+    return_ranks,
+    number_results_per_input,
 ):
 
     bucketfs_conn_name, _ = setup_database
-    n_rows, candidate_labels, n_labels, text_data = (
-        setup_common_input_data()
-    )
+    n_rows, candidate_labels, n_labels, text_data = setup_common_input_data()
     if not number_results_per_input:
         number_results_per_input = n_labels
     n_rows_result = n_rows * number_results_per_input

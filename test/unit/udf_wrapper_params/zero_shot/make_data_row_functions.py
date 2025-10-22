@@ -16,7 +16,7 @@ return_ranks = "ALL"
 
 error_msg = None
 
-#todo move to util file once other is merged?
+
 @dataclass
 class LabelScore:
     label: Union[str, None]
@@ -40,9 +40,14 @@ LABEL_SCORES = LabelScores(
 
 
 def make_candidate_lables_from_lable_scores(label_scores: LabelScores = LABEL_SCORES):
-    return [label_scores.label_scores[i].label for i in range(len(label_scores.label_scores))]
+    return [
+        label_scores.label_scores[i].label
+        for i in range(len(label_scores.label_scores))
+    ]
+
 
 candidate_labels = make_candidate_lables_from_lable_scores(LABEL_SCORES)
+
 
 def make_input_row(
     device_id=device_id,
@@ -59,7 +64,15 @@ def make_input_row(
     """
     candidate_labels_str = ",".join(candidate_labels)
     return [
-        (device_id, bucketfs_conn, sub_dir, model_name, text_data, candidate_labels_str, return_ranks)
+        (
+            device_id,
+            bucketfs_conn,
+            sub_dir,
+            model_name,
+            text_data,
+            candidate_labels_str,
+            return_ranks,
+        )
     ]
 
 
@@ -79,7 +92,7 @@ def make_udf_output_for_one_input_row_without_span(
     """
     candidate_labels_str = ",".join(candidate_labels)
     if return_ranks == "ALL" and not error_msg:
-        udf_output = []#todo klammern changed, i think it is more correct this way. check
+        udf_output = []
         for label_score in label_scores.label_scores:
             udf_output_row = (
                 bucketfs_conn,
@@ -114,7 +127,8 @@ def make_udf_output_for_one_input_row_without_span(
 
     return udf_output
 
-def make_model_output_for_one_input_row(label_scores: LabelScores =LABEL_SCORES):
+
+def make_model_output_for_one_input_row(label_scores: LabelScores = LABEL_SCORES):
     """
     Makes the output the model returns to the udf for one input row.
     returns a list with the model output row.
@@ -123,7 +137,10 @@ def make_model_output_for_one_input_row(label_scores: LabelScores =LABEL_SCORES)
 
     model_output = []
     for label_score in label_scores.label_scores:
-        model_output_single_label = {"labels": label_score.label, "scores": label_score.score}
+        model_output_single_label = {
+            "labels": label_score.label,
+            "scores": label_score.score,
+        }
         model_output.append(model_output_single_label)
     return [model_output]
 
@@ -213,7 +230,6 @@ def make_udf_output_for_one_input_row_with_span(
         ]
 
     return udf_output
-
 
 
 def make_number_of_strings(input_str: str, desired_number: int):

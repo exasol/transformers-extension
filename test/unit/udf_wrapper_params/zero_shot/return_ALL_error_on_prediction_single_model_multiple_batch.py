@@ -1,11 +1,14 @@
 import dataclasses
 from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
+    LabelScore,
+    LabelScores,
     bucketfs_conn,
     make_input_row,
     make_input_row_with_span,
+    make_model_output_for_one_input_row,
+    make_udf_output_for_one_input_row_with_span,
     make_udf_output_for_one_input_row_without_span,
-    make_udf_output_for_one_input_row_with_span, LabelScores, LabelScore, make_model_output_for_one_input_row,
 )
 
 from exasol_udf_mock_python.connection import Connection
@@ -14,7 +17,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
     """
-    Not cached error, single model, multiple batches
+    return_ranks ALL, not cached error, single model, multiple batches
     """
 
     expected_model_counter = 1
@@ -30,9 +33,7 @@ class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
         ]
     )
 
-    input_data = (
-        make_input_row(text_data="error on pred") * data_size
-    )
+    input_data = make_input_row(text_data="error on pred") * data_size
 
     output_data = (
         make_udf_output_for_one_input_row_without_span(
@@ -40,11 +41,15 @@ class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
             label_scores=label_scores,
             error_msg="Traceback",
         )
-        * data_size#todo does this need batching=
+        * data_size  # todo does this need batching=
     )
 
-    zero_shot_model_output_df_one_full_batch = make_model_output_for_one_input_row(label_scores) * batch_size
-    zero_shot_model_output_df_last_batch = make_model_output_for_one_input_row(label_scores)
+    zero_shot_model_output_df_one_full_batch = (
+        make_model_output_for_one_input_row(label_scores) * batch_size
+    )
+    zero_shot_model_output_df_last_batch = make_model_output_for_one_input_row(
+        label_scores
+    )
 
     zero_shot_models_output_df = [
         zero_shot_model_output_df_one_full_batch,
@@ -53,8 +58,7 @@ class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
     ]
 
     work_with_span_input_data = (
-        make_input_row_with_span(text_data="error on pred")
-        * data_size
+        make_input_row_with_span(text_data="error on pred") * data_size
     )
 
     work_with_span_output_data = (

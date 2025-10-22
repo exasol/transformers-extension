@@ -1,17 +1,20 @@
 import dataclasses
 from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
+    LABEL_SCORES,
+    LabelScore,
+    LabelScores,
     bucketfs_conn,
+    make_candidate_lables_from_lable_scores,
     make_input_row,
     make_input_row_with_span,
     make_model_output_for_one_input_row,
     make_number_of_strings,
-    make_udf_output_for_one_input_row_without_span,
     make_udf_output_for_one_input_row_with_span,
+    make_udf_output_for_one_input_row_without_span,
     model_name,
     sub_dir,
     text_data,
-    LABEL_SCORES, LabelScores, LabelScore, make_candidate_lables_from_lable_scores
 )
 
 from exasol_udf_mock_python.connection import Connection
@@ -20,7 +23,7 @@ from exasol_udf_mock_python.connection import Connection
 @dataclasses.dataclass
 class ReturnAllMultipleModelMultipleBatchComplete:
     """
-    Multiple model, multiple batches, last batch complete
+    return_ranks ALL, multiple model, multiple batches, last batch complete
     """
 
     expected_model_counter = 2
@@ -33,12 +36,13 @@ class ReturnAllMultipleModelMultipleBatchComplete:
 
     label_scores1 = LABEL_SCORES
     label_scores2 = LabelScores(
-    [
-        LabelScore("label21", 0.221, 4),
-        LabelScore("label22", 0.224, 3),
-        LabelScore("label23", 0.226, 2),
-        LabelScore("label24", 0.229, 1),
-    ])
+        [
+            LabelScore("label21", 0.221, 4),
+            LabelScore("label22", 0.224, 3),
+            LabelScore("label23", 0.226, 2),
+            LabelScore("label24", 0.229, 1),
+        ]
+    )
 
     input_data = (
         make_input_row(
@@ -53,7 +57,7 @@ class ReturnAllMultipleModelMultipleBatchComplete:
             model_name=model_name2,
             text_data=text_data2,
             candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
-    )
+        )
         * data_size
     )
 
@@ -72,7 +76,7 @@ class ReturnAllMultipleModelMultipleBatchComplete:
             text_data=text_data2,
             label_scores=label_scores2,
             candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
-    )
+        )
         * data_size
     )
 
@@ -89,13 +93,15 @@ class ReturnAllMultipleModelMultipleBatchComplete:
             model_name=model_name2,
             text_data=text_data2,
             candidate_labels=make_candidate_lables_from_lable_scores(label_scores2),
-    )
+        )
         * data_size
     )
 
     work_with_span_output_data = (
         make_udf_output_for_one_input_row_with_span(
-            sub_dir=sub_dir1, model_name=model_name1, label_scores=label_scores1,
+            sub_dir=sub_dir1,
+            model_name=model_name1,
+            label_scores=label_scores1,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -105,12 +111,10 @@ class ReturnAllMultipleModelMultipleBatchComplete:
     )
 
     zero_shot_model_output_df_model1 = [
-        make_model_output_for_one_input_row(label_scores1)
-        * data_size
+        make_model_output_for_one_input_row(label_scores1) * data_size
     ]
     zero_shot_model_output_df_model2 = [
-        make_model_output_for_one_input_row(label_scores2)
-        * data_size
+        make_model_output_for_one_input_row(label_scores2) * data_size
     ]
 
     zero_shot_models_output_df = [

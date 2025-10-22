@@ -88,9 +88,7 @@ class ZeroShotTextClassificationUDF(BaseModelUDF):
 
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(
-            columns=["text_data", "candidate_labels"]
-        )  # todo do we want to keep candidate lables?
+        model_df = model_df.drop(columns=["text_data", "candidate_labels"])
         return model_df
 
     def create_dataframes_from_predictions(

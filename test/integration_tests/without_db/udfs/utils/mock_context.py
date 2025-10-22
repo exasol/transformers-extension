@@ -1,4 +1,3 @@
-
 class MockContext:
     def __init__(self, input_df):
         self.input_df = input_df

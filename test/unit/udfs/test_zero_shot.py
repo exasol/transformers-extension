@@ -13,14 +13,18 @@ from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_mo
 from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_model_multiple_batch_complete import (
     ReturnAllMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import \
-    ReturnHighestErrorOnPredictionMultipleModelMultipleBatch
-from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_multiple_model_multiple_batch_complete import \
-    ReturnHighestMultipleModelMultipleBatchComplete
-from test.unit.udf_wrapper_params.zero_shot.return_mixed_error_on_prediction_multiple_model_multiple_batch import \
-    ReturnMixedErrorOnPredictionMultipleModelMultipleBatch
-from test.unit.udf_wrapper_params.zero_shot.return_mixed_multiple_model_multiple_batch import \
-    ReturnMixedMultipleModelMultipleBatchComplete
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_multiple_model_multiple_batch_complete import (
+    ReturnHighestMultipleModelMultipleBatchComplete,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_multiple_model_multiple_batch import (
+    ReturnMixedMultipleModelMultipleBatchComplete,
+)
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
     assert_result_matches_expected_output,
@@ -164,11 +168,7 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
     )
     udf.run(mock_ctx)
     result = mock_ctx.output
-    for res in expected_output_data:
-        print(res)
-    print("____res______")
-    for res in result:
-        print(res)
+
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
     )

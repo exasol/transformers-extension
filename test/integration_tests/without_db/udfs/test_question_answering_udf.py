@@ -10,7 +10,9 @@ from test.integration_tests.without_db.udfs.utils.matcher import (
     ShapeMatcher,
 )
 from test.integration_tests.without_db.udfs.utils.mock_context import MockContext
-from test.integration_tests.without_db.udfs.utils.mock_exa_environment import MockExaEnvironment
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
+    MockExaEnvironment,
+)
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
 
@@ -22,7 +24,6 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.question_answering_udf import (
     QuestionAnsweringUDF,
 )
-
 
 
 @pytest.mark.parametrize(

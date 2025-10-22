@@ -8,6 +8,8 @@ T.B.D
 
 ## Features
 
+ - #329: Added return_ranks to zero-shot-classification udf
+
 ## Bugfixes
 
 ## Documentation

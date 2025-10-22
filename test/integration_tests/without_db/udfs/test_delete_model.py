@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-
-from test.integration_tests.without_db.udfs.utils.mock_exa_environment import MockExaEnvironment
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
+    MockExaEnvironment,
+)
 from test.utils.mock_connections import (
     create_mounted_bucketfs_connection,
 )

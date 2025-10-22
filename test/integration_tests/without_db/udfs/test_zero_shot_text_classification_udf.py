@@ -10,7 +10,9 @@ from test.integration_tests.without_db.udfs.utils.matcher import (
     ShapeMatcher,
 )
 from test.integration_tests.without_db.udfs.utils.mock_context import MockContext
-from test.integration_tests.without_db.udfs.utils.mock_exa_environment import MockExaEnvironment
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
+    MockExaEnvironment,
+)
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
 
@@ -23,9 +25,7 @@ from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf
 )
 
 
-def prepare_bucketfs(
-    prepare_zero_shot_classification_model_for_local_bucketfs
-):
+def prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs):
     bucketfs_base_path = prepare_zero_shot_classification_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
@@ -60,17 +60,18 @@ def format_result(result_df):
     result = Result(result_df)
     return result, n_unique_labels_per_input
 
+
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
 @pytest.mark.parametrize(
     "return_ranks, number_results_per_input",
-    [
-        ("ALL", None),
-        ("HIGHEST", 1)# todo does this make it download the model multiple times?
-    ],
+    [("ALL", None), ("HIGHEST", 1)],
 )
 def test_zero_shot_classification_single_text_udf(
-    description, device_id, return_ranks, number_results_per_input,
-    prepare_zero_shot_classification_model_for_local_bucketfs
+    description,
+    device_id,
+    return_ranks,
+    number_results_per_input,
+    prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -115,11 +116,14 @@ def test_zero_shot_classification_single_text_udf(
 
     # assertions
     result = Result(result_df)
-    assert result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
+    assert result == RankMonotonicMatcher(
+        n_rows=n_rows, results_per_row=number_results_per_input
+    )
     assert (
         result == ScoreMatcher()
         and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
+        and result
+        == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
         and result
         == ShapeMatcher(
             columns=columns,
@@ -136,14 +140,14 @@ def test_zero_shot_classification_single_text_udf(
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
 @pytest.mark.parametrize(
     "return_ranks, number_results_per_input",
-    [
-        ("ALL", None),
-        ("HIGHEST", 1)
-    ],
+    [("ALL", None), ("HIGHEST", 1)],
 )
 def test_zero_shot_classification_single_text_udf_with_span(
-    description, device_id, return_ranks, number_results_per_input,
-        prepare_zero_shot_classification_model_for_local_bucketfs
+    description,
+    device_id,
+    return_ranks,
+    number_results_per_input,
+    prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -198,7 +202,8 @@ def test_zero_shot_classification_single_text_udf_with_span(
     assert (
         result == ScoreMatcher()
         and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
+        and result
+        == RankMonotonicMatcher(n_rows=n_rows, results_per_row=number_results_per_input)
         and result
         == ShapeMatcher(
             columns=columns,
@@ -215,21 +220,22 @@ def test_zero_shot_classification_single_text_udf_with_span(
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
 @pytest.mark.parametrize(
     "return_ranks, number_results_per_input",
-    [
-        ("ALL", 1),
-        ("HIGHEST", 1)
-    ],
+    [("ALL", 1), ("HIGHEST", 1)],
 )
 def test_zero_shot_classification_single_text_udf_on_error_handling(
-    description, device_id, return_ranks, number_results_per_input,
-        prepare_zero_shot_classification_model_for_local_bucketfs
+    description,
+    device_id,
+    return_ranks,
+    number_results_per_input,
+    prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
-    bucketfs_conn_name, bucketfs_connection = (
-        prepare_bucketfs(prepare_zero_shot_classification_model_for_local_bucketfs))
+    bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
+        prepare_zero_shot_classification_model_for_local_bucketfs
+    )
 
     n_rows, batch_size, candidate_labels, _ = base_params()
     sample_data = [
@@ -261,7 +267,12 @@ def test_zero_shot_classification_single_text_udf_on_error_handling(
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows * number_results_per_input)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=n_rows * number_results_per_input,
+        )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NewColumnsEmptyMatcher(new_columns=new_columns)
         and result == ErrorMessageMatcher()

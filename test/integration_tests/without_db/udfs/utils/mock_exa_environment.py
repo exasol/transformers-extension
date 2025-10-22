@@ -1,5 +1,6 @@
 from exasol_udf_mock_python.connection import Connection
 
+
 # this is the same as exasol_udf_mock_python.mock_exa_environment
 # if it accepted metadata=None as input #todo change the exasol_udf_mock_python?
 class MockExaEnvironment:
