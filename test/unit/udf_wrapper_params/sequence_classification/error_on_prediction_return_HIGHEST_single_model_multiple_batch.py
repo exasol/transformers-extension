@@ -91,4 +91,3 @@ class ErrorOnPredictionReturnHighestSingleModelMultipleBatch:
         ]
         * data_size
     ]
-
