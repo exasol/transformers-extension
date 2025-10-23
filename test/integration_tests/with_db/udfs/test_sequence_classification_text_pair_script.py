@@ -7,13 +7,28 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
+import pytest
 
+
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [("ALL", None), ("HIGHEST", 1)],
+)
 def test_sequence_classification_text_pair_script(
-    setup_database, db_conn, upload_sequence_classification_pair_model_to_bucketfs
+    return_ranks,
+    number_results_per_input,
+    setup_database,
+    db_conn,
+    upload_sequence_classification_pair_model_to_bucketfs,
 ):
     bucketfs_conn_name, _ = setup_database
     n_labels = 3
+
+    if not number_results_per_input:
+        number_results_per_input = n_labels
+
     n_rows = 100
+
     input_data = []
     for i in range(n_rows):
         input_data.append(
@@ -24,6 +39,7 @@ def test_sequence_classification_text_pair_script(
                 model_params.sequence_class_pair_model_specs.model_name,
                 "The database software company Exasol is based in Nuremberg",
                 "The main Exasol office is located in Flensburg",
+                return_ranks,
             )
         )
 
@@ -34,10 +50,11 @@ def test_sequence_classification_text_pair_script(
         f"t.sub_dir, "
         f"t.model_name, "
         f"t.first_text, "
-        f"t.second_text"
+        f"t.second_text, "
+        f"t.return_ranks"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, sub_dir, "
-        f"model_name, first_text, second_text));"
+        f"model_name, first_text, second_text, return_ranks));"
     )
 
     # execute sequence classification UDF
@@ -46,15 +63,15 @@ def test_sequence_classification_text_pair_script(
     # assertions
     assert result[0][-1] is None
 
-    n_rows_result = n_rows * n_labels
-    # added_columns: label,score,error_message
+    n_rows_result = n_rows * number_results_per_input
+    # added_columns: label,score,rank,error_message
     # removed_columns: device_id,
-    assert_correct_number_of_results(3, 1, input_data[0], result, n_rows_result)
+    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows_result)
 
     # Since in this test the input is two sentences which contradict each other, which the test model can detect,
     # the "acceptable_results" here is the label "contradiction" with a reasonably high score.
     # possible labels: contradiction, entailment, neutral
     acceptable_results = ["contradiction"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.5, label_index=5
+        result, acceptable_results, 1 / 1.5, label_index=6
     )

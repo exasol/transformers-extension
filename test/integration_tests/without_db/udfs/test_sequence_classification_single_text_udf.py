@@ -77,10 +77,18 @@ def test_sequence_classification_single_text_udf(
             model_params.sub_dir,
             model_params.sequence_class_model_specs.model_name,
             model_params.text_data + str(i),
+            "ALL",
         )
         for i in range(n_rows)
     ]
-    columns = ["device_id", "bucketfs_conn", "sub_dir", "model_name", "text_data"]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "return_ranks",
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -93,7 +101,8 @@ def test_sequence_classification_single_text_udf(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ["label", "score", "error_message"]
+
+    new_columns = ["label", "score", "rank", "error_message"]
 
     grouped_by_inputs = result_df.groupby("text_data")
     n_unique_labels_per_input = grouped_by_inputs["label"].nunique().to_list()
@@ -136,10 +145,18 @@ def test_sequence_classification_single_text_udf_on_error_handling(
             model_params.sub_dir,
             "not existing model",
             model_params.text_data + str(i),
+            "ALL",
         )
         for i in range(n_rows)
     ]
-    columns = ["device_id", "bucketfs_conn", "sub_dir", "model_name", "text_data"]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "return_ranks",
+    ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
@@ -152,8 +169,7 @@ def test_sequence_classification_single_text_udf_on_error_handling(
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
-    new_columns = ["label", "score", "error_message"]
-
+    new_columns = ["label", "score", "rank", "error_message"]
     result = Result(result_df)
     assert (
         result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)

@@ -158,3 +158,10 @@ def assert_result_matches_expected_output_order_agnostic(
         "actual_output_data: \n"
         f"{actual_output}"
     )
+
+
+def make_number_of_strings(input_str: str, desired_number: int):
+    """
+    Returns desired number of "input_strX", where X is counting up to desired_number.
+    """
+    return (input_str + f"{i}" for i in range(desired_number))

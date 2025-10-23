@@ -1,14 +1,23 @@
-from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_single_model_multiple_batch import (
-    ErrorOnPredictionSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_return_HIGHEST_single_model_multiple_batch import (
+    ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.sequence_classification.multiple_model_multiple_batch_complete import (
-    MultipleModelMultipleBatchComplete,
+from test.unit.udf_wrapper_params.sequence_classification.return_ALL_multiple_model_multiple_batch_complete import (
+    ReturnAllMultipleModelMultipleBatchComplete,
 )
-from test.unit.udfs.output_matcher import (
-    Output,
-    OutputMatcher,
+from test.unit.udf_wrapper_params.sequence_classification.return_HIGHEST_multiple_model_multiple_batch_complete import (
+    ReturnHighestMultipleModelMultipleBatchComplete,
 )
-from test.utils import postprocessing
+from test.unit.udf_wrapper_params.sequence_classification.return_mixed_single_model_multiple_batch import (
+    ReturnMixedMultipleModelMultipleBatchComplete,
+)
+from test.unit.utils.utils_for_udf_tests import (
+    assert_correct_number_of_results,
+    assert_result_matches_expected_output,
+    create_mock_exa_environment,
+    create_mock_model_factories_with_models,
+    create_mock_pipeline_factory,
+    create_mock_udf_context,
+)
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
     fake_local_bucketfs_path,
@@ -17,15 +26,16 @@ from unittest.mock import patch
 
 import pytest
 from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.group import Group
-from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
-from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+
+from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import (
+    SequenceClassificationTextPairUDF,
+)
 
 
-def create_mock_metadata(udf_wrapper):
+def create_mock_metadata():
     meta = MockMetaData(
-        script_code_wrapper_function=udf_wrapper,
+        script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
@@ -34,6 +44,7 @@ def create_mock_metadata(udf_wrapper):
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("first_text", str, "VARCHAR(2000000)"),
             Column("second_text", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -42,8 +53,10 @@ def create_mock_metadata(udf_wrapper):
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("first_text", str, "VARCHAR(2000000)"),
             Column("second_text", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
+            Column("rank", int, "INTEGER"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],
     )
@@ -52,7 +65,13 @@ def create_mock_metadata(udf_wrapper):
 
 @pytest.mark.parametrize(
     "params",
-    [MultipleModelMultipleBatchComplete, ErrorOnPredictionSingleModelMultipleBatch],
+    [
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedMultipleModelMultipleBatchComplete,
+        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
+        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
+    ],
 )
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
@@ -65,22 +84,38 @@ def test_sequence_classification_text_pair(mock_local_path, mock_create_loc, par
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata(params.udf_wrapper_text_pair)
-
-    exa = MockExaEnvironment(metadata=meta, connections=params.bfs_connections)
-
-    result = executor.run([Group(params.inputs_pair_text)], exa)
-    rounded_actual_result = postprocessing.get_rounded_result(result)
-    result_output = Output(rounded_actual_result)
-    expected_output = Output(params.outputs_text_pair)
+    model_input_data = params.inputs_pair_text
+    bfs_connections = params.bfs_connections
     expected_model_counter = params.expected_text_pair_model_counter
-    n_input_columns = len(meta.input_columns) - 1
+    sequence_models_output_df = params.sequence_models_output_df_text_pair
+    batch_size = params.batch_size
+    expected_output_data = params.outputs_text_pair
 
-    try:
-        assert (
-            OutputMatcher(result_output, n_input_columns) == expected_output
-            and params.mock_pipeline.counter == expected_model_counter
-        )
-    finally:
-        params.mock_pipeline.counter = 0
+    mock_meta = create_mock_metadata()
+    mock_ctx = create_mock_udf_context(model_input_data, mock_meta)
+    mock_exa = create_mock_exa_environment(mock_meta, bfs_connections)
+    mock_base_model_factory, mock_tokenizer_factory = (
+        create_mock_model_factories_with_models(expected_model_counter)
+    )
+    mock_pipeline_factory = create_mock_pipeline_factory(
+        sequence_models_output_df, expected_model_counter
+    )
+
+    udf = SequenceClassificationTextPairUDF(
+        exa=mock_exa,
+        batch_size=batch_size,
+        base_model=mock_base_model_factory,
+        tokenizer=mock_tokenizer_factory,
+        pipeline=mock_pipeline_factory,
+    )
+
+    udf.run(mock_ctx)
+    result = mock_ctx.output
+
+    assert_correct_number_of_results(
+        result, mock_meta.output_columns, expected_output_data
+    )
+    assert_result_matches_expected_output(
+        result, expected_output_data, mock_meta.input_columns
+    )
+    assert len(mock_pipeline_factory.mock_calls) == expected_model_counter

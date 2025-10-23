@@ -8,6 +8,8 @@ T.B.D
 
 ## Features
 
+* #328: Added parameters `rank` and `return_ranks` to sequence classification udf's
+
 ## Bugfixes
 
 ## Documentation
