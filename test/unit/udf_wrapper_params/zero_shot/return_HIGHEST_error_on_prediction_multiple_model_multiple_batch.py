@@ -41,6 +41,8 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
 
     sub_dir1, sub_dir2 = make_number_of_strings(sub_dir, 2)
     model_name1, model_name2 = make_number_of_strings(model_name, 2)
+    # create additional candidate_labels with slightly different content,
+    # so it's easier to see if the output is sorted correctly to the input.
     candidate_labels2 = [
         candidate_labels[i] + str(i) for i in range(0, len(candidate_labels))
     ]

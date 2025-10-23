@@ -158,7 +158,10 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
 
     work_with_span_output_data = (
         make_udf_output_for_one_input_row_with_span(
-            sub_dir=sub_dir1, model_name=model_name1, label_scores=label_scores1, return_ranks=return_ranks_all,
+            sub_dir=sub_dir1,
+            model_name=model_name1,
+            label_scores=label_scores1,
+            return_ranks=return_ranks_all,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -176,7 +179,10 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
-            sub_dir=sub_dir2, model_name=model_name2, label_scores=label_scores2, return_ranks=return_ranks_all,
+            sub_dir=sub_dir2,
+            model_name=model_name2,
+            label_scores=label_scores2,
+            return_ranks=return_ranks_all,
         )
         * data_size
     )
