@@ -41,7 +41,7 @@ class ReturnAllErrorOnPredictionSingleModelMultipleBatch:
             label_scores=label_scores,
             error_msg="Traceback",
         )
-        * data_size  # todo does this need batching=
+        * data_size
     )
 
     zero_shot_model_output_df_one_full_batch = (

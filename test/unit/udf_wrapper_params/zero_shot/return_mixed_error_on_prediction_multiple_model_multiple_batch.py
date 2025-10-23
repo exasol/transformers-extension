@@ -28,7 +28,8 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
     expected_model_counter = 2
     batch_size = 6
     data_size = 2
-    return_ranks = "HIGHEST"
+    return_ranks_highest = "HIGHEST"
+    return_ranks_all = "ALL"
 
     error_label_scores = LabelScores(
         [
@@ -49,12 +50,13 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
         make_input_row(
             sub_dir=sub_dir1,
             model_name=model_name1,
+            return_ranks=return_ranks_all,
         )
         * data_size
         + make_input_row(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_input_row(
@@ -62,7 +64,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_input_row(
@@ -70,6 +72,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
+            return_ranks=return_ranks_all,
         )
         * data_size
     )
@@ -78,12 +81,13 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
         make_udf_output_for_one_input_row_without_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
+            return_ranks=return_ranks_all,
         )
         * data_size
         + make_udf_output_for_one_input_row_without_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_udf_output_for_one_input_row_without_span(
@@ -93,7 +97,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             candidate_labels=candidate_labels2,
             label_scores=error_label_scores,
             error_msg="Traceback",
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_udf_output_for_one_input_row_without_span(
@@ -103,6 +107,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             candidate_labels=candidate_labels2,
             label_scores=error_label_scores,
             error_msg="Traceback",
+            return_ranks=return_ranks_all,
         )
         * data_size
     )
@@ -125,12 +130,13 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
         make_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
+            return_ranks=return_ranks_all,
         )
         * data_size
         + make_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_input_row_with_span(
@@ -138,7 +144,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_input_row_with_span(
@@ -146,6 +152,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
+            return_ranks=return_ranks_all,
         )
         * data_size
     )
@@ -154,12 +161,13 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
         make_udf_output_for_one_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
+            return_ranks=return_ranks_all,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -167,7 +175,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             label_scores=error_label_scores,
             error_msg="Traceback",
-            return_ranks=return_ranks,
+            return_ranks=return_ranks_highest,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -175,6 +183,7 @@ class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             label_scores=error_label_scores,
             error_msg="Traceback",
+            return_ranks=return_ranks_all,
         )
         * data_size
     )

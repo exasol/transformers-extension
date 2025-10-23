@@ -67,7 +67,6 @@ def test_zero_shot_classification_single_text_script_without_spans(
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
 
-    print(result)
 
     # assertions
     assert result[0][-1] is None
