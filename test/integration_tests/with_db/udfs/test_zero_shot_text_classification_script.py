@@ -7,23 +7,34 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
 
+import pytest
+
 
 def setup_common_input_data():
     n_rows = 100
     candidate_labels = "Database,Analytics,Germany,Food,Party"
     n_labels = len(candidate_labels.split(","))
-    n_rows_result = n_rows * n_labels
     text_data = "The database software company Exasol is based in Nuremberg"
-    return n_rows, candidate_labels, n_labels, n_rows_result, text_data
+    return n_rows, candidate_labels, n_labels, text_data
 
 
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [("ALL", None), ("HIGHEST", 1)],
+)
 def test_zero_shot_classification_single_text_script_without_spans(
-    setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs
+    setup_database,
+    db_conn,
+    upload_zero_shot_classification_model_to_bucketfs,
+    return_ranks,
+    number_results_per_input,
 ):
+
     bucketfs_conn_name, _ = setup_database
-    n_rows, candidate_labels, n_labels, n_rows_result, text_data = (
-        setup_common_input_data()
-    )
+    n_rows, candidate_labels, n_labels, text_data = setup_common_input_data()
+    if not number_results_per_input:
+        number_results_per_input = n_labels
+    n_rows_result = n_rows * number_results_per_input
     input_data = []
 
     for i in range(n_rows):
@@ -35,6 +46,7 @@ def test_zero_shot_classification_single_text_script_without_spans(
                 model_params.zero_shot_model_specs.model_name,
                 text_data,
                 candidate_labels,
+                return_ranks,
             )
         )
 
@@ -45,10 +57,11 @@ def test_zero_shot_classification_single_text_script_without_spans(
         f"t.sub_dir, "
         f"t.model_name, "
         f"t.text_data,"
-        f"t.candidate_labels) "
+        f"t.candidate_labels,"
+        f"t.return_ranks) "
         f"FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, "
-        f"sub_dir, model_name, text_data, candidate_labels));"
+        f"sub_dir, model_name, text_data, candidate_labels, return_ranks));"
     )
 
     # execute sequence classification UDF
@@ -62,17 +75,30 @@ def test_zero_shot_classification_single_text_script_without_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8
+        result,
+        acceptable_results,
+        1 / 1.8,
+        label_index=6,
     )
 
 
+@pytest.mark.parametrize(
+    "return_ranks, number_results_per_input",
+    [("ALL", None), ("HIGHEST", 1)],
+)
 def test_zero_shot_classification_single_text_script_with_spans(
-    setup_database, db_conn, upload_zero_shot_classification_model_to_bucketfs
+    setup_database,
+    db_conn,
+    upload_zero_shot_classification_model_to_bucketfs,
+    return_ranks,
+    number_results_per_input,
 ):
+
     bucketfs_conn_name, _ = setup_database
-    n_rows, candidate_labels, n_labels, n_rows_result, text_data = (
-        setup_common_input_data()
-    )
+    n_rows, candidate_labels, n_labels, text_data = setup_common_input_data()
+    if not number_results_per_input:
+        number_results_per_input = n_labels
+    n_rows_result = n_rows * number_results_per_input
     input_data = []
 
     for i in range(n_rows):
@@ -87,6 +113,7 @@ def test_zero_shot_classification_single_text_script_with_spans(
                 0,
                 len(text_data),
                 candidate_labels,
+                return_ranks,
             )
         )
 
@@ -100,11 +127,12 @@ def test_zero_shot_classification_single_text_script_with_spans(
         f"t.text_data_doc_id, "
         f"t.text_data_char_begin, "
         f"t.text_data_char_end, "
-        f"t.candidate_labels) "
+        f"t.candidate_labels, "
+        f"t.return_ranks) "
         f"FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, "
         f"sub_dir, model_name, text_data, text_data_doc_id, text_data_char_begin, "
-        f"text_data_char_end, candidate_labels));"
+        f"text_data_char_end, candidate_labels, return_ranks));"
     )
 
     # execute sequence classification UDF
@@ -118,5 +146,5 @@ def test_zero_shot_classification_single_text_script_with_spans(
 
     acceptable_results = ["Analytics", "Database", "Germany"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8, label_index=6
+        result, acceptable_results, 1 / 1.8, label_index=7
     )
