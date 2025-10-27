@@ -230,10 +230,3 @@ def make_udf_output_for_one_input_row_with_span(
         ]
 
     return udf_output
-
-
-def make_number_of_strings(input_str: str, desired_number: int):
-    """
-    Returns desired number of "input_strX", where X is counting up to desired_number.
-    """
-    return (input_str + f"{i}" for i in range(desired_number))

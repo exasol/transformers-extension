@@ -11,6 +11,7 @@ import transformers
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
 
+# todo update docu
 class SequenceClassificationTextPairUDF(BaseModelUDF):
     def __init__(
         self,
@@ -28,7 +29,7 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
             tokenizer,
             task_type="text-classification",
         )
-        self.new_columns = ["label", "score", "error_message"]
+        self.new_columns = ["label", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -60,7 +61,7 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         for text, text_pair in zip(first_sequences, second_sequences):
             input_sequences.append({"text": text, "text_pair": text_pair})
 
-        results = self.last_created_pipeline(input_sequences, return_all_scores=True)
+        results = self.last_created_pipeline(input_sequences, top_k=None)
 
         return results
 
@@ -83,7 +84,12 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-
+        # return all results for inputs with return_ranks == "ALL",
+        # and only best(rank=1) result for inputs with return_ranks == "HIGHEST"
+        model_df = model_df.query(
+            '(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))'
+        )
+        model_df.reset_index()
         return model_df
 
     def create_dataframes_from_predictions(
@@ -102,6 +108,9 @@ class SequenceClassificationTextPairUDF(BaseModelUDF):
         results_df_list = []
         for result in predictions:
             result_df = pd.DataFrame(result)
+            result_df["rank"] = (
+                result_df["score"].rank(ascending=False, method="dense").astype(int)
+            )
             results_df_list.append(result_df)
 
         return results_df_list

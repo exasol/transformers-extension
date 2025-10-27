@@ -488,7 +488,8 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
     bucketfs_conn,
     sub_dir,
     model_name,
-    text_data
+    text_data,
+    return_ranks
 )
 ```
 
@@ -500,21 +501,24 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 
 Specific parameters
 * `text_data`: The input text to be classified
+* `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 Additional output columns
 * _LABEL_: the prediction
 * _SCORE_: the confidence
+* _RANK_: the rank of the label
 
 Example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | LABEL   | SCORE | ERROR_MESSAGE |
-|---------------|---------|------------|-----------|---------|-------|---------------|
-| conn_name     | dir/    | model_name | text      | label_1 | 0.75  | None          |
-| ...           | ...     | ...        | ...       | ...     | ...   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
+|---------------|---------|------------|-----------|--------------|---------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text 1    | ALL          | label_1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text 1    | ALL          | label_2 | 0.23  | 2    | None          |
+| ...           | ...     | ...        | ...       | ...          | ...     | ...   | ...  | ...           |
 
 ### Sequence Classification for Text Pair UDF
 
-This UDF takes two input sequences and compares them. It can be used to determine if two sequences are paraphrases of each other.
+This UDF takes two input sequences and compares them. Among other things, it can be used to determine if two sequences are paraphrases of each other.
 
 Example usage:
 
@@ -525,7 +529,8 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
     sub_dir,
     model_name,
     first_text,
-    second_text
+    second_text,
+    return_ranks
 )
 ```
 
@@ -538,10 +543,20 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 Specific parameters
 * `first_text`: The first input text
 * `second_text`: The second input text
+* `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
+
 
 Additional output columns
 * _LABEL_: the prediction
 * _SCORE_: the confidence
+* _RANK_: the rank of the label
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | FIRST_TEXT | SECOND_TEXT | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
+|---------------|---------|------------|------------|-------------|--------------|---------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text 1     | text 2      | ALL          | label_1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text 1     | text 2      | ALL          | label_2 | 0.23  | 2    | None          |
+| ...           | ...     | ...        | ...        | ...         | ...          | ...     | ...   | ...  | ...           |
+
 
 ### Question Answering UDF
 

@@ -11,6 +11,7 @@ import transformers
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
 
+# todo update docu
 class SequenceClassificationSingleTextUDF(BaseModelUDF):
     def __init__(
         self,
@@ -28,7 +29,7 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
             tokenizer,
             task_type="text-classification",
         )
-        self.new_columns = ["label", "score", "error_message"]
+        self.new_columns = ["label", "score", "rank", "error_message"]
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -54,7 +55,10 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         sequences = list(model_df["text_data"])
-        results = self.last_created_pipeline(sequences, return_all_scores=True)
+        # todo apparently top_k is now supported. so we could also solve the ranks ALL/Highest like for example in filling mask udf
+        # todo in both approaches we need to go over inputs to look for ho many results to return, to be able sort results to inputs.
+        # todo personally i think this way is easier to read
+        results = self.last_created_pipeline(sequences, top_k=None)
         return results
 
     def append_predictions_to_input_dataframe(
@@ -76,7 +80,12 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         # Concat predictions and model_df
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
-
+        # return all results for inputs with return_ranks == "ALL",
+        # and only best(rank=1) result for inputs with return_ranks == "HIGHEST"
+        model_df = model_df.query(
+            '(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))'
+        )
+        model_df.reset_index()
         return model_df
 
     def create_dataframes_from_predictions(
@@ -95,6 +104,9 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         results_df_list = []
         for result in predictions:
             result_df = pd.DataFrame(result)
+            result_df["rank"] = (
+                result_df["score"].rank(ascending=False, method="dense").astype(int)
+            )
             results_df_list.append(result_df)
 
         return results_df_list

@@ -6,7 +6,6 @@ from test.unit.udf_wrapper_params.token_classification.make_data_row_functions i
     make_input_row,
     make_input_row_with_span,
     make_model_output_for_one_input_row,
-    make_number_of_strings,
     make_output_row,
     make_output_row_with_span,
     model_name,
@@ -15,6 +14,7 @@ from test.unit.udf_wrapper_params.token_classification.make_data_row_functions i
     text_data,
     token,
 )
+from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 
 from exasol_udf_mock_python.connection import Connection
 

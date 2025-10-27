@@ -8,17 +8,16 @@ from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
     make_input_row,
     make_input_row_with_span,
     make_model_output_for_one_input_row,
-    make_number_of_strings,
     make_udf_output_for_one_input_row_with_span,
     make_udf_output_for_one_input_row_without_span,
     model_name,
     sub_dir,
 )
+from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 
 from exasol_udf_mock_python.connection import Connection
 
 
-# todo update class descriptions
 @dataclasses.dataclass
 class ReturnMixedErrorOnPredictionMultipleModelMultipleBatch:
     """
