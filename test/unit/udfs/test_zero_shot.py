@@ -1,17 +1,29 @@
-from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_multiple_model_multiple_batch import (
-    ErrorOnPredictionMultipleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.error_on_prediction_single_model_multiple_batch import (
-    ErrorOnPredictionSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_single_model_multiple_batch import (
+    ReturnAllErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_labels_single_model_multiple_batch import (
-    MultipleLabelsSingleModelMultipleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_multiple_batch import (
+    ReturnAllMultipleLabelsSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_labels_single_model_single_batch import (
-    MultipleLabelsSingleModelSingleBatch,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_single_batch import (
+    ReturnAllMultipleLabelsSingleModelSingleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.multiple_model_multiple_batch_complete import (
-    MultipleModelMultipleBatchComplete,
+from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_model_multiple_batch_complete import (
+    ReturnAllMultipleModelMultipleBatchComplete,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_multiple_model_multiple_batch_complete import (
+    ReturnHighestMultipleModelMultipleBatchComplete,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_error_on_prediction_multiple_model_multiple_batch import (
+    ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+)
+from test.unit.udf_wrapper_params.zero_shot.return_mixed_multiple_model_multiple_batch import (
+    ReturnMixedMultipleModelMultipleBatchComplete,
 )
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
@@ -51,6 +63,7 @@ def create_mock_metadata_with_span():
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -60,6 +73,7 @@ def create_mock_metadata_with_span():
             Column("text_data_doc_id", int, "INTEGER"),
             Column("text_data_char_begin", int, "INTEGER"),
             Column("text_data_char_end", int, "INTEGER"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
             Column("rank", int, "INTEGER"),
@@ -81,6 +95,7 @@ def create_mock_metadata():
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -89,6 +104,7 @@ def create_mock_metadata():
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("candidate_labels", str, "VARCHAR(2000000)"),
+            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
             Column("rank", int, "INTEGER"),
@@ -101,11 +117,15 @@ def create_mock_metadata():
 @pytest.mark.parametrize(
     "params",
     [
-        MultipleModelMultipleBatchComplete,
-        MultipleLabelsSingleModelSingleBatch,
-        MultipleLabelsSingleModelMultipleBatch,
-        ErrorOnPredictionMultipleModelMultipleBatch,
-        ErrorOnPredictionSingleModelMultipleBatch,
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnAllMultipleLabelsSingleModelSingleBatch,
+        ReturnAllMultipleLabelsSingleModelMultipleBatch,
+        ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnAllErrorOnPredictionSingleModelMultipleBatch,
+        ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnMixedMultipleModelMultipleBatchComplete,
     ],
 )
 @patch(
@@ -146,7 +166,6 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
         tokenizer=mock_tokenizer_factory,
         pipeline=mock_pipeline_factory,
     )
-
     udf.run(mock_ctx)
     result = mock_ctx.output
 
@@ -162,11 +181,15 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
 @pytest.mark.parametrize(
     "params",
     [
-        MultipleModelMultipleBatchComplete,
-        MultipleLabelsSingleModelSingleBatch,
-        MultipleLabelsSingleModelMultipleBatch,
-        ErrorOnPredictionMultipleModelMultipleBatch,
-        ErrorOnPredictionSingleModelMultipleBatch,
+        ReturnAllMultipleModelMultipleBatchComplete,
+        ReturnAllMultipleLabelsSingleModelSingleBatch,
+        ReturnAllMultipleLabelsSingleModelMultipleBatch,
+        ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnAllErrorOnPredictionSingleModelMultipleBatch,
+        ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnHighestMultipleModelMultipleBatchComplete,
+        ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
+        ReturnMixedMultipleModelMultipleBatchComplete,
     ],
 )
 @patch(

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
+    MockExaEnvironment,
+)
 from test.utils.bucketfs_file_list import get_bucketfs_file_list
 from test.utils.mock_connections import (
     create_hf_token_connection,
@@ -23,16 +26,6 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import (
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )
-
-
-class ExaEnvironment:
-    def __init__(self, connections: dict[str, Connection] = None):
-        self._connections = connections
-        if self._connections is None:
-            self._connections = {}
-
-    def get_connection(self, name: str) -> Connection:
-        return self._connections[name]
 
 
 class Context:
@@ -109,7 +102,7 @@ def test_model_downloader_udf_implementation(tmp_path):
     env1 = TestEnvironmentSetup("1", tmp_path, token_conn_name="")
 
     ctx = Context([env1.ctx_data])
-    exa = ExaEnvironment(
+    exa = MockExaEnvironment(
         {
             env1.bucketfs_conn_name: env1.bucketfs_connection,
         }

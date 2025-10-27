@@ -769,6 +769,7 @@ This UDF provides the task of predicting a class that was not seen by the model 
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
+
 ```sql
 SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
     device_id,
@@ -776,7 +777,8 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
     sub_dir,
     model_name,
     text_data,
-    candidate_labels
+    candidate_labels,
+    return_ranks
 )
 ```
 
@@ -788,7 +790,8 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 
 Specific parameters
 * `text_data`: The text to be classified.
-* `candidate labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
+* `candidate_labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
+* `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 Additional output columns
 * _LABEL_: the prediction
@@ -797,8 +800,8 @@ Additional output columns
 
 Example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
-| ------------- |---------|------------|-----------|------------------|--------|-------|------|---------------|
-| conn_name     | dir/    | model_name | text      | label1,label2..  | label1 | 0.75  | 1    | None          |
-| conn_name     | dir/    | model_name | text      | label1,label2..  | label2 | 0.70  | 2    | None          |
-| ...           | ...     | ...        | ...       | ...              | ...    | ...   | ..   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | RETURN_RANKS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
+| ------------- |---------|------------|-----------|------------------|--------------|--------|-------|------|---------------|
+| conn_name     | dir/    | model_name | text      | label1,label2..  | ALL          | label1 | 0.75  | 1    | None          |
+| conn_name     | dir/    | model_name | text      | label1,label2..  | ALL          | label2 | 0.70  | 2    | None          |
+| ...           | ...     | ...        | ...       | ...              | ...          | ...    | ...   | ..   | ...           |

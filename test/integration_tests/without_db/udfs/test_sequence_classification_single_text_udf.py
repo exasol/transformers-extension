@@ -1,4 +1,4 @@
-from test.integration_tests.without_db.udfs.matcher import (
+from test.integration_tests.without_db.udfs.utils.matcher import (
     ColumnsMatcher,
     ErrorMessageMatcher,
     NewColumnsEmptyMatcher,
@@ -6,9 +6,12 @@ from test.integration_tests.without_db.udfs.matcher import (
     Result,
     ShapeMatcher,
 )
+from test.integration_tests.without_db.udfs.utils.mock_context import MockContext
+from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
+    MockExaEnvironment,
+)
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
-from typing import Dict
 
 import pandas as pd
 import pytest
@@ -18,41 +21,6 @@ from exasol_udf_mock_python.connection import Connection
 from exasol_transformers_extension.udfs.models.sequence_classification_single_text_udf import (
     SequenceClassificationSingleTextUDF,
 )
-
-
-class ExaEnvironment:
-    def __init__(self, connections: dict[str, Connection] = None):
-        self._connections = connections
-        if self._connections is None:
-            self._connections = {}
-
-    def get_connection(self, name: str) -> Connection:
-        return self._connections[name]
-
-
-class Context:
-    def __init__(self, input_df):
-        self.input_df = input_df
-        self._emitted = []
-        self._is_accessed_once = False
-
-    def emit(self, *args):
-        self._emitted.append(args)
-
-    def reset(self):
-        self._is_accessed_once = False
-
-    def get_emitted(self):
-        return self._emitted
-
-    def get_dataframe(self, num_rows="all", start_col=0):
-        return_df = (
-            None
-            if self._is_accessed_once
-            else self.input_df[self.input_df.columns[start_col:]]
-        )
-        self._is_accessed_once = True
-        return return_df
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
@@ -92,8 +60,8 @@ def test_sequence_classification_single_text_udf(
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
-    ctx = Context(input_df=sample_df)
-    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+    ctx = MockContext(input_df=sample_df)
+    exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
     sequence_classifier = SequenceClassificationSingleTextUDF(
         exa, batch_size=batch_size
@@ -160,8 +128,8 @@ def test_sequence_classification_single_text_udf_on_error_handling(
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
 
-    ctx = Context(input_df=sample_df)
-    exa = ExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+    ctx = MockContext(input_df=sample_df)
+    exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
     sequence_classifier = SequenceClassificationSingleTextUDF(
         exa, batch_size=batch_size
