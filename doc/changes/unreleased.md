@@ -18,3 +18,11 @@ T.B.D
 ## Refactorings
 
 * #311: Updated transitive dependencies
+
+## Security
+
+* #333: Resolved CVE-2025-3730 for torch by bumping version and setting requires-python = ">=3.10.0,<3.15"
+
+## Internal
+
+* #333: Resolved CVE-2025-8869 for transitive dependency pip by re-locking dependencies
