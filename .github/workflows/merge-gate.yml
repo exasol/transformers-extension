@@ -19,6 +19,7 @@ jobs:
   slow-checks:
     name: Slow
     uses: ./.github/workflows/slow-checks.yml
+    secrets: inherit
     permissions:
       contents: read
 
