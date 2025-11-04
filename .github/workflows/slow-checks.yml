@@ -1,0 +1,31 @@
+name: Slow-Checks
+
+on:
+  workflow_call:
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+
+jobs:
+  onprem-integration-tests:
+    name: Integrations
+    uses: ./.github/workflows/onprem-integration-tests.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  saas-integration-tests:
+    name: Integrations
+    uses: ./.github/workflows/saas-integration-tests.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  gpu-tests:
+    name: Integrations
+    uses: ./.github/workflows/gpu-tests.yml
+    secrets: inherit
+    permissions:
+      contents: read

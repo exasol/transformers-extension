@@ -1,0 +1,57 @@
+name: GPU Tests
+
+on:
+  workflow_call:
+    DOCKER_USER:
+      required: true
+    DOCKER_PASSWORD:
+      required: true
+
+jobs:
+
+  prep-testbed-gpu:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1 #todo newer?
+
+      - id: set-matrix
+        #todo make a set of gpu only tests? or is this seperated enough?
+        run: |
+          ALL_TESTS=`poetry run -- nox -s without_db_integration_tests`
+          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  test-gpu:
+    needs: prep-testbed-gpu
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version:
+          - "3.10"#todo matrix?
+        test-path: ${{fromJson(needs.prep-testbed-gpu.outputs.matrix)}}
+    runs-on:
+      labels: int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+    name: GPU Test
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        with:
+          python-version: '${{ matrix.python_version }}'
+          use-cache: 'false'
+
+      - name: Allow unprivileged user namespaces
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Run ${{ matrix.test-path.name }}
+        run: poetry run -- python "${{ matrix.test-path.path }}"
