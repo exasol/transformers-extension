@@ -15,6 +15,15 @@ T.B.D
 
 ## Documentation
 
-## Refactorings
+## Refactoring
 
 * #311: Updated transitive dependencies
+* #333: Updated dependency declaration to `pyexasol`
+
+## Security
+
+* #333: Resolved CVE-2025-3730 for torch by bumping version to ^2.8.0 and setting requires-python = ">=3.10.0,<3.15"
+
+## Internal
+
+* #333: Resolved CVE-2025-8869 for transitive dependency pip by re-locking dependencies
