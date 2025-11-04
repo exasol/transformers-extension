@@ -20,7 +20,6 @@ jobs:
       matrix:
         python_version:
           - "3.10"#todo matrix?
-        test-path: ${{fromJson(needs.prep-testbed-gpu.outputs.matrix)}}
     runs-on:
       labels: int-linux-x64-4core-gpu-t4-ubuntu24.04-1
     name: GPU Test

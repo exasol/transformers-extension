@@ -25,9 +25,8 @@ jobs:
       matrix:
         python_version:
           - "3.10"
-        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-24.04
-    name: ${{ matrix.test-path.name }}
+    name: run-saas-integration-tests
     steps:
       - uses: actions/checkout@v5
 
