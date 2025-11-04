@@ -9,7 +9,9 @@ on:
           required: true
 jobs:
 
-  test-all:
+  run-onprem-integration-tests:
+    environment:
+      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -34,7 +36,7 @@ jobs:
       - name: Start test Docker-DB
         run: poetry run -- nox -s start_database
 
-      - name: Run test ${{ matrix.test-path.name }}
+      - name: Run test onprem_integration_tests
         run: poetry run -- nox -s onprem_integration_tests
         env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.DOCKER_USER }}

@@ -10,29 +10,9 @@ on:
 
 jobs:
 
-  prep-testbed-gpu:
-    runs-on: ubuntu-24.04
+  test-gpu:
     environment:
       name: slow-test-env
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1 #todo newer?
-
-      - id: set-matrix
-        #todo make a set of gpu only tests? or is this seperated enough?
-        run: |
-          ALL_TESTS=`poetry run -- nox -s without_db_integration_tests`
-          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-
-  test-gpu:
-    needs: prep-testbed-gpu
     permissions:
       contents: read
     strategy:
@@ -48,7 +28,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1 #todo newer?
         with:
           python-version: '${{ matrix.python_version }}'
           use-cache: 'false'
@@ -56,5 +36,6 @@ jobs:
       - name: Allow unprivileged user namespaces
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
-      - name: Run ${{ matrix.test-path.name }}
-        run: poetry run -- python "${{ matrix.test-path.path }}"
+      - name: Run without_db_integration_tests
+                #todo make a set of gpu only tests? or is this seperated enough?
+        run: poetry run -- nox -s without_db_integration_tests
