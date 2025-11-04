@@ -3,7 +3,7 @@ name: Slow-Checks
 on:
   workflow_call:
     secrets:
-      DOCKER_USERNAME:
+      DOCKER_USER:
         required: true
       DOCKER_PASSWORD:
         required: true
