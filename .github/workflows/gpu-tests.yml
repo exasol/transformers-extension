@@ -2,10 +2,11 @@ name: GPU Tests
 
 on:
   workflow_call:
-    DOCKER_USER:
-      required: true
-    DOCKER_PASSWORD:
-      required: true
+    secrets:
+      DOCKER_USER:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
 
 jobs:
 
@@ -30,6 +31,8 @@ jobs:
 
   test-gpu:
     needs: prep-testbed-gpu
+    environment:
+      name: slow-test-env
     permissions:
       contents: read
     strategy:
