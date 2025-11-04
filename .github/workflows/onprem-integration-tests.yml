@@ -9,26 +9,7 @@ on:
           required: true
 jobs:
 
-  prep-testbed:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
-
-      - id: set-matrix
-        run: |
-          ALL_TESTS=`poetry run -- nox -s onprem_integration_tests`
-          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-
   test-all:
-    needs: prep-testbed
     permissions:
       contents: read
     strategy:
@@ -54,7 +35,7 @@ jobs:
         run: poetry run -- nox -s start_database
 
       - name: Run test ${{ matrix.test-path.name }}
-        run: poetry run -- python ${{ matrix.test-path.path }}
+        run: poetry run -- nox -s onprem_integration_tests
         env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}

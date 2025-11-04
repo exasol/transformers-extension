@@ -12,6 +12,8 @@ jobs:
 
   prep-testbed-gpu:
     runs-on: ubuntu-24.04
+    environment:
+      name: slow-test-env
     permissions:
       contents: read
 
@@ -31,8 +33,6 @@ jobs:
 
   test-gpu:
     needs: prep-testbed-gpu
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
