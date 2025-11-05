@@ -11,6 +11,8 @@ on:
 jobs:
 
   run-saas-integration-tests:
+    environment:
+      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -50,7 +52,8 @@ jobs:
 
       - name: Run test saas_integration_tests
         run: poetry run -- nox -s saas_integration_tests #todo do we want to use gpu for these?
-        env: # Set the secret as an input
+        # todo this one runs forever now: 1h 52m 32s
+        env: # Set the secret as an input #todo is saas db correctly deleted ?
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
           SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
