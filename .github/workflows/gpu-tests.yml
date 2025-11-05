@@ -32,9 +32,10 @@ jobs:
           python-version: '${{ matrix.python_version }}'
           use-cache: 'false'
 
-      - name: Allow unprivileged user namespaces
-        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      #- name: Allow unprivileged user namespaces
+      #  run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Run without_db_integration_tests
                 #todo make a set of gpu only tests? or is this seperated enough?
+        #todo "Device set to use cpu" in outout. where from? do tests run with gpu?
         run: poetry run -- nox -s without_db_integration_tests

@@ -19,8 +19,9 @@ jobs:
       matrix:
         python_version:
           - "3.10"
-    runs-on: ubuntu-24.04
-    name: run-onprem-integration-tests
+    runs-on:
+      labels: int-linux-x64-2core-ubuntu24.04-1
+    name: Onprem Integration Tests
     steps:
       - uses: actions/checkout@v5
 
@@ -29,14 +30,14 @@ jobs:
         with:
           tool-cache: true
           large-packages: false
-      - name: Free disk space by removing large directories
-        run: |
-          sudo rm -rf /usr/local/graalvm/
-          sudo rm -rf /usr/local/.ghcup/
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/local/share/chromium
-          sudo rm -rf /usr/local/lib/node_modules
-          sudo rm -rf /opt/ghc
+      #- name: Free disk space by removing large directories
+      #  run: |
+      #    sudo rm -rf /usr/local/graalvm/
+      #    sudo rm -rf /usr/local/.ghcup/
+      #    sudo rm -rf /usr/local/share/powershell
+     #     sudo rm -rf /usr/local/share/chromium
+       #   sudo rm -rf /usr/local/lib/node_modules
+      #    sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v1
