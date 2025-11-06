@@ -18,19 +18,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python_version:
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          - "3.13"
+        python_version: ${{ matrix.python-version }}
     runs-on:
       labels: int-linux-x64-2core-ubuntu24.04-1
     name: Without-DB Tests
     steps:
       - uses: actions/checkout@v5
 
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          large-packages: false
+      - name: Free disk space by removing large directories
+        run: |
+          sudo rm -rf /usr/local/graalvm/
+          sudo rm -rf /usr/local/.ghcup/
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /opt/ghc
+
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.6.0
         with:
           python-version: '${{ matrix.python_version }}'
           use-cache: 'false'
