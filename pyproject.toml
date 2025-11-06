@@ -1,7 +1,7 @@
 [project]
 name = "exasol-transformers-extension"
 version = "3.0.0"
-requires-python = ">=3.10.0,<4.0"
+requires-python = ">=3.10.0,<3.15"
 description = "An Exasol extension for using state-of-the-art pretrained machine learning models via the Hugging Face Transformers API."
 authors = [
     {name="Umit Buyuksahin", email="umit.buyuksahin@exasol.com"},
@@ -21,12 +21,12 @@ requires-poetry = ">=2.1.0"
 
 [tool.poetry.dependencies]
 pandas = ">=2.2.3,<3.0.0"
-torch = "^2.0.1"
+torch = "^2.8.0"
 transformers = {extras = ["torch"], version = "^4.36.2"}
 Jinja2 = "^3.1.6"
 importlib-resources = "^6.4.0"
 click = "^8.0.4"
-pyexasol = ">=0.25.0"
+pyexasol = ">=0.25.0,<2"
 exasol-bucketfs = ">=1.0.0"
 tenacity = "^8.2.2"
 sacremoses = ">=0.0.53"

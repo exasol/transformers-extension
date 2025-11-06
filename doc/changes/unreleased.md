@@ -12,4 +12,8 @@ T.B.D
 
 ## Documentation
 
-## Refactorings
+## Refactoring
+
+## Security
+
+## Internal
