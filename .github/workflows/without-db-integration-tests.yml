@@ -23,7 +23,8 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
-    runs-on: ubuntu-24.04
+    runs-on:
+      labels: int-linux-x64-2core-ubuntu24.04-1
     name: Without-DB Tests
     steps:
       - uses: actions/checkout@v5
