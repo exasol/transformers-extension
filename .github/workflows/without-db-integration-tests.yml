@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python_version: ${{ matrix.python-version }}
+        python_version: '${{ matrix.python-version }}'
     runs-on:
       labels: int-linux-x64-2core-ubuntu24.04-1
     name: Without-DB Tests
