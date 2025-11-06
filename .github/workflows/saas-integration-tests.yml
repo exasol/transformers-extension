@@ -44,16 +44,12 @@ jobs:
         with:
           python-version: '${{ matrix.python_version }}'
 
-      - name: Allow unprivileged user namespaces
-        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-
       - name: export slc
         run: poetry run -- nox -s export_slc
 
       - name: Run test saas_integration_tests
-        run: poetry run -- nox -s saas_integration_tests #todo do we want to use gpu for these?
-        # todo this one runs forever now: 1h 52m 32s
-        env: # Set the secret as an input #todo is saas db correctly deleted ?
+        run: poetry run -- nox -s saas_integration_tests
+        env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
           SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}

@@ -10,22 +10,22 @@ on:
 
 jobs:
   onprem-integration-tests:
-    name: Integrations
+    name: Onprem Integrations
     uses: ./.github/workflows/onprem-integration-tests.yml
     secrets: inherit
     permissions:
       contents: read
 
   saas-integration-tests:
-    name: Integrations
+    name: Saas Integrations
     uses: ./.github/workflows/saas-integration-tests.yml
     secrets: inherit
     permissions:
       contents: read
 
   gpu-tests:
-    name: Integrations
-    uses: ./.github/workflows/gpu-tests.yml
+    name: Without DB Integrations
+    uses: ./.github/workflows/without-db-integration-tests.yml
     secrets: inherit
     permissions:
       contents: read
