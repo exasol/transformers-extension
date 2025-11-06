@@ -25,7 +25,7 @@ jobs:
           large-packages: false
 
       - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/prepare_poetry_env
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1
         with:
           python-version: ${{ matrix.python-version }}
 

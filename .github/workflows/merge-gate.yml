@@ -2,6 +2,11 @@ name: Merge-Gate
 
 on:
   workflow_call:
+    secrets:
+      DOCKER_USER:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
 
 jobs:
 
@@ -11,23 +16,24 @@ jobs:
     permissions:
       contents: read
 
-#  slow-checks:
-#    name: Slow
-#    uses: ./.github/workflows/slow-checks.yml
-#    permissions:
-#      contents: read
-#
-  # This job ensures inputs have been executed successfully.
-#  approve-merge:
-#    name: Allow Merge
-#    runs-on: ubuntu-24.04
-#    permissions:
-#      contents: read
+  slow-checks:
+    name: Slow
+    uses: ./.github/workflows/slow-checks.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+#   This job ensures inputs have been executed successfully.
+  approve-merge:
+    name: Allow Merge
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
   #     If you need additional jobs to be part of the merge gate, add them below
-#    needs: [ fast-checks, slow-checks ]
+    needs: [ fast-checks, slow-checks ]
 #
 #     Each job requires a step, so we added this dummy step.
-#    steps:
-#      - name: Approve
-#        run: |
-#          echo "Merge Approved"
+    steps:
+      - name: Approve
+        run: |
+          echo "Merge Approved"

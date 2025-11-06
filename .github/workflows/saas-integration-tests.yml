@@ -1,0 +1,58 @@
+name: Saas Integration Tests
+
+on:
+  workflow_call:
+    secrets:
+      DOCKER_USER:
+          required: true
+      DOCKER_PASSWORD:
+          required: true
+
+jobs:
+
+  run-saas-integration-tests:
+    environment:
+      name: slow-test-env
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version:
+          - "3.10"
+    runs-on: ubuntu-24.04
+    name: Saas Integration Tests
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          large-packages: false
+      - name: Free disk space by removing large directories
+        run: |
+          sudo rm -rf /usr/local/graalvm/
+          sudo rm -rf /usr/local/.ghcup/
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /opt/ghc
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        with:
+          python-version: '${{ matrix.python_version }}'
+
+      - name: export slc
+        run: poetry run -- nox -s export_slc
+
+      - name: Run test saas_integration_tests
+        run: poetry run -- nox -s saas_integration_tests
+        env: # Set the secret as an input
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
+          SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
+          SAAS_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
+          SAAS_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
+
