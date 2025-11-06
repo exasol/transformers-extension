@@ -19,8 +19,10 @@ Please refer to the [user guide](../user_guide/user_guide.md) for Details.
 
 ## Features
 
+
 * #329: Added return_ranks to Zero-Shot-Classification UDF
-* #328: Added parameters `rank` and `return_ranks` to sequence classification udf's
+* #326: Added parameters `rank` and `return_ranks` to sequence classification single text udf
+* #327: Added parameters `rank` and `return_ranks` to sequence classification text pair udf
 
 ## Refactorings
 
@@ -34,4 +36,3 @@ Please refer to the [user guide](../user_guide/user_guide.md) for Details.
 ## Internal
 
 * #333: Resolved CVE-2025-8869 for transitive dependency pip by re-locking dependencies
-* 
