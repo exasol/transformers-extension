@@ -3,6 +3,8 @@
 
 # User Guide
 
+## Introduction
+
 The Transformers Extension provides a Python library with UDFs that allow the use of pre-trained NLP models provided by the [Transformers API](https://huggingface.co/docs/transformers/index).
 
 The extension provides two types of UDFs:
@@ -19,8 +21,6 @@ The extension provides two types of UDFs:
    8. Zero-Shot Text Classification
 
     
-## Introduction
-
 This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol cluster.
 
 User Defined Functions (UDFs) are scripts in various programming languages that can be executed in the Exasol database. They can be used by a user for more flexibility in data processing. With the Transformers Extension, we provide multiple UDFs for you to use on your Exasol database. You can find more detailed documentation on UDFs on the [UDF Scripts page](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
@@ -45,6 +45,8 @@ Many UDFs use a set of common parameters:
 Each of the UDFs generates an output containing the original input columns passed to the UDF plus additional columns containing the inference results.
 
 In case of any error during model loading or prediction, the additional output columns are set to `NULL` and column _ERROR_MESSAGE_ is set to the stacktrace of the error.
+
+## What's Next:
 
 For information on managing the models, please visit the [Manage Models in the BucketFS](manage_models.md) guide.
 
