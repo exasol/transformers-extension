@@ -12,6 +12,8 @@ T.B.D
 
 ## Documentation
 
+ * #204: Split the user_guide into multiple files
+
 ## Refactoring
 
 ## Security
