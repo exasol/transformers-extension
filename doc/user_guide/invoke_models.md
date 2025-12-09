@@ -31,7 +31,7 @@ SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -42,9 +42,9 @@ Specific parameters
 * `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 Additional output columns
-* _LABEL_: the prediction
-* _SCORE_: the confidence
-* _RANK_: the rank of the label
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with which this label was assigned
+* _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 Example:
 
@@ -72,22 +72,22 @@ SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
 * `model_name`
 
 Specific parameters
-* `first_text`: The first input text
-* `second_text`: The second input text
+* `first_text`: The first input text to be classified
+* `second_text`: The second input text, a context for the first text
 * `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 
 Additional output columns
-* _LABEL_: the prediction
-* _SCORE_: the confidence
-* _RANK_: the rank of the label
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with which this label was assigned
+* _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | FIRST_TEXT | SECOND_TEXT | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|------------|-------------|--------------|---------|-------|------|---------------|
@@ -114,7 +114,7 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -122,15 +122,15 @@ SELECT TE_QUESTION_ANSWERING_UDF(
 
 Specific parameters
 * `question`: The question text
-* `context_text`: The context text, associated with question
+* `context_text`: The context text, associated with the question
 * `top_k`: The number of answers to return.
    * Note that, `k` number of answers are not guaranteed.
-   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__.topk).
+   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
 
 Additional output columns
-* _ANSWER_: the prediction
-* _SCORE_: the confidence
-* _RANK_: the rank of the answer
+* _ANSWER_: the predicted answer for the input question
+* _SCORE_: the confidence with which this answer was generated
+* _RANK_: the rank of the answer. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 If `top_k` > 1, each input row is repeated for each answer.
 
@@ -159,7 +159,7 @@ SELECT TE_FILLING_MASK_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -172,7 +172,7 @@ Specific parameters
 Additional output columns
 * _FILLED_TEXT_: the filled text
 * _SCORE_: the confidence
-* _RANK_: the rank of the answer
+* _RANK_: the rank of the answer. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 If `top_k` > 1, each input row is repeated for each prediction.
 
@@ -202,7 +202,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -218,7 +218,7 @@ Additional output columns
 
 ### Token Classification UDF
 
-The main goal of this UDF is to assign a label to individual tokens in a given text.
+The main goal of this UDF is to find tokens in a given text, and assign a label to found tokens.
 
 There are two popular subtasks of token classification:
 
@@ -236,7 +236,7 @@ SELECT TE_TOKEN_CLASSIFICATION_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -247,11 +247,11 @@ Specific parameters
 * `aggregation_strategy`: The strategy about whether to fuse tokens based on the model prediction. `NULL` means "simple" strategy, see [huggingface.co](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TokenClassificationPipeline.aggregation_strategy) for more information.
 
 Additional output columns
-* _START_POS_: the index of the starting character of the token
-* _END_POS_: index of the ending character of the token
-* _WORD_: the token
-* _ENTITY_: the prediciton
-* _SCORE_: the confidence
+* _START_POS_: the index of the starting character of the found token
+* _END_POS_: index of the ending character of the found token
+* _WORD_: the found token
+* _ENTITY_: the token-type the found token was sorted into.
+* _SCORE_: the confidence with which the label was predicted
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 
@@ -279,7 +279,7 @@ SELECT TE_TRANSLATION_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -287,8 +287,8 @@ SELECT TE_TRANSLATION_UDF(
 
 Specific parameters
 * `text_data`: The text to translate.
-* `source_language`: The language of the input. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-* `target_language`:  The language of the desired output. Might be required for multilingual models. It does not have any effect for single pair translation models (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+* `source_language`: The language of the input. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+* `target_language`:  The language of the desired output. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
 * `max_length`: The maximum total length of the translated text.
 
 Additional output columns
@@ -320,7 +320,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `device_id`
 * `bucketfs_conn`
 * `sub_dir`
@@ -328,13 +328,13 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 
 Specific parameters
 * `text_data`: The text to be classified.
-* `candidate_labels`: Labels where the given text is classified. Multiple labels should be comma-separated, e.g., `label1,label2,label3`.
+* `candidate_labels`: A list of labels. Multiple labels should be comma-separated, e.g. `label1,label2,label3`. Only these labels will be used in the prediction.
 * `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 Additional output columns
-* _LABEL_: the prediction
-* _SCORE_: the confidence
-* _RANK_: the rank of the label
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with witch the label was assigned
+* _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 Example:
 
