@@ -170,8 +170,8 @@ Specific parameters
 * `top_k`: The number of predictions to return.
 
 Additional output columns
-* _FILLED_TEXT_: the filled text
-* _SCORE_: the confidence
+* _FILLED_TEXT_: the filled text (whole input text with mask token replaced)
+* _SCORE_: the confidence with witch the mask was filled
 * _RANK_: the rank of the answer. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
 If `top_k` > 1, each input row is repeated for each prediction.
@@ -215,6 +215,15 @@ Specific parameters
 
 Additional output columns
 * _GENERATED_TEXT_: the generated text
+
+Example:
+
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA      | MAX_LENGHT | RETURN_FULL_TEXT | GENERATED_TEXT                          | ERROR_MESSAGE |
+| ------------- |---------|------------|----------------|------------|------------------|-----------------------------------------|---------------|
+| conn_name     | dir/    | model_name | beginning text | 30         | True             | beginning text often includes a summary | None          |
+| conn_name     | dir/    | model_name | continue       | 30         | False            | this sentence                           | None          |
+| ...           | ...     | ...        | ...            | ...        | ...              | ...                                     | ...           |
+
 
 ### Token Classification UDF
 
