@@ -1,6 +1,3 @@
-[pec-user-guide]: https://github.com/exasol/python-extension-common/blob/0.8.0/doc/user_guide/user-guide.md
-<!-- Please check that the version in this reference matches the version of PEC being used by the extension  -->
-
 # User Guide
 
 ## Introduction

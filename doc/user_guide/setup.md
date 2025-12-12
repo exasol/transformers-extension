@@ -201,7 +201,7 @@ The deployment includes the installation of the Script Language Container (SLC).
 
 #### List of Options
 
-For information about the available options common to all Exasol extensions, please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
+For information about the available options common to all Exasol extensions, please refer to the [documentation](https://github.com/exasol/python-extension-common/blob/main/doc/user_guide/user-guide.md#language-container-deployer) in the Exasol Python Extension Common package.
 
 In addition, this extension provides the following installation options:
 

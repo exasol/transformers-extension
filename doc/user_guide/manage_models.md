@@ -1,3 +1,4 @@
+[pec-user-guide]: https://github.com/exasol/python-extension-common/blob/main/doc/user_guide/user-guide.md
 
 # Manage Models in the BucketFS
 
