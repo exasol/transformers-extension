@@ -337,7 +337,7 @@ SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
 
 Specific parameters
 * `text_data`: The text to be classified.
-* `candidate_labels`: A list of labels. Multiple labels should be comma-separated, e.g. `label1,label2,label3`. Only these labels will be used in the prediction.
+* `candidate_labels`: A list of comma-separated labels, e.g. `label1,label2,label3`. Only these labels will be used in the prediction.
 * `return_ranks`: String, either "ALL" which will result in all results being returned, or "HIGHEST", which will only return the result with rank=1 for this input.
 
 Additional output columns
