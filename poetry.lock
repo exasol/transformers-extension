@@ -1026,6 +1026,18 @@ files = [
     {file = "exasol_error_reporting-1.0.0.tar.gz", hash = "sha256:0b81cbb208cd74ca47643532568e467053a29905808e9f29b7b0e4ec5e4e0302"},
 ]
 
+[[package]]
+name = "exasol-integration-test-docker-environment"
+version = "4.4.1"
+description = "Integration Test Docker Environment for Exasol"
+optional = false
+python-versions = "<3.15,>=3.10"
+groups = ["main", "dev"]
+markers = "python_version == \"3.14\" or python_version >= \"3.12\" and platform_python_implementation == \"PyPy\""
+files = [
+    {file = "exasol_integration_test_docker_environment-4.4.1-py3-none-any.whl", hash = "sha256:1aaaac92ca0165435e617394d3ad2192b629a459356f227ac8ef6cf22bdd9863"},
+    {file = "exasol_integration_test_docker_environment-4.4.1.tar.gz", hash = "sha256:0f2cd9247189fdacfd54ab43653d97496b103a03fc7431499c80a38b7b4b315c"},
+]
 
 [package.dependencies]
 click = ">=7.0"
@@ -1122,6 +1134,18 @@ requests = ">=2.32.4,<3.0.0"
 tenacity = ">=8.2.3,<9.0.0"
 types-requests = ">=2.31.0.6,<3.0.0.0"
 
+[[package]]
+name = "exasol-script-languages-container-tool"
+version = "3.4.1"
+description = "Script Languages Container Tool"
+optional = false
+python-versions = "<4,>=3.10"
+groups = ["main", "dev"]
+markers = "python_version == \"3.14\" or python_version >= \"3.12\" and platform_python_implementation == \"PyPy\""
+files = [
+    {file = "exasol_script_languages_container_tool-3.4.1-py3-none-any.whl", hash = "sha256:d0fabc5a8bfab38c2ad6e13309ebce813051f5e4a13ecfd6e50775bffb733af4"},
+    {file = "exasol_script_languages_container_tool-3.4.1.tar.gz", hash = "sha256:43264a85f2dbc6455993923583a0b73a58c5fb7e987852779fd83d89e3c63e2b"},
+]
 
 [package.dependencies]
 exasol-bucketfs = ">=1,<3"
@@ -1253,14 +1277,14 @@ pytest = ["pytest (>=7)"]
 
 [[package]]
 name = "filelock"
-version = "3.19.1"
+version = "3.20.1"
 description = "A platform independent file lock."
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "filelock-3.19.1-py3-none-any.whl", hash = "sha256:d38e30481def20772f5baf097c122c3babc4fcdb7e14e57049eb9d88c6dc017d"},
-    {file = "filelock-3.19.1.tar.gz", hash = "sha256:66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58"},
+    {file = "filelock-3.20.1-py3-none-any.whl", hash = "sha256:15d9e9a67306188a44baa72f569d2bfd803076269365fdea0934385da4dc361a"},
+    {file = "filelock-3.20.1.tar.gz", hash = "sha256:b8360948b351b80f420878d8516519a2204b07aefcdcfd24912a5d33127f188c"},
 ]
 
 [[package]]
