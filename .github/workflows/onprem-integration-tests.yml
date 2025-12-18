@@ -20,7 +20,7 @@ jobs:
         python_version:
           - "3.10"
     runs-on:
-      labels: int-linux-x64-2core-ubuntu24.04-1
+      labels: int-linux-x64-4core-ubuntu24.04-1
     name: Onprem Integration Tests
     steps:
       - uses: actions/checkout@v5
