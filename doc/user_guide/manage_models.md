@@ -59,15 +59,15 @@ Once you have internet access, run the UDF with:
 
 ```sql
 SELECT TE_MODEL_DOWNLOADER_UDF(
+    bucketfs_conn,
+    sub_dir,
     model_name,
     task_type,
-    sub_dir,
-    bucketfs_conn,
     token_conn
 )
 ```
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `model_name`
 * `task_type`
 * `sub_dir`
@@ -147,14 +147,14 @@ Run the UDF with:
 
 ```sql
 SELECT TE_DELETE_MODEL_UDF(
-    bfs_conn,
+    bucketfs_conn,
     sub_dir,
     model_name,
     task_type
 )
 ```
 
-See [Common Parameters](#common-udf-parameters) for information about `bfs_conn`, `sub_dir` and `model_name`. All values, including the [Task Type](#selecting-the-task-type), should have the same value as used during the model installation.
+See [Common Parameters](./user_guide.md#common-udf-parameters) for information about `bfs_conn`, `sub_dir` and `model_name`. All values, including the [Task Type](#selecting-the-task-type), should have the same value as used during the model installation.
 
 Additional output columns
 * success: True if deletion was successful, False otherwise
@@ -190,7 +190,7 @@ It takes a BucketFS connection and a director as input, and will return a list o
 The output will contain the `model_name`, `task_type` and path of the model in the BucketFS, as well as a column 
 for potential error messages, in addition to the input.
 
-[Common Parameters](#common-udf-parameters)
+[Common Parameters](./user_guide.md#common-udf-parameters)
 * `bucketfs_conn`
 * `sub_dir`
 

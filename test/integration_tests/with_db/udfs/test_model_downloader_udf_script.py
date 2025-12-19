@@ -37,13 +37,13 @@ def test_model_downloader_udf_script(setup_database, db_conn, bucketfs_location)
     try:
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
+            t.bucketfs_conn_name,
+            t.sub_dir,
             t.model_name,
             t.task_type,
-            t.sub_dir,
-            t.bucketfs_conn_name,
             t.token_conn_name
             ) FROM (VALUES {str(tuple(input_data))} AS
-            t(model_name, task_type, sub_dir, bucketfs_conn_name, token_conn_name));
+            t(bucketfs_conn_name, sub_dir, model_name, task_type, token_conn_name));
             """
 
         # execute downloader UDF

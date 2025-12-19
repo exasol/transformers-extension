@@ -21,9 +21,10 @@ class ModelDownloaderUDF:
     loaded without accessing Huggingface again.
     Must be called with the following Input Parameter:
 
-    model_name                | sub_dir                 | bfs_conn            | token_conn
-    ---------------------------------------------------------------------------------------------------
-    name of Huggingface model | directory to save model | BucketFS connection | name of token connection
+
+    bfs_conn            | sub_dir                 | model_name                 | token_conn
+    ----------------------------------------------------------------------------------------------------
+    BucketFS connection | directory to save model | name of Huggingface model | name of token connection
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """

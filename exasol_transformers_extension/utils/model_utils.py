@@ -41,7 +41,8 @@ def install_huggingface_model(
             in case argument model_factory is None.
         model_factory:
             Optional model class (AutoModelXXX), e.g. AutoModelForTokenClassification.
-            If None then the model factory is derived from the task type in the model_spec.
+            If set to None, the model factory is derived from the task-type
+            in the model_spec.
         tokenizer_factory:
             Optional tokenizer class, e.g. huggingface.AutoTokenizer.
         huggingface_token:
@@ -91,7 +92,8 @@ def load_huggingface_pipeline(
             device id.
         model_factory:
             Optional model class (AutoModelXXX), e.g. AutoModelForTokenClassification.
-            If None then the model factory is derived from the task type in the model_spec.
+            If set to None, the model factory is derived from the task-type
+            in the model_spec.
         tokenizer_factory:
             Optional tokenizer class, e.g. huggingface.AutoTokenizer
     """
