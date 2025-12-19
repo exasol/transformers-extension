@@ -18,7 +18,8 @@ class DeleteModelUDF:
     BucketFS connection | directory to save model | name of Huggingface model | type of model
 
 
-    returns <bucketfs_conn>, <sub_dir>, <model_name>, <task_type>, <success>, <error_msg>
+    returns <bucketfs_conn>, <sub_dir>, <model_name>, <task_type>,
+    <success>, <error_msg>
     """
 
     def __init__(

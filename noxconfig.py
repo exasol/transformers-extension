@@ -20,6 +20,7 @@ class Config:
         "dist",
         ".eggs",
         "venv",
+        ".venv",
         "metrics-schema",
         "idioms",
     )
