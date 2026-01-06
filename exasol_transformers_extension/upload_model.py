@@ -1,4 +1,4 @@
-""" Downloads model from Huggingface hub and the transfers model to database """
+"""Downloads model from Huggingface hub and the transfers model to database"""
 
 from __future__ import annotations
 
@@ -25,7 +25,6 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
 from exasol_transformers_extension.utils.bucketfs_operations import relative_to
-
 from exasol_transformers_extension.utils.model_utils import install_huggingface_model
 
 MODEL_NAME_ARG = "model_name"
