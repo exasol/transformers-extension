@@ -114,8 +114,8 @@ def best_guess_model_specs(
 ) -> tuple[str, str, str]:
     # if no known_task_type was found, our best guess is to split the
     # model_specific_path_suffix on "_" and select task_type and model_name accordingly,
-    # because we know the model_specific_path_suffix includes at least on "_"
-    # followed by the task_name this might create wrong results if the user
+    # because we know the model_specific_path_suffix includes at least one "_"
+    # followed by the task_name. This might create wrong results if the user
     # choose to use a task_name containing a "_".
     warning = (
         "WARNING: We found a model which was saved using a task_name we don't recognize. "

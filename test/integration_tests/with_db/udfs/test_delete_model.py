@@ -160,10 +160,10 @@ def test_delete_model_error_wrong_model(db_conn, setup_database):
     bucketfs_conn_name, _ = setup_database
 
     model_location = BucketFSModelSpecification(
+        bucketfs_conn_name=bucketfs_conn_name,
+        sub_dir=Path("not_existing_sub_dir"),
         model_name="not_existing_model",
         task_type="not_existing_task_type",
-        sub_dir=Path("not_existing_sub_dir"),
-        bucketfs_conn_name=bucketfs_conn_name,
     )
 
     query = f"""

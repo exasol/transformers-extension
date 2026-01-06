@@ -25,10 +25,10 @@ def test_model_downloader_udf_script(setup_database, db_conn, bucketfs_location)
         model_paths.append(current_model_specs.get_bucketfs_model_save_path())
         input_data.append(
             (
+                bucketfs_conn_name,
+                sub_dir,
                 current_model_specs.model_name,
                 current_model_specs.task_type,
-                sub_dir,
-                bucketfs_conn_name,
                 "",
             )
         )
