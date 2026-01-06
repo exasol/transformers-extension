@@ -46,7 +46,7 @@ def create_mock_metadata() -> MockMetaData:
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("task_type", str, "VARCHAR(2000000)"),
-            Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("token_conn", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
@@ -96,7 +96,7 @@ def test_model_downloader(
     bucketfs_connections = [
         Connection(address=f"file:///test{i}") for i in range(count)
     ]
-    bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
+    bucketfs_conn_name = [f"bucketfs_conn_name_{i}" for i in bucketfs_connections]
 
     mock_bucketfs_model_specs = [
         create_autospec(
@@ -104,7 +104,7 @@ def test_model_downloader(
             model_name=base_model_names[i],
             task_type=task_type[i],
             sub_dir=Path(sub_directory_names[i]),
-            bucketfs_conn_name=bfs_conn_name[i],
+            bucketfs_conn_name=bucketfs_conn_name[i],
         )
         for i in range(count)
     ]
@@ -124,14 +124,14 @@ def test_model_downloader(
             base_model_names[i],
             sub_directory_names[i],
             task_type[i],
-            bfs_conn_name[i],
+            bucketfs_conn_name[i],
             token_conn_name,
         )
         for i in range(count)
     ]
     mock_meta = create_mock_metadata()
     mock_exa = create_mock_exa_environment_with_token_con(
-        bfs_conn_name, bucketfs_connections, mock_meta, token_conn_name, token_conn_obj
+        bucketfs_conn_name, bucketfs_connections, mock_meta, token_conn_name, token_conn_obj
     )
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
