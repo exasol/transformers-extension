@@ -131,7 +131,11 @@ def test_model_downloader(
     ]
     mock_meta = create_mock_metadata()
     mock_exa = create_mock_exa_environment_with_token_con(
-        bucketfs_conn_name, bucketfs_connections, mock_meta, token_conn_name, token_conn_obj
+        bucketfs_conn_name,
+        bucketfs_connections,
+        mock_meta,
+        token_conn_name,
+        token_conn_obj,
     )
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
 
