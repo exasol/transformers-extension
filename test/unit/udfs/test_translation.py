@@ -87,7 +87,8 @@ def test_translation(mock_local_path, mock_create_loc, params):
     model_input_data = params.input_data
     bfs_connection = params.bfs_connections
     expected_model_counter = params.expected_model_counter
-    translation_models_output_df = params.translation_models_output_df
+    #translation_models_output_df = params.translation_models_output_df
+    translation_models_output_df = params.output_data
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
