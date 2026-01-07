@@ -14,7 +14,7 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
 
     try:
         # execute downloader UDF
-        input_data = (MODEL_NAME, TASK_TYPE, SUB_DIR, bucketfs_conn_name, "")
+        input_data = (bucketfs_conn_name, SUB_DIR, MODEL_NAME, TASK_TYPE, "")
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
             t.bucketfs_conn_name,
