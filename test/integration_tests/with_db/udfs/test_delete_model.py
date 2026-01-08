@@ -1,6 +1,8 @@
 from pathlib import Path
-
-from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql, python_row_to_sql
+from test.integration_tests.with_db.udfs.python_rows_to_sql import (
+    python_row_to_sql,
+    python_rows_to_sql,
+)
 from test.utils import postprocessing
 from test.utils.parameters import model_params
 
@@ -12,7 +14,10 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 
 SUB_DIR = "test_delete_model_{id}"
 
-def model_spec_as_input_tuple(model_spec: BucketFSModelSpecification) -> tuple[str, str, str, str]:
+
+def model_spec_as_input_tuple(
+    model_spec: BucketFSModelSpecification,
+) -> tuple[str, str, str, str]:
     """returns tuple with model spec values in right order to be used as udf input"""
     return (
         model_spec.bucketfs_conn_name,
@@ -20,6 +25,7 @@ def model_spec_as_input_tuple(model_spec: BucketFSModelSpecification) -> tuple[s
         model_spec.model_name,
         model_spec.task_type,
     )
+
 
 @pytest.fixture()
 def populate_models(setup_database, db_conn, bucketfs_location):
@@ -32,10 +38,13 @@ def populate_models(setup_database, db_conn, bucketfs_location):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
         input_data_model_specs.append(
-            BucketFSModelSpecification(bucketfs_conn_name=bucketfs_conn_name,
-                                       sub_dir=Path(sub_dir),
-                                       model_name=model_params.tiny_model_specs.model_name,
-                                       task_type=model_params.tiny_model_specs.task_type))
+            BucketFSModelSpecification(
+                bucketfs_conn_name=bucketfs_conn_name,
+                sub_dir=Path(sub_dir),
+                model_name=model_params.tiny_model_specs.model_name,
+                task_type=model_params.tiny_model_specs.task_type,
+            )
+        )
     try:
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
@@ -96,7 +105,13 @@ def test_delete_model(populate_models, db_conn, bucketfs_location):
 
         # execute downloader UDF
         res = db_conn.execute(query).fetchall()
-        expected_res = [ removed_model_tuple + (True, None,)]
+        expected_res = [
+            removed_model_tuple
+            + (
+                True,
+                None,
+            )
+        ]
         assert res == expected_res
 
         for remaining_model in populate_models:
@@ -104,7 +119,12 @@ def test_delete_model(populate_models, db_conn, bucketfs_location):
 
         validate_model_not_in_bucketfs(removed_model_spec, bucketfs_location)
 
-def run_delete_model_error_test(db_connection, model_location_spec:BucketFSModelSpecification, expected_error_message:str):
+
+def run_delete_model_error_test(
+    db_connection,
+    model_location_spec: BucketFSModelSpecification,
+    expected_error_message: str,
+):
     model_location_tuple = model_spec_as_input_tuple(model_location_spec)
 
     query = f"""
@@ -123,7 +143,8 @@ def run_delete_model_error_test(db_connection, model_location_spec:BucketFSModel
 
     assert len(res) == 1, res
     assert res[0][:-1] == expected_res, res
-    assert (expected_error_message in res[0][-1])
+    assert expected_error_message in res[0][-1]
+
 
 def test_delete_model_error_wrong_bfs_conn(db_conn):
     model_location_spec = BucketFSModelSpecification(
@@ -132,10 +153,13 @@ def test_delete_model_error_wrong_bfs_conn(db_conn):
         sub_dir=Path("not_existing_sub_dir"),
         bucketfs_conn_name="not_existing_bucketfs_conn_name",
     )
-    expected_error_message = f"get_connection for connection name {model_location_spec.bucketfs_conn_name} "\
-                             f"failed: connection {model_location_spec.bucketfs_conn_name.upper()} does "\
-                             f"not exist"
+    expected_error_message = (
+        f"get_connection for connection name {model_location_spec.bucketfs_conn_name} "
+        f"failed: connection {model_location_spec.bucketfs_conn_name.upper()} does "
+        f"not exist"
+    )
     run_delete_model_error_test(db_conn, model_location_spec, expected_error_message)
+
 
 def test_delete_model_error_wrong_model(db_conn, setup_database):
     bucketfs_conn_name, _ = setup_database
@@ -146,7 +170,8 @@ def test_delete_model_error_wrong_model(db_conn, setup_database):
         model_name="not_existing_model",
         task_type="not_existing_task_type",
     )
-    expected_error_message = \
-        (f"No such file or directory: 'container/{model_location_spec.sub_dir}/"
-         f"{model_location_spec.model_name}_{model_location_spec.task_type}.tar.gz'")
+    expected_error_message = (
+        f"No such file or directory: 'container/{model_location_spec.sub_dir}/"
+        f"{model_location_spec.model_name}_{model_location_spec.task_type}.tar.gz'"
+    )
     run_delete_model_error_test(db_conn, model_location_spec, expected_error_message)
