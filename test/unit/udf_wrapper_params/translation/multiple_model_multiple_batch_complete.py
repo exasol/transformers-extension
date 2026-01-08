@@ -1,37 +1,17 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.translation.mock_translation import (
-    MockPipeline,
-    MockTranslationFactory,
-    MockTranslationModel,
-)
+import dataclasses
 
 from exasol_udf_mock_python.connection import Connection
+from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
+    bucketfs_conn,
+    make_input_row,
+    make_model_output_for_one_input_row,
+    make_udf_output_for_one_input_row, sub_dir, model_name, text_data,
+)
+from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 
 
-def udf_wrapper():
-    from test.unit.udf_wrapper_params.translation.mock_translation_tokenizer import (
-        MockSequenceTokenizer,
-    )
-    from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import (
-        MultipleModelMultipleBatchComplete as params,
-    )
-
-    from exasol_udf_mock_python.udf_context import UDFContext
-
-    from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
-
-    udf = TranslationUDF(
-        exa,
-        batch_size=params.batch_size,
-        pipeline=params.mock_pipeline,
-        base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer,
-    )
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
-
-
+@dataclasses.dataclass
 class MultipleModelMultipleBatchComplete:
     """
     multiple model, multiple batch, last batch complete
@@ -40,74 +20,44 @@ class MultipleModelMultipleBatchComplete:
     expected_model_counter = 2
     batch_size = 2
     data_size = 2
-    src_lang = "English"
-    target_lang = "German"
-    max_length = 10
+    bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn,2)
+    sub_dir1, sub_dir2 = make_number_of_strings(sub_dir,2)
+    model1, model2 = make_number_of_strings(model_name,2)
+    text1, text2 = make_number_of_strings(text_data, 2)
 
-    input_data = [
-        (
-            None,
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "text 1",
-            src_lang,
-            target_lang,
-            max_length,
-        )
-    ] * data_size + [
-        (
-            None,
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "text 2",
-            src_lang,
-            target_lang,
-            max_length,
-        )
-    ] * data_size
-    output_data = [
-        (
-            "bfs_conn1",
-            "sub_dir1",
-            "model1",
-            "text 1",
-            src_lang,
-            target_lang,
-            max_length,
-            "text 1 übersetzt" * max_length,
-        )
-    ] * data_size + [
-        (
-            "bfs_conn2",
-            "sub_dir2",
-            "model2",
-            "text 2",
-            src_lang,
-            target_lang,
-            max_length,
-            "text 2 übersetzt" * max_length,
-        )
-    ] * data_size
+    translation_text1 = text1 + "übersetzt"
+    translation_text2 = text2 + "übersetzt"
+
+    input_data = (make_input_row(bucketfs_conn=bfs_conn1,
+                                 sub_dir=sub_dir1,
+                                 model_name=model1,
+                                 text_data=text1) * data_size +
+                  make_input_row(bucketfs_conn=bfs_conn2,
+                                 sub_dir=sub_dir2,
+                                 model_name=model2,
+                                 text_data=text2) * data_size)
+
+    output_data = (make_udf_output_for_one_input_row(bucketfs_conn=bfs_conn1,
+                                                     sub_dir=sub_dir1,
+                                                     model_name=model1,
+                                                     text_data=text1,
+                                                     translation_text=translation_text1) * data_size +
+                   make_udf_output_for_one_input_row(bucketfs_conn=bfs_conn2,
+                                                     sub_dir=sub_dir2,
+                                                     model_name=model2,
+                                                     text_data=text2,
+                                                     translation_text=translation_text2) * data_size)
+    translation_models_output_df = [[
+        (make_model_output_for_one_input_row(translation_text1) * data_size)],
+        [(make_model_output_for_one_input_row(translation_text2) * data_size),
+    ]]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
-    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)
+    base_cache_dir2 = PurePosixPath(tmpdir_name, bfs_conn2)
     bfs_connections = {
-        "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
-        "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
+        bfs_conn1: Connection(address=f"file://{base_cache_dir1}"),
+        bfs_conn2: Connection(address=f"file://{base_cache_dir2}"),
     }
-    mock_factory = MockTranslationFactory(
-        {
-            PurePosixPath(
-                base_cache_dir1, "sub_dir1", "model1_translation"
-            ): MockTranslationModel(text_data="text 1"),
-            PurePosixPath(
-                base_cache_dir2, "sub_dir2", "model2_translation"
-            ): MockTranslationModel(text_data="text 2"),
-        }
-    )
 
-    mock_pipeline = MockPipeline
-    udf_wrapper = udf_wrapper
+
