@@ -59,7 +59,7 @@ def make_udf_output_for_one_input_row(
     Creates the output row for translation_udf as a list,
     using default values for all parameters that are not specified.
     """
-    translation_text = translation_text * max_length if "Traceback" not in translation_text else translation_text
+    translation_text = translation_text * max_length if not error_msg else translation_text
     return [
         (
             bucketfs_conn,

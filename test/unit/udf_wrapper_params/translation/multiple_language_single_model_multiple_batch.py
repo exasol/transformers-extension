@@ -35,8 +35,8 @@ class MultipleLanguageSingleModelNameMultipleBatch:
                                                      translation_text=translation_text_2) * data_size)
 
     translation_models_output_df = [
-        [(make_model_output_for_one_input_row(target_language_1) * data_size)],
-        [(make_model_output_for_one_input_row(target_language_2) * data_size)]
+        [(make_model_output_for_one_input_row(translation_text_1) * data_size)] +#todo thes should be mutliple batch, so ",". fix input klammer as well?
+        [(make_model_output_for_one_input_row(translation_text_2) * data_size)]
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

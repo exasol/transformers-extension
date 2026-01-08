@@ -28,9 +28,9 @@ class ErrorOnPredictionSingleModelMultipleBatch:
                                                      error_msg="Traceback") * data_size)
 
     translation_models_output_df = [
-        [([{"translation_text": None}] * batch_size)],
-        [([{"translation_text": None}] * batch_size)],
-        [([{"translation_text": None}])]#todo error in model output?
+        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")] * batch_size)],
+        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")] * batch_size)],
+        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")])]#todo error in model output?
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

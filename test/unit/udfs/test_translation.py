@@ -17,6 +17,8 @@ from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_m
 from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
+from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import \
+    MultipleModelMultipleBatchComplete
 
 from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
     create_mock_model_factories_with_models, create_mock_pipeline_factory, assert_result_matches_expected_output, \
@@ -69,6 +71,7 @@ def create_mock_metadata():
         MultipleMaxLengthSingleModelNameMultipleBatch,
         MultipleLanguageSingleModelNameSingleBatch,
         MultipleLanguageSingleModelNameMultipleBatch,
+        MultipleModelMultipleBatchComplete,
         ErrorOnPredictionMultipleModelMultipleBatch,
         ErrorOnPredictionSingleModelMultipleBatch,
     ],
@@ -87,8 +90,7 @@ def test_translation(mock_local_path, mock_create_loc, params):
     model_input_data = params.input_data
     bfs_connection = params.bfs_connections
     expected_model_counter = params.expected_model_counter
-    #translation_models_output_df = params.translation_models_output_df
-    translation_models_output_df = params.output_data
+    translation_models_output_df = params.translation_models_output_df
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
