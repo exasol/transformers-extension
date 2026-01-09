@@ -1,13 +1,16 @@
-from pathlib import PurePosixPath
 import dataclasses
-
-from exasol_udf_mock_python.connection import Connection
+from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
     make_model_output_for_one_input_row,
-    make_udf_output_for_one_input_row, max_length,
+    make_udf_output_for_one_input_row,
+    max_length,
 )
+
+from exasol_udf_mock_python.connection import Connection
+
+
 @dataclasses.dataclass
 class MultipleMaxLengthSingleModelNameSingleBatch:
     """
@@ -20,12 +23,15 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
     max_length1 = max_length
     max_length2 = 2
 
-    input_data = (make_input_row(max_length=max_length1) * data_size +
-                  make_input_row(max_length=max_length2) * data_size)
+    input_data = (
+        make_input_row(max_length=max_length1) * data_size
+        + make_input_row(max_length=max_length2) * data_size
+    )
 
-    output_data = (make_udf_output_for_one_input_row(max_length=max_length1) * data_size +
-                   make_udf_output_for_one_input_row(max_length=max_length2) * data_size)
-
+    output_data = (
+        make_udf_output_for_one_input_row(max_length=max_length1) * data_size
+        + make_udf_output_for_one_input_row(max_length=max_length2) * data_size
+    )
 
     translation_model_output_df_maxlen1 = [
         make_model_output_for_one_input_row(max_length=max_length1) * data_size
@@ -35,8 +41,7 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
     ]
 
     translation_models_output_df = [
-        translation_model_output_df_maxlen1 +
-        translation_model_output_df_maxlen2
+        translation_model_output_df_maxlen1 + translation_model_output_df_maxlen2
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

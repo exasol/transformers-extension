@@ -1,15 +1,18 @@
-from pathlib import PurePosixPath
 import dataclasses
-
-from exasol_udf_mock_python.connection import Connection
-
+from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
     make_model_output_for_one_input_row,
-    make_udf_output_for_one_input_row, sub_dir, model_name, text_data, translation_text,
+    make_udf_output_for_one_input_row,
+    model_name,
+    sub_dir,
+    text_data,
+    translation_text,
 )
 from test.unit.utils.utils_for_udf_tests import make_number_of_strings
+
+from exasol_udf_mock_python.connection import Connection
 
 
 @dataclasses.dataclass
@@ -22,33 +25,49 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     batch_size = 3
     data_size = 2
 
-    bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn,2)
-    sub_dir1, sub_dir2 = make_number_of_strings(sub_dir,2)
-    model1, model2 = make_number_of_strings(model_name,2)
+    bfs_conn1, bfs_conn2 = make_number_of_strings(bucketfs_conn, 2)
+    sub_dir1, sub_dir2 = make_number_of_strings(sub_dir, 2)
+    model1, model2 = make_number_of_strings(model_name, 2)
 
-    input_data = (make_input_row(bucketfs_conn=bfs_conn1,
-                                 sub_dir=sub_dir1,
-                                 model_name=model1,
-                                 text_data=text_data) * data_size +
-                  make_input_row(bucketfs_conn=bfs_conn2,
-                                 sub_dir=sub_dir2,
-                                 model_name=model2,
-                                 text_data= "error on pred") * data_size)
+    input_data = (
+        make_input_row(
+            bucketfs_conn=bfs_conn1,
+            sub_dir=sub_dir1,
+            model_name=model1,
+            text_data=text_data,
+        )
+        * data_size
+        + make_input_row(
+            bucketfs_conn=bfs_conn2,
+            sub_dir=sub_dir2,
+            model_name=model2,
+            text_data="error on pred",
+        )
+        * data_size
+    )
 
-    output_data = (make_udf_output_for_one_input_row(bucketfs_conn=bfs_conn1,
-                                                     sub_dir=sub_dir1,
-                                                     model_name=model1,
-                                                     text_data=text_data,
-                                                     translation_text=translation_text) * data_size +
-                   make_udf_output_for_one_input_row(bucketfs_conn=bfs_conn2,
-                                                     sub_dir=sub_dir2,
-                                                     model_name=model2,
-                                                     text_data= "error on pred",
-                                                     translation_text=None,
-                                                     error_msg="Traceback") * data_size)
+    output_data = (
+        make_udf_output_for_one_input_row(
+            bucketfs_conn=bfs_conn1,
+            sub_dir=sub_dir1,
+            model_name=model1,
+            text_data=text_data,
+            translation_text=translation_text,
+        )
+        * data_size
+        + make_udf_output_for_one_input_row(
+            bucketfs_conn=bfs_conn2,
+            sub_dir=sub_dir2,
+            model_name=model2,
+            text_data="error on pred",
+            translation_text=None,
+            error_msg="Traceback",
+        )
+        * data_size
+    )
 
     translation_model_output_df_batch1_ok = [
-        (make_model_output_for_one_input_row(translation_text) * data_size)
+        make_model_output_for_one_input_row(translation_text) * data_size
     ]
     translation_model_output_df_batch1_error = [
         Exception("Traceback mock_pipeline is throwing an error intentionally")
@@ -59,9 +78,9 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
     ]
 
     translation_models_output_df = [
-        translation_model_output_df_batch1_ok+
-        translation_model_output_df_batch1_error,
-        translation_model_output_df_batch2
+        translation_model_output_df_batch1_ok
+        + translation_model_output_df_batch1_error,
+        translation_model_output_df_batch2,
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

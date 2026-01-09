@@ -1,4 +1,3 @@
-from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
 from test.unit.udf_wrapper_params.translation.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
@@ -17,12 +16,17 @@ from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_m
 from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import \
-    MultipleModelMultipleBatchComplete
-
-from test.unit.utils.utils_for_udf_tests import create_mock_udf_context, create_mock_exa_environment, \
-    create_mock_model_factories_with_models, create_mock_pipeline_factory, assert_result_matches_expected_output, \
-    assert_correct_number_of_results
+from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import (
+    MultipleModelMultipleBatchComplete,
+)
+from test.unit.utils.utils_for_udf_tests import (
+    assert_correct_number_of_results,
+    assert_result_matches_expected_output,
+    create_mock_exa_environment,
+    create_mock_model_factories_with_models,
+    create_mock_pipeline_factory,
+    create_mock_udf_context,
+)
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
     fake_local_bucketfs_path,
@@ -32,6 +36,8 @@ from unittest.mock import patch
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
 
 
 def create_mock_metadata():
@@ -121,4 +127,3 @@ def test_translation(mock_local_path, mock_create_loc, params):
         result, expected_output_data, mock_meta.input_columns
     )
     assert len(mock_pipeline_factory.mock_calls) == expected_model_counter
-
