@@ -17,6 +17,8 @@ T.B.D
 
 ## Refactoring
 
+ * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
+
 ## Security
 
  Updated urllib3 (2.5.0 -> 2.6.1)

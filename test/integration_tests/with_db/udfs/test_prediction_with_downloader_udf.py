@@ -14,19 +14,19 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
 
     try:
         # execute downloader UDF
-        input_data = (MODEL_NAME, TASK_TYPE, SUB_DIR, bucketfs_conn_name, "")
+        input_data = (bucketfs_conn_name, SUB_DIR, MODEL_NAME, TASK_TYPE, "")
         query = f"""
             SELECT TE_MODEL_DOWNLOADER_UDF(
+            t.bucketfs_conn_name,
+            t.sub_dir,
             t.model_name,
             t.task_type,
-            t.sub_dir,
-            t.bucketfs_conn_name,
             t.token_conn_name
             ) FROM (VALUES {str(input_data)} AS
-            t(model_name, task_type, sub_dir, bucketfs_conn_name, token_conn_name));
+            t(bucketfs_conn_name, sub_dir, model_name, task_type, token_conn_name));
             """
 
-        result = db_conn.execute(query).fetchall()
+        db_conn.execute(query).fetchall()
         time.sleep(10)
 
         # execute the filling mask UDF
