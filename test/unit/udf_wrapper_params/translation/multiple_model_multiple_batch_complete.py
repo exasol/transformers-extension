@@ -47,10 +47,18 @@ class MultipleModelMultipleBatchComplete:
                                                      model_name=model2,
                                                      text_data=text2,
                                                      translation_text=translation_text2) * data_size)
-    translation_models_output_df = [[
-        (make_model_output_for_one_input_row(translation_text1) * data_size)],
-        [(make_model_output_for_one_input_row(translation_text2) * data_size),
-    ]]
+
+    translation_model_output_df_batch1 = [
+        make_model_output_for_one_input_row(translation_text1) * data_size
+    ]
+    translation_model_output_df_batch2 = [
+        make_model_output_for_one_input_row(translation_text2) * data_size
+    ]
+
+    translation_models_output_df = [
+        translation_model_output_df_batch1,
+        translation_model_output_df_batch2,
+    ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)

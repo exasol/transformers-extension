@@ -34,10 +34,20 @@ class MultipleLanguageSingleModelNameMultipleBatch:
                    make_udf_output_for_one_input_row(target_language=target_language_2,
                                                      translation_text=translation_text_2) * data_size)
 
-    translation_models_output_df = [
-        [(make_model_output_for_one_input_row(translation_text_1) * data_size)] +#todo thes should be mutliple batch, so ",". fix input klammer as well?
-        [(make_model_output_for_one_input_row(translation_text_2) * data_size)]
+    translation_model_output_df_batch1 = [
+        (make_model_output_for_one_input_row(translation_text_1) * data_size)
     ]
+
+    translation_model_output_df_batch2 = [
+        (make_model_output_for_one_input_row(translation_text_2) * data_size)
+    ]
+
+
+    translation_models_output_df = [
+        translation_model_output_df_batch1 +
+        translation_model_output_df_batch2,
+    ]
+
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir = PurePosixPath(tmpdir_name, bucketfs_conn)

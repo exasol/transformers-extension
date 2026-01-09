@@ -28,11 +28,23 @@ class MultipleMaxLengthSingleModelNameMultipleBatch:
     output_data = (make_udf_output_for_one_input_row(max_length=max_length1) * data_size +
                    make_udf_output_for_one_input_row(max_length=max_length2) * data_size)
 
-    translation_models_output_df = [[
-        (make_model_output_for_one_input_row(max_length=max_length1) * data_size) +
-        (make_model_output_for_one_input_row(max_length=max_length2)),
-        (make_model_output_for_one_input_row(max_length=max_length2))
-    ]]
+    translation_model_output_df_batch1_maxlen1 = [
+        make_model_output_for_one_input_row(max_length=max_length1) * data_size
+    ]
+    translation_model_output_df_batch1_maxlen2 = [
+        make_model_output_for_one_input_row(max_length=max_length2)
+    ]
+    translation_model_output_df_batch2 = [
+        make_model_output_for_one_input_row(max_length=max_length2)
+    ]
+
+
+    translation_models_output_df = [
+        translation_model_output_df_batch1_maxlen1 +
+        translation_model_output_df_batch1_maxlen2 +
+        translation_model_output_df_batch2,
+    ]
+
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir = PurePosixPath(tmpdir_name, bucketfs_conn)
