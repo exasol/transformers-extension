@@ -13,7 +13,7 @@ target_language = "German"
 
 translation_text = "text 1 übersetzt"
 
-max_length = 10 #todo does this one work?
+max_length = 10
 error_msg = None
 
 def make_input_row(
@@ -81,5 +81,8 @@ def make_model_output_for_one_input_row(translation_text=translation_text, max_l
     returns a list with the model output row.
     each model output row is a dictionary.
     """
-    return [{"translation_text": translation_text * max_length}]
+    if not translation_text :
+        return [{"translation_text": translation_text}]
+    else:
+        return [{"translation_text": translation_text * max_length}]
 

@@ -47,10 +47,21 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
                                                      translation_text=None,
                                                      error_msg="Traceback") * data_size)
 
+    translation_model_output_df_batch1_ok = [
+        (make_model_output_for_one_input_row(translation_text) * data_size)
+    ]
+    translation_model_output_df_batch1_error = [
+        Exception("Traceback mock_pipeline is throwing an error intentionally")
+    ]
+
+    translation_model_output_df_batch2 = [
+        Exception("Traceback mock_pipeline is throwing an error intentionally")
+    ]
+
     translation_models_output_df = [
-        [(make_model_output_for_one_input_row(translation_text) * data_size)] +
-        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")])],
-        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")])]#todo error in model output?
+        translation_model_output_df_batch1_ok+
+        translation_model_output_df_batch1_error,
+        translation_model_output_df_batch2
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
@@ -60,5 +71,3 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
         bfs_conn1: Connection(address=f"file://{base_cache_dir1}"),
         bfs_conn2: Connection(address=f"file://{base_cache_dir2}"),
     }
-
-

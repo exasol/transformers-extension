@@ -6,10 +6,8 @@ from exasol_udf_mock_python.connection import Connection
 from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
-    make_model_output_for_one_input_row,
-    make_udf_output_for_one_input_row, sub_dir, model_name, text_data, translation_text,
+    make_udf_output_for_one_input_row,
 )
-from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 
 @dataclasses.dataclass
 class ErrorOnPredictionSingleModelMultipleBatch:
@@ -27,10 +25,23 @@ class ErrorOnPredictionSingleModelMultipleBatch:
                                                      translation_text=None,
                                                      error_msg="Traceback") * data_size)
 
+    translation_model_output_df_batch1 = [
+        Exception("Traceback mock_pipeline is throwing an error intentionally"),
+        Exception("Traceback mock_pipeline is throwing an error intentionally")
+    ]
+    translation_model_output_df_batch2 = [
+        Exception("Traceback mock_pipeline is throwing an error intentionally"),
+        Exception("Traceback mock_pipeline is throwing an error intentionally")
+    ]
+
+    translation_model_output_df_batch3 = [
+        Exception("Traceback mock_pipeline is throwing an error intentionally")
+    ]
+
     translation_models_output_df = [
-        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")] * batch_size)],
-        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")] * batch_size)],
-        [([Exception("Traceback mock_pipeline is " "throwing an error intentionally")])]#todo error in model output?
+        translation_model_output_df_batch1+
+        translation_model_output_df_batch2+
+        translation_model_output_df_batch3
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

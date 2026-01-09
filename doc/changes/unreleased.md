@@ -17,6 +17,8 @@ T.B.D
 
 ## Refactoring
 
+ * #346: Changed translation_udf unit tests to use StandaloneUdfMock
+
 ## Security
 
  Updated urllib3 (2.5.0 -> 2.6.1)
