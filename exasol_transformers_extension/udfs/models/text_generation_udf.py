@@ -67,7 +67,7 @@ class TextGenerationUDF(BaseModelUDF):
         max_length = int(model_df["max_length"].iloc[0])
         return_full_text = bool(model_df["return_full_text"].iloc[0])
         results = self.last_created_pipeline(
-            text_data, max_length=max_length, return_full_text=return_full_text
+            text_data, max_new_tokens=max_length, return_full_text=return_full_text
         )
 
         #  Batch prediction returns list of list while single prediction just

@@ -72,7 +72,7 @@ class TranslationUDF(BaseModelUDF):
         text_data = list(translation_prefix + model_df["text_data"].astype(str))
         max_length = int(model_df["max_length"].iloc[0])
 
-        results = self.last_created_pipeline(text_data, max_length=max_length)
+        results = self.last_created_pipeline(text_data, max_new_tokens=max_length)
         return results
 
     def append_predictions_to_input_dataframe(

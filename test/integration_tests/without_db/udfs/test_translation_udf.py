@@ -103,6 +103,81 @@ def test_translation_udf(
 
 
 @pytest.mark.parametrize(
+    "description,  device_id, languages, max_new_tokens",
+    [
+        ("on CPU with max_new_tokens > expected result tokens", None, [("English", "French")], 20),
+        ("on CPU with max_new_tokens < expected result tokens", None, [("English", "French")], 2),
+        ("on CPU with max_new_tokens = 0", None, [("English", "French")], 0),
+        ("on GPU with max_new_tokens > expected result tokens", 0, [("English", "French")], 20),
+        ("on GPU with max_new_tokens < expected result tokens", 0, [("English", "French")], 2),
+        ("on GPU with max_new_tokens = 0", 0, [("English", "French")], 0),
+    ],
+)
+def test_translation_udf_max_new_tokens_effective(
+    description, device_id, languages, max_new_tokens, prepare_translation_model_for_local_bucketfs
+):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(
+            f"There is no available device({device_id}) " f"to execute the test"
+        )
+
+    bucketfs_base_path = prepare_translation_model_for_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
+
+    input_text = model_params.text_data
+    n_input_tokens = len(input_text.split())
+
+    batch_size = 2
+    sample_data = [
+        (
+            None,
+            bucketfs_conn_name,
+            model_params.sub_dir,
+            model_params.seq2seq_model_specs.model_name,
+            input_text,
+            src_lang,
+            target_lang,
+            max_new_tokens,
+        )
+        for src_lang, target_lang in languages
+    ]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "source_language",
+        "target_language",
+        "max_length",
+    ]
+
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+    ctx = MockContext(input_df=sample_df)
+    exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = ["translation_text", "error_message"]
+
+    result = Result(result_df)
+    assert (
+        result
+        == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
+        and result == NoErrorMessageMatcher()
+    )
+    for translated_text in result_df["translation_text"]:
+        if max_new_tokens > n_input_tokens:
+            assert n_input_tokens -4 < len(translated_text.split())
+            assert len(translated_text.split()) < n_input_tokens + 4
+        assert len(translated_text.split()) <= max_new_tokens
+
+
+
+@pytest.mark.parametrize(
     "description,  device_id, languages",
     [
         ("on CPU with single input", None, [("English", "French")]),

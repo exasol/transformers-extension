@@ -89,6 +89,79 @@ def test_text_generation_udf(
     )
 
 
+
+@pytest.mark.parametrize(
+    "description,  device_id, max_new_tokens",
+    [
+        ("on CPU with max_new_tokens > expected result tokens", None, 20),
+        ("on CPU with max_new_tokens < expected result tokens", None, 2),
+        ("on CPU with max_new_tokens = 0", None, 0),
+        ("on GPU with max_new_tokens > expected result tokens", 0, 20),
+        ("on GPU with max_new_tokens < expected result tokens", 0, 2),
+        ("on GPU with max_new_tokens = 0", 0, 0),
+    ],
+)
+def test_text_generation_udf(
+        description, device_id, max_new_tokens,
+        prepare_text_generation_model_for_local_bucketfs
+):
+    if device_id is not None and not torch.cuda.is_available():
+        pytest.skip(
+            f"There is no available device({device_id}) " f"to execute the test"
+        )
+
+    bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
+    bucketfs_conn_name = "bucketfs_connection"
+    bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
+
+    batch_size = 2
+    text_data = "Exasol is an analytics database management"
+    n_input_tokens = len(text_data.split())
+    return_full_text = True
+    sample_data = [
+        (
+            None,
+            bucketfs_conn_name,
+            model_params.sub_dir,
+            model_params.text_gen_model_specs.model_name,
+            text_data,
+            max_new_tokens,
+            return_full_text,
+        )
+    ]
+    columns = [
+        "device_id",
+        "bucketfs_conn",
+        "sub_dir",
+        "model_name",
+        "text_data",
+        "max_length",
+        "return_full_text",
+    ]
+
+    sample_df = pd.DataFrame(data=sample_data, columns=columns)
+    ctx = MockContext(input_df=sample_df)
+    exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
+
+    sequence_classifier = TextGenerationUDF(exa, batch_size=batch_size)
+    sequence_classifier.run(ctx)
+
+    result_df = ctx.get_emitted()[0][0]
+    new_columns = ["generated_text", "error_message"]
+
+    result = Result(result_df)
+    assert (
+        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=1)
+        and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
+        and result == NoErrorMessageMatcher()
+        and result_df["generated_text"].str.contains(text_data).all()
+    )
+    for generated_text in result_df["generated_text"]:
+        assert len(generated_text.split()) - n_input_tokens <= max_new_tokens
+
+
+
+
 @pytest.mark.parametrize(
     "description,  device_id, n_rows",
     [
