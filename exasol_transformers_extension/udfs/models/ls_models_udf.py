@@ -14,7 +14,8 @@ from exasol_transformers_extension.utils.model_specification import (
 
 class ListModelsUDF:
     """
-    UDF which list all transformers models installed with the Transformers Extension in the BucketFS/subdir.
+    UDF which list all transformers models installed with the Transformers Extension
+    in the BucketFS/subdir.
     Must be called with the following Input Parameter:
 
     | sub_dir                     | bfs_conn            |
@@ -54,7 +55,8 @@ class ListModelsUDF:
         ):
             if files:  # this means there is at least 1 file here
                 for file in files:
-                    # models saved with .from_pretrained can have different file types and directory structures,
+                    # models saved with .from_pretrained can have different file
+                    # types and directory structures,
                     # but always have a config.json
                     # https://huggingface.co/docs/diffusers/main/using-diffusers/other-formats
                     if file == "config.json" and self._check_if_model_config(
@@ -104,7 +106,8 @@ class ListModelsUDF:
         )
 
         if not sub_dir:
-            self._error_message = "sub_dir cant be an empty string"  # -> disallow "" this in creation of path at some point?
+            self._error_message = "sub_dir cant be an empty string"
+            # -> disallow "" this in creation of path at some point?
             self._output.append(
                 [bfs_conn_name, sub_dir, "", "", "", self._error_message]
             )

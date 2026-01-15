@@ -47,7 +47,7 @@ class Context:
         return self.ctx_data[self.index]["task_type"]
 
     @property
-    def bfs_conn(self):
+    def bucketfs_conn(self):
         return self.ctx_data[self.index]["bucketfs_conn_name"]
 
     @property

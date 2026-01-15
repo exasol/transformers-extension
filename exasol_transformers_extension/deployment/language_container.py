@@ -15,7 +15,10 @@ def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> 
     """Modifies the default dependencies/Dockerfile"""
     dockerfile_file = "flavor_base/dependencies/Dockerfile"
     dockerfile = container_builder.read_file(dockerfile_file)
-    install_pattern = r"^\s*(?i:run)\s+python\d.\d+\s+-m\s+pip\s+install\s+-r\s+/project/requirements.txt"
+    install_pattern = (
+        r"^\s*(?i:run)\s+python\d.\d+\s+-m\s+pip\s+install"
+        r"\s+-r\s+/project/requirements.txt"
+    )
     install_extra = "--extra-index-url https://download.pytorch.org/whl/cpu"
     dockerfile = re.sub(
         install_pattern, rf"\g<0> {install_extra}", dockerfile, flags=re.MULTILINE

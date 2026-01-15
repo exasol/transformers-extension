@@ -21,9 +21,10 @@ class ModelDownloaderUDF:
     loaded without accessing Huggingface again.
     Must be called with the following Input Parameter:
 
-    model_name                | sub_dir                 | bfs_conn            | token_conn
-    ---------------------------------------------------------------------------------------------------
-    name of Huggingface model | directory to save model | BucketFS connection | name of token connection
+
+    bucketfs_conn            | sub_dir                 | model_name                 | token_conn
+    ----------------------------------------------------------------------------------------------------
+    BucketFS connection | directory to save model | name of Huggingface model | name of token connection
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """
@@ -51,10 +52,10 @@ class ModelDownloaderUDF:
 
     def _download_model(self, ctx) -> tuple[str, str]:
         # parameters
-        bfs_conn = ctx.bfs_conn  # BucketFS connection
+        bucketfs_conn = ctx.bucketfs_conn  # BucketFS connection
         token_conn = ctx.token_conn  # name of token connection
         current_model_specification = self._current_model_specification_factory.create(
-            ctx.model_name, ctx.task_type, bfs_conn, ctx.sub_dir
+            ctx.model_name, ctx.task_type, bucketfs_conn, ctx.sub_dir
         )  # specifies details of Huggingface model
 
         model_factory = current_model_specification.get_model_factory()
@@ -70,9 +71,9 @@ class ModelDownloaderUDF:
         model_path = current_model_specification.get_bucketfs_model_save_path()
 
         # create bucketfs location
-        bfs_conn_obj = self._exa.get_connection(bfs_conn)
+        bucketfs_conn_obj = self._exa.get_connection(bucketfs_conn)
         bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
-            bfs_conn_obj
+            bucketfs_conn_obj
         )
 
         # download base model and tokenizer into the model path

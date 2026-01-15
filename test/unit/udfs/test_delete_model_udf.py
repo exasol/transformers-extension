@@ -32,14 +32,14 @@ def create_mock_metadata() -> MockMetaData:
         script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
-            Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("task_type", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
-            Column("bfs_conn", str, "VARCHAR(2000000)"),
+            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("task_type", str, "VARCHAR(2000000)"),

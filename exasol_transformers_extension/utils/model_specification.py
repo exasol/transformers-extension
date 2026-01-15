@@ -89,9 +89,11 @@ class ModelSpecification:
 def split_path_using_subdir(
     path_parts: tuple[str, ...], model_path: pathlib.Path, sub_dir: str
 ) -> tuple[str, str]:
-    # many models have a name like creator-name/model-name or similar. but we do not know the format exactly.
-    # therefor we assume the directory which includes the config.json file to be the model_specific_path_suffix,
-    # and everything between this and the sub-dir to be the model_name_prefix
+    # many models have a name like creator-name/model-name or similar.
+    # but we do not know the format exactly.
+    # therefor we assume the directory which includes the config.json file to be
+    # the model_specific_path_suffix, and everything between this and the sub-dir
+    # to be the model_name_prefix
     try:
         subdir_index = path_parts.index(sub_dir)
     except ValueError as e:
@@ -110,10 +112,11 @@ def split_path_using_subdir(
 def best_guess_model_specs(
     model_specific_path_suffix, name_prefix
 ) -> tuple[str, str, str]:
-    # if no known_task_type was found, our best guess is to split the model_specific_path_suffix on "_"
-    # and select task_type and model_name accordingly, because
-    # we know the model_specific_path_suffix includes at least on "_" followed by the task_name
-    # this might create wrong results if the user choose to use a task_name containing a "_".
+    # if no known_task_type was found, our best guess is to split the
+    # model_specific_path_suffix on "_" and select task_type and model_name accordingly,
+    # because we know the model_specific_path_suffix includes at least one "_"
+    # followed by the task_name. This might create wrong results if the user
+    # choose to use a task_name containing a "_".
     warning = (
         "WARNING: We found a model which was saved using a task_name we don't recognize. "
         "As a result, we can only give a best guess on how to parse the model_name and task."
@@ -145,8 +148,8 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
         except ValueError as e:
             raise e
 
-    # if we found known_task_type in the path, check if one is on the end of the model_specific_path_suffix,
-    # and declare this one as the task_type.
+    # if we found known_task_type in the path, check if one is on the end of the
+    # model_specific_path_suffix, and declare this one as the task_type.
     # disregard found_task_types form other positions in the model_specific_path_suffix
     for found_task_name in found_task_names:
         if model_specific_path_suffix.endswith("_" + found_task_name):

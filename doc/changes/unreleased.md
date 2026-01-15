@@ -18,6 +18,7 @@ T.B.D
 ## Refactoring
 
  * #346: Changed translation_udf unit tests to use StandaloneUdfMock
+ * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
 
 ## Security
 
