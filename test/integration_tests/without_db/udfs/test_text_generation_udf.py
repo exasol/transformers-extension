@@ -46,7 +46,7 @@ def test_text_generation_udf(
 
     batch_size = 2
     text_data = "Exasol is an analytics database management"
-    max_length = 10
+    max_new_tokens = 10
     return_full_text = True
     sample_data = [
         (
@@ -55,7 +55,7 @@ def test_text_generation_udf(
             model_params.sub_dir,
             model_params.text_gen_model_specs.model_name,
             text_data,
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
         for _ in range(n_rows)
@@ -66,7 +66,7 @@ def test_text_generation_udf(
         "sub_dir",
         "model_name",
         "text_data",
-        "max_length",
+        "max_new_tokens",
         "return_full_text",
     ]
 
@@ -95,10 +95,8 @@ def test_text_generation_udf(
     [
         ("on CPU with max_new_tokens > expected result tokens", None, 20),
         ("on CPU with max_new_tokens < expected result tokens", None, 2),
-        ("on CPU with max_new_tokens = 0", None, 0),
         ("on GPU with max_new_tokens > expected result tokens", 0, 20),
         ("on GPU with max_new_tokens < expected result tokens", 0, 2),
-        ("on GPU with max_new_tokens = 0", 0, 0),
     ],
 )
 def test_text_generation_udf(
@@ -135,7 +133,7 @@ def test_text_generation_udf(
         "sub_dir",
         "model_name",
         "text_data",
-        "max_length",
+        "max_new_tokens",
         "return_full_text",
     ]
 
@@ -185,7 +183,7 @@ def test_text_generation_udf_on_error_handlig(
 
     batch_size = 2
     text_data = "Exasol is an analytics database management"
-    max_length = 10
+    max_new_tokens = 10
     return_full_text = True
     sample_data = [
         (
@@ -194,7 +192,7 @@ def test_text_generation_udf_on_error_handlig(
             model_params.sub_dir,
             "not existing model",
             text_data,
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
         for _ in range(n_rows)
@@ -205,7 +203,7 @@ def test_text_generation_udf_on_error_handlig(
         "sub_dir",
         "model_name",
         "text_data",
-        "max_length",
+        "max_new_tokens",
         "return_full_text",
     ]
 

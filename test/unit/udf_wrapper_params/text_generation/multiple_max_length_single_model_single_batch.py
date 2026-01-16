@@ -12,7 +12,7 @@ def udf_wrapper():
     from test.unit.udf_wrapper_params.text_generation.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
     )
-    from test.unit.udf_wrapper_params.text_generation.multiple_max_length_single_model_single_batch import (
+    from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_single_batch import (
         MultipleMaxLengthSingleModelNameSingleBatch as params,
     )
 
@@ -36,14 +36,14 @@ def udf_wrapper():
 
 class MultipleMaxLengthSingleModelNameSingleBatch:
     """
-    multiple max_length, single model, single batch
+    multiple max_new_tokens, single model, single batch
     """
 
     expected_model_counter = 1
     batch_size = 4
     data_size = 2
-    max_length1 = 10
-    max_length2 = 20
+    max_new_tokens1 = 10
+    max_new_tokens2 = 20
     return_full_text = True
 
     input_data = [
@@ -53,7 +53,7 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length1,
+            max_new_tokens1,
             return_full_text,
         )
     ] * data_size + [
@@ -63,7 +63,7 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length2,
+            max_new_tokens2,
             return_full_text,
         )
     ] * data_size
@@ -73,9 +73,9 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length1,
+            max_new_tokens1,
             return_full_text,
-            "text 1 generated" * max_length1,
+            "text 1 generated" * max_new_tokens1,
             None,
         )
     ] * data_size + [
@@ -84,9 +84,9 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length2,
+            max_new_tokens2,
             return_full_text,
-            "text 1 generated" * max_length2,
+            "text 1 generated" * max_new_tokens2,
             None,
         )
     ] * data_size

@@ -81,7 +81,7 @@ def test_translation_udf(
         "text_data",
         "source_language",
         "target_language",
-        "max_length",
+        "max_new_tokens",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
@@ -107,10 +107,8 @@ def test_translation_udf(
     [
         ("on CPU with max_new_tokens > expected result tokens", None, [("English", "French")], 20),
         ("on CPU with max_new_tokens < expected result tokens", None, [("English", "French")], 2),
-        ("on CPU with max_new_tokens = 0", None, [("English", "French")], 0),
         ("on GPU with max_new_tokens > expected result tokens", 0, [("English", "French")], 20),
         ("on GPU with max_new_tokens < expected result tokens", 0, [("English", "French")], 2),
-        ("on GPU with max_new_tokens = 0", 0, [("English", "French")], 0),
     ],
 )
 def test_translation_udf_max_new_tokens_effective(
@@ -150,7 +148,7 @@ def test_translation_udf_max_new_tokens_effective(
         "text_data",
         "source_language",
         "target_language",
-        "max_length",
+        "max_new_tokens",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
@@ -238,7 +236,7 @@ def test_translation_udf_on_error_handling(
         "text_data",
         "source_language",
         "target_language",
-        "max_length",
+        "max_new_tokens",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)

@@ -42,7 +42,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     expected_model_counter = 0
     batch_size = 2
     data_size = 5
-    max_length = 10
+    max_new_tokens = 10
     return_full_text = True
 
     input_data = [
@@ -52,7 +52,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
             "sub_dir1",
             "model1",
             "error on pred",
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
     ] * data_size
@@ -62,7 +62,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
             "sub_dir1",
             "model1",
             "error on pred",
-            max_length,
+            max_new_tokens,
             return_full_text,
             None,
             "Traceback",

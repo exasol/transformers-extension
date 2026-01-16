@@ -4,10 +4,10 @@ from test.unit.udf_wrapper_params.text_generation.error_on_prediction_multiple_m
 from test.unit.udf_wrapper_params.text_generation.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_max_length_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_multiple_batch import (
     MultipleMaxLengthSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_max_length_single_model_single_batch import (
+from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
 from test.unit.udf_wrapper_params.text_generation.multiple_model_multiple_batch_complete import (
@@ -47,7 +47,7 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("max_length", int, "INTEGER"),
+            Column("max_new_tokens", int, "INTEGER"),
             Column("return_full_text", bool, "BOOLEAN"),
         ],
         output_type="EMITS",
@@ -56,7 +56,7 @@ def create_mock_metadata(udf_wrapper):
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("max_length", int, "INTEGER"),
+            Column("max_new_tokens", int, "INTEGER"),
             Column("return_full_text", bool, "BOOLEAN"),
             Column("generated_text", str, "VARCHAR(2000000)"),
             Column("error_message", str, "VARCHAR(2000000)"),

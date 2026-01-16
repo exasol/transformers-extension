@@ -32,7 +32,7 @@ class TranslationUDF(BaseModelUDF):
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
         """
-        Extract unique dataframes having same max_length, source_language,
+        Extract unique dataframes having same max_new_tokens, source_language,
         and target_language parameter values
 
         :param model_df: Dataframe used in prediction
@@ -41,11 +41,11 @@ class TranslationUDF(BaseModelUDF):
         """
 
         unique_params = dataframe_operations.get_unique_values(
-            model_df, ["max_length", "source_language", "target_language"]
+            model_df, ["max_new_tokens", "source_language", "target_language"]
         )
-        for max_length, source_language, target_language in unique_params:
+        for max_new_tokens, source_language, target_language in unique_params:
             param_based_model_df = model_df[
-                (model_df["max_length"] == max_length)
+                (model_df["max_new_tokens"] == max_new_tokens)
                 & (model_df["source_language"] == source_language)
                 & (model_df["target_language"] == target_language)
             ]
@@ -70,9 +70,9 @@ class TranslationUDF(BaseModelUDF):
             )
 
         text_data = list(translation_prefix + model_df["text_data"].astype(str))
-        max_length = int(model_df["max_length"].iloc[0])
+        max_new_tokens = int(model_df["max_new_tokens"].iloc[0])
 
-        results = self.last_created_pipeline(text_data, max_new_tokens=max_length)
+        results = self.last_created_pipeline(text_data, max_new_tokens=max_new_tokens)
         return results
 
     def append_predictions_to_input_dataframe(

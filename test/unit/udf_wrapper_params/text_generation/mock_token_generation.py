@@ -56,9 +56,9 @@ class MockPipeline:
             raise Exception("Error while performing prediction.")
 
         len_generated_text = (
-            kwargs["max_length"]
+            kwargs["max_new_tokens"]
             if kwargs["return_full_text"]
-            else kwargs["max_length"] - 1
+            else kwargs["max_new_tokens"] - 1
         )
         result = {
             "generated_text": self.model.result["generated_text"] * len_generated_text

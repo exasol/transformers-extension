@@ -14,7 +14,7 @@ def test_text_generation_script(
     bucketfs_conn_name, _ = setup_database
     text_data = "Exasol is an analytics database management"
     n_rows = 100
-    max_length = 12
+    max_new_tokens = 12
     return_full_text = True
     input_data = []
     for i in range(n_rows):
@@ -25,7 +25,7 @@ def test_text_generation_script(
                 str(model_params.sub_dir),
                 model_params.text_gen_model_specs.model_name,
                 text_data,
-                max_length,
+                max_new_tokens,
                 return_full_text,
             )
         )
@@ -37,11 +37,11 @@ def test_text_generation_script(
         f"t.sub_dir, "
         f"t.model_name, "
         f"t.text_data, "
-        f"t.max_length,"
+        f"t.max_new_tokens,"
         f"t.return_full_text"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, sub_dir, "
-        f"model_name, text_data, max_length, return_full_text));"
+        f"model_name, text_data, max_new_tokens, return_full_text));"
     )
 
     # execute sequence classification UDF

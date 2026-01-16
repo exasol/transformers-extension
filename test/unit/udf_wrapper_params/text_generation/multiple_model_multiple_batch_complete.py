@@ -42,7 +42,7 @@ class MultipleModelMultipleBatchComplete:
     expected_model_counter = 2
     batch_size = 2
     data_size = 2
-    max_length = 10
+    max_new_tokens = 10
     return_full_text = True
 
     input_data = [
@@ -52,7 +52,7 @@ class MultipleModelMultipleBatchComplete:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
     ] * data_size + [
@@ -62,7 +62,7 @@ class MultipleModelMultipleBatchComplete:
             "sub_dir2",
             "model2",
             "text 2",
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
     ] * data_size
@@ -72,9 +72,9 @@ class MultipleModelMultipleBatchComplete:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             return_full_text,
-            "text 1 generated" * max_length,
+            "text 1 generated" * max_new_tokens,
             None,
         )
     ] * data_size + [
@@ -83,9 +83,9 @@ class MultipleModelMultipleBatchComplete:
             "sub_dir2",
             "model2",
             "text 2",
-            max_length,
+            max_new_tokens,
             return_full_text,
-            "text 2 generated" * max_length,
+            "text 2 generated" * max_new_tokens,
             None,
         )
     ] * data_size

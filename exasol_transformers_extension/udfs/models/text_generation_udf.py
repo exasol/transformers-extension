@@ -35,7 +35,7 @@ class TextGenerationUDF(BaseModelUDF):
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
         """
-        Extract unique dataframes having same max_length and return_full_text
+        Extract unique dataframes having same max_new_tokens and return_full_text
         parameter values
 
         :param model_df: Dataframe used in prediction
@@ -44,11 +44,11 @@ class TextGenerationUDF(BaseModelUDF):
         """
 
         unique_params = dataframe_operations.get_unique_values(
-            model_df, ["max_length", "return_full_text"]
+            model_df, ["max_new_tokens", "return_full_text"]
         )
-        for max_length, return_full_text in unique_params:
+        for max_new_tokens, return_full_text in unique_params:
             param_based_model_df = model_df[
-                (model_df["max_length"] == max_length)
+                (model_df["max_new_tokens"] == max_new_tokens)
                 & (model_df["return_full_text"] == return_full_text)
             ]
 
@@ -64,10 +64,10 @@ class TextGenerationUDF(BaseModelUDF):
         :return: A tuple containing prediction score list and label list
         """
         text_data = list(model_df["text_data"])
-        max_length = int(model_df["max_length"].iloc[0])
+        max_new_tokens = int(model_df["max_new_tokens"].iloc[0])
         return_full_text = bool(model_df["return_full_text"].iloc[0])
         results = self.last_created_pipeline(
-            text_data, max_new_tokens=max_length, return_full_text=return_full_text
+            text_data, max_new_tokens=max_new_tokens, return_full_text=return_full_text
         )
 
         #  Batch prediction returns list of list while single prediction just
