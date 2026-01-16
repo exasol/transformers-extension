@@ -10,6 +10,8 @@ T.B.D
 
 ## Bugfixes
 
+ * #343: Fixed max_length parameter being ignored, renamed max_length to max_new_tokens
+
 ## Documentation
 
  * #204: Split the user_guide into multiple files

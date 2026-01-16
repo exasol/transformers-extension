@@ -210,7 +210,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 
 Specific parameters
 * `text_data`: The context text.
-* `max_new_tokens`: The maximum total length of text to be generated.
+* `max_new_tokens`: The maximum total number of tokens in the generated text.
 * `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
 
 Additional output columns
@@ -298,7 +298,7 @@ Specific parameters
 * `text_data`: The text to translate.
 * `source_language`: The language of the input. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
 * `target_language`:  The language of the desired output. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-* `max_new_tokens`: The maximum total length of the translated text.
+* `max_new_tokens`: The maximum total number of tokens in the translated text.
 
 Additional output columns
 * _TRANSLATION_TEXT_: the translated text
