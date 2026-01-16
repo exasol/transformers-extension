@@ -89,7 +89,6 @@ def test_text_generation_udf(
     )
 
 
-
 @pytest.mark.parametrize(
     "description,  device_id, max_new_tokens",
     [
@@ -100,8 +99,10 @@ def test_text_generation_udf(
     ],
 )
 def test_text_generation_udf(
-        description, device_id, max_new_tokens,
-        prepare_text_generation_model_for_local_bucketfs
+    description,
+    device_id,
+    max_new_tokens,
+    prepare_text_generation_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -156,8 +157,6 @@ def test_text_generation_udf(
     )
     for generated_text in result_df["generated_text"]:
         assert len(generated_text.split()) - n_input_tokens <= max_new_tokens
-
-
 
 
 @pytest.mark.parametrize(

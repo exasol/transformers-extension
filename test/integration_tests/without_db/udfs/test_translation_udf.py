@@ -105,14 +105,38 @@ def test_translation_udf(
 @pytest.mark.parametrize(
     "description,  device_id, languages, max_new_tokens",
     [
-        ("on CPU with max_new_tokens > expected result tokens", None, [("English", "French")], 20),
-        ("on CPU with max_new_tokens < expected result tokens", None, [("English", "French")], 2),
-        ("on GPU with max_new_tokens > expected result tokens", 0, [("English", "French")], 20),
-        ("on GPU with max_new_tokens < expected result tokens", 0, [("English", "French")], 2),
+        (
+            "on CPU with max_new_tokens > expected result tokens",
+            None,
+            [("English", "French")],
+            20,
+        ),
+        (
+            "on CPU with max_new_tokens < expected result tokens",
+            None,
+            [("English", "French")],
+            2,
+        ),
+        (
+            "on GPU with max_new_tokens > expected result tokens",
+            0,
+            [("English", "French")],
+            20,
+        ),
+        (
+            "on GPU with max_new_tokens < expected result tokens",
+            0,
+            [("English", "French")],
+            2,
+        ),
     ],
 )
 def test_translation_udf_max_new_tokens_effective(
-    description, device_id, languages, max_new_tokens, prepare_translation_model_for_local_bucketfs
+    description,
+    device_id,
+    languages,
+    max_new_tokens,
+    prepare_translation_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -169,10 +193,9 @@ def test_translation_udf_max_new_tokens_effective(
     )
     for translated_text in result_df["translation_text"]:
         if max_new_tokens > n_input_tokens:
-            assert n_input_tokens -4 < len(translated_text.split())
+            assert n_input_tokens - 4 < len(translated_text.split())
             assert len(translated_text.split()) < n_input_tokens + 4
         assert len(translated_text.split()) <= max_new_tokens
-
 
 
 @pytest.mark.parametrize(
