@@ -119,7 +119,6 @@ def test_text_generation_udf(
 
     batch_size = 2
     text_data = "Exasol is an analytics database management test test test"
-    n_input_tokens = len(text_data.split())
     # we load the test models tokenizer to convert input and output to tokens,
     # in order to check if max_new_tokens is respected in the output.
     model_specification = model_params.text_gen_model_specs
@@ -181,9 +180,7 @@ def test_text_generation_udf(
         generated_text_tokenized = tokenizer(
             generated_text, return_tensors="pt", return_attention_mask=False
         )
-        generated_text_token_ids = tokenizer.convert_ids_to_tokens(
-            generated_text_tokenized["input_ids"][0]
-        )
+        generated_text_token_ids = generated_text_tokenized["input_ids"][0]
         assert len(generated_text_token_ids) - len(input_token_ids) <= max_new_tokens
 
 

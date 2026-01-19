@@ -153,7 +153,7 @@ def test_translation_udf_max_new_tokens_effective(
 
     input_text = model_params.text_data
 
-    # we load the test models tokenizer to convert input and output to tokens,
+    # we load the test models tokenizer to convert output to tokens,
     # in order to check if max_new_tokens is respected in the output.
     model_specification = model_params.seq2seq_model_specs
     current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
@@ -163,12 +163,6 @@ def test_translation_udf_max_new_tokens_effective(
     tokenizer = AutoTokenizer.from_pretrained(
         str(bucketfs_base_path / model_path_in_bucketfs)
     )
-
-    input_tokenized = tokenizer(
-        input_text, return_tensors="pt", return_attention_mask=False
-    )
-    input_token_ids = input_tokenized["input_ids"][0]
-    input_tokens = tokenizer.convert_ids_to_tokens(input_token_ids)
 
     batch_size = 2
     sample_data = [
