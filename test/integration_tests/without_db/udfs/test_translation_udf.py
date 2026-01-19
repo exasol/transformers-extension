@@ -206,7 +206,6 @@ def test_translation_udf_max_new_tokens_effective(
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
-    print(result)
     assert (
         result
         == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))

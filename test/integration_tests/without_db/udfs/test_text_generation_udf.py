@@ -176,8 +176,6 @@ def test_text_generation_udf(
         and result == NoErrorMessageMatcher()
         and result_df["generated_text"].str.contains(text_data).all()
     )
-    for generated_text in result_df["generated_text"]:
-        assert len(generated_text.split()) - n_input_tokens <= max_new_tokens
 
     for generated_text in result_df["generated_text"]:
         generated_text_tokenized = tokenizer(
