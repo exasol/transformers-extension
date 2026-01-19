@@ -186,7 +186,7 @@ Example:
 
 ### Text Generation UDF
 
-This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_length` parameter.
+This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
 
 Example usage:
 
@@ -197,7 +197,7 @@ SELECT TE_TEXT_GENERATION_UDF(
     sub_dir,
     model_name,
     text_data,
-    max_length,
+    max_new_tokens,
     return_full_text
 )
 ```
@@ -210,7 +210,7 @@ SELECT TE_TEXT_GENERATION_UDF(
 
 Specific parameters
 * `text_data`: The context text.
-* `max_length`: The maximum total length of text to be generated.
+* `max_new_tokens`: The maximum total number of tokens in the generated text.
 * `return_full_text`:  If set to `FALSE`, only added text is returned, otherwise the full text is returned.
 
 Additional output columns
@@ -218,11 +218,11 @@ Additional output columns
 
 Example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA      | MAX_LENGHT | RETURN_FULL_TEXT | GENERATED_TEXT                          | ERROR_MESSAGE |
-| ------------- |---------|------------|----------------|------------|------------------|-----------------------------------------|---------------|
-| conn_name     | dir/    | model_name | beginning text | 30         | True             | beginning text often includes a summary | None          |
-| conn_name     | dir/    | model_name | continue       | 30         | False            | this sentence                           | None          |
-| ...           | ...     | ...        | ...            | ...        | ...              | ...                                     | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA      | MAX_NEW_TOKENS | RETURN_FULL_TEXT | GENERATED_TEXT                          | ERROR_MESSAGE |
+| ------------- |---------|------------|----------------|----------------|------------------|-----------------------------------------|---------------|
+| conn_name     | dir/    | model_name | beginning text | 30             | True             | beginning text often includes a summary | None          |
+| conn_name     | dir/    | model_name | continue       | 30             | False            | this sentence                           | None          |
+| ...           | ...     | ...        | ...            | ...            | ...              | ...                                     | ...           |
 
 
 ### Token Classification UDF
@@ -284,7 +284,7 @@ SELECT TE_TRANSLATION_UDF(
     text_data,
     source_language,
     target_language,
-    max_length
+    max_new_tokens
 )
 ```
 
@@ -298,14 +298,14 @@ Specific parameters
 * `text_data`: The text to translate.
 * `source_language`: The language of the input. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
 * `target_language`:  The language of the desired output. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
-* `max_length`: The maximum total length of the translated text.
+* `max_new_tokens`: The maximum total number of tokens in the translated text.
 
 Additional output columns
 * _TRANSLATION_TEXT_: the translated text
 
 Example:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_LENGTH | TRANSLATION_TEXT | ERROR_MESSAGE |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_NEW_TOKENS | TRANSLATION_TEXT | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |

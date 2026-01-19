@@ -42,7 +42,7 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
     expected_model_counter = 1
     batch_size = 2
     data_size = 3
-    max_length = 10
+    max_new_tokens = 10
     return_full_text = True
     not_return_full_text = False
 
@@ -53,7 +53,7 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             return_full_text,
         )
     ] * data_size + [
@@ -63,7 +63,7 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             not_return_full_text,
         )
     ] * data_size
@@ -73,9 +73,9 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             return_full_text,
-            "text 1 generated" * max_length,
+            "text 1 generated" * max_new_tokens,
             None,
         )
     ] * data_size + [
@@ -84,9 +84,9 @@ class MultipleReturnFullParamSingleModelNameMultipleBatch:
             "sub_dir1",
             "model1",
             "text 1",
-            max_length,
+            max_new_tokens,
             not_return_full_text,
-            "text 1 generated" * (max_length - 1),
+            "text 1 generated" * (max_new_tokens - 1),
             None,
         )
     ] * data_size

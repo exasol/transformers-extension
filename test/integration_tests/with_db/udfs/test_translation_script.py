@@ -15,7 +15,7 @@ def test_translation_script(
     n_rows = 100
     src_lang = "English"
     target_lang = "German"
-    max_length = 50
+    max_new_tokens = 50
     input_data = []
     for i in range(n_rows):
         input_data.append(
@@ -27,7 +27,7 @@ def test_translation_script(
                 "The database software company Exasol is based in Nuremberg",
                 src_lang,
                 target_lang,
-                max_length,
+                max_new_tokens,
             )
         )
 
@@ -40,10 +40,10 @@ def test_translation_script(
         f"t.text_data, "
         f"t.source_language, "
         f"t.target_language, "
-        f"t.max_length"
+        f"t.max_new_tokens"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, sub_dir, model_name, "
-        f"text_data, source_language, target_language, max_length));"
+        f"text_data, source_language, target_language, max_new_tokens));"
     )
 
     # execute sequence classification UDF

@@ -10,10 +10,10 @@ from test.unit.udf_wrapper_params.translation.multiple_language_single_model_mul
 from test.unit.udf_wrapper_params.translation.multiple_language_single_model_single_batch import (
     MultipleLanguageSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.translation.multiple_max_new_tokens_single_model_multiple_batch import (
     MultipleMaxLengthSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_max_length_single_model_single_batch import (
+from test.unit.udf_wrapper_params.translation.multiple_max_new_tokens_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
 from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import (
@@ -52,7 +52,7 @@ def create_mock_metadata():
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("source_language", str, "VARCHAR(2000000)"),
             Column("target_language", str, "VARCHAR(2000000)"),
-            Column("max_length", int, "INTEGER"),
+            Column("max_new_tokens", int, "INTEGER"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -62,7 +62,7 @@ def create_mock_metadata():
             Column("text_data", str, "VARCHAR(2000000)"),
             Column("source_language", str, "VARCHAR(2000000)"),
             Column("target_language", str, "VARCHAR(2000000)"),
-            Column("max_length", int, "INTEGER"),
+            Column("max_new_tokens", int, "INTEGER"),
             Column("translation_text", str, "VARCHAR(2000000)"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],

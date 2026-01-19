@@ -6,7 +6,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TRANSLATION_UDF"(
     text_data VARCHAR(2000000),
     source_language VARCHAR(2000000),
     target_language VARCHAR(2000000),
-    max_length INTEGER
+    max_new_tokens INTEGER
     ORDER BY {{ ordered_columns | join(" ASC,") }} ASC
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
@@ -15,7 +15,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TRANSLATION_UDF"(
     text_data VARCHAR(2000000),
     source_language VARCHAR(2000000),
     target_language VARCHAR(2000000),
-    max_length INTEGER,
+    max_new_tokens INTEGER,
     translation_text VARCHAR(2000000),
     error_message VARCHAR(2000000)) AS
 

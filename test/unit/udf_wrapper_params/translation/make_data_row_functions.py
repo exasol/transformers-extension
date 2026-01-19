@@ -13,7 +13,7 @@ target_language = "German"
 
 translation_text = "text 1 übersetzt"
 
-max_length = 10
+max_new_tokens = 10
 error_msg = None
 
 
@@ -25,7 +25,7 @@ def make_input_row(
     text_data=text_data,
     source_language=source_lanuage,
     target_language=target_language,
-    max_length=max_length,
+    max_new_tokens=max_new_tokens,
 ):
     """
     Creates an input row for translation udf as a list,
@@ -40,7 +40,7 @@ def make_input_row(
             text_data,
             source_language,
             target_language,
-            max_length,
+            max_new_tokens,
         )
     ]
 
@@ -52,7 +52,7 @@ def make_udf_output_for_one_input_row(
     text_data=text_data,
     source_language=source_lanuage,
     target_language=target_language,
-    max_length=max_length,
+    max_new_tokens=max_new_tokens,
     translation_text=translation_text,
     error_msg=error_msg,
 ):
@@ -61,7 +61,7 @@ def make_udf_output_for_one_input_row(
     using default values for all parameters that are not specified.
     """
     translation_text = (
-        translation_text * max_length if not error_msg else translation_text
+        translation_text * max_new_tokens if not error_msg else translation_text
     )
     return [
         (
@@ -71,7 +71,7 @@ def make_udf_output_for_one_input_row(
             text_data,
             source_language,
             target_language,
-            max_length,
+            max_new_tokens,
             translation_text,
             error_msg,
         )
@@ -79,7 +79,7 @@ def make_udf_output_for_one_input_row(
 
 
 def make_model_output_for_one_input_row(
-    translation_text=translation_text, max_length=max_length
+    translation_text=translation_text, max_new_tokens=max_new_tokens
 ):
     """
     Makes the output the model returns to the udf for one input row.
@@ -89,4 +89,4 @@ def make_model_output_for_one_input_row(
     if not translation_text:
         return [{"translation_text": translation_text}]
     else:
-        return [{"translation_text": translation_text * max_length}]
+        return [{"translation_text": translation_text * max_new_tokens}]
