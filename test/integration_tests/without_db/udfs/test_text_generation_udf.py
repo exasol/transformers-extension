@@ -17,9 +17,13 @@ import pandas as pd
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
+from transformers import AutoTokenizer
 
 from exasol_transformers_extension.udfs.models.text_generation_udf import (
     TextGenerationUDF,
+)
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    get_BucketFSModelSpecification_from_model_Specs,
 )
 
 
@@ -114,8 +118,24 @@ def test_text_generation_udf(
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
-    text_data = "Exasol is an analytics database management"
+    text_data = "Exasol is an analytics database management test test test"
     n_input_tokens = len(text_data.split())
+    # we load the test models tokenizer to convert input and output to tokens,
+    # in order to check if max_new_tokens is respected in the output.
+    model_specification = model_params.text_gen_model_specs
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+        model_specification, bucketfs_conn_name, model_params.sub_dir
+    )
+    model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
+    tokenizer = AutoTokenizer.from_pretrained(
+        str(bucketfs_base_path / model_path_in_bucketfs)
+    )
+
+    input_tokenized = tokenizer(
+        text_data, return_tensors="pt", return_attention_mask=False
+    )
+    input_token_ids = input_tokenized["input_ids"][0]
+
     return_full_text = True
     sample_data = [
         (
@@ -149,6 +169,7 @@ def test_text_generation_udf(
     new_columns = ["generated_text", "error_message"]
 
     result = Result(result_df)
+
     assert (
         result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=1)
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
@@ -157,6 +178,15 @@ def test_text_generation_udf(
     )
     for generated_text in result_df["generated_text"]:
         assert len(generated_text.split()) - n_input_tokens <= max_new_tokens
+
+    for generated_text in result_df["generated_text"]:
+        generated_text_tokenized = tokenizer(
+            generated_text, return_tensors="pt", return_attention_mask=False
+        )
+        generated_text_token_ids = tokenizer.convert_ids_to_tokens(
+            generated_text_tokenized["input_ids"][0]
+        )
+        assert len(generated_text_token_ids) - len(input_token_ids) <= max_new_tokens
 
 
 @pytest.mark.parametrize(

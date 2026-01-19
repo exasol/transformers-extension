@@ -16,8 +16,12 @@ import pandas as pd
 import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
+from transformers import AutoTokenizer
 
 from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    get_BucketFSModelSpecification_from_model_Specs,
+)
 
 
 @pytest.mark.parametrize(
@@ -148,7 +152,23 @@ def test_translation_udf_max_new_tokens_effective(
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     input_text = model_params.text_data
-    n_input_tokens = len(input_text.split())
+
+    # we load the test models tokenizer to convert input and output to tokens,
+    # in order to check if max_new_tokens is respected in the output.
+    model_specification = model_params.seq2seq_model_specs
+    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+        model_specification, bucketfs_conn_name, model_params.sub_dir
+    )
+    model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
+    tokenizer = AutoTokenizer.from_pretrained(
+        str(bucketfs_base_path / model_path_in_bucketfs)
+    )
+
+    input_tokenized = tokenizer(
+        input_text, return_tensors="pt", return_attention_mask=False
+    )
+    input_token_ids = input_tokenized["input_ids"][0]
+    input_tokens = tokenizer.convert_ids_to_tokens(input_token_ids)
 
     batch_size = 2
     sample_data = [
@@ -186,16 +206,21 @@ def test_translation_udf_max_new_tokens_effective(
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
+    print(result)
     assert (
         result
         == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
         and result == NoErrorMessageMatcher()
     )
+
     for translated_text in result_df["translation_text"]:
-        if max_new_tokens > n_input_tokens:
-            assert n_input_tokens - 4 < len(translated_text.split())
-            assert len(translated_text.split()) < n_input_tokens + 4
-        assert len(translated_text.split()) <= max_new_tokens
+        translated_text_tokenized = tokenizer(
+            translated_text, return_tensors="pt", return_attention_mask=False
+        )
+        translated_text_token_ids = translated_text_tokenized["input_ids"][0]
+        # there is  an "end token" in the generated sequences witch does not
+        # count toward max_new_tokens
+        assert len(translated_text_token_ids) - 1 <= max_new_tokens
 
 
 @pytest.mark.parametrize(
