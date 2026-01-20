@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.question_answering.mock_question_answering import (
+from test.unit.udf_wrapper_params.ai_answer_extended.mock_question_answering import (
     MockPipeline,
     MockQuestionAnsweringFactory,
     MockQuestionAnsweringModel,
@@ -9,20 +9,20 @@ from exasol_udf_mock_python.connection import Connection
 
 
 def udf_wrapper():
-    from test.unit.udf_wrapper_params.question_answering.mock_sequence_tokenizer import (
+    from test.unit.udf_wrapper_params.ai_answer_extended.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
     )
-    from test.unit.udf_wrapper_params.question_answering.multiple_topk_multiple_size_single_model_single_batch_complete import (
+    from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_multiple_size_single_model_single_batch_complete import (
         MultipleTopkMultipleSizeSingleModelNameSingleBatch as params,
     )
 
     from exasol_udf_mock_python.udf_context import UDFContext
 
-    from exasol_transformers_extension.udfs.models.question_answering_udf import (
-        QuestionAnsweringUDF,
+    from exasol_transformers_extension.udfs.models.ai_answer_extended_udf import (
+        AiAnswerExtendedUDF,
     )
 
-    udf = QuestionAnsweringUDF(
+    udf = AiAnswerExtendedUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,

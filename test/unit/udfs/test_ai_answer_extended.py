@@ -1,22 +1,22 @@
-from test.unit.udf_wrapper_params.question_answering.error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_answer_extended.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.question_answering.error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_answer_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.question_answering.multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_answer_extended.multiple_model_multiple_batch_complete import (
     MultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.question_answering.multiple_topk_multiple_size_single_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_multiple_size_single_model_multiple_batch_complete import (
     MultipleTopkMultipleSizeSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.question_answering.multiple_topk_multiple_size_single_model_single_batch_complete import (
+from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_multiple_size_single_model_single_batch_complete import (
     MultipleTopkMultipleSizeSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.question_answering.multiple_topk_single_size_single_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_single_size_single_model_multiple_batch_complete import (
     MultipleTopkSingleSizeSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.question_answering.multiple_topk_single_size_single_model_single_batch_complete import (
+from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_single_size_single_model_single_batch_complete import (
     MultipleTopkSingleSizeSingleModelNameSingleBatch,
 )
 from test.unit.udfs.output_matcher import (
@@ -85,7 +85,7 @@ def create_mock_metadata(udf_wrapper):
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_question_answering(mock_local_path, mock_create_loc, params):
+def test_ai_answer_extended(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path

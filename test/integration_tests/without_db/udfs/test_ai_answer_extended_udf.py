@@ -21,8 +21,8 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.question_answering_udf import (
-    QuestionAnsweringUDF,
+from exasol_transformers_extension.udfs.models.ai_answer_extended_udf import (
+    AiAnswerExtendedUDF,
 )
 
 
@@ -39,12 +39,12 @@ from exasol_transformers_extension.udfs.models.question_answering_udf import (
         ("on GPU with single input, multiple answers", 0, 1, 2),
     ],
 )
-def test_question_answering_udf(
+def test_ai_answer_extended_udf(
     description,
     device_id,
     n_rows,
     top_k,
-    prepare_question_answering_model_for_local_bucketfs,
+        prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -83,7 +83,7 @@ def test_question_answering_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = QuestionAnsweringUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiAnswerExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -119,12 +119,12 @@ def test_question_answering_udf(
         ("on GPU with single input, multiple answers", 0, 1, 2),
     ],
 )
-def test_question_answering_udf_on_error_handling(
+def test_ai_answer_extended_udf_on_error_handling(
     description,
     device_id,
     n_rows,
     top_k,
-    prepare_question_answering_model_for_local_bucketfs,
+        prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -163,7 +163,7 @@ def test_question_answering_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = QuestionAnsweringUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiAnswerExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

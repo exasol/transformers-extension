@@ -103,7 +103,7 @@ input parameter, up to `k` answers with the best inference scores can be returne
 An example usage is given below:
 
 ```sql
-SELECT TE_QUESTION_ANSWERING_UDF(
+SELECT AI_ANSWER_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -125,7 +125,7 @@ Specific parameters
 * `context_text`: The context text, associated with the question
 * `top_k`: The number of answers to return.
    * Note that, `k` number of answers are not guaranteed.
-   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
+   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of the QuestionAnswering Pipeline](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
 
 Additional output columns
 * _ANSWER_: the predicted answer for the input question
