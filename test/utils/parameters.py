@@ -11,7 +11,7 @@ PATH_IN_BUCKET = "container"
 class ModelParams:
     base_model_specs: ModelSpecification  # this is used for other test, taks_name should be set per test
     seq2seq_model_specs: (
-        ModelSpecification  # this model is used for testing translation_udf
+        ModelSpecification  # this model is used for testing ai_translate_extended_udf
     )
     q_a_model_specs: (
         ModelSpecification  # this model is used for testing question answering

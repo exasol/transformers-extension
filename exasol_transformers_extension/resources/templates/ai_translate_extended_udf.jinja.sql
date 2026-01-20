@@ -1,4 +1,4 @@
-CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TRANSLATION_UDF"(
+CREATE OR REPLACE {{ language_alias }} SET SCRIPT "AI_TRANSLATE_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),

@@ -1,6 +1,6 @@
 import dataclasses
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
+from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
     make_model_output_for_one_input_row,

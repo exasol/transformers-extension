@@ -18,7 +18,7 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from transformers import AutoTokenizer
 
-from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
+from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import AiTranslateExtendedUDF
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )
@@ -51,7 +51,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
         ),
     ],
 )
-def test_translation_udf(
+def test_ai_translate_extended_udf(
     description, device_id, languages, prepare_translation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -92,7 +92,7 @@ def test_translation_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -193,13 +193,14 @@ def test_translation_udf_max_new_tokens_effective(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
+    print(result)
     assert (
         result
         == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=len(languages))
@@ -284,7 +285,7 @@ def test_translation_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TranslationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

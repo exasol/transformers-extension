@@ -10,11 +10,11 @@ The extension provides two types of UDFs:
 * Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
    1. Sequence Classification for Single Text
    2. Sequence Classification for Text Pair
-   3. Question Answering
+   3. AI Answer Extended
    4. Masked Language Modelling
    5. Text Generation
    6. Token Classification
-   7. Text Translation
+   7. AI Translate Extended
    8. Zero-Shot Text Classification
 
     

@@ -1,22 +1,22 @@
-from test.unit.udf_wrapper_params.translation.error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.translation.error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_language_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.multiple_language_single_model_multiple_batch import (
     MultipleLanguageSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_language_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.multiple_language_single_model_single_batch import (
     MultipleLanguageSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_max_new_tokens_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.multiple_max_new_tokens_single_model_multiple_batch import (
     MultipleMaxLengthSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_max_new_tokens_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_translate_extended.multiple_max_new_tokens_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.translation.multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_translate_extended.multiple_model_multiple_batch_complete import (
     MultipleModelMultipleBatchComplete,
 )
 from test.unit.utils.utils_for_udf_tests import (
@@ -37,7 +37,7 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.translation_udf import TranslationUDF
+from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import AiTranslateExtendedUDF
 
 
 def create_mock_metadata():
@@ -88,7 +88,7 @@ def create_mock_metadata():
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_translation(mock_local_path, mock_create_loc, params):
+def test_ai_translate_extended(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
@@ -110,7 +110,7 @@ def test_translation(mock_local_path, mock_create_loc, params):
         translation_models_output_df, expected_model_counter
     )
 
-    udf = TranslationUDF(
+    udf = AiTranslateExtendedUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

@@ -10,7 +10,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [Masked Language Modelling UDF](#masked-language-modelling-udf)
   * [Text Generation UDF](#text-generation-udf)
   * [Token Classification UDF](#token-classification-udf)
-  * [Text Translation UDF](#text-translation-udf)
+  * [AI Translate Extended](#text-translation-udf)
   * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
 
     
@@ -96,7 +96,7 @@ Additional output columns
 | ...           | ...     | ...        | ...        | ...         | ...          | ...     | ...   | ...  | ...           |
 
 
-### Question Answering UDF
+### AI Answer Extended
 
 This UDF extracts answer(s) from a given question text. With the `top_k`
 input parameter, up to `k` answers with the best inference scores can be returned.
@@ -271,12 +271,12 @@ Example:
 | conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
 | ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
-### Text Translation UDF
+### AI Translate Extended
 
 This UDF translates a given text from one language to another.
 
 ```sql
-SELECT TE_TRANSLATION_UDF(
+SELECT AI_TRANSLATE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,

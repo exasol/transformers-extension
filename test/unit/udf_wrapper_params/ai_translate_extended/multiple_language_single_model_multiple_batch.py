@@ -1,6 +1,6 @@
 import dataclasses
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.translation.make_data_row_functions import (
+from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
     make_model_output_for_one_input_row,
@@ -13,13 +13,13 @@ from exasol_udf_mock_python.connection import Connection
 
 
 @dataclasses.dataclass
-class MultipleLanguageSingleModelNameSingleBatch:
+class MultipleLanguageSingleModelNameMultipleBatch:
     """
-    multiple language, single model, single batch
+    multiple language, single model, multiple batch
     """
 
     expected_model_counter = 1
-    batch_size = 4
+    batch_size = 2
     data_size = 2
 
     target_language_1 = target_language
@@ -44,17 +44,16 @@ class MultipleLanguageSingleModelNameSingleBatch:
         * data_size
     )
 
-    translation_model_output_df_batch1_lang1 = [
+    translation_model_output_df_batch1 = [
         make_model_output_for_one_input_row(translation_text_1) * data_size
     ]
 
-    translation_model_output_df_batch1_lang2 = [
+    translation_model_output_df_batch2 = [
         make_model_output_for_one_input_row(translation_text_2) * data_size
     ]
 
     translation_models_output_df = [
-        translation_model_output_df_batch1_lang1
-        + translation_model_output_df_batch1_lang2,
+        translation_model_output_df_batch1 + translation_model_output_df_batch2,
     ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))

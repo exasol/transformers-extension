@@ -28,7 +28,7 @@ def make_input_row(
     max_new_tokens=max_new_tokens,
 ):
     """
-    Creates an input row for translation udf as a list,
+    Creates an input row for ai_translate_extended udf as a list,
     using default values for all parameters that are not specified.
     """
     return [

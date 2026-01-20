@@ -14,7 +14,7 @@ UDF_CALL_TEMPLATES = {
     "ai_answer_extended_udf_call.py": "ai_answer_extended_udf.jinja.sql",
     "filling_mask_udf_call.py": "filling_mask_udf.jinja.sql",
     "text_generation_udf_call.py": "text_generation_udf.jinja.sql",
-    "translation_udf_call.py": "translation_udf.jinja.sql",
+    "ai_translate_extended_udf_call.py": "ai_translate_extended_udf.jinja.sql",
     "delete_model_udf_call.py": "delete_model_udf.jinja.sql",
 }
 
