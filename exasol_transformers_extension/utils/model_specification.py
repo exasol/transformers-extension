@@ -48,7 +48,7 @@ class ModelSpecification:
             task_type = "text-classification"
         elif text == "ai_complete_extended":
             task_type = "text-generation"
-        elif text == "token_classification":
+        elif text == "ai_extract_extended":
             task_type = "token-classification"
         elif text == "translation":
             task_type = "translation"

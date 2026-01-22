@@ -12,8 +12,8 @@ The extension provides two types of UDFs:
    2. Sequence Classification for Text Pair
    3. AI Answer Extended
    4. Masked Language Modelling
-   5. Text Generation
-   6. Token Classification
+   5. AI Complete Extended
+   6. AI Extract Extended
    7. AI Translate Extended
    8. Zero-Shot Text Classification
 

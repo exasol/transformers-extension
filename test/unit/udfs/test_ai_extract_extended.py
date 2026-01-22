@@ -1,29 +1,29 @@
 # test params:
-from test.unit.udf_wrapper_params.token_classification.error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_extract_extended.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.token_classification.error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_extract_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.token_classification.error_prediction_containing_only_unknown_fields import (
+from test.unit.udf_wrapper_params.ai_extract_extended.error_prediction_containing_only_unknown_fields import (
     ErrorPredictionOnlyContainsUnknownFields,
 )
-from test.unit.udf_wrapper_params.token_classification.error_prediction_missing_expected_field import (
+from test.unit.udf_wrapper_params.ai_extract_extended.error_prediction_missing_expected_field import (
     ErrorPredictionMissingExpectedFields,
 )
-from test.unit.udf_wrapper_params.token_classification.multiple_model_multiple_batch_complete_multiple_entities import (
+from test.unit.udf_wrapper_params.ai_extract_extended.multiple_model_multiple_batch_complete_multiple_entities import (
     MultipleModelMultipleBatchCompleteMultipleEntities,
 )
-from test.unit.udf_wrapper_params.token_classification.multiple_strategy_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_extract_extended.multiple_strategy_single_model_multiple_batch import (
     MultipleStrategySingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.token_classification.multiple_strategy_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_extract_extended.multiple_strategy_single_model_single_batch import (
     MultipleStrategySingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.token_classification.prediction_contains_additional_keys import (
+from test.unit.udf_wrapper_params.ai_extract_extended.prediction_contains_additional_keys import (
     PredictionContainsAdditionalFields,
 )
-from test.unit.udf_wrapper_params.token_classification.prediction_returns_empty_result import (
+from test.unit.udf_wrapper_params.ai_extract_extended.prediction_returns_empty_result import (
     PredictionReturnsEmptyResult,
 )
 from test.unit.utils.utils_for_udf_tests import (
@@ -44,8 +44,8 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.token_classification_udf import (
-    TokenClassificationUDF,
+from exasol_transformers_extension.udfs.models.ai_extract_extended_udf import (
+    AiExtractExtendedUDF,
 )
 
 
@@ -137,7 +137,7 @@ def create_mock_metadata():
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_token_classification_with_span(mock_local_path, mock_create_loc, params):
+def test_ai_extract_extended_with_span(mock_local_path, mock_create_loc, params):
     """
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
@@ -162,7 +162,7 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
         tokenizer_models_output_df, expected_model_counter
     )
 
-    udf = TokenClassificationUDF(
+    udf = AiExtractExtendedUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,
@@ -203,7 +203,7 @@ def test_token_classification_with_span(mock_local_path, mock_create_loc, params
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_token_classification(mock_local_path, mock_create_loc, params):
+def test_ai_extract_extended(mock_local_path, mock_create_loc, params):
     """
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
@@ -228,7 +228,7 @@ def test_token_classification(mock_local_path, mock_create_loc, params):
         tokenizer_models_output_df, expected_model_counter
     )
 
-    udf = TokenClassificationUDF(
+    udf = AiExtractExtendedUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

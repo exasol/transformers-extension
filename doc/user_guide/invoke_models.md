@@ -9,7 +9,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [AI Answer Extended](#ai-answer-extended)
   * [Masked Language Modelling UDF](#masked-language-modelling-udf)
   * [AI Complete Extended](#ai-complete-extended)
-  * [Token Classification UDF](#token-classification-udf)
+  * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
   * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
 
@@ -225,7 +225,7 @@ Example:
 | ...           | ...     | ...        | ...            | ...            | ...              | ...                                     | ...           |
 
 
-### Token Classification UDF
+### AI Extract Extended
 
 The main goal of this UDF is to find tokens in a given text, and assign a label to found tokens.
 
@@ -235,7 +235,7 @@ There are two popular subtasks of token classification:
 *  Part of Speech (PoS) which identifies which words in a text are verbs, nouns, and punctuation.
 
 ```sql
-SELECT TE_TOKEN_CLASSIFICATION_UDF(
+SELECT AI_EXTRACT_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,

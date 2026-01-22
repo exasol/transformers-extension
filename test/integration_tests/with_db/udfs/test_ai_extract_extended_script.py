@@ -15,7 +15,7 @@ def setup_common_input_data():
     return aggregation_strategy, n_rows, text_data
 
 
-def test_token_classification_script_without_spans(
+def test_ai_extract_extended_script_without_spans(
     setup_database, db_conn, upload_token_classification_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
@@ -34,7 +34,7 @@ def test_token_classification_script_without_spans(
         )
 
     query = (
-        f"SELECT TE_TOKEN_CLASSIFICATION_UDF("
+        f"SELECT AI_EXTRACT_EXTENDED("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "
@@ -66,7 +66,7 @@ def test_token_classification_script_without_spans(
     )
 
 
-def test_token_classification_script_with_span(
+def test_ai_extract_extended_script_with_span(
     setup_database, db_conn, upload_token_classification_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
@@ -88,7 +88,7 @@ def test_token_classification_script_with_span(
         )
 
     query = (
-        f"SELECT TE_TOKEN_CLASSIFICATION_UDF_WITH_SPAN("
+        f"SELECT AI_EXTRACT_EXTENDED_WITH_SPAN("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "

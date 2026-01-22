@@ -18,8 +18,8 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.token_classification_udf import (
-    TokenClassificationUDF,
+from exasol_transformers_extension.udfs.models.ai_extract_extended_udf import (
+    AiExtractExtendedUDF,
 )
 
 
@@ -40,7 +40,7 @@ from exasol_transformers_extension.udfs.models.token_classification_udf import (
         ("on GPU with single input with max aggregation", 0, 1, "max"),
     ],
 )
-def test_token_classification_udf(
+def test_ai_extract_extended_udf(
     description,
     device_id,
     n_rows,
@@ -81,7 +81,7 @@ def test_token_classification_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TokenClassificationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiExtractExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -111,7 +111,7 @@ def test_token_classification_udf(
         ("on GPU with single input with max aggregation", 0, 1, "max"),
     ],
 )
-def test_token_classification_udf_with_span(
+def test_ai_extract_extended_udf_with_span(
     description,
     device_id,
     n_rows,
@@ -168,7 +168,7 @@ def test_token_classification_udf_with_span(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TokenClassificationUDF(
+    sequence_classifier = AiExtractExtendedUDF(
         exa, batch_size=batch_size, work_with_spans=True
     )
     sequence_classifier.run(ctx)
@@ -192,7 +192,7 @@ def test_token_classification_udf_with_span(
 
 
 @pytest.mark.parametrize("description,  device_id", [("on CPU", None), ("on GPU", 0)])
-def test_token_classification_udf_with_multiple_aggregation_strategies(
+def test_ai_extract_extended_udf_with_multiple_aggregation_strategies(
     description, device_id, prepare_token_classification_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -230,7 +230,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TokenClassificationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiExtractExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -262,7 +262,7 @@ def test_token_classification_udf_with_multiple_aggregation_strategies(
         ("on GPU with single input with max aggregation", 0, 1, "max"),
     ],
 )
-def test_token_classification_udf_on_error_handling(
+def test_ai_extract_extended_udf_on_error_handling(
     description,
     device_id,
     n_rows,
@@ -303,7 +303,7 @@ def test_token_classification_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TokenClassificationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiExtractExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

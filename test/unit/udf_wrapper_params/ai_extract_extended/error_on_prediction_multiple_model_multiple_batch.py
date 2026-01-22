@@ -1,6 +1,6 @@
 import dataclasses
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.token_classification.make_data_row_functions import (
+from test.unit.udf_wrapper_params.ai_extract_extended.make_data_row_functions import (
     agg_strategy_simple,
     bucketfs_conn,
     make_input_row,

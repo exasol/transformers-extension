@@ -18,7 +18,9 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from transformers import AutoTokenizer
 
-from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import AiTranslateExtendedUDF
+from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import (
+    AiTranslateExtendedUDF,
+)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )

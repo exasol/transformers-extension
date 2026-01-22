@@ -18,7 +18,7 @@ class ModelParams:
     )
     text_gen_model_specs: ModelSpecification  # used for ai_complete_extended test
     token_model_specs: (
-        ModelSpecification  # this model is used for token classification test
+        ModelSpecification  # this model is used for ai_extract_extended test
     )
     sequence_class_model_specs: ModelSpecification  # this model is used for sequence classification single text test
     sequence_class_pair_model_specs: ModelSpecification  # this model is used for sequence classification text pair test
