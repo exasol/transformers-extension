@@ -12,7 +12,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.utils import dataframe_operations
 
 
-class ZeroShotTextClassificationUDF(BaseModelUDF):
+class AiClassifyExtendeUDF(BaseModelUDF):
     """
     UDF labeling a given text.
     If given an input span as input columns

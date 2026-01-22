@@ -23,7 +23,7 @@ class ModelParams:
     sequence_class_model_specs: ModelSpecification  # this model is used for sequence classification single text test
     sequence_class_pair_model_specs: ModelSpecification  # this model is used for sequence classification text pair test
     zero_shot_model_specs: (
-        ModelSpecification  # this model is used for zero-shot-classification test
+        ModelSpecification  # this model is used for ai_classify_extended test
     )
     tiny_model_specs: ModelSpecification  # this model is used for upload/download test
     text_data: str

@@ -1,6 +1,6 @@
 import dataclasses
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.zero_shot.make_data_row_functions import (
+from test.unit.udf_wrapper_params.ai_classify_extended.make_data_row_functions import (
     LabelScore,
     LabelScores,
     bucketfs_conn,
@@ -18,17 +18,15 @@ from test.unit.utils.utils_for_udf_tests import make_number_of_strings
 from exasol_udf_mock_python.connection import Connection
 
 
-# todo update class descriptions
 @dataclasses.dataclass
-class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
+class ReturnAllErrorOnPredictionMultipleModelMultipleBatch:
     """
-    return_ranks HIGHEST, not cached error, multiple models, multiple batches
+    return_ranks ALL, not cached error, multiple models, multiple batches
     """
 
     expected_model_counter = 2
     batch_size = 3
     data_size = 2
-    return_ranks = "HIGHEST"
 
     error_label_scores = LabelScores(
         [
@@ -51,7 +49,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
         make_input_row(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
         )
         * data_size
         + make_input_row(
@@ -59,7 +56,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
-            return_ranks=return_ranks,
         )
         * data_size
     )
@@ -68,7 +64,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
         make_udf_output_for_one_input_row_without_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
         )
         * data_size
         + make_udf_output_for_one_input_row_without_span(
@@ -78,7 +73,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
             candidate_labels=candidate_labels2,
             label_scores=error_label_scores,
             error_msg="Traceback",
-            return_ranks=return_ranks,
         )
         * data_size
     )
@@ -100,7 +94,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
         make_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
         )
         * data_size
         + make_input_row_with_span(
@@ -108,7 +101,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             text_data="error on pred",
             candidate_labels=candidate_labels2,
-            return_ranks=return_ranks,
         )
         * data_size
     )
@@ -117,7 +109,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
         make_udf_output_for_one_input_row_with_span(
             sub_dir=sub_dir1,
             model_name=model_name1,
-            return_ranks=return_ranks,
         )
         * data_size
         + make_udf_output_for_one_input_row_with_span(
@@ -125,7 +116,6 @@ class ReturnHighestErrorOnPredictionMultipleModelMultipleBatch:
             model_name=model_name2,
             label_scores=error_label_scores,
             error_msg="Traceback",
-            return_ranks=return_ranks,
         )
         * data_size
     )

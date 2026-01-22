@@ -8,7 +8,7 @@ from exasol_transformers_extension.deployment.install_scripts_constants import (
 
 UDF_CALL_TEMPLATES = {
     "span_ai_extract_extended_udf_call.py": "span_ai_extract_extended_udf.jinja.sql",
-    "span_zero_shot_text_classification_udf_call.py": "span_zero_shot_text_classification_udf.jinja.sql",
+    "span_ai_classify_extended_udf_call.py": "span_ai_classify_extended_udf.jinja.sql",
 }
 
 work_with_spans_constants = InstallScriptsConstants(

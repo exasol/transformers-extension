@@ -15,7 +15,7 @@ The extension provides two types of UDFs:
    5. AI Complete Extended
    6. AI Extract Extended
    7. AI Translate Extended
-   8. Zero-Shot Text Classification
+   8. AI Classify Extended
 
     
 This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol cluster.

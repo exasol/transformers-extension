@@ -1,28 +1,28 @@
-from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_ALL_error_on_prediction_multiple_model_multiple_batch import (
     ReturnAllErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_ALL_error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_ALL_error_on_prediction_single_model_multiple_batch import (
     ReturnAllErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_ALL_multiple_labels_single_model_multiple_batch import (
     ReturnAllMultipleLabelsSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_labels_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_ALL_multiple_labels_single_model_single_batch import (
     ReturnAllMultipleLabelsSingleModelSingleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_ALL_multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_ALL_multiple_model_multiple_batch_complete import (
     ReturnAllMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_HIGHEST_error_on_prediction_multiple_model_multiple_batch import (
     ReturnHighestErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_HIGHEST_multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_HIGHEST_multiple_model_multiple_batch_complete import (
     ReturnHighestMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_mixed_error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_mixed_error_on_prediction_multiple_model_multiple_batch import (
     ReturnMixedErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.zero_shot.return_mixed_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_classify_extended.return_mixed_multiple_model_multiple_batch import (
     ReturnMixedMultipleModelMultipleBatchComplete,
 )
 from test.unit.utils.utils_for_udf_tests import (
@@ -43,8 +43,8 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import (
-    ZeroShotTextClassificationUDF,
+from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
+    AiClassifyExtendeUDF,
 )
 
 
@@ -134,7 +134,7 @@ def create_mock_metadata():
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_zero_shot(mock_local_path, mock_create_loc, params):
+def test_ai_classify_extended(mock_local_path, mock_create_loc, params):
     """
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
@@ -159,7 +159,7 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
         zero_shot_models_output_df, expected_model_counter
     )
 
-    udf = ZeroShotTextClassificationUDF(
+    udf = AiClassifyExtendeUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,
@@ -198,7 +198,7 @@ def test_zero_shot(mock_local_path, mock_create_loc, params):
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_zero_shot_with_span(mock_local_path, mock_create_loc, params):
+def test_ai_classify_extended_with_span(mock_local_path, mock_create_loc, params):
     """
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
@@ -223,7 +223,7 @@ def test_zero_shot_with_span(mock_local_path, mock_create_loc, params):
         zero_shot_models_output_df, expected_model_counter
     )
 
-    udf = ZeroShotTextClassificationUDF(
+    udf = AiClassifyExtendeUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

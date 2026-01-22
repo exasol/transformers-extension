@@ -11,7 +11,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [AI Complete Extended](#ai-complete-extended)
   * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
-  * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
+  * [AI Classify Extended](#ai-classify-extended)
 
     
 ### Sequence Classification for Single Text UDF
@@ -310,15 +310,15 @@ Example:
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
-### Zero-Shot Text Classification UDF
+### AI Classify Extended
 
-This UDF provides the task of predicting a class that was not seen by the model during training.
+This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known by to the model.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
 
 ```sql
-SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
+SELECT AI_CLASSIFY_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,

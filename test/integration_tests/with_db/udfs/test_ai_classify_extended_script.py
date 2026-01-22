@@ -22,7 +22,7 @@ def setup_common_input_data():
     "return_ranks, number_results_per_input",
     [("ALL", None), ("HIGHEST", 1)],
 )
-def test_zero_shot_classification_single_text_script_without_spans(
+def test_ai_classify_extended_single_text_script_without_spans(
     setup_database,
     db_conn,
     upload_zero_shot_classification_model_to_bucketfs,
@@ -51,7 +51,7 @@ def test_zero_shot_classification_single_text_script_without_spans(
         )
 
     query = (
-        f"SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF("
+        f"SELECT AI_CLASSIFY_EXTENDED("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "
@@ -86,7 +86,7 @@ def test_zero_shot_classification_single_text_script_without_spans(
     "return_ranks, number_results_per_input",
     [("ALL", None), ("HIGHEST", 1)],
 )
-def test_zero_shot_classification_single_text_script_with_spans(
+def test_ai_classify_extended_single_text_script_with_spans(
     setup_database,
     db_conn,
     upload_zero_shot_classification_model_to_bucketfs,
@@ -118,7 +118,7 @@ def test_zero_shot_classification_single_text_script_with_spans(
         )
 
     query = (
-        f"SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF_WITH_SPAN("
+        f"SELECT AI_CLASSIFY_EXTENDED_WITH_SPAN("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "

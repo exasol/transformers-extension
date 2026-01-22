@@ -20,8 +20,8 @@ import pandas as pd
 import pytest
 import torch
 
-from exasol_transformers_extension.udfs.models.zero_shot_text_classification_udf import (
-    ZeroShotTextClassificationUDF,
+from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
+    AiClassifyExtendeUDF,
 )
 
 
@@ -46,7 +46,7 @@ def run_test(sample_data, columns, bucketfs_conn_name, bucketfs_connection, batc
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = ZeroShotTextClassificationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiClassifyExtendeUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -66,7 +66,7 @@ def format_result(result_df):
     "return_ranks, number_results_per_input",
     [("ALL", None), ("HIGHEST", 1)],
 )
-def test_zero_shot_classification_single_text_udf(
+def test_ai_classify_extended_single_text_udf(
     description,
     device_id,
     return_ranks,
@@ -142,7 +142,7 @@ def test_zero_shot_classification_single_text_udf(
     "return_ranks, number_results_per_input",
     [("ALL", None), ("HIGHEST", 1)],
 )
-def test_zero_shot_classification_single_text_udf_with_span(
+def test_ai_classify_extended_single_text_udf_with_span(
     description,
     device_id,
     return_ranks,
@@ -222,7 +222,7 @@ def test_zero_shot_classification_single_text_udf_with_span(
     "return_ranks, number_results_per_input",
     [("ALL", 1), ("HIGHEST", 1)],
 )
-def test_zero_shot_classification_single_text_udf_on_error_handling(
+def test_ai_classify_extended_single_text_udf_on_error_handling(
     description,
     device_id,
     return_ranks,
