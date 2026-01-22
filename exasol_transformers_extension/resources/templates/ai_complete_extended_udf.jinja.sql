@@ -1,4 +1,4 @@
-CREATE OR REPLACE {{ language_alias }} SET SCRIPT "TE_TEXT_GENERATION_UDF"(
+CREATE OR REPLACE {{ language_alias }} SET SCRIPT "AI_COMPLETE_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),

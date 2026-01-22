@@ -22,7 +22,7 @@ class BucketFSModelSpecification(ModelSpecification):
             model card, for example 'cross-encoder/nli-deberta-base'.
         task_type:
             Name of an NLP task, filling_mask, question_answering,
-            sequence_classification, text_generation, token_classification,
+            sequence_classification, ai_complete_extended, token_classification,
             translation, zero_shot_classification.
         bucketfs_conn_name:
             Name of the BucketFS connection to retrieve the BucketFS location from.

@@ -8,7 +8,7 @@ from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_t
 from test.utils.parameters import model_params
 
 
-def test_text_generation_script(
+def test_ai_complete_extended_script(
     setup_database, db_conn, upload_text_generation_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
@@ -31,7 +31,7 @@ def test_text_generation_script(
         )
 
     query = (
-        f"SELECT TE_TEXT_GENERATION_UDF("
+        f"SELECT AI_COMPLETE_EXTENDED("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "

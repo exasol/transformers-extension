@@ -1,22 +1,22 @@
-from test.unit.udf_wrapper_params.text_generation.error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.multiple_max_new_tokens_single_model_multiple_batch import (
     MultipleMaxLengthSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.multiple_max_new_tokens_single_model_single_batch import (
     MultipleMaxLengthSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_complete_extended.multiple_model_multiple_batch_complete import (
     MultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_return_full_param_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.multiple_return_full_param_single_model_multiple_batch import (
     MultipleReturnFullParamSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.text_generation.multiple_return_full_param_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_complete_extended.multiple_return_full_param_single_model_single_batch import (
     MultipleReturnFullParamSingleModelNameSingleBatch,
 )
 from test.unit.udfs.output_matcher import (
@@ -83,7 +83,7 @@ def create_mock_metadata(udf_wrapper):
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_text_generation(mock_local_path, mock_create_loc, params):
+def test_ai_complete_extended(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path

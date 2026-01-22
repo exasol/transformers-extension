@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.text_generation.mock_token_generation import (
+from test.unit.udf_wrapper_params.ai_complete_extended.mock_token_generation import (
     MockPipeline,
     MockTextGenerationFactory,
     MockTextGenerationModel,
@@ -9,20 +9,20 @@ from exasol_udf_mock_python.connection import Connection
 
 
 def udf_wrapper():
-    from test.unit.udf_wrapper_params.text_generation.mock_sequence_tokenizer import (
+    from test.unit.udf_wrapper_params.ai_complete_extended.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
     )
-    from test.unit.udf_wrapper_params.text_generation.multiple_max_new_tokens_single_model_single_batch import (
-        MultipleMaxLengthSingleModelNameSingleBatch as params,
+    from test.unit.udf_wrapper_params.ai_complete_extended.multiple_max_new_tokens_single_model_multiple_batch import (
+        MultipleMaxLengthSingleModelNameMultipleBatch as params,
     )
 
     from exasol_udf_mock_python.udf_context import UDFContext
 
-    from exasol_transformers_extension.udfs.models.text_generation_udf import (
-        TextGenerationUDF,
+    from exasol_transformers_extension.udfs.models.ai_complete_extended_udf import (
+        AiCompleteExtendedUDF,
     )
 
-    udf = TextGenerationUDF(
+    udf = AiCompleteExtendedUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -34,14 +34,14 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class MultipleMaxLengthSingleModelNameSingleBatch:
+class MultipleMaxLengthSingleModelNameMultipleBatch:
     """
-    multiple max_new_tokens, single model, single batch
+    multiple max_new_tokens, single model, multiple batch
     """
 
     expected_model_counter = 1
-    batch_size = 4
-    data_size = 2
+    batch_size = 2
+    data_size = 3
     max_new_tokens1 = 10
     max_new_tokens2 = 20
     return_full_text = True

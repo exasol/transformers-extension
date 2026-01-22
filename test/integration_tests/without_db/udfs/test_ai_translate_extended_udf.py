@@ -135,7 +135,7 @@ def test_ai_translate_extended_udf(
         ),
     ],
 )
-def test_translation_udf_max_new_tokens_effective(
+def test_ai_translate_extended_udf_max_new_tokens_effective(
     description,
     device_id,
     languages,
@@ -244,7 +244,7 @@ def test_translation_udf_max_new_tokens_effective(
         ),
     ],
 )
-def test_translation_udf_on_error_handling(
+def test_ai_translate_extended_udf_on_error_handling(
     description, device_id, languages, prepare_translation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():

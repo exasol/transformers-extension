@@ -19,8 +19,8 @@ import torch
 from exasol_udf_mock_python.connection import Connection
 from transformers import AutoTokenizer
 
-from exasol_transformers_extension.udfs.models.text_generation_udf import (
-    TextGenerationUDF,
+from exasol_transformers_extension.udfs.models.ai_complete_extended_udf import (
+    AiCompleteExtendedUDF,
 )
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
@@ -36,7 +36,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
         ("on GPU with single input", 0, 1),
     ],
 )
-def test_text_generation_udf(
+def test_ai_complete_extended_udf(
     description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -78,7 +78,7 @@ def test_text_generation_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TextGenerationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -102,7 +102,7 @@ def test_text_generation_udf(
         ("on GPU with max_new_tokens < expected result tokens", 0, 2),
     ],
 )
-def test_text_generation_udf(
+def test_max_new_tokens_ai_complete_extended(
     description,
     device_id,
     max_new_tokens,
@@ -161,7 +161,7 @@ def test_text_generation_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TextGenerationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -193,7 +193,7 @@ def test_text_generation_udf(
         ("on GPU with single input", 0, 1),
     ],
 )
-def test_text_generation_udf_on_error_handlig(
+def test_ai_complete_extended_udf_on_error_handlig(
     description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -235,7 +235,7 @@ def test_text_generation_udf_on_error_handlig(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = TextGenerationUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

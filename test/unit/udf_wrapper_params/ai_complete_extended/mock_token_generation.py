@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.text_generation.mock_sequence_tokenizer import (
+from test.unit.udf_wrapper_params.ai_complete_extended.mock_sequence_tokenizer import (
     MockSequenceTokenizer,
 )
 from typing import (

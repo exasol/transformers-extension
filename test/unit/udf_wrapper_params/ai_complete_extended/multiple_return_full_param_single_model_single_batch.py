@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.text_generation.mock_token_generation import (
+from test.unit.udf_wrapper_params.ai_complete_extended.mock_token_generation import (
     MockPipeline,
     MockTextGenerationFactory,
     MockTextGenerationModel,
@@ -9,20 +9,20 @@ from exasol_udf_mock_python.connection import Connection
 
 
 def udf_wrapper():
-    from test.unit.udf_wrapper_params.text_generation.error_on_prediction_single_model_multiple_batch import (
-        ErrorOnPredictionSingleModelMultipleBatch as params,
-    )
-    from test.unit.udf_wrapper_params.text_generation.mock_sequence_tokenizer import (
+    from test.unit.udf_wrapper_params.ai_complete_extended.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
+    )
+    from test.unit.udf_wrapper_params.ai_complete_extended.multiple_return_full_param_single_model_single_batch import (
+        MultipleReturnFullParamSingleModelNameSingleBatch as params,
     )
 
     from exasol_udf_mock_python.udf_context import UDFContext
 
-    from exasol_transformers_extension.udfs.models.text_generation_udf import (
-        TextGenerationUDF,
+    from exasol_transformers_extension.udfs.models.ai_complete_extended_udf import (
+        AiCompleteExtendedUDF,
     )
 
-    udf = TextGenerationUDF(
+    udf = AiCompleteExtendedUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -34,16 +34,17 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class ErrorOnPredictionSingleModelMultipleBatch:
+class MultipleReturnFullParamSingleModelNameSingleBatch:
     """
-    error on prediction, single model, multiple batch,
+    multiple return_full_text, single model, single batch
     """
 
-    expected_model_counter = 0
-    batch_size = 2
-    data_size = 5
+    expected_model_counter = 1
+    batch_size = 4
+    data_size = 2
     max_new_tokens = 10
     return_full_text = True
+    not_return_full_text = False
 
     input_data = [
         (
@@ -51,9 +52,19 @@ class ErrorOnPredictionSingleModelMultipleBatch:
             "bfs_conn1",
             "sub_dir1",
             "model1",
-            "error on pred",
+            "text 1",
             max_new_tokens,
             return_full_text,
+        )
+    ] * data_size + [
+        (
+            None,
+            "bfs_conn1",
+            "sub_dir1",
+            "model1",
+            "text 1",
+            max_new_tokens,
+            not_return_full_text,
         )
     ] * data_size
     output_data = [
@@ -61,11 +72,22 @@ class ErrorOnPredictionSingleModelMultipleBatch:
             "bfs_conn1",
             "sub_dir1",
             "model1",
-            "error on pred",
+            "text 1",
             max_new_tokens,
             return_full_text,
+            "text 1 generated" * max_new_tokens,
             None,
-            "Traceback",
+        )
+    ] * data_size + [
+        (
+            "bfs_conn1",
+            "sub_dir1",
+            "model1",
+            "text 1",
+            max_new_tokens,
+            not_return_full_text,
+            "text 1 generated" * (max_new_tokens - 1),
+            None,
         )
     ] * data_size
 
@@ -76,7 +98,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
     mock_factory = MockTextGenerationFactory(
         {
             PurePosixPath(
-                base_cache_dir1, "sub_dir1", "model 1"
+                base_cache_dir1, "sub_dir1", "model1_text-generation"
             ): MockTextGenerationModel(text_data="text 1")
         }
     )

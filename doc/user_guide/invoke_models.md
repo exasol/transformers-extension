@@ -6,11 +6,11 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
   * [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
   * [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
-  * [Question Answering UDF](#question-answering-udf)
+  * [AI Answer Extended](#ai-answer-extended)
   * [Masked Language Modelling UDF](#masked-language-modelling-udf)
-  * [Text Generation UDF](#text-generation-udf)
+  * [AI Complete Extended](#ai-complete-extended)
   * [Token Classification UDF](#token-classification-udf)
-  * [AI Translate Extended](#text-translation-udf)
+  * [AI Translate Extended](#ai-translate-extended)
   * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
 
     
@@ -184,14 +184,14 @@ Example:
 | conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
 | ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
-### Text Generation UDF
+### AI Complete Extended
 
 This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
 
 Example usage:
 
 ```sql
-SELECT TE_TEXT_GENERATION_UDF(
+SELECT AI_COMPLETE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
