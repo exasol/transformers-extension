@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.sequence_classification.make_data_row_functions import (
+from test.unit.udf_wrapper_params.text_classification.make_data_row_functions import (
     bucketfs_conn,
     make_input_row_single_text,
     make_input_row_text_pair,
@@ -56,7 +56,7 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
     model_output_single_text_one_batch = [
         make_model_output_for_one_input_row() * batch_size
     ]
-    sequence_models_output_df_single_text = [
+    text_class_models_output_df_single_text = [
         model_output_single_text_one_batch + model_output_single_text_one_batch
     ]
 
@@ -93,6 +93,6 @@ class ReturnMixedMultipleModelMultipleBatchComplete:
     model_output_text_pair_one_batch = [
         make_model_output_for_one_input_row() * batch_size
     ]
-    sequence_models_output_df_text_pair = [
+    text_class_models_output_df_text_pair = [
         model_output_text_pair_one_batch + model_output_text_pair_one_batch
     ]

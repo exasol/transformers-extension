@@ -20,8 +20,8 @@ class ModelParams:
     token_model_specs: (
         ModelSpecification  # this model is used for token classification test
     )
-    sequence_class_model_specs: ModelSpecification  # this model is used for sequence classification single text test
-    sequence_class_pair_model_specs: ModelSpecification  # this model is used for sequence classification text pair test
+    text_classification_model_specs: ModelSpecification  # this model is used for sequence classification single text test
+    text_classification_pair_model_specs: ModelSpecification  # this model is used for ai_entailment_extended test
     zero_shot_model_specs: (
         ModelSpecification  # this model is used for zero-shot-classification test
     )
@@ -41,11 +41,11 @@ model_params = ModelParams(
     ),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),
-    sequence_class_model_specs=ModelSpecification(
+    text_classification_model_specs=ModelSpecification(
         "mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
         "text-classification",
     ),
-    sequence_class_pair_model_specs=ModelSpecification(
+    text_classification_pair_model_specs=ModelSpecification(
         "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli", "text-classification"
     ),
     zero_shot_model_specs=ModelSpecification(

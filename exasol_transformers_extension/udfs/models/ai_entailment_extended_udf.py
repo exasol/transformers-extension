@@ -11,8 +11,8 @@ import transformers
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
 
-# todo update docu
-class SequenceClassificationTextPairUDF(BaseModelUDF):
+
+class AiEntailmentExtendedUDF(BaseModelUDF):
     def __init__(
         self,
         exa,

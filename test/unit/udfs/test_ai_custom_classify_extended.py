@@ -1,13 +1,13 @@
-from test.unit.udf_wrapper_params.sequence_classification.error_on_prediction_return_HIGHEST_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.text_classification.error_on_prediction_return_HIGHEST_single_model_multiple_batch import (
     ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.sequence_classification.return_ALL_multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.text_classification.return_ALL_multiple_model_multiple_batch_complete import (
     ReturnAllMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.sequence_classification.return_HIGHEST_multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.text_classification.return_HIGHEST_multiple_model_multiple_batch_complete import (
     ReturnHighestMultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.sequence_classification.return_mixed_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.text_classification.return_mixed_single_model_multiple_batch import (
     ReturnMixedMultipleModelMultipleBatchComplete,
 )
 from test.unit.utils.utils_for_udf_tests import (
@@ -28,8 +28,8 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import (
-    SequenceClassificationTextPairUDF,
+from exasol_transformers_extension.udfs.models.ai_custom_classify_extended_udf import (
+    AiCustomClassifyUDF,
 )
 
 
@@ -42,8 +42,7 @@ def create_mock_metadata():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("first_text", str, "VARCHAR(2000000)"),
-            Column("second_text", str, "VARCHAR(2000000)"),
+            Column("text_data", str, "VARCHAR(2000000)"),
             Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
@@ -51,8 +50,7 @@ def create_mock_metadata():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("first_text", str, "VARCHAR(2000000)"),
-            Column("second_text", str, "VARCHAR(2000000)"),
+            Column("text_data", str, "VARCHAR(2000000)"),
             Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
@@ -79,17 +77,17 @@ def create_mock_metadata():
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_sequence_classification_text_pair(mock_local_path, mock_create_loc, params):
+def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-    model_input_data = params.inputs_pair_text
+    model_input_data = params.inputs_single_text
     bfs_connections = params.bfs_connections
-    expected_model_counter = params.expected_text_pair_model_counter
-    sequence_models_output_df = params.sequence_models_output_df_text_pair
+    expected_model_counter = params.expected_single_text_model_counter
+    sequence_models_output_df = params.text_class_models_output_df_single_text
     batch_size = params.batch_size
-    expected_output_data = params.outputs_text_pair
+    expected_output_data = params.outputs_single_text
 
     mock_meta = create_mock_metadata()
     mock_ctx = create_mock_udf_context(model_input_data, mock_meta)
@@ -101,7 +99,7 @@ def test_sequence_classification_text_pair(mock_local_path, mock_create_loc, par
         sequence_models_output_df, expected_model_counter
     )
 
-    udf = SequenceClassificationTextPairUDF(
+    udf = AiCustomClassifyUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

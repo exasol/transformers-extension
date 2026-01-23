@@ -18,23 +18,23 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.sequence_classification_text_pair_udf import (
-    SequenceClassificationTextPairUDF,
+from exasol_transformers_extension.udfs.models.ai_entailment_extended_udf import (
+    AiEntailmentExtendedUDF,
 )
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
-def test_sequence_classification_text_pair_udf(
+def test_ai_entailment_extended_udf(
     description,
     device_id,
-    prepare_sequence_classification_pair_model_for_local_bucketfs,
+        prepare_text_classification_pair_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
 
-    bucketfs_base_path = prepare_sequence_classification_pair_model_for_local_bucketfs
+    bucketfs_base_path = prepare_text_classification_pair_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -45,7 +45,7 @@ def test_sequence_classification_text_pair_udf(
             None,
             bucketfs_conn_name,
             model_params.sub_dir,
-            model_params.sequence_class_pair_model_specs.model_name,
+            model_params.text_classification_pair_model_specs.model_name,
             model_params.text_data + str(i),
             model_params.text_data + str(i * i),
             "ALL",
@@ -67,7 +67,7 @@ def test_sequence_classification_text_pair_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = SequenceClassificationTextPairUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiEntailmentExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -94,17 +94,17 @@ def test_sequence_classification_text_pair_udf(
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
-def test_sequence_classification_text_pair_udf_on_error_handling(
+def test_ai_entailment_extended_udf_on_error_handling(
     description,
     device_id,
-    prepare_sequence_classification_pair_model_for_local_bucketfs,
+        prepare_text_classification_pair_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
 
-    bucketfs_base_path = prepare_sequence_classification_pair_model_for_local_bucketfs
+    bucketfs_base_path = prepare_text_classification_pair_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -137,7 +137,7 @@ def test_sequence_classification_text_pair_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = SequenceClassificationTextPairUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiEntailmentExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

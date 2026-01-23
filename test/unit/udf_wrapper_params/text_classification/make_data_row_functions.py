@@ -62,7 +62,7 @@ def make_input_row_text_pair(
     return_ranks=return_ranks,
 ):
     """
-    Creates an input row for sequence classification text pair usage as a list,
+    Creates an input row for text classification text pair usage as a list,
     using default values for all parameters that are not specified.
     """
     return [
@@ -179,7 +179,6 @@ def make_udf_output_for_one_input_row_text_pair(
         # if there was an error during prediction,
         # only one result with traceback gets returned per input,
         # because the rank cant be computed
-        # todo what do if not default input of label score. do i really need another sorting?
         udf_output = [
             (
                 bucketfs_conn,

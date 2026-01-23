@@ -95,7 +95,7 @@ def run_model_upload_test(
             f"model_name, text_data, top_k));"
         )
 
-        # execute sequence classification UDF
+        # execute fill mask UDF
         result = db_conn.execute(query).fetchall()
         assert len(result) == 1 and result[0][-1] is None
     finally:

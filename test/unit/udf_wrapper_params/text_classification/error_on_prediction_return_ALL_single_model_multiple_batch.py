@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.sequence_classification.make_data_row_functions import (
+from test.unit.udf_wrapper_params.text_classification.make_data_row_functions import (
     LabelScore,
     LabelScores,
     bucketfs_conn,
@@ -52,7 +52,7 @@ class ErrorOnPredictionReturnAllSingleModelMultipleBatch:
         * data_size
     )
 
-    sequence_models_output_df_single_text = [
+    text_class_models_output_df_single_text = [
         [
             make_model_output_for_one_input_row(
                 label_scores=label_scores,
@@ -74,7 +74,7 @@ class ErrorOnPredictionReturnAllSingleModelMultipleBatch:
         * data_size
     )
 
-    sequence_models_output_df_text_pair = [
+    text_class_models_output_df_text_pair = [
         [
             make_model_output_for_one_input_row(
                 label_scores=label_scores,

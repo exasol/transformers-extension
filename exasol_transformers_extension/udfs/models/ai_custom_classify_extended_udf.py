@@ -12,7 +12,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 
 
 # todo update docu
-class SequenceClassificationSingleTextUDF(BaseModelUDF):
+class AiCustomClassifyUDF(BaseModelUDF):
     def __init__(
         self,
         exa,
@@ -55,9 +55,6 @@ class SequenceClassificationSingleTextUDF(BaseModelUDF):
         :return: List of dataframe includes prediction details
         """
         sequences = list(model_df["text_data"])
-        # todo apparently top_k is now supported. so we could also solve the ranks ALL/Highest like for example in filling mask udf
-        # todo in both approaches we need to go over inputs to look for ho many results to return, to be able sort results to inputs.
-        # todo personally i think this way is easier to read
         results = self.last_created_pipeline(sequences, top_k=None)
         return results
 
