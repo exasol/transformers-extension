@@ -21,7 +21,7 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.filling_mask_udf import FillingMaskUDF
+from exasol_transformers_extension.udfs.models.ai_fill_mask_extended_udf import AiFillMaskExtendedUDF
 
 
 @pytest.mark.parametrize(
@@ -33,15 +33,15 @@ from exasol_transformers_extension.udfs.models.filling_mask_udf import FillingMa
         ("on GPU with single input", 0, 1),
     ],
 )
-def test_filling_mask_udf(
-    description, device_id, n_rows, prepare_filling_mask_model_for_local_bucketfs
+def test_ai_fill_mask_extended_udf(
+    description, device_id, n_rows, prepare_fill_mask_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
 
-    bucketfs_base_path = prepare_filling_mask_model_for_local_bucketfs
+    bucketfs_base_path = prepare_fill_mask_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
@@ -72,7 +72,7 @@ def test_filling_mask_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = FillingMaskUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiFillMaskExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -104,15 +104,15 @@ def test_filling_mask_udf(
         ("on GPU with single input", 0, 1),
     ],
 )
-def test_filling_mask_udf_on_error_handling(
-    description, device_id, n_rows, prepare_filling_mask_model_for_local_bucketfs
+def test_ai_fill_mask_extended_udf_on_error_handling(
+    description, device_id, n_rows, prepare_fill_mask_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
             f"There is no available device({device_id}) " f"to execute the test"
         )
 
-    bucketfs_base_path = prepare_filling_mask_model_for_local_bucketfs
+    bucketfs_base_path = prepare_fill_mask_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
     bucketfs_connection = Connection(address=f"file://{bucketfs_base_path}")
 
@@ -143,7 +143,7 @@ def test_filling_mask_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = FillingMaskUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiFillMaskExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

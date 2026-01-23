@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.filling_mask.mock_filling_mask import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.mock_filling_mask import (
     MockFillingMaskFactory,
     MockFillingMaskModel,
     MockPipeline,
@@ -9,20 +9,20 @@ from exasol_udf_mock_python.connection import Connection
 
 
 def udf_wrapper():
-    from test.unit.udf_wrapper_params.filling_mask.mock_sequence_tokenizer import (
+    from test.unit.udf_wrapper_params.ai_fill_mask_extended.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
     )
-    from test.unit.udf_wrapper_params.filling_mask.single_topk_multiple_model_multiple_batch import (
-        SingleTopkMultipleModelNameMultipleBatch as params,
+    from test.unit.udf_wrapper_params.ai_fill_mask_extended.single_topk_multiple_model_single_batch import (
+        SingleTopkMultipleModelNameSingleBatch as params,
     )
 
     from exasol_udf_mock_python.udf_context import UDFContext
 
-    from exasol_transformers_extension.udfs.models.filling_mask_udf import (
-        FillingMaskUDF,
+    from exasol_transformers_extension.udfs.models.ai_fill_mask_extended_udf import (
+        AiFillMaskExtendedUDF,
     )
 
-    udf = FillingMaskUDF(
+    udf = AiFillMaskExtendedUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,
@@ -34,13 +34,13 @@ def udf_wrapper():
         udf.run(ctx)
 
 
-class SingleTopkMultipleModelNameMultipleBatch:
+class SingleTopkMultipleModelNameSingleBatch:
     """
-    single topk, multiple model, multiple batch
+    single topk, multiple model, single batch
     """
 
     expected_model_counter = 2
-    batch_size = 2
+    batch_size = 4
     data_size = 2
     top_k = 3
 

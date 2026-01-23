@@ -12,7 +12,7 @@ UDF_CALL_TEMPLATES = {
     "ai_custom_classify_extended_udf_call.py": "ai_custom_classify_extended_udf.jinja.sql",
     "ai_entailment_extended_udf_call.py": "ai_entailment_extended_udf.jinja.sql",
     "question_answering_udf_call.py": "question_answering_udf.jinja.sql",
-    "filling_mask_udf_call.py": "filling_mask_udf.jinja.sql",
+    "ai_fill_mask_extended_udf_call.py": "ai_fill_mask_extended_udf.sql",
     "text_generation_udf_call.py": "text_generation_udf.jinja.sql",
     "translation_udf_call.py": "translation_udf.jinja.sql",
     "delete_model_udf_call.py": "delete_model_udf.jinja.sql",

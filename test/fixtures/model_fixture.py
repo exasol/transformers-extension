@@ -12,9 +12,9 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def prepare_filling_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+def prepare_fill_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     """
-    Create tmpdir and save standard filling mask model into it, returns tmpdir-path.
+    Create tmpdir and save standard fill mask model into it, returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.base_model_specs
@@ -147,11 +147,11 @@ def prepare_tiny_model_for_local_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_filling_mask_model_to_bucketfs(
+def upload_fill_mask_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard filling mask model into BucketFS at bucketfs_location,
+    Load standard fill mask model into BucketFS at bucketfs_location,
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """

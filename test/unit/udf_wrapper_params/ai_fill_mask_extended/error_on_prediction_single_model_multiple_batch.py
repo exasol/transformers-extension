@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.filling_mask.mock_filling_mask import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.mock_filling_mask import (
     MockFillingMaskFactory,
     MockFillingMaskModel,
     MockPipeline,
@@ -9,20 +9,20 @@ from exasol_udf_mock_python.connection import Connection
 
 
 def udf_wrapper():
-    from test.unit.udf_wrapper_params.filling_mask.error_on_prediction_single_model_multiple_batch import (
+    from test.unit.udf_wrapper_params.ai_fill_mask_extended.error_on_prediction_single_model_multiple_batch import (
         ErrorOnPredictionSingleModelMultipleBatch as params,
     )
-    from test.unit.udf_wrapper_params.filling_mask.mock_sequence_tokenizer import (
+    from test.unit.udf_wrapper_params.ai_fill_mask_extended.mock_sequence_tokenizer import (
         MockSequenceTokenizer,
     )
 
     from exasol_udf_mock_python.udf_context import UDFContext
 
-    from exasol_transformers_extension.udfs.models.filling_mask_udf import (
-        FillingMaskUDF,
+    from exasol_transformers_extension.udfs.models.ai_fill_mask_extended_udf import (
+        AiFillMaskExtendedUDF,
     )
 
-    udf = FillingMaskUDF(
+    udf = AiFillMaskExtendedUDF(
         exa,
         batch_size=params.batch_size,
         pipeline=params.mock_pipeline,

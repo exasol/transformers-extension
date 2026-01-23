@@ -144,12 +144,16 @@ Example:
 
 ### Masked Language Modelling UDF
 
-This UDF is responsible for masking tokens in a given text with a masking token, and then filling that masks with appropriate tokens. The masking token of this UDF is ```<mask>```.
+This UDF needs to be given an inout text containing the ```<mask>``` token. It can then 
+replace these masks with appropriate tokens. 
+I.E the input text could be "<mask> is the best database Software for Machine 
+Learning Enthusiasts.", resulting in an output like "Exasol is the best database 
+Software for Machine Learning Enthusiasts."
 
 Example usage:
 
 ```sql
-SELECT TE_FILLING_MASK_UDF(
+SELECT AI_FILL_MASK_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,

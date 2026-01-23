@@ -8,8 +8,8 @@ from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_t
 from test.utils.parameters import model_params
 
 
-def test_filling_mask_script(
-    setup_database, db_conn, upload_filling_mask_model_to_bucketfs
+def test_ai_fill_mask_extended_script(
+    setup_database, db_conn, upload_fill_mask_model_to_bucketfs
 ):
     bucketfs_conn_name, schema_name = setup_database
     text_data = "I <mask> you so much."
@@ -29,7 +29,7 @@ def test_filling_mask_script(
         )
 
     query = (
-        f"SELECT TE_FILLING_MASK_UDF("
+        f"SELECT AI_FILL_MASK_EXTENDED("
         f"t.device_id, "
         f"t.bucketfs_conn_name, "
         f"t.sub_dir, "

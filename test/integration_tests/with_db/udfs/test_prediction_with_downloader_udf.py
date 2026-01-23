@@ -4,7 +4,7 @@ from test.integration_tests.utils.model_output_quality_checkers import (
 )
 from test.utils import postprocessing
 
-TASK_TYPE = "filling_mask"
+TASK_TYPE = "ai_fill_mask_extended"
 SUB_DIR = "test_downloader_with_prediction_sub_dir"
 MODEL_NAME = "gaunernst/bert-tiny-uncased"
 
@@ -29,13 +29,13 @@ def test_prediction_with_downloader_udf(setup_database, db_conn, bucketfs_locati
         db_conn.execute(query).fetchall()
         time.sleep(10)
 
-        # execute the filling mask UDF
+        # execute the fill mask UDF
         text_data = "I <mask> you so much."
         top_k = 3
         input_data = ("", bucketfs_conn_name, SUB_DIR, MODEL_NAME, text_data, top_k)
 
         query = (
-            f"SELECT TE_FILLING_MASK_UDF("
+            f"SELECT AI_FILL_MASK_EXTENDED("
             f"t.device_id, "
             f"t.bucketfs_conn_name, "
             f"t.sub_dir, "

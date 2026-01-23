@@ -1,22 +1,22 @@
-from test.unit.udf_wrapper_params.filling_mask.error_on_prediction_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.error_on_prediction_multiple_model_multiple_batch import (
     ErrorOnPredictionMultipleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.filling_mask.error_on_prediction_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.filling_mask.multiple_model_multiple_batch_complete import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.multiple_model_multiple_batch_complete import (
     MultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.filling_mask.multiple_topk_single_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.multiple_topk_single_model_multiple_batch import (
     MultipleTopkSingleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.filling_mask.multiple_topk_single_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.multiple_topk_single_model_single_batch import (
     MultipleTopkSingleModelNameSingleBatch,
 )
-from test.unit.udf_wrapper_params.filling_mask.single_topk_multiple_model_multiple_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.single_topk_multiple_model_multiple_batch import (
     SingleTopkMultipleModelNameMultipleBatch,
 )
-from test.unit.udf_wrapper_params.filling_mask.single_topk_multiple_model_single_batch import (
+from test.unit.udf_wrapper_params.ai_fill_mask_extended.single_topk_multiple_model_single_batch import (
     SingleTopkMultipleModelNameSingleBatch,
 )
 from test.unit.udfs.output_matcher import (
@@ -83,7 +83,7 @@ def create_mock_metadata(udf_wrapper):
 @patch(
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
-def test_filling_mask(mock_local_path, mock_create_loc, params):
+def test_ai_fill_mask_extended(mock_local_path, mock_create_loc, params):
 
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path

@@ -12,7 +12,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.utils import dataframe_operations
 
 
-class FillingMaskUDF(BaseModelUDF):
+class AiFillMaskExtendedUDF(BaseModelUDF):
     def __init__(
         self,
         exa,
