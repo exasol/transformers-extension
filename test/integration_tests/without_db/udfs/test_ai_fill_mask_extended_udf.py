@@ -21,7 +21,9 @@ import pytest
 import torch
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.udfs.models.ai_fill_mask_extended_udf import AiFillMaskExtendedUDF
+from exasol_transformers_extension.udfs.models.ai_fill_mask_extended_udf import (
+    AiFillMaskExtendedUDF,
+)
 
 
 @pytest.mark.parametrize(

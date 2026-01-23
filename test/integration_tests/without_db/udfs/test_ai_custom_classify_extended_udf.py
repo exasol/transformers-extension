@@ -63,9 +63,7 @@ def test_ai_custom_classify_extended_udf(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiCustomClassifyUDF(
-        exa, batch_size=batch_size
-    )
+    sequence_classifier = AiCustomClassifyUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
@@ -131,9 +129,7 @@ def test_ai_custom_classify_extended_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiCustomClassifyUDF(
-        exa, batch_size=batch_size
-    )
+    sequence_classifier = AiCustomClassifyUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]

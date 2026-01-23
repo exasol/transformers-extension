@@ -27,7 +27,7 @@ from exasol_transformers_extension.udfs.models.ai_entailment_extended_udf import
 def test_ai_entailment_extended_udf(
     description,
     device_id,
-        prepare_text_classification_pair_model_for_local_bucketfs,
+    prepare_text_classification_pair_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -97,7 +97,7 @@ def test_ai_entailment_extended_udf(
 def test_ai_entailment_extended_udf_on_error_handling(
     description,
     device_id,
-        prepare_text_classification_pair_model_for_local_bucketfs,
+    prepare_text_classification_pair_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(

@@ -11,7 +11,6 @@ import transformers
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 
 
-
 class AiEntailmentExtendedUDF(BaseModelUDF):
     def __init__(
         self,

@@ -19,7 +19,7 @@ def test_ai_entailment_extended_script(
     number_results_per_input,
     setup_database,
     db_conn,
-        upload_text_classification_pair_model_to_bucketfs,
+    upload_text_classification_pair_model_to_bucketfs,
 ):
     bucketfs_conn_name, _ = setup_database
     n_labels = 3
