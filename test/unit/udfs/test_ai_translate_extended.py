@@ -37,7 +37,9 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import AiTranslateExtendedUDF
+from exasol_transformers_extension.udfs.models.ai_translate_extended_udf import (
+    AiTranslateExtendedUDF,
+)
 
 
 def create_mock_metadata():

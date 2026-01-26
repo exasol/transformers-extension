@@ -44,7 +44,7 @@ def test_ai_answer_extended_udf(
     device_id,
     n_rows,
     top_k,
-        prepare_question_answering_model_for_local_bucketfs,
+    prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
@@ -124,7 +124,7 @@ def test_ai_answer_extended_udf_on_error_handling(
     device_id,
     n_rows,
     top_k,
-        prepare_question_answering_model_for_local_bucketfs,
+    prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
