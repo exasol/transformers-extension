@@ -6,11 +6,11 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
   * [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
   * [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
-  * [Question Answering UDF](#question-answering-udf)
+  * [AI Answer Extended](#ai-answer-extended)
   * [Masked Language Modelling UDF](#masked-language-modelling-udf)
-  * [Text Generation UDF](#text-generation-udf)
+  * [AI Complete Extended](#ai-complete-extended)
   * [Token Classification UDF](#token-classification-udf)
-  * [Text Translation UDF](#text-translation-udf)
+  * [AI Translate Extended](#ai-translate-extended)
   * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
 
     
@@ -96,14 +96,14 @@ Additional output columns
 | ...           | ...     | ...        | ...        | ...         | ...          | ...     | ...   | ...  | ...           |
 
 
-### Question Answering UDF
+### AI Answer Extended
 
 This UDF extracts answer(s) from a given question text. With the `top_k`
 input parameter, up to `k` answers with the best inference scores can be returned.
 An example usage is given below:
 
 ```sql
-SELECT TE_QUESTION_ANSWERING_UDF(
+SELECT AI_ANSWER_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -125,7 +125,7 @@ Specific parameters
 * `context_text`: The context text, associated with the question
 * `top_k`: The number of answers to return.
    * Note that, `k` number of answers are not guaranteed.
-   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
+   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of the QuestionAnswering Pipeline](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
 
 Additional output columns
 * _ANSWER_: the predicted answer for the input question
@@ -184,14 +184,14 @@ Example:
 | conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
 | ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
-### Text Generation UDF
+### AI Complete Extended
 
 This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
 
 Example usage:
 
 ```sql
-SELECT TE_TEXT_GENERATION_UDF(
+SELECT AI_COMPLETE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -271,12 +271,12 @@ Example:
 | conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
 | ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
-### Text Translation UDF
+### AI Translate Extended
 
 This UDF translates a given text from one language to another.
 
 ```sql
-SELECT TE_TRANSLATION_UDF(
+SELECT AI_TRANSLATE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
