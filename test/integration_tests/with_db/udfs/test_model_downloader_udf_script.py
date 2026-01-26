@@ -9,7 +9,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 
 SUB_DIR = "test_downloader_udf_sub_dir{id}"
 
-
+#todo keep this test? or only test InUDFModelDownloader?
 def test_model_downloader_udf_script(setup_database, db_conn, bucketfs_location):
     bucketfs_conn_name, _ = setup_database
     n_rows = 2
