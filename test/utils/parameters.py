@@ -20,7 +20,7 @@ class ModelParams:
     token_model_specs: (
         ModelSpecification  # this model is used for token classification test
     )
-    text_classification_model_specs: ModelSpecification  # this model is used for sequence classification single text test
+    text_classification_model_specs: ModelSpecification  # this model is used for text classification single text test
     text_classification_pair_model_specs: (
         ModelSpecification  # this model is used for ai_entailment_extended test
     )

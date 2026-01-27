@@ -144,7 +144,7 @@ Example:
 
 ### Masked Language Modelling UDF
 
-This UDF needs to be given an inout text containing the ```<mask>``` token. It can then 
+This UDF needs to be given an input text containing the ```<mask>``` token. It can then 
 replace these masks with appropriate tokens. 
 I.E the input text could be "<mask> is the best database Software for Machine 
 Learning Enthusiasts.", resulting in an output like "Exasol is the best database 
