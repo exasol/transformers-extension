@@ -312,7 +312,7 @@ Example:
 
 ### AI Classify Extended
 
-This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known by to the model.
+This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
