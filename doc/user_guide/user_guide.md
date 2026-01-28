@@ -8,8 +8,8 @@ The extension provides two types of UDFs:
 
 * Utility UDFs: UDFs which deal with installation and deletion of pretrained Transformers models in the Exasol BucketFS.
 * Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
-   1. Sequence Classification for Single Text
-   2. Sequence Classification for Text Pair
+   1. AI Custom Classify Extended
+   2. AI Entailment Extended
    3. Question Answering
    4. Masked Language Modelling
    5. Text Generation
