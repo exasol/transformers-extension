@@ -81,7 +81,7 @@ Specific parameters
 
 Some models can be used for multiple types of tasks, but Hugging Face Transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
 
-Available task types are the same as the names of our available UDFs, namely:
+Available task types are:
 * `filling_mask`
 * `question_answering`
 * `sequence_classification`

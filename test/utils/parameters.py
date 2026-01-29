@@ -9,23 +9,23 @@ PATH_IN_BUCKET = "container"
 
 @dataclass(frozen=True)
 class ModelParams:
-    base_model_specs: ModelSpecification  # this is used for other test, taks_name should be set per test
+    base_model_specs: ModelSpecification  # this is used for other test, task_name should be set per test
     seq2seq_model_specs: (
-        ModelSpecification  # this model is used for testing translation_udf
+        ModelSpecification  # this model is used for testing ai_translate_extended udf
     )
     q_a_model_specs: (
-        ModelSpecification  # this model is used for testing question answering
+        ModelSpecification  # this model is used for testing ai_answer_extended udf
     )
-    text_gen_model_specs: ModelSpecification  # used for text generation test
+    text_gen_model_specs: ModelSpecification  # used for ai_complete_extended test
     token_model_specs: (
-        ModelSpecification  # this model is used for token classification test
+        ModelSpecification  # this model is used for ai_extract_extended test
     )
     text_classification_model_specs: ModelSpecification  # this model is used for text classification single text test
     text_classification_pair_model_specs: (
         ModelSpecification  # this model is used for ai_entailment_extended test
     )
     zero_shot_model_specs: (
-        ModelSpecification  # this model is used for zero-shot-classification test
+        ModelSpecification  # this model is used for ai_classify_extended test
     )
     tiny_model_specs: ModelSpecification  # this model is used for upload/download test
     text_data: str
