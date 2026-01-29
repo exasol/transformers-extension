@@ -6,11 +6,30 @@ Code name: T.B.D
 
 T.B.D
 
+#### BREAKING CHANGES:
+
+* The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. 
+Both of these changes where done in accordance with changes in [transformers](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
+* All prediction udf's have been renamed:
+
+| Old UDF name                               | new UDF name                |
+|--------------------------------------------|-----------------------------|
+| TE_FILLING_MASK_UDF                        | AI_FILL_MASK_EXTENDED       |
+| TE_QUESTION_ANSWERING_UDF                  | AI_ANSWER_EXTENDED          |
+| TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF | AI_CUSTOM_CLASSIFY_EXTENDED |
+| TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF   | AI_ENTAILMENT_EXTENDED      |
+| TE_TEXT_GENERATION_UDF                     | AI_COMPLETE_EXTENDED        |
+| TE_TRANSLATION_UDF                         | AI_TRANSLATE_EXTENDED       |
+| TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
+| TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
+
+
+
 ## Features
 
 ## Bugfixes
 
- * #343: Fixed max_length parameter being ignored, renamed max_length to max_new_tokens
+ * #343: Fixed max_length parameter being ignored, renamed max_length to 
 
 ## Documentation
 
@@ -21,6 +40,7 @@ T.B.D
 
  * #346: Changed translation_udf unit tests to use StandaloneUdfMock
  * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
+ * #350: Renamed all prediction udf's.
 
 ## Security
 

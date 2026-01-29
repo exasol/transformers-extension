@@ -9,7 +9,7 @@ from test.utils.parameters import model_params
 
 
 def test_ai_answer_extended_script(
-    setup_database, db_conn, upload_ai_answer_model_to_bucketfs
+    setup_database, db_conn, upload_question_answering_model_to_bucketfs
 ):
     bucketfs_conn_name, _ = setup_database
     question = "Where is Exasol based?"
