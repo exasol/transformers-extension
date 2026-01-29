@@ -12,9 +12,9 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def prepare_filling_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
+def prepare_fill_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     """
-    Create tmpdir and save standard filling mask model into it, returns tmpdir-path.
+    Create tmpdir and save standard fill mask model into it, returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
     model_specification = model_params.base_model_specs
@@ -42,15 +42,15 @@ def prepare_question_answering_model_for_local_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def prepare_sequence_classification_model_for_local_bucketfs(
+def prepare_text_classification_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard sequence classification model into it,
+    Create tmpdir and save standard text classification model into it,
     returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
-    model_specification = model_params.sequence_class_model_specs
+    model_specification = model_params.text_classification_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
@@ -58,15 +58,15 @@ def prepare_sequence_classification_model_for_local_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def prepare_sequence_classification_pair_model_for_local_bucketfs(
+def prepare_text_classification_pair_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard sequence classification text pair model
+    Create tmpdir and save standard text classification pair model
     into it, returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
-    model_specification = model_params.sequence_class_pair_model_specs
+    model_specification = model_params.text_classification_pair_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
@@ -147,11 +147,11 @@ def prepare_tiny_model_for_local_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_filling_mask_model_to_bucketfs(
+def upload_fill_mask_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard filling mask model into BucketFS at bucketfs_location,
+    Load standard fill mask model into BucketFS at bucketfs_location,
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
@@ -178,31 +178,31 @@ def upload_question_answering_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_sequence_classification_model_to_bucketfs(
+def upload_text_classification_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard sequence classification model into BucketFS at bucketfs_location,
+    Load standard text classification model into BucketFS at bucketfs_location,
     returns BucketFS path
     Model is defined in test/utils/parameters.py.
     """
-    model_specs = model_params.sequence_class_model_specs
+    model_specs = model_params.text_classification_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 
 @pytest.fixture(scope="session")
-def upload_sequence_classification_pair_model_to_bucketfs(
+def upload_text_classification_pair_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard sequence classification text pair model into BucketFS at
+    Load standard text classification pair model into BucketFS at
     bucketfs_location,
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
-    model_specs = model_params.sequence_class_pair_model_specs
+    model_specs = model_params.text_classification_pair_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path

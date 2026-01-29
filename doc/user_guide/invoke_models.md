@@ -4,8 +4,9 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
 ### Table of Contents
 
-  * [Sequence Classification for Single Text UDF](#sequence-classification-for-single-text-udf)
-  * [Sequence Classification for Text Pair UDF](#sequence-classification-for-text-pair-udf)
+
+  * [AI Custom Classify Extended](#ai-custom-classify-extended)
+  * [AI Entailment Extended](#ai-entailment-extended)
   * [AI Answer Extended](#ai-answer-extended)
   * [Masked Language Modelling UDF](#masked-language-modelling-udf)
   * [AI Complete Extended](#ai-complete-extended)
@@ -14,14 +15,14 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [AI Classify Extended](#ai-classify-extended)
 
     
-### Sequence Classification for Single Text UDF
+### AI Custom Classify Extended
 
 This UDF classifies the given text according to a given number of classes of the specified model.
 
 Example usage:
 
 ```sql
-SELECT TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF(
+SELECT AI_CUSTOM_CLASSIFY_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -54,14 +55,14 @@ Example:
 | conn_name     | dir/    | model_name | text 1    | ALL          | label_2 | 0.23  | 2    | None          |
 | ...           | ...     | ...        | ...       | ...          | ...     | ...   | ...  | ...           |
 
-### Sequence Classification for Text Pair UDF
+### AI Entailment Extended
 
-This UDF takes two input sequences and compares them. Among other things, it can be used to determine if two sequences are paraphrases of each other.
+This UDF takes two input texts and compares them. Among other things, it can be used to determine if two texts are paraphrases of each other.
 
 Example usage:
 
 ```sql
-SELECT TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF(
+SELECT AI_ENTAILMENT_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -144,12 +145,16 @@ Example:
 
 ### Masked Language Modelling UDF
 
-This UDF is responsible for masking tokens in a given text with a masking token, and then filling that masks with appropriate tokens. The masking token of this UDF is ```<mask>```.
+This UDF needs to be given an input text containing the ```<mask>``` token. It can then 
+replace these masks with appropriate tokens. 
+I.E the input text could be "<mask> is the best database Software for Machine 
+Learning Enthusiasts.", resulting in an output like "Exasol is the best database 
+Software for Machine Learning Enthusiasts."
 
 Example usage:
 
 ```sql
-SELECT TE_FILLING_MASK_UDF(
+SELECT AI_FILL_MASK_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
