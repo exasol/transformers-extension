@@ -12,7 +12,7 @@ The extension provides two types of UDFs:
    1. AI Custom Classify Extended
    2. AI Entailment Extended
    3. AI Answer Extended
-   4. Masked Language Modelling
+   4. AI Fill Mask Extended
    5. AI Complete Extended
    6. AI Extract Extended
    7. AI Translate Extended

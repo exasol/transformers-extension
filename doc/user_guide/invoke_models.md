@@ -8,7 +8,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [AI Custom Classify Extended](#ai-custom-classify-extended)
   * [AI Entailment Extended](#ai-entailment-extended)
   * [AI Answer Extended](#ai-answer-extended)
-  * [Masked Language Modelling UDF](#masked-language-modelling-udf)
+  * [AI Fill Mask Extended](#ai-fill-mask-extended)
   * [AI Complete Extended](#ai-complete-extended)
   * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
@@ -143,7 +143,7 @@ Example:
 | conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
 | ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
 
-### Masked Language Modelling UDF
+### AI Fill Mask Extended
 
 This UDF needs to be given an input text containing the ```<mask>``` token. It can then 
 replace these masks with appropriate tokens. 
