@@ -11,7 +11,7 @@ from exasol_transformers_extension.deployment.default_udf_parameters import DEFA
 #todo what about unit test for this, integration only for InUDFModelDownloader?
 class InstallDefaultModelsUDF:
         """
-        UDF which downloads the default models specified in #todo
+        UDF which downloads the default models specified in default_model_specs
         from Huggingface using Huggingface's
         transformers API, and uploads them to the BucketFS, from where they can then be
         loaded without accessing Huggingface again.
@@ -24,15 +24,15 @@ class InstallDefaultModelsUDF:
                 self,
                 exa,
                 current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory(),
+                default_model_specs = DEFAULT_MODEL_SPECS,
 
         ):
             self._exa = exa
             self._current_model_specification_factory = current_model_specification_factory
+            self.default_model_specs = default_model_specs
 
         def run(self, ctx) -> None:
-            default_model_specs = DEFAULT_MODEL_SPECS
-
-            for model_specs in default_model_specs:
+            for model_specs in self.default_model_specs:
                 model_path = self._download_model(model_specs)
                 ctx.emit(*model_path)
 

@@ -157,3 +157,22 @@ The CodeBuild project also uses our DockerHub user for the build. For this it ha
 
 * Hugging Face models consist of 2 parts, the model and the Tokenizer.
 Most of our functions deal with both parts
+
+### Model installers and downloaders
+
+We have multiple scripts and udfs for installing downloading models:
+
+InstallDefaultModelsUDF reads DEFAULT_MODEL_SPECS, installs by calling InUDFModelDownloader
+ModelDownloaderUDF gets model as input, installs by calling InUDFModelDownloader
+
+InUDFModelDownloader creates bucketfs_location from exa, installs by calling HuggingFaceHubBucketFSModelTransferSP
+
+HuggingFaceHubBucketFSModelTransferSP downloads model to bucketfs_location, and then installs model in give bucketfs_model_path using BucketFSModelUploader
+
+BucketFSModelUploader uploads model files to bucketfs using upload_model_files_to_bucketfs
+
+upload_model_command calls upload_model function
+
+upload_model function creates bucketfs_location from params, calls install_huggingface_model
+
+install_huggingface_model downloads and uploads model to bucketfs using HuggingFaceHubBucketFSModelTransfer
