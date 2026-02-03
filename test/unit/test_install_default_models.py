@@ -9,9 +9,7 @@ from _pytest.monkeypatch import MonkeyPatch
 
 import exasol_transformers_extension.install_default_models
 from exasol_transformers_extension.install_default_models import install_default_models
-from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecification,
-)
+
 from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
 
 
