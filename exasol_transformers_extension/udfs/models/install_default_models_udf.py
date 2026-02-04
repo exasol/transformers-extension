@@ -23,17 +23,15 @@ class InstallDefaultModelsUDF:
         def __init__(
                 self,
                 exa,
-                current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory(),
                 default_model_specs = DEFAULT_MODEL_SPECS,
 
         ):
             self._exa = exa
-            self._current_model_specification_factory = current_model_specification_factory
             self.default_model_specs = default_model_specs
 
         def run(self, ctx) -> None:
-            for model_specs in self.default_model_specs:
-                model_path = self._download_model(model_specs)
+            for udf_name in self.default_model_specs:
+                model_path = self._download_model(self.default_model_specs[udf_name])
                 ctx.emit(*model_path)
 
         def _download_model(self, model_specs: BucketFSModelSpecification) -> tuple[str, str]:
