@@ -4,14 +4,15 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
 ### Table of Contents
 
+
   * [AI Custom Classify Extended](#ai-custom-classify-extended)
   * [AI Entailment Extended](#ai-entailment-extended)
-  * [Question Answering UDF](#question-answering-udf)
-  * [Masked Language Modelling UDF](#masked-language-modelling-udf)
-  * [Text Generation UDF](#text-generation-udf)
-  * [Token Classification UDF](#token-classification-udf)
-  * [Text Translation UDF](#text-translation-udf)
-  * [Zero-Shot Text Classification UDF](#zero-shot-text-classification-udf)
+  * [AI Answer Extended](#ai-answer-extended)
+  * [AI Fill Mask Extended](#ai-fill-mask-extended)
+  * [AI Complete Extended](#ai-complete-extended)
+  * [AI Extract Extended](#ai-extract-extended)
+  * [AI Translate Extended](#ai-translate-extended)
+  * [AI Classify Extended](#ai-classify-extended)
 
     
 ### AI Custom Classify Extended
@@ -96,14 +97,14 @@ Additional output columns
 | ...           | ...     | ...        | ...        | ...         | ...          | ...     | ...   | ...  | ...           |
 
 
-### Question Answering UDF
+### AI Answer Extended
 
 This UDF extracts answer(s) from a given question text. With the `top_k`
 input parameter, up to `k` answers with the best inference scores can be returned.
 An example usage is given below:
 
 ```sql
-SELECT TE_QUESTION_ANSWERING_UDF(
+SELECT AI_ANSWER_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -125,7 +126,7 @@ Specific parameters
 * `context_text`: The context text, associated with the question
 * `top_k`: The number of answers to return.
    * Note that, `k` number of answers are not guaranteed.
-   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of QuestionAnswering](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
+   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of the QuestionAnswering Pipeline](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
 
 Additional output columns
 * _ANSWER_: the predicted answer for the input question
@@ -142,7 +143,7 @@ Example:
 | conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
 | ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
 
-### Masked Language Modelling UDF
+### AI Fill Mask Extended
 
 This UDF needs to be given an input text containing the ```<mask>``` token. It can then 
 replace these masks with appropriate tokens. 
@@ -188,14 +189,14 @@ Example:
 | conn_name     | dir/    | model_name | text `<mask>` | 2     | text filled_2 | 0.70  |   2  | None          |
 | ...           | ...     | ...        | ...           | ...   | ...           | ...   |  ... | ...           |
 
-### Text Generation UDF
+### AI Complete Extended
 
 This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
 
 Example usage:
 
 ```sql
-SELECT TE_TEXT_GENERATION_UDF(
+SELECT AI_COMPLETE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -229,7 +230,7 @@ Example:
 | ...           | ...     | ...        | ...            | ...            | ...              | ...                                     | ...           |
 
 
-### Token Classification UDF
+### AI Extract Extended
 
 The main goal of this UDF is to find tokens in a given text, and assign a label to found tokens.
 
@@ -239,7 +240,7 @@ There are two popular subtasks of token classification:
 *  Part of Speech (PoS) which identifies which words in a text are verbs, nouns, and punctuation.
 
 ```sql
-SELECT TE_TOKEN_CLASSIFICATION_UDF(
+SELECT AI_EXTRACT_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -275,12 +276,12 @@ Example:
 | conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
 | ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
-### Text Translation UDF
+### AI Translate Extended
 
 This UDF translates a given text from one language to another.
 
 ```sql
-SELECT TE_TRANSLATION_UDF(
+SELECT AI_TRANSLATE_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
@@ -314,15 +315,15 @@ Example:
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
-### Zero-Shot Text Classification UDF
+### AI Classify Extended
 
-This UDF provides the task of predicting a class that was not seen by the model during training.
+This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
 
 ```sql
-SELECT TE_ZERO_SHOT_TEXT_CLASSIFICATION_UDF(
+SELECT AI_CLASSIFY_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,
