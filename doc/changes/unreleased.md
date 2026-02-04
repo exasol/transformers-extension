@@ -9,8 +9,8 @@ T.B.D
 #### BREAKING CHANGES:
 
 * The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. 
-Both of these changes where done in accordance with changes in [transformers](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
-* All prediction udf's have been renamed:
+Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
+* All prediction UDFs have been renamed:
 
 | Old UDF name                               | new UDF name                |
 |--------------------------------------------|-----------------------------|
@@ -29,7 +29,7 @@ Both of these changes where done in accordance with changes in [transformers](ht
 
 ## Bugfixes
 
- * #343: Fixed max_length parameter being ignored, renamed max_length to 
+ * #343: Fixed max_length parameter being ignored, renamed max_length to max_new_tokens
 
 ## Documentation
 
@@ -40,7 +40,7 @@ Both of these changes where done in accordance with changes in [transformers](ht
 
  * #346: Changed translation_udf unit tests to use StandaloneUdfMock
  * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
- * #350: Renamed all prediction udf's.
+ * #350: Renamed all prediction UDFs.
 
 ## Security
 
