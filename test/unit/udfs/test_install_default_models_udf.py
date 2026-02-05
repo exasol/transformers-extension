@@ -1,13 +1,7 @@
-
-from _pytest.monkeypatch import MonkeyPatch
-
-import exasol_transformers_extension
-from exasol_transformers_extension.udfs.models.install_default_models_udf import InstallDefaultModelsUDF
 from test.unit.utils.utils_for_udf_tests import (
     create_mock_exa_environment_with_token_con,
     create_mock_udf_context,
 )
-
 from unittest.mock import (
     Mock,
     call,
@@ -15,15 +9,23 @@ from unittest.mock import (
 )
 
 import pytest
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS, DEFAULT_SUBDIR, DEFAULT_BUCKETFS_CONN_NAME
+from _pytest.monkeypatch import MonkeyPatch
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+import exasol_transformers_extension
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+    DEFAULT_MODEL_SPECS,
+    DEFAULT_SUBDIR,
+)
+from exasol_transformers_extension.udfs.models.install_default_models_udf import (
+    InstallDefaultModelsUDF,
+)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
-
 
 
 def create_mock_metadata() -> MockMetaData:
@@ -51,12 +53,12 @@ def test_model_downloader(mock_create_loc, monkeypatch: MonkeyPatch):
     bucketfs_connection = [Connection(address=f"file:///test")]
     bucketfs_conn_name = [DEFAULT_BUCKETFS_CONN_NAME]
 
-    mock_return_path =[]
+    mock_return_path = []
     for udf_name in DEFAULT_MODEL_SPECS:
         model_name = DEFAULT_MODEL_SPECS[udf_name].model_name
-        mock_return_path.append((f"{DEFAULT_SUBDIR}/{model_name}",
-                                 model_name + "_tar_fiel_path"))
-
+        mock_return_path.append(
+            (f"{DEFAULT_SUBDIR}/{model_name}", model_name + "_tar_fiel_path")
+        )
 
     download_model_mock = Mock(side_effect=mock_return_path)
     monkeypatch.setattr(
@@ -80,9 +82,10 @@ def test_model_downloader(mock_create_loc, monkeypatch: MonkeyPatch):
         exa=mock_exa,
     )
     udf.run(mock_ctx)
-    expected_download_model_calls = [call(None,
-                                          DEFAULT_MODEL_SPECS[udf_name],
-                                          mock_exa) for udf_name in DEFAULT_MODEL_SPECS]
+    expected_download_model_calls = [
+        call(None, DEFAULT_MODEL_SPECS[udf_name], mock_exa)
+        for udf_name in DEFAULT_MODEL_SPECS
+    ]
 
-    assert expected_download_model_calls==download_model_mock.call_args_list
+    assert expected_download_model_calls == download_model_mock.call_args_list
     assert mock_ctx.output == mock_return_path

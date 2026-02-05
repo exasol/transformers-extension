@@ -25,6 +25,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )
 
+
 def adapt_file_to_upload(path: PosixPath, download_path: PosixPath):
     if path.is_dir():
         path = path / "not_empty"

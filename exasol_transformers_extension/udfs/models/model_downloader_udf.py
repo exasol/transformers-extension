@@ -1,9 +1,9 @@
-
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecificationFactory,
 )
-from exasol_transformers_extension.utils.in_udf_model_downloader import InUDFModelDownloader
-
+from exasol_transformers_extension.utils.in_udf_model_downloader import (
+    InUDFModelDownloader,
+)
 
 
 class ModelDownloaderUDF:
@@ -25,7 +25,6 @@ class ModelDownloaderUDF:
         self,
         exa,
         current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory(),
-
     ):
         self._exa = exa
         self._current_model_specification_factory = current_model_specification_factory
@@ -46,8 +45,7 @@ class ModelDownloaderUDF:
         )  # specifies details of Huggingface model
         model_downloader = InUDFModelDownloader()
         model_path, model_tar_file_path = model_downloader.download_model(
-            token_conn,
-            current_model_specification,
-            self._exa)
+            token_conn, current_model_specification, self._exa
+        )
 
         return model_path, model_tar_file_path

@@ -26,4 +26,3 @@ constants = InstallScriptsConstants(
     udf_callers_templates=UDF_CALL_TEMPLATES,
     ordered_columns=["model_name", "bucketfs_conn", "sub_dir"],
 )
-

@@ -1,10 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-
-from exasol_transformers_extension.deployment.default_udf_parameters import model_spec_factory, DEFAULT_BUCKETFS_CONN, \
-    DEFAULT_SUBDIR
-from exasol_transformers_extension.udfs.models.install_default_models_udf import InstallDefaultModelsUDF
 from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
     MockExaEnvironment,
 )
@@ -13,23 +9,34 @@ from test.utils.mock_connections import (
     create_mounted_bucketfs_connection,
 )
 
-
 from exasol.python_extension_common.connections.bucketfs_location import (
     create_bucketfs_location_from_conn_object,
 )
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN,
+    DEFAULT_SUBDIR,
+    model_spec_factory,
+)
+from exasol_transformers_extension.udfs.models.install_default_models_udf import (
+    InstallDefaultModelsUDF,
+)
 
 TEST_DEFAULT_MODELS = {
-    "model_for_a_specific_udf": model_spec_factory.create(model_name="prajjwal1/bert-tiny",
-                                                          task_type="task",
-                                                          bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
-                                                          sub_dir=Path(DEFAULT_SUBDIR)),
-    "model_for_another_udf": model_spec_factory.create(model_name="prajjwal1/bert-tiny",
-                                                          task_type="different_task",
-                                                          bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
-                                                          sub_dir=Path(DEFAULT_SUBDIR)),
-
+    "model_for_a_specific_udf": model_spec_factory.create(
+        model_name="prajjwal1/bert-tiny",
+        task_type="task",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
+    "model_for_another_udf": model_spec_factory.create(
+        model_name="prajjwal1/bert-tiny",
+        task_type="different_task",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
 }
+
 
 class Context:
     def __init__(self, ctx_data: list[dict[str, str]]):
@@ -51,7 +58,7 @@ class Context:
 class TestEnvironmentSetup:
     __test__ = False
 
-    def __init__(self, tmp_dir: Path) :
+    def __init__(self, tmp_dir: Path):
         self.bucketfs_conn_name = DEFAULT_BUCKETFS_CONN
         self.bucketfs_connection = create_mounted_bucketfs_connection(
             tmp_dir, f"DEFAULT_BUCKETFS_CONN/"
@@ -77,14 +84,20 @@ def test_install_default_models_udf_implementation(tmp_path):
     )
 
     # run udf implementation
-    default_models_installer = InstallDefaultModelsUDF(exa, default_model_specs=TEST_DEFAULT_MODELS)
+    default_models_installer = InstallDefaultModelsUDF(
+        exa, default_model_specs=TEST_DEFAULT_MODELS
+    )
     default_models_installer.run(ctx)
 
     # assertions
     env1_bucketfs_files = env1.list_files_in_bucketfs()
 
-    expected_model_path_1 = TEST_DEFAULT_MODELS["model_for_a_specific_udf"].get_bucketfs_model_save_path()
-    expected_model_path_2 = TEST_DEFAULT_MODELS["model_for_another_udf"].get_bucketfs_model_save_path()
+    expected_model_path_1 = TEST_DEFAULT_MODELS[
+        "model_for_a_specific_udf"
+    ].get_bucketfs_model_save_path()
+    expected_model_path_2 = TEST_DEFAULT_MODELS[
+        "model_for_another_udf"
+    ].get_bucketfs_model_save_path()
 
     assert ctx.get_emitted()[0] == (
         str(expected_model_path_1),

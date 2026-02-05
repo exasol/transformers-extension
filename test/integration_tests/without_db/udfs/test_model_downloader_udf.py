@@ -26,7 +26,7 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import (
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     get_BucketFSModelSpecification_from_model_Specs,
 )
-#todo
+
 
 class Context:
     def __init__(self, ctx_data: list[dict[str, str]]):

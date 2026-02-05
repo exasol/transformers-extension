@@ -1,19 +1,21 @@
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
-from exasol_transformers_extension.utils.model_utils import install_huggingface_model
-
-from exasol.python_extension_common.connections.bucketfs_location import (
-    create_bucketfs_location,
-)
-
 import click
 import transformers as huggingface
-
 from exasol.python_extension_common.cli.std_options import (
     StdTags,
     select_std_options,
 )
+from exasol.python_extension_common.connections.bucketfs_location import (
+    create_bucketfs_location,
+)
+
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
+from exasol_transformers_extension.utils.model_utils import install_huggingface_model
 
 opts = select_std_options([StdTags.BFS])
+
+
 def install_default_models(**kwargs) -> None:
     """
     Downloads default models from Huggingface hub and the transfers model to database
@@ -29,12 +31,15 @@ def install_default_models(**kwargs) -> None:
             huggingface_token=None,
         )
         print(
-            "A model or tokenizer has been saved in the BucketFS at: " + str(upload_path)
+            "A model or tokenizer has been saved in the BucketFS at: "
+            + str(upload_path)
         )
 
 
-install_default_models_command = click.Command(None, params=opts, callback=install_default_models)
+install_default_models_command = click.Command(
+    None, params=opts, callback=install_default_models
+)
 
 
 if __name__ == "__main__":
-    install_default_models_command ()
+    install_default_models_command()

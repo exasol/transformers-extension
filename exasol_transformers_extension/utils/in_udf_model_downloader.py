@@ -1,20 +1,22 @@
 from typing import Union
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
+import transformers
 
-from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
-
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSPFactory,
 )
 from exasol_transformers_extension.utils.model_factory_protocol import (
     ModelFactoryProtocol,
 )
-import transformers
 
-#todo name download_default_models? or ai_install_defaul_models?
-#todo change tests to use this instead?
-#todo move to model utils?
+
+# todo name download_default_models? or ai_install_defaul_models?
+# todo change tests to use this instead?
+# todo move to model utils?
 class InUDFModelDownloader:
     """
     Class for downloading the specified model from the Huggingface hub and uploading it
@@ -25,6 +27,7 @@ class InUDFModelDownloader:
     utils.model_utils.install_huggingface_model instead, which takes a bucketfs_location as input
 
     """
+
     def __init__(
         self,
         tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
@@ -35,9 +38,9 @@ class InUDFModelDownloader:
             huggingface_hub_bucketfs_model_transfer
         )
 
-
-    def download_model(self, token_conn: Union[str,None], model_specs: BucketFSModelSpecification,
-                       exa) -> tuple[str, str]:
+    def download_model(
+        self, token_conn: Union[str, None], model_specs: BucketFSModelSpecification, exa
+    ) -> tuple[str, str]:
 
         model_factory = model_specs.get_model_factory()
         # extract token from the connection if token connection name is given.
@@ -59,10 +62,10 @@ class InUDFModelDownloader:
 
         # download base model and tokenizer into the model path
         with self._huggingface_hub_bucketfs_model_transfer.create(
-                bucketfs_location=bucketfs_location,
-                model_specification=model_specs,
-                model_path=model_path,
-                token=token,
+            bucketfs_location=bucketfs_location,
+            model_specification=model_specs,
+            model_path=model_path,
+            token=token,
         ) as downloader:
             for model in [model_factory, self._tokenizer_factory]:
                 downloader.download_from_huggingface_hub(model)

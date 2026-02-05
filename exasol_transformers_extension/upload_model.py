@@ -84,7 +84,6 @@ def upload_model(**kwargs) -> None:
     )
 
 
-
 upload_model_command = click.Command(None, params=opts, callback=upload_model)
 
 
