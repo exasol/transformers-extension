@@ -17,6 +17,7 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
+# todo reflect no udf use in name?
 def install_huggingface_model(
     bucketfs_location: bfs.path.PathLike,
     model_spec: BucketFSModelSpecification,
@@ -29,7 +30,9 @@ def install_huggingface_model(
     into the BucketFS.  Returns the BucketFS location where the model is
     uploaded.
 
-    Note: This function should NOT be called from a UDF.
+    Note: This function should NOT be called from a UDF. Instead,
+    use utils.model_downloader.ModelDownloader, which creates a
+    bucketfs-connection from within Exasol Database
 
     Parameters:
         bucketfs_location:

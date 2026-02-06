@@ -7,7 +7,6 @@ from pathlib import Path
 
 import click
 import transformers as huggingface
-from exasol.bucketfs._path import PathLike
 from exasol.python_extension_common.cli.std_options import (
     StdTags,
     make_option_secret,
@@ -24,7 +23,6 @@ from exasol_transformers_extension.deploy import (
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
-from exasol_transformers_extension.utils.bucketfs_operations import relative_to
 from exasol_transformers_extension.utils.model_utils import install_huggingface_model
 
 MODEL_NAME_ARG = "model_name"
@@ -84,49 +82,6 @@ def upload_model(**kwargs) -> None:
     print(
         "Your model or tokenizer has been saved in the BucketFS at: " + str(upload_path)
     )
-
-
-def upload_model_to_bfs_location(
-    model_name: str,
-    task_type: str,
-    subdir: Path,
-    bucketfs_location: PathLike,
-    huggingface_token: str | None = None,
-) -> Path:
-    """
-    Deprecated.
-
-    Please use
-    exasol_transformers_extension.utils.model_utils.install_huggingface_model()
-    instead.
-
-    Downloads model from Huggingface hub and the transfers model to
-    database at bucketfs_location
-
-    params:
-        model_name: name of the model
-        task_type: name of the task model is used for
-        subdir: directory where the model will be stored in the BucketFS
-        bucketfs_location: BucketFS location model will be uploaded to
-        huggingface_token: Optional. Huggingface token for private models
-
-    returns
-        path model/tokenizer is saved at in the BucketFS
-    """
-    LOG.warning(
-        "This function is deprecated. "
-        "Please use exasol_transformers_extension.utils"
-        ".model_utils.install_huggingface_model() instead."
-    )
-    mspec = BucketFSModelSpecification(model_name, task_type, "", subdir)
-    upload_path = install_huggingface_model(
-        bucketfs_location=bucketfs_location,
-        model_spec=mspec,
-        huggingface_token=huggingface_token,
-    )
-    # Return instance of Path representing the upload_path relative to
-    # bucketfs_location.
-    return relative_to(bucketfs_location, upload_path)
 
 
 upload_model_command = click.Command(None, params=opts, callback=upload_model)
