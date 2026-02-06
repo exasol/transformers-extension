@@ -14,8 +14,6 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
-# todo name download_default_models? or ai_install_defaul_models?
-# todo change tests to use this instead?
 # todo move to model utils?
 class InUDFModelDownloader:
     """

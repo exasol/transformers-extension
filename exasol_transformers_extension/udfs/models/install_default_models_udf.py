@@ -10,9 +10,7 @@ from exasol_transformers_extension.utils.in_udf_model_downloader import (
 )
 
 
-# todo add docu?
-# todo write test? or only test InUDFModelDownloader?
-# todo what about unit test for this, integration only for InUDFModelDownloader?
+# todo add docu
 class InstallDefaultModelsUDF:
     """
     UDF which downloads the default models specified in default_model_specs
