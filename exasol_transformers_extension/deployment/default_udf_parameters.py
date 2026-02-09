@@ -8,7 +8,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 model_spec_factory = BucketFSModelSpecificationFactory()
 
 DEFAULT_SUBDIR = "TE_default_models"
-DEFAULT_BUCKETFS_CONN_NAME = "TE_default_connection"  # todo do we want to put constants.constants.base_dir in front?
+DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_FUNCTION_MODEL_LOCATION"
 
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one

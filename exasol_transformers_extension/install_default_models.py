@@ -26,7 +26,7 @@ def install_default_models(**kwargs) -> None:
     for model_spec in default_models:
         upload_path = install_huggingface_model(
             bucketfs_location=bucketfs_location,
-            model_spec=model_spec,
+            model_spec=default_models[model_spec],
             tokenizer_factory=huggingface.AutoTokenizer,
             huggingface_token=None,
         )

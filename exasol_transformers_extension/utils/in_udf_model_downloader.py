@@ -27,7 +27,7 @@ class InUDFModelDownloader:
 
     def __init__(
         self,
-        tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
+        tokenizer_factory= transformers.AutoTokenizer,
         huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory = HuggingFaceHubBucketFSModelTransferSPFactory(),
     ):
         self._tokenizer_factory = tokenizer_factory
@@ -43,7 +43,7 @@ class InUDFModelDownloader:
         # extract token from the connection if token connection name is given.
         # note that, token is required for private models. It doesn't matter
         # whether there is a token for public model or even what the token is.
-        token = False
+        token = None
         if token_conn:
             token_conn_obj = exa.get_connection(token_conn)
             token = token_conn_obj.password
