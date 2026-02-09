@@ -27,7 +27,7 @@ class InUDFModelDownloader:
 
     def __init__(
         self,
-        tokenizer_factory= transformers.AutoTokenizer,
+        tokenizer_factory=transformers.AutoTokenizer,
         huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory = HuggingFaceHubBucketFSModelTransferSPFactory(),
     ):
         self._tokenizer_factory = tokenizer_factory
