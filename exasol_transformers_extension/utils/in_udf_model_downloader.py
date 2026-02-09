@@ -14,7 +14,6 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
-# todo move to model utils?
 class InUDFModelDownloader:
     """
     Class for downloading the specified model from the Huggingface hub and uploading it

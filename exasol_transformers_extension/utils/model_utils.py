@@ -17,7 +17,6 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
-# todo reflect no udf use in name?
 def install_huggingface_model(
     bucketfs_location: bfs.path.PathLike,
     model_spec: BucketFSModelSpecification,
