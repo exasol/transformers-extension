@@ -17,7 +17,7 @@ ROOT_PATH = Path(__file__).parent
 EXPORT_PATH = ROOT_PATH / "export"
 
 # default actions to be run if nothing is explicitly specified with the -s option
-nox.options.sessions = ["project:fix"]
+nox.options.sessions = ["format:fix"]
 
 
 @nox.session(python=False)
