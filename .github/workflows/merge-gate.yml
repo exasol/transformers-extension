@@ -16,24 +16,41 @@ jobs:
     permissions:
       contents: read
 
+  run-slow-tests:
+    name: Run Slow Tests?
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+
+    # Even though the environment "manual-approval" will be created automatically,
+    # it still needs to be configured to require interactive review.
+    # See project settings on GitHub (Settings / Environments / manual-approval).
+    environment: manual-approval
+    steps:
+      - name: Tests
+        run: echo "Slow tests approved"
+
   slow-checks:
     name: Slow
+    needs:
+      - run-slow-tests
     uses: ./.github/workflows/slow-checks.yml
     secrets: inherit
     permissions:
       contents: read
 
-#   This job ensures inputs have been executed successfully.
+  # This job ensures inputs have been executed successfully.
   approve-merge:
     name: Allow Merge
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
-  #     If you need additional jobs to be part of the merge gate, add them below
-    needs: [ fast-checks, slow-checks ]
-#
-#     Each job requires a step, so we added this dummy step.
+    # If you need additional jobs to be part of the merge gate, add them below
+    needs:
+      - fast-checks
+      - slow-checks
+
+    # Each job requires a step, so we added this dummy step.
     steps:
       - name: Approve
-        run: |
-          echo "Merge Approved"
+        run: echo "Merge Approved"
