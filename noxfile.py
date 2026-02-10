@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 
 import nox
-from exasol.toolbox.nox._format import _code_format
 from exasol.toolbox.nox._shared import (
     _version,
     get_filtered_python_files,
@@ -136,6 +135,14 @@ def _pyupgrade(session: Session, files: list[str]) -> None:
     )
 
 
+def _code_format(session: Session, mode: Mode, files: list[str]) -> None:
+    def command(*args: str) -> list[str]:
+        return args if mode == Mode.Fix else list(args) + ["--check"]
+
+    session.run(*command("isort"), *files)
+    session.run(*command("black"), *files)
+
+
 @nox.session(name="format:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
@@ -143,3 +150,10 @@ def fix(session: Session) -> None:
     _version(session, Mode.Fix)
     _pyupgrade(session, files=py_files)
     _code_format(session, Mode.Fix, py_files)
+
+
+@nox.session(name="format:check", python=False)
+def fmt_check(session: Session) -> None:
+    """Checks the project for correct formatting"""
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
+    _code_format(session=session, mode=Mode.Check, files=py_files)
