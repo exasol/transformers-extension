@@ -25,9 +25,10 @@ jobs:
           large-packages: false
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: '2.3.0'
 
       - name: Build language container
         run: poetry run -- nox -s export_slc

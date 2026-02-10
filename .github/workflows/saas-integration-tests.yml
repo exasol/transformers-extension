@@ -40,9 +40,10 @@ jobs:
           sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: '${{ matrix.python_version }}'
+          poetry-version: '2.3.0'
 
       - name: export slc
         run: poetry run -- nox -s export_slc
