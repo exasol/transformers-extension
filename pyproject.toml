@@ -118,6 +118,16 @@ ignore_errors = true
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8"
 
+[tool.ruff.lint]
+extend-ignore = [
+    "E", # Syntax errors
+    "F", # Pyflakes rules (excluding F401)
+    "UP", # pyupgrade rules
+    "D", # Docstring rules
+]
+extend-select = ["F401"]
+unfixable = []
+
 [tool.sonar]
 projectKey = "com.exasol:transformers-extension"
 host.url = "https://sonarcloud.io"
