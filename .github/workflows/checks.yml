@@ -206,6 +206,7 @@ jobs:
         with:
           tool-cache: true
           large-packages: false
+
       - name: Free disk space by removing large directories
         run: |
           sudo rm -rf /usr/local/graalvm/
@@ -214,6 +215,25 @@ jobs:
           sudo rm -rf /usr/local/share/chromium
           sudo rm -rf /usr/local/lib/node_modules
           sudo rm -rf /opt/ghc
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
+
+      - name: Run format check
+        run: poetry run -- nox -s format:check
+
+
+  Build-Packages:
+    name: Build Package Check
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v6
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v5
