@@ -1,9 +1,11 @@
 """Nox tasks for starting the test-db and integration tests"""
 
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 import nox
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._format import (
     _code_format,
     _pyupgrade,
@@ -127,6 +129,15 @@ def start_database(session):
         "8GB",
         "--nameserver",
         "8.8.8.8",
+    )
+
+
+def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> None:
+    session.run(
+        "pyupgrade",
+        "--py39-plus",
+        "--exit-zero-even-if-changed",
+        *files,
     )
 
 
