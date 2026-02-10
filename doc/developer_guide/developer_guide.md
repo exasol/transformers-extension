@@ -178,5 +178,5 @@ We have multiple scripts and udfs for installing and downloading models:
 
 `install_huggingface_model` downloads and uploads a model to bucketfs using `HuggingFaceHubBucketFSModelTransfer`.
 
-![](model_install_state6.2.26.drawio.png)
+![](model_install_state10.2.26.drawio.png)
 
