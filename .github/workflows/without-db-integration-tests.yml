@@ -28,7 +28,7 @@ jobs:
     name: Without-DB Tests
     needs: [ build-matrix ]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
