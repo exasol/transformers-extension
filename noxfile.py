@@ -137,7 +137,7 @@ def _pyupgrade(session: Session, files: list[str]) -> None:
 
 def _code_format(session: Session, mode: Mode, files: list[str]) -> None:
     def command(*args: str) -> list[str]:
-        return args if mode == Mode.Fix else list(args) + ["--check"]
+        return list(args) if mode == Mode.Fix else list(args) + ["--check"]
 
     session.run(*command("isort"), *files)
     session.run(*command("black"), *files)
