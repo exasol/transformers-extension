@@ -4,13 +4,23 @@ import sys
 from pathlib import Path
 
 import nox
+from exasol.toolbox.nox._format import (
+    _code_format,
+    _pyupgrade,
+)
+from exasol.toolbox.nox._shared import (
+    _version,
+    get_filtered_python_files,
+)
 
 # imports all nox task provided by the toolbox
 from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disable=unused-wildcard-import
+from nox import Session
 
 from exasol_transformers_extension.deployment.language_container import (
     language_container_factory,
 )
+from noxconfig import PROJECT_CONFIG
 
 sys.path += [str(Path().parent.absolute())]
 ROOT_PATH = Path(__file__).parent
@@ -118,3 +128,12 @@ def start_database(session):
         "--nameserver",
         "8.8.8.8",
     )
+
+
+@nox.session(name="format:fix", python=False)
+def fix(session: Session) -> None:
+    """Runs all automated fixes on the code base"""
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
+    _version(session, Mode.Fix)
+    _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
+    _code_format(session, Mode.Fix, py_files)
