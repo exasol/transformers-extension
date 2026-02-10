@@ -45,7 +45,7 @@ def create_mock_metadata() -> MockMetaData:
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
-def test_model_downloader(mock_create_loc, monkeypatch: MonkeyPatch):
+def test_install_default_models_udf(mock_create_loc, monkeypatch: MonkeyPatch):
 
     mock_bucketfs_location = Mock()
     mock_create_loc.side_effect = mock_bucketfs_location
@@ -53,14 +53,14 @@ def test_model_downloader(mock_create_loc, monkeypatch: MonkeyPatch):
     bucketfs_connection = [Connection(address=f"file:///test")]
     bucketfs_conn_name = [DEFAULT_BUCKETFS_CONN_NAME]
 
-    mock_return_path = []
+    mock_return_paths = []
     for udf_name in DEFAULT_MODEL_SPECS:
         model_name = DEFAULT_MODEL_SPECS[udf_name].model_name
-        mock_return_path.append(
+        mock_return_paths.append(
             (f"{DEFAULT_SUBDIR}/{model_name}", model_name + "_tar_fiel_path")
         )
 
-    download_model_mock = Mock(side_effect=mock_return_path)
+    download_model_mock = Mock(side_effect=mock_return_paths)
     monkeypatch.setattr(
         exasol_transformers_extension.utils.in_udf_model_downloader.InUDFModelDownloader,
         "download_model",
@@ -88,4 +88,4 @@ def test_model_downloader(mock_create_loc, monkeypatch: MonkeyPatch):
     ]
 
     assert expected_download_model_calls == download_model_mock.call_args_list
-    assert mock_ctx.output == mock_return_path
+    assert mock_ctx.output == mock_return_paths

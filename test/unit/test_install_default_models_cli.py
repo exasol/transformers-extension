@@ -74,11 +74,11 @@ def test_install_default_models_cli(
         use_ssl_cert_validation=True,
     )
     expected_model_installs = []
-    for mspec in DEFAULT_MODEL_SPECS:
+    for udf_name in DEFAULT_MODEL_SPECS:
         expected_model_installs.append(
             call(
                 bucketfs_location=bfs_location,
-                model_spec=mspec,
+                model_spec=DEFAULT_MODEL_SPECS[udf_name],
                 tokenizer_factory=huggingface.AutoTokenizer,
                 huggingface_token=None,
             )

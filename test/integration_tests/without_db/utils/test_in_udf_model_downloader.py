@@ -32,7 +32,7 @@ def test_in_udf_model_downloader_test(tmpdir_factory):
 
     model_downloader = InUDFModelDownloader()
     model_path, model_tar_file_path = model_downloader.download_model(
-        token_conn=None, model_specs=bfs_model_specs, exa=mock_exa
+        token_conn_name=None, model_specs=bfs_model_specs, exa=mock_exa
     )
 
     expected_bucketfs_upload_location = (

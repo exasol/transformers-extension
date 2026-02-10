@@ -36,7 +36,10 @@ class InUDFModelDownloader:
         )
 
     def download_model(
-        self, token_conn: Union[str, None], model_specs: BucketFSModelSpecification, exa
+        self,
+        token_conn_name: Union[str, None],
+        model_specs: BucketFSModelSpecification,
+        exa,
     ) -> tuple[str, str]:
 
         model_factory = model_specs.get_model_factory()
@@ -44,8 +47,8 @@ class InUDFModelDownloader:
         # note that, token is required for private models. It doesn't matter
         # whether there is a token for public model or even what the token is.
         token = None
-        if token_conn:
-            token_conn_obj = exa.get_connection(token_conn)
+        if token_conn_name:
+            token_conn_obj = exa.get_connection(token_conn_name)
             token = token_conn_obj.password
 
         # set model path in buckets
