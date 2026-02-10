@@ -1,15 +1,10 @@
 """Nox tasks for starting the test-db and integration tests"""
 
 import sys
-from collections.abc import Iterable
 from pathlib import Path
 
 import nox
-from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._format import (
-    _code_format,
-    _pyupgrade,
-)
+from exasol.toolbox.nox._format import _code_format
 from exasol.toolbox.nox._shared import (
     _version,
     get_filtered_python_files,
@@ -132,7 +127,7 @@ def start_database(session):
     )
 
 
-def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> None:
+def _pyupgrade(session: Session, files: list[str]) -> None:
     session.run(
         "pyupgrade",
         "--py39-plus",
@@ -146,5 +141,5 @@ def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
     _version(session, Mode.Fix)
-    _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
+    _pyupgrade(session, files=py_files)
     _code_format(session, Mode.Fix, py_files)
