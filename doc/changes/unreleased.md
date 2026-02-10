@@ -41,6 +41,7 @@ Both of these changes where done in accordance with changes in the [transformers
  * #346: Changed translation_udf unit tests to use StandaloneUdfMock
  * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
  * #350: Renamed all prediction UDFs.
+ * #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
 
 ## Security
 
