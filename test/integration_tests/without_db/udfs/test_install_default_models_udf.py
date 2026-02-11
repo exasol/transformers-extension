@@ -14,7 +14,7 @@ from exasol.python_extension_common.connections.bucketfs_location import (
 )
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
-    DEFAULT_BUCKETFS_CONN,
+    DEFAULT_BUCKETFS_CONN_NAME,
     DEFAULT_SUBDIR,
     model_spec_factory,
 )
@@ -26,13 +26,13 @@ TEST_DEFAULT_MODELS = {
     "model_for_a_specific_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="task",
-        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "model_for_another_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="different_task",
-        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN,
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
 }
@@ -59,7 +59,7 @@ class TestEnvironmentSetup:
     __test__ = False
 
     def __init__(self, tmp_dir: Path):
-        self.bucketfs_conn_name = DEFAULT_BUCKETFS_CONN
+        self.bucketfs_conn_name = DEFAULT_BUCKETFS_CONN_NAME
         self.bucketfs_connection = create_mounted_bucketfs_connection(
             tmp_dir, f"DEFAULT_BUCKETFS_CONN/"
         )
@@ -99,10 +99,10 @@ def test_install_default_models_udf_implementation(tmp_path):
         "model_for_another_udf"
     ].get_bucketfs_model_save_path()
 
-    assert ctx.get_emitted()[0] == (
+    assert ctx.get_emitted() == [(
         str(expected_model_path_1),
-        str(expected_model_path_1.with_suffix(".tar.gz")),
-        str(expected_model_path_2),
+        str(expected_model_path_1.with_suffix(".tar.gz"))),
+        (str(expected_model_path_2),
         str(expected_model_path_2.with_suffix(".tar.gz")),
-    )
+    )]
     assert ctx.get_emitted()[0][1] in env1_bucketfs_files
