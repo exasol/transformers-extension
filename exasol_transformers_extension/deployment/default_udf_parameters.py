@@ -1,4 +1,3 @@
-# todo do json instead?
 from pathlib import Path
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
