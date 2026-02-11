@@ -8,6 +8,8 @@ T.B.D
 
 ## Features
 
+ * #351: Added functionality for installing default models.
+
 ## Bugfixes
 
  * #343: Fixed max_length parameter being ignored, renamed max_length to max_new_tokens
