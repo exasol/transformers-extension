@@ -99,10 +99,11 @@ def test_install_default_models_udf_implementation(tmp_path):
         "model_for_another_udf"
     ].get_bucketfs_model_save_path()
 
-    assert ctx.get_emitted() == [(
-        str(expected_model_path_1),
-        str(expected_model_path_1.with_suffix(".tar.gz"))),
-        (str(expected_model_path_2),
-        str(expected_model_path_2.with_suffix(".tar.gz")),
-    )]
+    assert ctx.get_emitted() == [
+        (str(expected_model_path_1), str(expected_model_path_1.with_suffix(".tar.gz"))),
+        (
+            str(expected_model_path_2),
+            str(expected_model_path_2.with_suffix(".tar.gz")),
+        ),
+    ]
     assert ctx.get_emitted()[0][1] in env1_bucketfs_files
