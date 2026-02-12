@@ -16,7 +16,7 @@ The 'token_conn' parameter was removed from the UDF calls. You can now call the 
 as follows (Example case for the filling mask udf):
 
 ```sql
-SELECT TE_FILLING_MASK_UDF(
+SELECT AI_FILL_MASK_EXTENDED(
     device_id,
     bucketfs_conn,
     sub_dir,

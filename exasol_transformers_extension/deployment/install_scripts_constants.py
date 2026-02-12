@@ -35,8 +35,8 @@ class InstallScriptsConstants:
                 the caller python file must be found in base_dir/udf_callers_dir_suffix
                 (if udf_callers_dir_suffix was converted to a path)
                 the jinja template must be found in base_dir/templates_dir
-                a key value pair may look like eg: "token_classification_udf_call.py":
-                    "token_classification_udf.jinja.sql"
+                a key value pair may look like eg: "ai_extract_extended_udf_call.py":
+                    "ai_extract_extended_udf.jinja.sql"
         :param ordered_columns:
                 list of ordered columns the udfs designated by the instance
                 of InstallScriptsConstants have in common.

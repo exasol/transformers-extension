@@ -40,15 +40,15 @@ class ModelSpecification:
         """
         switches user input(matching udf name) to transformers task types
         """
-        if text == "filling_mask":
+        if text == "ai_fill_mask_extended":
             task_type = "fill-mask"
         elif text == "question_answering":
             task_type = "question-answering"
         elif text == "sequence_classification":
             task_type = "text-classification"
-        elif text == "text_generation":
+        elif text == "ai_complete_extended":
             task_type = "text-generation"
-        elif text == "token_classification":
+        elif text == "ai_extract_extended":
             task_type = "token-classification"
         elif text == "translation":
             task_type = "translation"

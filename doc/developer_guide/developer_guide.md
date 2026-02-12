@@ -118,7 +118,7 @@ Users should implement the following methods in the UDF class
 that extends the `BaseModel UDF`:
  - `extract_unique_param_based_dataframes` : Even if the data in a given
 dataframe all have the same model, there might be differences within the given
-dataframe with different model parameters (e.g. _top_k_ parameter in [FillingMaskUDF](../../exasol_transformers_extension/udfs/models/filling_mask_udf.py)).
+dataframe with different model parameters (e.g. _top_k_ parameter in [AIFillMaskExtendedUDF](../../exasol_transformers_extension/udfs/models/ai_fill_mask_extended_udf.py)).
 This method is responsible for extracting unique dataframes which share both the
 same model and model parameters.
  - `execute_prediction` : Performs prediction on a given text list using
