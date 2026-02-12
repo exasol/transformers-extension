@@ -22,10 +22,10 @@ jobs:
     permissions:
       contents: read
 
-    # Even though the environment "manual-approval" will be created automatically,
+    # Even though the environment "slow-test-env" will be created automatically,
     # it still needs to be configured to require interactive review.
     # See project settings on GitHub (Settings / Environments / manual-approval).
-    environment: manual-approval
+    environment: slow-test-env
     steps:
       - name: Tests
         run: echo "Slow tests approved"

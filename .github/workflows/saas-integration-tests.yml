@@ -11,8 +11,6 @@ on:
 jobs:
 
   run-saas-integration-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -56,4 +54,3 @@ jobs:
           SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
           SAAS_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
           SAAS_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
-

@@ -10,8 +10,6 @@ on:
 jobs:
 
   run-onprem-integration-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:

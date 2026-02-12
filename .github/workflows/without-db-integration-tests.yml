@@ -16,8 +16,6 @@ jobs:
       contents: read
 
   without-db-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
