@@ -126,6 +126,10 @@ def start_database(session):
     )
 
 
+# These overridden functions should be removed as part of:
+#    https://github.com/exasol/transformers-extension/issues/367
+
+
 def _pyupgrade(session: Session, files: list[str]) -> None:
     session.run(
         "pyupgrade",
