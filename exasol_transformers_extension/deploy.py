@@ -38,12 +38,21 @@ BUCKETFS_CONN_NAME_ARG = "bucketfs_conn_name"
 TOKEN_CONN_NAME_ARG = "token_conn_name"
 TOKEN_ARG = "token"
 
-ver_formatter = ParameterFormatters()
-ver_formatter.set_formatter(
-    CONTAINER_URL_ARG, TeLanguageContainerDeployer.SLC_URL_FORMATTER
-)
-ver_formatter.set_formatter(CONTAINER_NAME_ARG, TeLanguageContainerDeployer.SLC_NAME)
-formatters = {StdParams.version: ver_formatter}
+
+def version_formatters() -> ParameterFormatters:
+    formatters = ParameterFormatters()
+    formatters.set_formatter(
+        CONTAINER_URL_ARG, TeLanguageContainerDeployer.SLC_URL_FORMATTER
+    )
+    formatters.set_formatter(CONTAINER_NAME_ARG, TeLanguageContainerDeployer.SLC_NAME)
+    return formatters
+
+
+# If the version is specified, then TE will infer the container name and
+# download URL.  Otherwise the user needs to provide dedicated CLI options.
+# Variable `formatters` is used to propagate the value of StdParams.version to
+# dependent CLI parameters.
+formatters = {StdParams.version: version_formatters()}
 
 
 def get_opt_name(arg_name: str) -> str:
