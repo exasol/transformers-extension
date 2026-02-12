@@ -38,6 +38,7 @@ BUCKETFS_CONN_NAME_ARG = "bucketfs_conn_name"
 TOKEN_CONN_NAME_ARG = "token_conn_name"
 TOKEN_ARG = "token"
 
+
 def version_formatters() -> ParameterFormatters:
     formatters = ParameterFormatters()
     formatters.set_formatter(
