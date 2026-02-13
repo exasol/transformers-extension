@@ -26,7 +26,7 @@ T.B.D
 
 ## Security
 
-* Updated urllib3 (2.5.0 -> 2.6.1)
+* Updated urllib3 (2.5.0 -> 2.6.3)
 * Updated exasol-integration-test-docker-environment (4.4.1 -> 5.0.0)
 * Updated exasol-script-languages-container-tool (3.4.1 -> 3.5.0)
 * Updated exasol-saas-api (2.3.0 -> 2.6.0)

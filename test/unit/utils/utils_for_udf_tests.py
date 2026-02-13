@@ -121,8 +121,8 @@ def create_mock_pipeline_factory_from_gen(
     tokenizer_models_output_generator, number_of_intended_used_models
 ):
     """
-    Creates a mock pipeline (Normally created form model and tokenizer, then called with the data and outputs results).
-    Ths mock gets a function as side_effect, enabling it to use this function to generate its output when called.
+    Creates a mock pipeline (Normally created from model and tokenizer, then called with the data and outputs results).
+    This mock gets a function as side_effect, enabling it to use this function to generate its output when called.
     This mock_pipeline is feed into a mock_pipeline_factory.
     """
     mock_pipeline: list[Union[AutoModel, MagicMock]] = [

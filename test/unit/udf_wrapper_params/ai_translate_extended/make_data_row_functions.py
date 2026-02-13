@@ -96,7 +96,6 @@ def translation_models_output_generator(input_texts, max_new_tokens):
         lang_marker = " übersetzt, "
         if "French" in input_prefix:
             lang_marker = " traduit, "
-        else:
-            lang_marker = " übersetzt, "
+
         output.append({"translation_text": (text + lang_marker) + str(max_new_tokens)})
     return output
