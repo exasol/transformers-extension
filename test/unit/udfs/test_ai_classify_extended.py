@@ -30,7 +30,7 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     create_mock_exa_environment,
     create_mock_model_factories_with_models,
-    create_mock_pipeline_factory,
+    create_mock_pipeline_factory_from_df,
     create_mock_udf_context,
 )
 from test.utils.mock_bucketfs_location import (
@@ -155,7 +155,7 @@ def test_ai_classify_extended(mock_local_path, mock_create_loc, params):
     mock_base_model_factory, mock_tokenizer_factory = (
         create_mock_model_factories_with_models(expected_model_counter)
     )
-    mock_pipeline_factory = create_mock_pipeline_factory(
+    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
         zero_shot_models_output_df, expected_model_counter
     )
 
@@ -219,7 +219,7 @@ def test_ai_classify_extended_with_span(mock_local_path, mock_create_loc, params
     mock_base_model_factory, mock_tokenizer_factory = (
         create_mock_model_factories_with_models(expected_model_counter)
     )
-    mock_pipeline_factory = create_mock_pipeline_factory(
+    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
         zero_shot_models_output_df, expected_model_counter
     )
 

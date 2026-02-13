@@ -3,7 +3,6 @@ from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
-    make_model_output_for_one_input_row,
     make_udf_output_for_one_input_row,
     model_name,
     sub_dir,
@@ -65,23 +64,6 @@ class ErrorOnPredictionMultipleModelMultipleBatch:
         )
         * data_size
     )
-
-    translation_model_output_df_batch1_ok = [
-        make_model_output_for_one_input_row(translation_text) * data_size
-    ]
-    translation_model_output_df_batch1_error = [
-        Exception("Traceback mock_pipeline is throwing an error intentionally")
-    ]
-
-    translation_model_output_df_batch2 = [
-        Exception("Traceback mock_pipeline is throwing an error intentionally")
-    ]
-
-    translation_models_output_df = [
-        translation_model_output_df_batch1_ok
-        + translation_model_output_df_batch1_error,
-        translation_model_output_df_batch2,
-    ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)

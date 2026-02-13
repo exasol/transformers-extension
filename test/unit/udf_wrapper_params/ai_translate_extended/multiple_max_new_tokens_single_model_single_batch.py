@@ -3,7 +3,6 @@ from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
-    make_model_output_for_one_input_row,
     make_udf_output_for_one_input_row,
     max_new_tokens,
 )
@@ -32,17 +31,6 @@ class MultipleMaxLengthSingleModelNameSingleBatch:
         make_udf_output_for_one_input_row(max_new_tokens=max_new_tokens1) * data_size
         + make_udf_output_for_one_input_row(max_new_tokens=max_new_tokens2) * data_size
     )
-
-    translation_model_output_df_maxlen1 = [
-        make_model_output_for_one_input_row(max_new_tokens=max_new_tokens1) * data_size
-    ]
-    translation_model_output_df_maxlen2 = [
-        make_model_output_for_one_input_row(max_new_tokens=max_new_tokens2) * data_size
-    ]
-
-    translation_models_output_df = [
-        translation_model_output_df_maxlen1 + translation_model_output_df_maxlen2
-    ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir = PurePosixPath(tmpdir_name, bucketfs_conn)

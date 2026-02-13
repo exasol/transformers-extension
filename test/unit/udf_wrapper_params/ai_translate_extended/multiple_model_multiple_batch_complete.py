@@ -3,7 +3,6 @@ from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
-    make_model_output_for_one_input_row,
     make_udf_output_for_one_input_row,
     model_name,
     sub_dir,
@@ -28,8 +27,8 @@ class MultipleModelMultipleBatchComplete:
     model1, model2 = make_number_of_strings(model_name, 2)
     text1, text2 = make_number_of_strings(text_data, 2)
 
-    translation_text1 = text1 + "übersetzt"
-    translation_text2 = text2 + "übersetzt"
+    translation_text1 = text1 + " übersetzt, "
+    translation_text2 = text2 + " übersetzt, "
 
     input_data = (
         make_input_row(
@@ -66,18 +65,6 @@ class MultipleModelMultipleBatchComplete:
         )
         * data_size
     )
-
-    translation_model_output_df_batch1 = [
-        make_model_output_for_one_input_row(translation_text1) * data_size
-    ]
-    translation_model_output_df_batch2 = [
-        make_model_output_for_one_input_row(translation_text2) * data_size
-    ]
-
-    translation_models_output_df = [
-        translation_model_output_df_batch1,
-        translation_model_output_df_batch2,
-    ]
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, bfs_conn1)

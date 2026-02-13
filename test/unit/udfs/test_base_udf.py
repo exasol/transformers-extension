@@ -50,7 +50,7 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     create_mock_exa_environment,
     create_mock_model_factories_with_models,
-    create_mock_pipeline_factory,
+    create_mock_pipeline_factory_from_df,
     create_mock_udf_context,
 )
 from test.utils.mock_bucketfs_location import (
@@ -78,7 +78,7 @@ def setup_base_udf_tests_and_run(
     else:
         mock_meta = create_mock_metadata()
     mock_exa = create_mock_exa_environment(mock_meta, bfs_connections)
-    mock_pipeline_factory = create_mock_pipeline_factory(
+    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
         tokenizer_models_output_df, number_of_intended_used_models
     )
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
