@@ -11,7 +11,7 @@ text_data = "text"
 source_lanuage = "English"
 target_language = "German"
 
-translation_text = "text 1 übersetzt"
+translation_text = "text übersetzt, "
 
 max_new_tokens = 10
 error_msg = None
@@ -61,7 +61,7 @@ def make_udf_output_for_one_input_row(
     using default values for all parameters that are not specified.
     """
     translation_text = (
-        translation_text * max_new_tokens if not error_msg else translation_text
+        translation_text + str(max_new_tokens) if not error_msg else translation_text
     )
     return [
         (
@@ -78,15 +78,23 @@ def make_udf_output_for_one_input_row(
     ]
 
 
-def make_model_output_for_one_input_row(
-    translation_text=translation_text, max_new_tokens=max_new_tokens
-):
+def translation_models_output_generator(input_texts, max_new_tokens):
     """
-    Makes the output the model returns to the udf for one input row.
-    returns a list with the model output row.
+    Makes the output the model returns to the udf for one input batch.
+    returns a list with the model output.
     each model output row is a dictionary.
     """
-    if not translation_text:
-        return [{"translation_text": translation_text}]
-    else:
-        return [{"translation_text": translation_text * max_new_tokens}]
+    output = []
+    for input_text in input_texts:
+        # throw an error for "error on pred" test cases
+        if "error" in input_text:
+            return Exception("Traceback mock_pipeline is throwing an error intentionally")
+        # remove the input prefix from the input
+        input_prefix, text = input_text.split(": ")
+        lang_marker = " übersetzt, "
+        if "French" in input_prefix:
+            lang_marker = " traduit, "
+        else:
+            lang_marker = " übersetzt, "
+        output.append({"translation_text": (text + lang_marker) +str( max_new_tokens)})
+    return output

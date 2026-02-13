@@ -4,6 +4,8 @@ from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_mult
 from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
+from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import \
+    translation_models_output_generator
 from test.unit.udf_wrapper_params.ai_translate_extended.multiple_language_single_model_multiple_batch import (
     MultipleLanguageSingleModelNameMultipleBatch,
 )
@@ -24,8 +26,8 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     create_mock_exa_environment,
     create_mock_model_factories_with_models,
-    create_mock_pipeline_factory,
-    create_mock_udf_context,
+    create_mock_pipeline_factory_from_df,
+    create_mock_udf_context, create_mock_pipeline_factory_from_gen,
 )
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
@@ -98,7 +100,6 @@ def test_ai_translate_extended(mock_local_path, mock_create_loc, params):
     model_input_data = params.input_data
     bfs_connection = params.bfs_connections
     expected_model_counter = params.expected_model_counter
-    translation_models_output_df = params.translation_models_output_df
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
@@ -108,8 +109,9 @@ def test_ai_translate_extended(mock_local_path, mock_create_loc, params):
     mock_base_model_factory, mock_tokenizer_factory = (
         create_mock_model_factories_with_models(expected_model_counter)
     )
-    mock_pipeline_factory = create_mock_pipeline_factory(
-        translation_models_output_df, expected_model_counter
+
+    mock_pipeline_factory = create_mock_pipeline_factory_from_gen(
+        translation_models_output_generator, expected_model_counter
     )
 
     udf = AiTranslateExtendedUDF(

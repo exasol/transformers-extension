@@ -98,7 +98,7 @@ def create_mock_model_factories_with_models(number_of_intended_used_models: int)
     return mock_base_model_factory, mock_tokenizer_factory
 
 
-def create_mock_pipeline_factory(
+def create_mock_pipeline_factory_from_df(
     tokenizer_models_output_df, number_of_intended_used_models
 ):
     """
@@ -108,6 +108,24 @@ def create_mock_pipeline_factory(
     """
     mock_pipeline: list[Union[AutoModel, MagicMock]] = [
         create_autospec(Pipeline, side_effect=tokenizer_models_output_df[i])
+        for i in range(0, number_of_intended_used_models)
+    ]
+
+    mock_pipeline_factory: Union[Pipeline, MagicMock] = create_autospec(
+        Pipeline, side_effect=mock_pipeline
+    )
+    return mock_pipeline_factory
+
+def create_mock_pipeline_factory_from_gen(
+    tokenizer_models_output_generator, number_of_intended_used_models
+):
+    """
+    Creates a mock pipeline (Normally created form model and tokenizer, then called with the data and outputs results).
+    Ths mock gets a function as side_effect, enabling it to use this function to generate its output when called.
+    This mock_pipeline is feed into a mock_pipeline_factory.
+    """
+    mock_pipeline: list[Union[AutoModel, MagicMock]] = [
+        create_autospec(Pipeline, side_effect=tokenizer_models_output_generator)
         for i in range(0, number_of_intended_used_models)
     ]
 
