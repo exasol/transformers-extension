@@ -10,8 +10,6 @@ on:
 jobs:
 
   run-onprem-integration-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -23,7 +21,7 @@ jobs:
       labels: int-linux-x64-4core-ubuntu24.04-1
     name: Onprem Integration Tests
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
@@ -40,9 +38,10 @@ jobs:
           sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: '${{ matrix.python_version }}'
+          poetry-version: '2.3.0'
 
       - name: Allow unprivileged user namespaces
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0

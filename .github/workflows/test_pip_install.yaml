@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: ${{ matrix.python-version }}
-          poetry-version: 2.1.2
+          poetry-version: '2.3.0'
 
       - name: Test pip install
         uses: ./.github/actions/test_pip_install

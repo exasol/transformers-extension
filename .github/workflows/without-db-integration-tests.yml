@@ -16,8 +16,6 @@ jobs:
       contents: read
 
   without-db-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -28,7 +26,7 @@ jobs:
     name: Without-DB Tests
     needs: [ build-matrix ]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
@@ -45,9 +43,10 @@ jobs:
           sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.6.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: "2.3.0"
 
       - name: Run without_db_integration_tests
         run: poetry run -- nox -s without_db_integration_tests
