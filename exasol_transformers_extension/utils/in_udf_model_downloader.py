@@ -37,7 +37,7 @@ class InUDFModelDownloader:
 
     def download_model(
         self,
-        token_conn_name: Union[str, None],
+        token_conn_name:  str | None,
         model_specs: BucketFSModelSpecification,
         exa,
     ) -> tuple[str, str]:
