@@ -6,6 +6,11 @@ Code name: T.B.D
 
 T.B.D
 
+## Features
+
+ * #351: Added functionality for installing default models.
+
+## Bugfixes
 #### BREAKING CHANGES:
 
 * The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
