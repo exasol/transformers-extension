@@ -7,7 +7,7 @@ from test.unit.utils.utils_for_base_udf_tests import (
 from test.unit.utils.utils_for_udf_tests import (
     create_base_mock_model_factories,
     create_mock_exa_environment_with_token_con,
-    create_mock_pipeline_factory,
+    create_mock_pipeline_factory_from_df,
     create_mock_udf_context,
 )
 from test.utils.mock_bucketfs_location import (
@@ -35,7 +35,7 @@ def setup_model_loader_tests_and_run(
         [bucketfs_conn_name], [bucketfs_conn], mock_meta, "", None
     )  # todo do we need empty token con
 
-    mock_pipeline_factory = create_mock_pipeline_factory([[[model_output_data]]], 1)
+    mock_pipeline_factory = create_mock_pipeline_factory_from_df([[[model_output_data]]], 1)
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     res = run_test(
         mock_exa,
