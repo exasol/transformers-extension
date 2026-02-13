@@ -88,7 +88,9 @@ def translation_models_output_generator(input_texts, max_new_tokens):
     for input_text in input_texts:
         # throw an error for "error on pred" test cases
         if "error" in input_text:
-            return Exception("Traceback mock_pipeline is throwing an error intentionally")
+            return Exception(
+                "Traceback mock_pipeline is throwing an error intentionally"
+            )
         # remove the input prefix from the input
         input_prefix, text = input_text.split(": ")
         lang_marker = " übersetzt, "
@@ -96,5 +98,5 @@ def translation_models_output_generator(input_texts, max_new_tokens):
             lang_marker = " traduit, "
         else:
             lang_marker = " übersetzt, "
-        output.append({"translation_text": (text + lang_marker) +str( max_new_tokens)})
+        output.append({"translation_text": (text + lang_marker) + str(max_new_tokens)})
     return output

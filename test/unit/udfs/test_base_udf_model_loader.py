@@ -35,7 +35,9 @@ def setup_model_loader_tests_and_run(
         [bucketfs_conn_name], [bucketfs_conn], mock_meta, "", None
     )  # todo do we need empty token con
 
-    mock_pipeline_factory = create_mock_pipeline_factory_from_df([[[model_output_data]]], 1)
+    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
+        [[[model_output_data]]], 1
+    )
     mock_ctx = create_mock_udf_context(input_data, mock_meta)
     res = run_test(
         mock_exa,

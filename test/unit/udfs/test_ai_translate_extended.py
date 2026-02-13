@@ -4,8 +4,9 @@ from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_mult
 from test.unit.udf_wrapper_params.ai_translate_extended.error_on_prediction_single_model_multiple_batch import (
     ErrorOnPredictionSingleModelMultipleBatch,
 )
-from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import \
-    translation_models_output_generator
+from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
+    translation_models_output_generator,
+)
 from test.unit.udf_wrapper_params.ai_translate_extended.multiple_language_single_model_multiple_batch import (
     MultipleLanguageSingleModelNameMultipleBatch,
 )
@@ -27,7 +28,8 @@ from test.unit.utils.utils_for_udf_tests import (
     create_mock_exa_environment,
     create_mock_model_factories_with_models,
     create_mock_pipeline_factory_from_df,
-    create_mock_udf_context, create_mock_pipeline_factory_from_gen,
+    create_mock_pipeline_factory_from_gen,
+    create_mock_udf_context,
 )
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,

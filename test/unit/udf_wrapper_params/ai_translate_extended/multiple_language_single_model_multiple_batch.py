@@ -43,7 +43,6 @@ class MultipleLanguageSingleModelNameMultipleBatch:
         * data_size
     )
 
-
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
