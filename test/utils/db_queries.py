@@ -13,6 +13,7 @@ expected_script_list_without_span = [
     "AI_TRANSLATE_EXTENDED",
     "AI_CLASSIFY_EXTENDED",
     "TE_LIST_MODELS_UDF",
+    "INSTALL_AI_DEFAULT_MODEL_UDF",
 ]
 
 expected_script_list_with_span = [
@@ -27,6 +28,7 @@ expected_script_list_with_span = [
     "AI_TRANSLATE_EXTENDED",
     "AI_CLASSIFY_EXTENDED_WITH_SPAN",
     "TE_LIST_MODELS_UDF",
+    "INSTALL_AI_DEFAULT_MODEL_UDF",
 ]
 
 expected_script_list_all = [
@@ -43,6 +45,7 @@ expected_script_list_all = [
     "AI_CLASSIFY_EXTENDED",
     "AI_CLASSIFY_EXTENDED_WITH_SPAN",
     "TE_LIST_MODELS_UDF",
+    "INSTALL_AI_DEFAULT_MODEL_UDF",
 ]
 
 

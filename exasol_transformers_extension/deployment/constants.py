@@ -8,6 +8,7 @@ from exasol_transformers_extension.deployment.install_scripts_constants import (
 
 UDF_CALL_TEMPLATES = {
     "model_downloader_udf_call.py": "model_downloader_udf.jinja.sql",
+    "install_default_models_call.py": "install_default_models_udf.jinja.sql",
     "ls_models_udf.py": "ls_models_udf.jinja.sql",
     "ai_custom_classify_extended_udf_call.py": "ai_custom_classify_extended_udf.jinja.sql",
     "ai_entailment_extended_udf_call.py": "ai_entailment_extended_udf.jinja.sql",
