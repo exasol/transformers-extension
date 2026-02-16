@@ -29,7 +29,9 @@ def install_huggingface_model(
     into the BucketFS.  Returns the BucketFS location where the model is
     uploaded.
 
-    Note: This function should NOT be called from a UDF.
+    Note: This function should NOT be called from a UDF. Instead,
+    use utils.model_downloader.ModelDownloader, which creates a
+    bucketfs-connection from within Exasol Database
 
     Parameters:
         bucketfs_location:

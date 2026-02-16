@@ -1,16 +1,8 @@
-from typing import Tuple
-
-import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
-import transformers
-
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecificationFactory,
 )
-from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
-    HuggingFaceHubBucketFSModelTransferSPFactory,
-)
-from exasol_transformers_extension.utils.model_factory_protocol import (
-    ModelFactoryProtocol,
+from exasol_transformers_extension.utils.in_udf_model_downloader import (
+    InUDFModelDownloader,
 )
 
 
@@ -32,15 +24,9 @@ class ModelDownloaderUDF:
     def __init__(
         self,
         exa,
-        tokenizer_factory: ModelFactoryProtocol = transformers.AutoTokenizer,
-        huggingface_hub_bucketfs_model_transfer: HuggingFaceHubBucketFSModelTransferSPFactory = HuggingFaceHubBucketFSModelTransferSPFactory(),
         current_model_specification_factory: BucketFSModelSpecificationFactory = BucketFSModelSpecificationFactory(),
     ):
         self._exa = exa
-        self._tokenizer_factory = tokenizer_factory
-        self._huggingface_hub_bucketfs_model_transfer = (
-            huggingface_hub_bucketfs_model_transfer
-        )
         self._current_model_specification_factory = current_model_specification_factory
 
     def run(self, ctx) -> None:
@@ -57,35 +43,9 @@ class ModelDownloaderUDF:
         current_model_specification = self._current_model_specification_factory.create(
             ctx.model_name, ctx.task_type, bucketfs_conn, ctx.sub_dir
         )  # specifies details of Huggingface model
-
-        model_factory = current_model_specification.get_model_factory()
-        # extract token from the connection if token connection name is given.
-        # note that, token is required for private models. It doesn't matter
-        # whether there is a token for public model or even what the token is.
-        token = False
-        if token_conn:
-            token_conn_obj = self._exa.get_connection(token_conn)
-            token = token_conn_obj.password
-
-        # set model path in buckets
-        model_path = current_model_specification.get_bucketfs_model_save_path()
-
-        # create bucketfs location
-        bucketfs_conn_obj = self._exa.get_connection(bucketfs_conn)
-        bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
-            bucketfs_conn_obj
+        model_downloader = InUDFModelDownloader()
+        model_path, model_tar_file_path = model_downloader.download_model(
+            token_conn, current_model_specification, self._exa
         )
 
-        # download base model and tokenizer into the model path
-        with self._huggingface_hub_bucketfs_model_transfer.create(
-            bucketfs_location=bucketfs_location,
-            model_specification=current_model_specification,
-            model_path=model_path,
-            token=token,
-        ) as downloader:
-            for model in [model_factory, self._tokenizer_factory]:
-                downloader.download_from_huggingface_hub(model)
-            # upload model files to BucketFS
-            model_tar_file_path = downloader.upload_to_bucketfs()
-
-        return str(model_path), str(model_tar_file_path)
+        return model_path, model_tar_file_path
