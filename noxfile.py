@@ -4,20 +4,26 @@ import sys
 from pathlib import Path
 
 import nox
+from exasol.toolbox.nox._shared import (
+    _version,
+    get_filtered_python_files,
+)
 
 # imports all nox task provided by the toolbox
 from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disable=unused-wildcard-import
+from nox import Session
 
 from exasol_transformers_extension.deployment.language_container import (
     language_container_factory,
 )
+from noxconfig import PROJECT_CONFIG
 
 sys.path += [str(Path().parent.absolute())]
 ROOT_PATH = Path(__file__).parent
 EXPORT_PATH = ROOT_PATH / "export"
 
 # default actions to be run if nothing is explicitly specified with the -s option
-nox.options.sessions = ["project:fix"]
+nox.options.sessions = ["format:fix"]
 
 
 @nox.session(python=False)
@@ -118,3 +124,40 @@ def start_database(session):
         "--nameserver",
         "8.8.8.8",
     )
+
+
+# These overridden functions should be removed as part of:
+#    https://github.com/exasol/transformers-extension/issues/367
+
+
+def _pyupgrade(session: Session, files: list[str]) -> None:
+    session.run(
+        "pyupgrade",
+        "--py39-plus",
+        "--exit-zero-even-if-changed",
+        *files,
+    )
+
+
+def _code_format(session: Session, mode: Mode, files: list[str]) -> None:
+    def command(*args: str) -> list[str]:
+        return list(args) if mode == Mode.Fix else list(args) + ["--check"]
+
+    session.run(*command("isort"), *files)
+    session.run(*command("black"), *files)
+
+
+@nox.session(name="format:fix", python=False)
+def fix(session: Session) -> None:
+    """Runs all automated fixes on the code base"""
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
+    _version(session, Mode.Fix)
+    _pyupgrade(session, files=py_files)
+    _code_format(session, Mode.Fix, py_files)
+
+
+@nox.session(name="format:check", python=False)
+def fmt_check(session: Session) -> None:
+    """Checks the project for correct formatting"""
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
+    _code_format(session=session, mode=Mode.Check, files=py_files)

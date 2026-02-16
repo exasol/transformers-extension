@@ -11,8 +11,6 @@ on:
 jobs:
 
   run-saas-integration-tests:
-    environment:
-      name: slow-test-env
     permissions:
       contents: read
     strategy:
@@ -23,7 +21,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: Saas Integration Tests
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
@@ -40,9 +38,10 @@ jobs:
           sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v1
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: '${{ matrix.python_version }}'
+          poetry-version: '2.3.0'
 
       - name: export slc
         run: poetry run -- nox -s export_slc
@@ -55,4 +54,3 @@ jobs:
           SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
           SAAS_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
           SAAS_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
-
