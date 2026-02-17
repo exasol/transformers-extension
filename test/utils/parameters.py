@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from textwrap import fill
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
@@ -9,7 +10,7 @@ PATH_IN_BUCKET = "container"
 
 @dataclass(frozen=True)
 class ModelParams:
-    base_model_specs: ModelSpecification  # this is used for other test, task_type should be set per test
+    fill_model_specs: ModelSpecification  # this is used for fill_mask model tests
     seq2seq_model_specs: (
         ModelSpecification  # this model is used for testing ai_translate_extended udf
     )
@@ -44,8 +45,8 @@ def create_illegal_tiny_model_specs():
 
 
 model_params = ModelParams(
-    base_model_specs=ModelSpecification(
-        "bert-base-uncased", "need to set this task_type"
+    fill_model_specs=ModelSpecification(
+        "bert-base-uncased", "fill_mask"
     ),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification(

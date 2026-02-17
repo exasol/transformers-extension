@@ -17,8 +17,7 @@ def prepare_fill_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     Create tmpdir and save standard fill mask model into it, returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
-    model_specification = model_params.base_model_specs
-    model_specification.task_type = "fill-mask"
+    model_specification = model_params.fill_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
@@ -155,8 +154,7 @@ def upload_fill_mask_model_to_bucketfs(
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
-    base_model_specs = model_params.base_model_specs
-    base_model_specs.task_type = "fill-mask"
+    base_model_specs = model_params.fill_model_specs
     tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
     with upload_model_to_bucketfs(base_model_specs, tmpdir, bucketfs_location) as path:
         yield path
