@@ -42,9 +42,9 @@ class ModelSpecification:
         Allows for use of dash or underscore.
         Raises a ValueError if given task_type is not recognized.
         """
-        #todo this changes makes loading and installing models of unkown task_type impossible, but allows for listing and deleting.
-        # unkown task_type includes models saved with out old task_types, which we now do not accept anymore.
-        # i though since we have breaking changes anyway, this is the moment to do it. if not i will revert to allowing it always
+        # todo this changes makes loading and installing models of unkown task_type impossible, but allows for listing and deleting.
+        #  unkown task_type includes models saved with out old task_types, which we now do not accept anymore.
+        #  i though since we have breaking changes anyway, this is the moment to do it. if not i will revert to allowing it always
         # todo check if docu needs updating, add info about ls/delete of legacy task_types?
         allowed_task_types = [
             "fill-mask",
@@ -53,15 +53,17 @@ class ModelSpecification:
             "text-classification",
             "question-answering",
             "text-generation",
-            "token-classification"
+            "token-classification",
         ]
         text_replace_underscore = text.replace("_", "-")
         if text_replace_underscore in allowed_task_types:
             task_type = text_replace_underscore
         else:
-            raise ValueError("task_type needs to be one of %s. Refer to the user guide for more information." % allowed_task_types)
+            raise ValueError(
+                "task_type needs to be one of %s. Refer to the user guide for more information."
+                % allowed_task_types
+            )
         return task_type
-
 
     def legacy_set_task_type_from_udf_name(self, text):
         """
@@ -85,7 +87,6 @@ class ModelSpecification:
         else:
             task_type = text
         return task_type
-
 
     def __eq__(self, other):
         """Overrides the default implementation of equal"""
@@ -234,7 +235,9 @@ def create_model_specs_from_path(
         # and then replace using the legacy_set_task_type_from_udf_name.
         # needed to allow for deletion of already installed models with illegal task_types
         found_model = ModelSpecification(model_name, "fill-mask")
-        found_model.task_type = found_model.legacy_set_task_type_from_udf_name(task_type)
+        found_model.task_type = found_model.legacy_set_task_type_from_udf_name(
+            task_type
+        )
         return found_model, warning
 
     return ModelSpecification(model_name, task_type), warning

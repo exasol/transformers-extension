@@ -20,7 +20,6 @@ from transformers import (
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
-
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSPFactory,
 )

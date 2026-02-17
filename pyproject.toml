@@ -31,6 +31,7 @@ dependencies = [
     "bitsandbytes>=0.45.0",
     "exasol-python-extension-common>=0.9.0,<1",
     "numpy<=1.26.4",
+    "exasol-toolbox (>=5.1.1,<6.0.0)",
 ]
 dynamic = ["dependencies"]
 

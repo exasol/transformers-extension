@@ -49,7 +49,8 @@ def create_mock_metadata() -> MockMetaData:
     )
     return meta
 
-#todo add test case with illegal task_type
+
+# todo add test case with illegal task_type
 @pytest.mark.parametrize("count", list(range(1, 10)))
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
