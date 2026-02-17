@@ -49,7 +49,7 @@ def create_mock_metadata() -> MockMetaData:
     )
     return meta
 
-
+#todo add test case with illegal task_type
 @pytest.mark.parametrize("count", list(range(1, 10)))
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
@@ -60,7 +60,7 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
-    task_type = [f"task_type_{i}" for i in range(count)]
+    task_type = "fill-mask"
     bucketfs_connections = [
         Connection(address=f"file:///test{i}") for i in range(count)
     ]
@@ -77,7 +77,7 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
             bfs_conn_name[i],
             sub_directory_names[i],
             base_model_names[i],
-            task_type[i],
+            task_type,
         )
         for i in range(count)
     ]

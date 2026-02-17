@@ -44,7 +44,7 @@ def test_install_huggingface_model(
     )
     mspec = BucketFSModelSpecification(
         model_name="model name",
-        task_type="task type",
+        task_type="fill-mask",
         bucketfs_conn_name="",
         sub_dir="sub-dir",
     )
@@ -62,7 +62,7 @@ def test_install_huggingface_model(
 def test_load_huggingface_pipeline(monkeypatch: MonkeyPatch):
     model_spec = BucketFSModelSpecification(
         model_name="name",
-        task_type="task",
+        task_type="fill-mask",
         bucketfs_conn_name="bfs conn",
         sub_dir=Path("sub"),
     )

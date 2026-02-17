@@ -283,14 +283,14 @@ def upload_tiny_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_tiny_model_to_bucketfs_ls_test_subdir(
+def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard zero shot classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard small model(with illegal model_name) into BucketFS at bucketfs_location, returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
-    model_specs = model_params.tiny_model_specs
+    model_specs = model_params.illegal_tiny_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(
         model_specs,

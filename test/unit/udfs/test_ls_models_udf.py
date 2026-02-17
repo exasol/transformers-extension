@@ -37,7 +37,7 @@ def create_mock_metadata():
             Column("bucketfs_conn", str, "VARCHAR(2000000)"),
             Column("sub_dir", str, "VARCHAR(2000000)"),
             Column("model_name", str, "VARCHAR(2000000)"),
-            Column("task_name", str, "VARCHAR(2000000)"),
+            Column("task_type", str, "VARCHAR(2000000)"),
             Column("path", str, "VARCHAR(2000000)"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],
@@ -127,7 +127,7 @@ def setup_fake_model_files(
                 / sub_dir
                 / "model_with_unknown_task_type/model-name_unknown-task"
             ),
-            "WARNING: We found a model which was saved using a task_name we don't recognize.",
+            "WARNING: We found a model which was saved using a task_type we don't recognize.",
         ),
         (
             bfs_conn_name,

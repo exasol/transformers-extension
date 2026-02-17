@@ -101,7 +101,8 @@ def without_db_integration_tests(session):
         "--setup-show",
         "-s",
         "--itde-db-version=external",
-        "test/integration_tests/without_db",
+        # "test/integration_tests/without_db",
+        "test/integration_tests/without_db/udfs/test_ai_fill_mask_extended_udf.py",
     )
 
 

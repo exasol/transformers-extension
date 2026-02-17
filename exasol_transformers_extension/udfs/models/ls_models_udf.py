@@ -23,7 +23,7 @@ class ListModelsUDF:
     | directory where models are | BucketFS connection |
 
     returns a table of:
-    bucketfs_conn, sub_dir, model_name, task_name, path of model in BucketFS
+    bucketfs_conn, sub_dir, model_name, task_type, path of model in BucketFS
     """
 
     def __init__(

@@ -82,13 +82,15 @@ Specific parameters
 Some models can be used for multiple types of tasks, but Hugging Face Transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
 
 Available task types are:
-* `filling_mask`
-* `question_answering`
-* `sequence_classification`
-* `text_generation`
-* `token_classification`
+* `fill-mask`
+* `question-answering`
+* `text-classification`
+* `text-generation`
+* `token-classification`
 * `translation`
-* `zero_shot_classification`
+* `zero-shot-classification`
+
+You may use Underscores instead of Dashes.
 
 ### Model Uploader Script
 
@@ -203,8 +205,8 @@ SELECT TE_LIST_MODELS_UDF(
 ```
 Example Output:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TASK_NAME | MODEL_PATH               | ERROR_MESSAGE |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TASK_TYPE | MODEL_PATH               | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|--------------------------|---------------|
-| conn_name     | dir/    | model_name | task_name | dir/model_name_task_name |  None         |
+| conn_name     | dir/    | model_name | task_type | dir/model_name_task_type |  None         |
 | ...           | ...     | ...        | ...       | ...                      |  ...          |
 

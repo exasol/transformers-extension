@@ -46,9 +46,19 @@ class DeleteModelUDF:
             ctx.task_type,
         )
 
-        current_model_specification = self._current_model_specification_factory.create(
-            model_name, task_type, bucketfs_conn, Path(sub_dir)
-        )  # specifies details of Huggingface model
+        try:
+            current_model_specification = self._current_model_specification_factory.create(
+                model_name, task_type, bucketfs_conn, Path(sub_dir)
+            )  # specifies details of Huggingface model
+        except ValueError as e:
+            # if task_type is not allowed for model_specification, use a placeholder for creation
+            # and then replace using the legacy_set_task_type_from_udf_name.
+            # needed to allow for deletion of already installed models with illegal task_types
+            current_model_specification = self._current_model_specification_factory.create(
+                model_name, "fill_mask", bucketfs_conn, Path(sub_dir)
+            )  # specifies details of Huggingface model
+            current_model_specification.task_type = (
+                current_model_specification.legacy_set_task_type_from_udf_name(task_type))
         try:
             # create bucketfs location
             bfs_conn_obj = self._exa.get_connection(bucketfs_conn)

@@ -25,13 +25,13 @@ from exasol_transformers_extension.udfs.models.install_default_models_udf import
 TEST_DEFAULT_MODELS = {
     "model_for_a_specific_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
-        task_type="task",
+        task_type="fill_mask",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "model_for_another_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
-        task_type="different_task",
+        task_type="fill_mask",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
