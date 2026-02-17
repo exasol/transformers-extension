@@ -28,25 +28,6 @@ class ErrorOnPredictionSingleModelMultipleBatch:
         * data_size
     )
 
-    translation_model_output_df_batch1 = [
-        Exception("Traceback mock_pipeline is throwing an error intentionally"),
-        Exception("Traceback mock_pipeline is throwing an error intentionally"),
-    ]
-    translation_model_output_df_batch2 = [
-        Exception("Traceback mock_pipeline is throwing an error intentionally"),
-        Exception("Traceback mock_pipeline is throwing an error intentionally"),
-    ]
-
-    translation_model_output_df_batch3 = [
-        Exception("Traceback mock_pipeline is throwing an error intentionally")
-    ]
-
-    translation_models_output_df = [
-        translation_model_output_df_batch1
-        + translation_model_output_df_batch2
-        + translation_model_output_df_batch3
-    ]
-
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir = PurePosixPath(tmpdir_name, bucketfs_conn)
     bfs_connections = {
