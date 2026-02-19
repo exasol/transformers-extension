@@ -1,5 +1,7 @@
-"""Utils related to downloading/moving models to Local
-BucketFS or BucketFS or Local Directory"""
+"""
+Utils related to downloading/moving models to Local-BucketFS or BucketFS or
+Local Directory
+"""
 
 import time
 from contextlib import contextmanager

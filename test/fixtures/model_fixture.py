@@ -1,9 +1,12 @@
 """Fixtures for loading standard models to Local BucketFS and DB BucketFS for tests"""
 
 from pathlib import PurePosixPath
+
+from test.utils import postprocessing
+from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from test.fixtures.model_fixture_utils import (
     prepare_model_for_local_bucketfs,
-    upload_model_to_bucketfs,
+    upload_model_to_bucketfs, download_model_to_standard_local_save_path, upload_model,
 )
 from test.utils.parameters import model_params
 
@@ -285,15 +288,32 @@ def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> PurePosixPath:
     """
-    Load standard small model(with illegal model_name) into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard small model(with illegal task_type) into BucketFS at
+    bucketfs_location, returns BucketFS path.
     Model is defined in test/utils/parameters.py.
+
+    this one cant use the normal functions, because the task type is illegal and we
+    have to create the BucketFSModelSpecification in a specific way.
     """
     model_specs = model_params.illegal_tiny_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
-    with upload_model_to_bucketfs(
-        model_specs,
-        tmpdir,
-        bucketfs_location,
-        bucketfs_model_subdir=model_params.ls_test_subdir,
-    ) as path:
-        yield path
+
+    local_model_save_path = download_model_to_standard_local_save_path(
+        model_specs, tmpdir
+    )
+
+    current_model_specs = BucketFSModelSpecification(
+        model_name=model_specs.model_name,
+        task_type="fill_mask",
+        bucketfs_conn_name="",
+        sub_dir=model_params.ls_test_subdir,
+    )
+    current_model_specs.task_type = model_specs.task_type
+    with upload_model(
+        bucketfs_location, current_model_specs, local_model_save_path
+    ) as model_path:
+        try:
+            yield model_path
+        finally:
+            postprocessing.cleanup_buckets(bucketfs_location, model_path)
+

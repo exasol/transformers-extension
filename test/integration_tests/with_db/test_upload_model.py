@@ -58,7 +58,7 @@ def run_model_upload_test(
             get_cli_arg(StdParams.path_in_bucket, str(bucketfs_location)),
             get_cli_arg(MODEL_NAME_ARG, model_name),
             get_cli_arg(SUBDIR_ARG, sub_dir),
-            get_cli_arg(TASK_TYPE_ARG, "ai_fill_mask_extended"),
+            get_cli_arg(TASK_TYPE_ARG, "fill_mask"),
         ]
     )
 
