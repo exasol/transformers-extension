@@ -30,7 +30,6 @@ class ModelTypeData:
         "mask-generation": transformers.AutoModelForMaskGeneration,
         "table-question-answering": transformers.AutoModelForTableQuestionAnswering,
         "feature-extraction": transformers.AutoModel,
-
     }
 
 
@@ -63,7 +62,7 @@ class ModelSpecification:
             "question-answering",
             "text-generation",
             "token-classification",
-            #we don't have built-in udf's which use the task_types below
+            # we don't have built-in udf's which use the task_types below
             "document-question-answering",
             "mask-generation",
             "table-question-answering",

@@ -1,17 +1,21 @@
 """Fixtures for loading standard models to Local BucketFS and DB BucketFS for tests"""
 
 from pathlib import PurePosixPath
-
-from test.utils import postprocessing
-from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
 from test.fixtures.model_fixture_utils import (
+    download_model_to_standard_local_save_path,
     prepare_model_for_local_bucketfs,
-    upload_model_to_bucketfs, download_model_to_standard_local_save_path, upload_model,
+    upload_model,
+    upload_model_to_bucketfs,
 )
+from test.utils import postprocessing
 from test.utils.parameters import model_params
 
 import exasol.bucketfs as bfs
 import pytest
+
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
 
 
 @pytest.fixture(scope="session")
@@ -316,4 +320,3 @@ def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
             yield model_path
         finally:
             postprocessing.cleanup_buckets(bucketfs_location, model_path)
-
