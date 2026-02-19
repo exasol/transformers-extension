@@ -15,6 +15,7 @@ class ModelTypeData:
     """
     matches task_type to model_factory
     """
+
     model_factory_dict = {
         "fill-mask": transformers.AutoModelForMaskedLM,
         "translation": transformers.AutoModelForSeq2SeqLM,
@@ -63,8 +64,7 @@ class ModelSpecification:
             raise ValueError(
                 "task_type needs to be one of %s. Refer to the user guide "
                 "for more information. "
-                "Found task_type was '%s'"
-                % (allowed_task_types, text)
+                "Found task_type was '%s'" % (allowed_task_types, text)
             )
         return task_type
 
