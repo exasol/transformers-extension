@@ -45,7 +45,7 @@ def create_illegal_tiny_model_specs():
 
 
 model_params = ModelParams(
-    fill_model_specs=ModelSpecification("bert-base-uncased", "fill_mask"),
+    fill_model_specs=ModelSpecification("bert-base-uncased", "fill-mask"),#todo if this fixed the test, someting goes wrong with the underscores
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification(
         "deepset/tinybert-6l-768d-squad2", "question-answering"
