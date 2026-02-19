@@ -55,7 +55,7 @@ def test_install_huggingface_model(
         huggingface_token="hf-token",
     )
     downloads = downloader_mock.download_from_huggingface_hub.call_args_list
-    assert downloads == [call(huggingface.AutoModel), call(huggingface.AutoTokenizer)]
+    assert downloads == [call(huggingface.AutoModelForMaskedLM), call(huggingface.AutoTokenizer)]
     assert actual == bfs_location / "some_path"
 
 

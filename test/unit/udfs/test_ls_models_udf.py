@@ -151,7 +151,7 @@ def setup_fake_model_files(
                 / sub_dir
                 / "model_with_no_task_type/model-name-no-task"
             ),
-            "ValueError: couldn't find a task name in path suffix model-name-no-task",
+            "ValueError: couldn't find a task type in path suffix model-name-no-task",
         ),
     ]
     return expected_output

@@ -97,7 +97,7 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
     expected_bucketfs_model_specs_calls = [
         call(
             base_model_names[i],
-            task_type[i],
+            task_type,
             bfs_conn_name[i],
             Path(sub_directory_names[i]),
         )
@@ -118,7 +118,7 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
             bfs_conn_name[i],
             sub_directory_names[i],
             base_model_names[i],
-            task_type[i],
+            task_type,
             True,
             "",
         )

@@ -31,7 +31,7 @@ class TestSetup:
         )
         self.token = "token"
         self.model_name = "model_name"
-        self.model_task = "test_task"
+        self.model_task = "fill_mask"
         self.mock_current_model_specification: Union[
             BucketFSModelSpecification, MagicMock
         ] = create_autospec(BucketFSModelSpecification)
@@ -68,7 +68,7 @@ def test_load_function_call():
     ]
     assert test_setup.mock_pipeline.mock_calls == [
         call(
-            task="test_task",
+            task="fill_mask",
             model=mock_cast(test_setup.model_factory_mock.from_pretrained).return_value,
             tokenizer=mock_cast(
                 test_setup.tokenizer_factory_mock.from_pretrained

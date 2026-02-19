@@ -60,8 +60,8 @@ class ModelSpecification:
             task_type = text_replace_underscore
         else:
             raise ValueError(
-                "task_type needs to be one of %s. Refer to the user guide for more information."
-                % allowed_task_types
+                "task_type needs to be one of %s. Refer to the user guide for more information. Found task_type was '%s'"
+                % (allowed_task_types, text)
             )
         return task_type
 

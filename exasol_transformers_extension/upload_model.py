@@ -26,7 +26,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 from exasol_transformers_extension.utils.model_utils import install_huggingface_model
 
 MODEL_NAME_ARG = "model_name"
-TASK_TYPE_ARG = "fill-mask"
+TASK_TYPE_ARG = "task_type"
 SUBDIR_ARG = "sub_dir"
 
 LOG = logging.getLogger(__name__)
