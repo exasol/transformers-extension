@@ -16,6 +16,7 @@ from unittest.mock import (
 )
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.connection import Connection
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
@@ -50,28 +51,24 @@ def create_mock_metadata() -> MockMetaData:
     return meta
 
 
-# todo add test case with illegal task_type
 @pytest.mark.parametrize("count", list(range(1, 10)))
+@pytest.mark.parametrize(
+    "task_type", ["fill-mask", "illegal-task-type", "sequence-classification"]
+)
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
 @patch("exasol_transformers_extension.udfs.models.delete_model_udf.delete_model")
-def test_delete_model(mock_delete_model, mock_create_loc, count):
+def test_delete_model(mock_delete_model, mock_create_loc, count, task_type):
+
     mock_bucketfs_locations = [Mock() for i in range(count)]
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
-    task_type = "fill-mask"
     bucketfs_connections = [
         Connection(address=f"file:///test{i}") for i in range(count)
     ]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
-
-    mock_current_model_specification_factory: Union[
-        BucketFSModelSpecificationFactory, MagicMock
-    ] = create_autospec(BucketFSModelSpecificationFactory)
-    model_spec_mock = MagicMock(spec=BucketFSModelSpecification)
-    mock_current_model_specification_factory.create.return_value = model_spec_mock
 
     input_data = [
         (
@@ -90,12 +87,20 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
 
     udf = DeleteModelUDF(
         exa=mock_exa,
-        current_model_specification_factory=mock_current_model_specification_factory,
     )
     udf.run(mock_ctx)
 
-    expected_bucketfs_model_specs_calls = [
-        call(
+    def create_bfs_model_spec_with_any_task_type(
+        model_name, task_type, bfs_conn_name, subdir
+    ):
+        model_spec = BucketFSModelSpecification(
+            model_name, "fill_mask", bfs_conn_name, subdir
+        )
+        model_spec.task_type = model_spec.legacy_set_task_type_from_udf_name(task_type)
+        return model_spec
+
+    expected_bucketfs_model_specs = [
+        create_bfs_model_spec_with_any_task_type(
             base_model_names[i],
             task_type,
             bfs_conn_name[i],
@@ -103,10 +108,6 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
         )
         for i in range(count)
     ]
-    assert (
-        mock_current_model_specification_factory.create.mock_calls
-        == expected_bucketfs_model_specs_calls
-    )
 
     called_loc_addresses = [
         arg_list[0][0].address for arg_list in mock_create_loc.call_args_list
@@ -126,5 +127,6 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
     ]
 
     assert mock_delete_model.mock_calls == [
-        call(mock_bucketfs_locations[i], model_spec_mock) for i in range(count)
+        call(mock_bucketfs_locations[i], expected_bucketfs_model_specs[i])
+        for i in range(count)
     ]
