@@ -34,10 +34,10 @@ You may need to re-install you models from HuggingFace using the new task_types 
 Models installed with legacy task_types can still be listed and deleted using th respective UDF's.
 
 * Allowed task_types are: 
-             "fill-mask",
+             "fill-mask" (previously "filling_mask"),
              "translation",
              "zero-shot-classification",
-             "text-classification",
+             "text-classification" (previously "sequence_classification"),
              "question-answering",
              "text-generation",
              "token-classification"
@@ -58,7 +58,7 @@ Models installed with legacy task_types can still be listed and deleted using th
 ## Documentation
 
 * #204: Split the user_guide into multiple files
-* #253, #341, #342: Fixed links and improveed parameter description in user guide
+* #253, #341, #342: Fixed links and improved parameter description in user guide
 
 ## Refactorings
 
