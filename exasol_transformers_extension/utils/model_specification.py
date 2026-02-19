@@ -14,6 +14,7 @@ import transformers
 class ModelTypeData:
     """
     matches task_type to model_factory
+    some types are not matches exactly as transformers officially does it.
     """
 
     model_factory_dict = {
@@ -24,6 +25,12 @@ class ModelTypeData:
         "question-answering": transformers.AutoModelForQuestionAnswering,
         "text-generation": transformers.AutoModelForCausalLM,
         "token-classification": transformers.AutoModelForTokenClassification,
+        # we don't have built-in udf's which use the task_types below
+        "document-question-answering": transformers.AutoModelForDocumentQuestionAnswering,
+        "mask-generation": transformers.AutoModelForMaskGeneration,
+        "table-question-answering": transformers.AutoModelForTableQuestionAnswering,
+        "feature-extraction": transformers.AutoModel,
+
     }
 
 
@@ -56,6 +63,11 @@ class ModelSpecification:
             "question-answering",
             "text-generation",
             "token-classification",
+            #we don't have built-in udf's which use the task_types below
+            "document-question-answering",
+            "mask-generation",
+            "table-question-answering",
+            "feature-extraction",
         ]
         text_replace_underscore = text.replace("_", "-")
         if text_replace_underscore in allowed_task_types:
