@@ -35,7 +35,7 @@ def test_list_models_script(
             bucketfs_conn_name,
             subdir,
             model_specification.model_name,
-            model_specification.ta,
+            model_specification.task_type,
             "/buckets/bfsdefault/default/container/"
             + str(upload_illegal_tiny_model_to_bucketfs_ls_test_subdir),
             "WARNING: We found a model which was saved using a task_type we don't recognize.",
