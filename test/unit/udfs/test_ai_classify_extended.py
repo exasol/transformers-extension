@@ -43,7 +43,7 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
+from exasol_transformers_extension.udfs.models.ai_classify_extended_udf import (
     AiClassifyExtendeUDF,
 )
 

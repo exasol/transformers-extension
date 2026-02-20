@@ -31,7 +31,7 @@ def test_upload_model(monkeypatch: MonkeyPatch, capsys):
     )
     mspec = BucketFSModelSpecification(
         "model name",
-        "task type",
+        "fill-mask",
         "",
         Path("sub dir"),
     )

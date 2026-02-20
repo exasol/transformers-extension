@@ -44,7 +44,7 @@ def test_install_huggingface_model(
     )
     mspec = BucketFSModelSpecification(
         model_name="model name",
-        task_type="task type",
+        task_type="fill-mask",
         bucketfs_conn_name="",
         sub_dir="sub-dir",
     )
@@ -55,14 +55,17 @@ def test_install_huggingface_model(
         huggingface_token="hf-token",
     )
     downloads = downloader_mock.download_from_huggingface_hub.call_args_list
-    assert downloads == [call(huggingface.AutoModel), call(huggingface.AutoTokenizer)]
+    assert downloads == [
+        call(huggingface.AutoModelForMaskedLM),
+        call(huggingface.AutoTokenizer),
+    ]
     assert actual == bfs_location / "some_path"
 
 
 def test_load_huggingface_pipeline(monkeypatch: MonkeyPatch):
     model_spec = BucketFSModelSpecification(
         model_name="name",
-        task_type="task",
+        task_type="fill-mask",
         bucketfs_conn_name="bfs conn",
         sub_dir=Path("sub"),
     )

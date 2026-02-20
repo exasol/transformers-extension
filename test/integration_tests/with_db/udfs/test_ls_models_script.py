@@ -23,11 +23,11 @@ def assert_correct_number_of_results(
 
 
 def test_list_models_script(
-    setup_database, db_conn, upload_tiny_model_to_bucketfs_ls_test_subdir
+    setup_database, db_conn, upload_illegal_tiny_model_to_bucketfs_ls_test_subdir
 ):
     bucketfs_conn_name, _ = setup_database
     subdir = model_params.ls_test_subdir
-    model_specification = model_params.tiny_model_specs
+    model_specification = model_params.illegal_tiny_model_specs
 
     input_data_unkown_task = [(bucketfs_conn_name, subdir)]
     expected_result_unkown_task = [
@@ -37,8 +37,8 @@ def test_list_models_script(
             model_specification.model_name,
             model_specification.task_type,
             "/buckets/bfsdefault/default/container/"
-            + str(upload_tiny_model_to_bucketfs_ls_test_subdir),
-            "WARNING: We found a model which was saved using a task_name we don't recognize.",
+            + str(upload_illegal_tiny_model_to_bucketfs_ls_test_subdir),
+            "WARNING: We found a model which was saved using a task_type we don't recognize.",
         )
     ]
     input_data_subdir_not_exist = [(bucketfs_conn_name, "non-existend-subdir")]
@@ -68,7 +68,7 @@ def test_list_models_script(
 
         # execute UDF
         result = db_conn.execute(query).fetchall()
-        # added_columns: model_name, task_name, path, error_message
+        # added_columns: model_name, task_type, path, error_message
         # assertions
         assert_correct_number_of_results(4, 0, input_data_set[0], result, 1)
         assert_result_matches_expected_output_order_agnostic(

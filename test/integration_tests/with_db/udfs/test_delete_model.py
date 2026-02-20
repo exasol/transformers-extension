@@ -149,9 +149,12 @@ def run_delete_model_error_test(
 def test_delete_model_error_wrong_bfs_conn(db_conn):
     model_location_spec = BucketFSModelSpecification(
         model_name="not_existing_model",
-        task_type="not_existing_task_type",
+        task_type="fill-mask",
         sub_dir=Path("not_existing_sub_dir"),
         bucketfs_conn_name="not_existing_bucketfs_conn_name",
+    )
+    model_location_spec.task_type = (
+        model_location_spec.legacy_set_task_type_from_udf_name("not_existing_task_type")
     )
     expected_error_message = (
         f"get_connection for connection name {model_location_spec.bucketfs_conn_name} "
@@ -168,7 +171,10 @@ def test_delete_model_error_wrong_model(db_conn, setup_database):
         bucketfs_conn_name=bucketfs_conn_name,
         sub_dir=Path("not_existing_sub_dir"),
         model_name="not_existing_model",
-        task_type="not_existing_task_type",
+        task_type="fill-mask",
+    )
+    model_location_spec.task_type = (
+        model_location_spec.legacy_set_task_type_from_udf_name("not_existing_task_type")
     )
     expected_error_message = (
         f"No such file or directory: 'container/{model_location_spec.sub_dir}/"

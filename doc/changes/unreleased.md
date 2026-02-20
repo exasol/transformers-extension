@@ -27,6 +27,21 @@ T.B.D
 | TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
 | TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
 
+* `task_type` handling has been changed. 
+The Transformers extension now allows only specific transformers task types in 
+the installation and execution of models.
+You may need to re-install you models from HuggingFace using the new task_types in order to use them.
+Models installed with legacy task_types can still be listed and deleted using th respective UDF's.
+
+* Allowed task_types are: 
+             "fill-mask" (previously "filling_mask"),
+             "translation",
+             "zero-shot-classification",
+             "text-classification" (previously "sequence_classification"),
+             "question-answering",
+             "text-generation",
+             "token-classification"
+
 ## Features
 
 ## Security
@@ -43,7 +58,7 @@ T.B.D
 ## Documentation
 
 * #204: Split the user_guide into multiple files
-* #253, #341, #342: Fixed links and improveed parameter description in user guide
+* #253, #341, #342: Fixed links and improved parameter description in user guide
 
 ## Refactorings
 
@@ -51,8 +66,6 @@ T.B.D
 * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
 * #350: Renamed all prediction UDFs.
 * #358: Refactored deployment configuration
-<<<<<<< refactoring/348-improve-max-new-token-in-unit-tests
 * #348: Improved mock model-output for testing max_new_tokens handling in translation unit tests
-=======
 * #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
->>>>>>> main
+* #316: Changed task_types to only allow transformers task_types, allows underscores and dashes

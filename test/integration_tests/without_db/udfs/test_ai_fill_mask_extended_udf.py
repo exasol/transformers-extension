@@ -55,7 +55,7 @@ def test_ai_fill_mask_extended_udf(
             None,
             bucketfs_conn_name,
             model_params.sub_dir,
-            model_params.base_model_specs.model_name,
+            model_params.fill_model_specs.model_name,
             text_data,
             top_k,
         )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from textwrap import fill
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
@@ -9,7 +10,7 @@ PATH_IN_BUCKET = "container"
 
 @dataclass(frozen=True)
 class ModelParams:
-    base_model_specs: ModelSpecification  # this is used for other test, task_name should be set per test
+    fill_model_specs: ModelSpecification  # this is used for fill_mask model tests
     seq2seq_model_specs: (
         ModelSpecification  # this model is used for testing ai_translate_extended udf
     )
@@ -28,15 +29,25 @@ class ModelParams:
         ModelSpecification  # this model is used for ai_classify_extended test
     )
     tiny_model_specs: ModelSpecification  # this model is used for upload/download test
+    # a model with a task_type not recognized by us. used for testing ls and delete of legacy models
+    illegal_tiny_model_specs: ModelSpecification
     text_data: str
     sub_dir: str
     ls_test_subdir: str
 
 
+def create_illegal_tiny_model_specs():
+    illegal_tiny_model_specs = ModelSpecification("prajjwal1/bert-tiny", "fill-mask")
+    illegal_tiny_model_specs.task_type = (
+        illegal_tiny_model_specs.legacy_set_task_type_from_udf_name("illegal-task-type")
+    )
+    return illegal_tiny_model_specs
+
+
 model_params = ModelParams(
-    base_model_specs=ModelSpecification(
-        "bert-base-uncased", "need to set this task_type"
-    ),
+    fill_model_specs=ModelSpecification(
+        "bert-base-uncased", "fill-mask"
+    ),  # todo if this fixed the test, someting goes wrong with the underscores
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification(
         "deepset/tinybert-6l-768d-squad2", "question-answering"
@@ -54,7 +65,8 @@ model_params = ModelParams(
         "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
         "zero-shot-classification",
     ),
-    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "task"),
+    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "fill-mask"),
+    illegal_tiny_model_specs=create_illegal_tiny_model_specs(),
     text_data="The database software company Exasol is based in Nuremberg",
     sub_dir="model_sub_dir",
     ls_test_subdir="ls_test_subdir",

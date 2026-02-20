@@ -76,7 +76,7 @@ def test_model_downloader(
 ):
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
-    task_type = [f"task_type_{i}" for i in range(count)]
+    task_type = "fill-mask"
     bucketfs_connections = [
         Connection(address=f"file:///test{i}") for i in range(count)
     ]
@@ -102,7 +102,7 @@ def test_model_downloader(
         create_autospec(
             BucketFSModelSpecification,
             model_name=base_model_names[i],
-            task_type=task_type[i],
+            task_type=task_type,
             sub_dir=Path(sub_directory_names[i]),
             bucketfs_conn_name=bucketfs_conn_name[i],
         )
@@ -123,7 +123,7 @@ def test_model_downloader(
         (
             base_model_names[i],
             sub_directory_names[i],
-            task_type[i],
+            task_type,
             bucketfs_conn_name[i],
             token_conn_name,
         )

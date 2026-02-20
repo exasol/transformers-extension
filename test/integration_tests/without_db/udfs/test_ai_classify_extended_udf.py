@@ -20,7 +20,7 @@ import pandas as pd
 import pytest
 import torch
 
-from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
+from exasol_transformers_extension.udfs.models.ai_classify_extended_udf import (
     AiClassifyExtendeUDF,
 )
 

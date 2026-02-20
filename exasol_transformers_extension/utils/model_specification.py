@@ -12,6 +12,11 @@ import transformers
 
 @dataclass(frozen=True)
 class ModelTypeData:
+    """
+    matches task_type to model_factory
+    some types are not matches exactly as transformers officially does it.
+    """
+
     model_factory_dict = {
         "fill-mask": transformers.AutoModelForMaskedLM,
         "translation": transformers.AutoModelForSeq2SeqLM,
@@ -20,6 +25,11 @@ class ModelTypeData:
         "question-answering": transformers.AutoModelForQuestionAnswering,
         "text-generation": transformers.AutoModelForCausalLM,
         "token-classification": transformers.AutoModelForTokenClassification,
+        # we don't have built-in udf's which use the task_types below
+        "document-question-answering": transformers.AutoModelForDocumentQuestionAnswering,
+        "mask-generation": transformers.AutoModelForMaskGeneration,
+        "table-question-answering": transformers.AutoModelForTableQuestionAnswering,
+        "feature-extraction": transformers.AutoModel,
     }
 
 
@@ -38,6 +48,41 @@ class ModelSpecification:
 
     def _set_task_type_from_udf_name(self, text):
         """
+        switches user input to transformers task types.
+        Allows for use of dash or underscore.
+        Raises a ValueError if given task_type is not recognized.
+        """
+        # todo check if docu needs updating, add info about ls/delete of
+        #  legacy task_types?
+        allowed_task_types = [
+            "fill-mask",
+            "translation",
+            "zero-shot-classification",
+            "text-classification",
+            "question-answering",
+            "text-generation",
+            "token-classification",
+            # we don't have built-in udf's which use the task_types below
+            "document-question-answering",
+            "mask-generation",
+            "table-question-answering",
+            "feature-extraction",
+        ]
+        text_replace_underscore = text.replace("_", "-")
+        if text_replace_underscore in allowed_task_types:
+            task_type = text_replace_underscore
+        else:
+            raise ValueError(
+                "task_type needs to be one of %s. Refer to the user guide "
+                "for more information. "
+                "Found task_type was '%s'" % (allowed_task_types, text)
+            )
+        return task_type
+
+    def legacy_set_task_type_from_udf_name(self, text):
+        """
+        allows for task_type to be unknown. needed for model listing and deletion of
+        models saved with unknown task_types.
         switches user input(matching udf name) to transformers task types
         """
         if text == "ai_fill_mask_extended":
@@ -89,11 +134,13 @@ class ModelSpecification:
 def split_path_using_subdir(
     path_parts: tuple[str, ...], model_path: pathlib.Path, sub_dir: str
 ) -> tuple[str, str]:
-    # many models have a name like creator-name/model-name or similar.
-    # but we do not know the format exactly.
-    # therefor we assume the directory which includes the config.json file to be
-    # the model_specific_path_suffix, and everything between this and the sub-dir
-    # to be the model_name_prefix
+    """
+    many models have a name like creator-name/model-name or similar.
+    but we do not know the format exactly.
+    therefor we assume the directory which includes the config.json file to be
+    the model_specific_path_suffix, and everything between this and the sub-dir
+    to be the model_name_prefix
+    """
     try:
         subdir_index = path_parts.index(sub_dir)
     except ValueError as e:
@@ -112,14 +159,19 @@ def split_path_using_subdir(
 def best_guess_model_specs(
     model_specific_path_suffix, name_prefix
 ) -> tuple[str, str, str]:
-    # if no known_task_type was found, our best guess is to split the
-    # model_specific_path_suffix on "_" and select task_type and model_name accordingly,
-    # because we know the model_specific_path_suffix includes at least one "_"
-    # followed by the task_name. This might create wrong results if the user
-    # choose to use a task_name containing a "_".
+    """
+    if no known_task_type was found, our best guess is to split the
+    model_specific_path_suffix on "_" and select task_type and model_name accordingly,
+    because we know the model_specific_path_suffix includes at least one "_"
+    followed by the task_type. This might create wrong results if the user
+    choose to use a task_type containing a "_".
+    Note: we don't allow for the saving of models like this anymore, but this stays
+    here in case of legacy models
+    """
     warning = (
-        "WARNING: We found a model which was saved using a task_name we don't recognize. "
-        "As a result, we can only give a best guess on how to parse the model_name and task."
+        "WARNING: We found a model which was saved using a task_type we don't "
+        "recognize. As a result, we can only give a best guess on how to parse "
+        "the model_type and task."
     )
     try:
         model_specific_path_suffix_split = model_specific_path_suffix.split("_")
@@ -127,22 +179,27 @@ def best_guess_model_specs(
             model_name = "/".join(
                 [name_prefix, "".join(model_specific_path_suffix_split[0:-1])]
             )
-            task_name = model_specific_path_suffix_split[-1]
-        return model_name, task_name, warning
+            task_type = model_specific_path_suffix_split[-1]
+        return model_name, task_type, warning
     except:
         error_message = (
-            "couldn't find a task name in path suffix %s" % model_specific_path_suffix
+            "couldn't find a task type in path suffix %s" % model_specific_path_suffix
         )
         raise ValueError(error_message)
 
 
-def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix):
-    task_name = ""
+def get_task_and_model_name(found_task_types, model_specific_path_suffix, name_prefix):
+    """
+    Attempts to infer original model specs used to save a model.
+    Will return a ValueError if sub_dir not in model_path.
+    Will return a ValueError if no task_type or model_name can be inferred.
+    """
+    task_type = ""
     model_name = ""
     warning = None
-    if not found_task_names:
+    if not found_task_types:
         try:
-            model_name, task_name, warning = best_guess_model_specs(
+            model_name, task_type, warning = best_guess_model_specs(
                 model_specific_path_suffix, name_prefix
             )
         except ValueError as e:
@@ -151,30 +208,37 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
     # if we found known_task_type in the path, check if one is on the end of the
     # model_specific_path_suffix, and declare this one as the task_type.
     # disregard found_task_types form other positions in the model_specific_path_suffix
-    for found_task_name in found_task_names:
-        if model_specific_path_suffix.endswith("_" + found_task_name):
+    for found_task_type in found_task_types:
+        if model_specific_path_suffix.endswith("_" + found_task_type):
             model_name = "/".join(
                 [
                     name_prefix,
-                    model_specific_path_suffix.removesuffix("_" + found_task_name),
+                    model_specific_path_suffix.removesuffix("_" + found_task_type),
                 ]
             )
-            task_name = found_task_name
+            task_type = found_task_type
             break
 
-    if not task_name or not model_name:
+    if not task_type or not model_name:
         try:
-            model_name, task_name, warning = best_guess_model_specs(
+            model_name, task_type, warning = best_guess_model_specs(
                 model_specific_path_suffix, name_prefix
             )
         except ValueError as e:
             raise e
-    return model_name, task_name, warning
+    return model_name, task_type, warning
 
 
 def create_model_specs_from_path(
     model_path: pathlib.Path, sub_dir
 ) -> tuple[ModelSpecification, str]:
+    """
+    Attempts to infer original model specs used to save a model at model_path.
+    Will return a ValueError if sub_dir not in model_path.
+    Will return a ValueError if no task_type or model_name can be inferred.
+    Will return a ModelSpecification and a warning which includes information
+    about the found task_type/model_name, if the task_type ws non-standard
+    """
     path_parts = model_path.parts
     warning = None
 
@@ -185,18 +249,29 @@ def create_model_specs_from_path(
     except ValueError as e:
         raise e
 
-    # find known task_names in the model_specific_path_suffix:
-    found_task_names = [
+    # find known task_types in the model_specific_path_suffix:
+    found_task_types = [
         key
         for key in ModelTypeData.model_factory_dict.keys()
         if key in model_specific_path_suffix
     ]
 
     try:
-        model_name, task_name, warning = get_task_and_model_name(
-            found_task_names, model_specific_path_suffix, name_prefix
+        model_name, task_type, warning = get_task_and_model_name(
+            found_task_types, model_specific_path_suffix, name_prefix
         )
     except ValueError as e:
         raise e
 
-    return ModelSpecification(model_name, task_name), warning
+    if warning:
+        # if task_type is not allowed for model_specification, use a placeholder
+        # for creation and then replace using the legacy_set_task_type_from_udf_name.
+        # needed to allow for deletion of already installed models with illegal
+        # task_types
+        found_model = ModelSpecification(model_name, "fill-mask")
+        found_model.task_type = found_model.legacy_set_task_type_from_udf_name(
+            task_type
+        )
+        return found_model, warning
+
+    return ModelSpecification(model_name, task_type), warning
