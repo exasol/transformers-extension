@@ -161,9 +161,9 @@ def upload_fill_mask_model_to_bucketfs(
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
-    base_model_specs = model_params.fill_model_specs
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
-    with upload_model_to_bucketfs(base_model_specs, tmpdir, bucketfs_location) as path:
+    fill_model_specs = model_params.fill_model_specs
+    tmpdir = tmpdir_factory.mktemp(fill_model_specs.task_type)
+    with upload_model_to_bucketfs(fill_model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 
@@ -308,7 +308,7 @@ def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
 
     current_model_specs = BucketFSModelSpecification(
         model_name=model_specs.model_name,
-        task_type="fill_mask",
+        task_type="fill-mask",
         bucketfs_conn_name="",
         sub_dir=model_params.ls_test_subdir,
     )

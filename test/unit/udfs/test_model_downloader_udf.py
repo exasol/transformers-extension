@@ -76,7 +76,7 @@ def test_model_downloader(
 ):
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
-    task_type = "fill_mask"
+    task_type = "fill-mask"
     bucketfs_connections = [
         Connection(address=f"file:///test{i}") for i in range(count)
     ]

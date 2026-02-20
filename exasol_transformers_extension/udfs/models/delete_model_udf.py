@@ -58,7 +58,7 @@ class DeleteModelUDF:
             # needed to allow for deletion of already installed models with illegal task_types
             current_model_specification = (
                 self._current_model_specification_factory.create(
-                    model_name, "fill_mask", bucketfs_conn, Path(sub_dir)
+                    model_name, "fill-mask", bucketfs_conn, Path(sub_dir)
                 )
             )  # specifies details of Huggingface model
             current_model_specification.task_type = (

@@ -33,7 +33,7 @@ class DummyImplementationUDF(BaseModelUDF):
             pipeline,
             base_model,
             tokenizer,
-            task_type="fill_mask",
+            task_type="fill-mask",
             work_with_spans=work_with_spans,
         )
         self._desired_fields_in_prediction = ["answer", "score"]

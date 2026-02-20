@@ -43,6 +43,7 @@ def test_ai_fill_mask_extended_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
+    print(result)
 
     # assertions
     assert result[0][-1] is None

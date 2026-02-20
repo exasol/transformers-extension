@@ -94,7 +94,7 @@ def test_delete_model(mock_delete_model, mock_create_loc, count, task_type):
         model_name, task_type, bfs_conn_name, subdir
     ):
         model_spec = BucketFSModelSpecification(
-            model_name, "fill_mask", bfs_conn_name, subdir
+            model_name, "fill-mask", bfs_conn_name, subdir
         )
         model_spec.task_type = model_spec.legacy_set_task_type_from_udf_name(task_type)
         return model_spec

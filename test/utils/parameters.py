@@ -37,7 +37,7 @@ class ModelParams:
 
 
 def create_illegal_tiny_model_specs():
-    illegal_tiny_model_specs = ModelSpecification("prajjwal1/bert-tiny", "fill_mask")
+    illegal_tiny_model_specs = ModelSpecification("prajjwal1/bert-tiny", "fill-mask")
     illegal_tiny_model_specs.task_type = (
         illegal_tiny_model_specs.legacy_set_task_type_from_udf_name("illegal-task-type")
     )
