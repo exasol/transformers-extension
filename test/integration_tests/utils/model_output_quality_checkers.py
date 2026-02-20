@@ -75,7 +75,6 @@ def assert_lenient_check_of_output_quality(
 
     for i in range(len(results)):
         if contains(results[i], acceptable_results):
-            print("accepted", results[i])
             number_accepted_results += 1
     assert number_accepted_results > len(result) * acceptance_factor
 
