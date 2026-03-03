@@ -1,13 +1,8 @@
 import traceback
 from abc import (
     ABC,
-    abstractmethod,
 )
 from collections.abc import Iterator
-from typing import (
-    Any,
-    List,
-)
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 import numpy as np
@@ -15,6 +10,7 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.deployment.constants import constants
+from exasol_transformers_extension.udfs.models.prediction_task import PredictionTask
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -38,12 +34,6 @@ class BaseModelUDF(ABC):
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
 
-    Additionally, the following
-    methods should be implemented specifically for each UDF class:
-        - create_dataframes_from_predictions
-        - extract_unique_param_based_dataframes
-        - execute_prediction
-        - append_predictions_to_input_dataframe
 
     If your UDF changes output format depending on work_with_spans,
     consider also implementing:
@@ -62,7 +52,9 @@ class BaseModelUDF(ABC):
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
         task_type: str,
+        prediction_task: PredictionTask,#todo add docstr
         work_with_spans: bool = False,
+
     ):
         self.exa = exa
         self.batch_size = batch_size
@@ -72,9 +64,9 @@ class BaseModelUDF(ABC):
         self.task_type = task_type
         self.device = None
         self.model_loader = None
-        self.last_created_pipeline = None
         self.new_columns = []
         self.work_with_spans = work_with_spans
+        self.prediction_task = prediction_task
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
@@ -148,7 +140,7 @@ class BaseModelUDF(ABC):
         :return: List of prediction results
         """
         result_df_list = []
-        for param_based_model_df in self.extract_unique_param_based_dataframes(
+        for param_based_model_df in self.prediction_task.extract_unique_param_based_dataframes(
             model_df
         ):
             try:
@@ -174,7 +166,8 @@ class BaseModelUDF(ABC):
 
     @staticmethod
     def extract_unique_model_dataframes_from_batch(
-        self, batch_df: pd.DataFrame
+            self,
+            batch_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
@@ -236,7 +229,7 @@ class BaseModelUDF(ABC):
             self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
             try:
-                self.last_created_pipeline = self.model_loader.load_models()
+                self.prediction_task.last_created_pipeline = self.model_loader.load_models()
             except Exception as exc:
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
@@ -260,9 +253,9 @@ class BaseModelUDF(ABC):
         prediction results
         """
 
-        predictions = self.execute_prediction(model_df)
-        pred_df_list = self.create_dataframes_from_predictions(predictions)
-        pred_df = self.append_predictions_to_input_dataframe(model_df, pred_df_list)
+        predictions = self.prediction_task.execute_prediction(model_df)
+        pred_df_list = self.prediction_task.create_dataframes_from_predictions(predictions)
+        pred_df = self.prediction_task.append_predictions_to_input_dataframe(model_df, pred_df_list)
         pred_df["error_message"] = None
         return pred_df
 
@@ -289,28 +282,6 @@ class BaseModelUDF(ABC):
             model_df = model_df[cols]
         model_df["error_message"] = stack_trace
         return model_df
-
-    @abstractmethod
-    def create_dataframes_from_predictions(
-        self, predictions: list[Any]
-    ) -> list[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def extract_unique_param_based_dataframes(
-        self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
-    ) -> pd.DataFrame:
-        pass
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
         return model_df
