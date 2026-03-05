@@ -19,6 +19,7 @@ class AnswerPredictionTask(PredictionTask):
     ):
         super().__init__()
         self.last_created_pipeline = None
+        self.task_type = "question-answering"
         self._desired_fields_in_prediction = desired_fields_in_prediction
         self.new_columns = new_columns
 
@@ -128,6 +129,5 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         ),
     ):
         super().__init__(
-            exa, batch_size, pipeline, base_model, tokenizer,
-            "question-answering", prediction_task
+            exa, batch_size, pipeline, base_model, tokenizer, prediction_task
         )

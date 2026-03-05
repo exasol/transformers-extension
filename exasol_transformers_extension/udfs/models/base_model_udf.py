@@ -51,7 +51,6 @@ class BaseModelUDF(ABC):
         pipeline: transformers.Pipeline,
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
-        task_type: str,
         prediction_task: PredictionTask,#todo add docstr
         work_with_spans: bool = False,
 
@@ -61,7 +60,6 @@ class BaseModelUDF(ABC):
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
-        self.task_type = task_type
         self.device = None
         self.model_loader = None
         self.new_columns = []
@@ -91,7 +89,7 @@ class BaseModelUDF(ABC):
             pipeline_factory=self.pipeline,
             base_model_factory=self.base_model,
             tokenizer_factory=self.tokenizer,
-            task_type=self.task_type,
+            task_type=self.prediction_task.task_type,
             device=self.device,
         )
 
@@ -214,7 +212,7 @@ class BaseModelUDF(ABC):
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
         current_model_specification = BucketFSModelSpecification(
-            model_name, self.task_type, bucketfs_conn, sub_dir
+            model_name, self.prediction_task.task_type, bucketfs_conn, sub_dir
         )
 
         if self.model_loader.current_model_specification != current_model_specification:

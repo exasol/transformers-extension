@@ -9,44 +9,22 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
+from exasol_transformers_extension.udfs.models.prediction_task import PredictionTask
 from exasol_transformers_extension.utils import dataframe_operations
 
-
-class AiExtractExtendedUDF(BaseModelUDF):
-    """
-    UDF for finding and classifying a token/entity in a given text.
-    If given an input span, text_data_char_begin and text_data_char_end should
-    represent the entire input text and not indicate a substring.
-    """
-
+class TokenClassifyPredictionTask(PredictionTask):
     def __init__(
-        self,
-        exa,
-        batch_size=100,
-        pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForTokenClassification,
-        tokenizer=transformers.AutoTokenizer,
-        work_with_spans: bool = False,
+            self,
+            desired_fields_in_prediction: list[str],
+            new_columns: list[str],
     ):
-        super().__init__(
-            exa,
-            batch_size,
-            pipeline,
-            base_model,
-            tokenizer,
-            task_type="token-classification",
-            work_with_spans=work_with_spans,
-        )
+        super().__init__()
+        self.last_created_pipeline = None
+        self.task_type = "token-classification"
+        self._desired_fields_in_prediction = desired_fields_in_prediction
+        self.new_columns = new_columns
         self._default_aggregation_strategy = "simple"
-        self._desired_fields_in_prediction = ["start", "end", "word", "entity", "score"]
-        self.new_columns = [
-            "start_pos",
-            "end_pos",
-            "word",
-            "entity",
-            "score",
-            "error_message",
-        ]
+
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -211,3 +189,33 @@ class AiExtractExtendedUDF(BaseModelUDF):
             results_df_list.append(result_df)
 
         return results_df_list
+
+class AiExtractExtendedUDF(BaseModelUDF):
+    """
+    UDF for finding and classifying a token/entity in a given text.
+    If given an input span, text_data_char_begin and text_data_char_end should
+    represent the entire input text and not indicate a substring.
+    """
+
+    def __init__(
+        self,
+        exa,
+        batch_size=100,
+        pipeline=transformers.pipeline,
+        base_model=transformers.AutoModelForTokenClassification,
+        tokenizer=transformers.AutoTokenizer,
+        prediction_task=TokenClassifyPredictionTask(
+                desired_fields_in_prediction=["start", "end", "word", "entity", "score"],
+                new_columns=["start_pos","end_pos", "word","entity", "score","error_message"]
+            ),
+        work_with_spans: bool = False,
+    ):
+        super().__init__(
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
+            prediction_task=prediction_task,
+            work_with_spans=work_with_spans,
+        )

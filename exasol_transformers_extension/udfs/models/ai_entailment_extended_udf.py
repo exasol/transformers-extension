@@ -1,34 +1,27 @@
 from collections.abc import Iterator
 from typing import (
     Any,
-    Dict,
-    List,
 )
 
 import pandas as pd
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
+from exasol_transformers_extension.udfs.models.prediction_task import PredictionTask
 
-
-class AiEntailmentExtendedUDF(BaseModelUDF):
+# todo make one file all text-classification prediciton tasks functions, then on for each impementation remove duplicate code
+#todo also for other task types
+class EntailmentPredictionTask(PredictionTask):
     def __init__(
-        self,
-        exa,
-        batch_size=100,
-        pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForSequenceClassification,
-        tokenizer=transformers.AutoTokenizer,
+            self,
+            desired_fields_in_prediction: list[str],
+            new_columns: list[str],
     ):
-        super().__init__(
-            exa,
-            batch_size,
-            pipeline,
-            base_model,
-            tokenizer,
-            task_type="text-classification",
-        )
-        self.new_columns = ["label", "score", "rank", "error_message"]
+        super().__init__()
+        self.last_created_pipeline = None
+        self.task_type = "text-classification"
+        self._desired_fields_in_prediction = desired_fields_in_prediction
+        self.new_columns = new_columns
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -113,3 +106,26 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
             results_df_list.append(result_df)
 
         return results_df_list
+
+
+class AiEntailmentExtendedUDF(BaseModelUDF):
+    def __init__(
+        self,
+        exa,
+        batch_size=100,
+        pipeline=transformers.pipeline,
+        base_model=transformers.AutoModelForSequenceClassification,
+        tokenizer=transformers.AutoTokenizer,
+        prediction_task=EntailmentPredictionTask(
+                desired_fields_in_prediction=[],
+                new_columns=["label", "score", "rank", "error_message"]
+            ),
+    ):
+        super().__init__(
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
+            prediction_task=prediction_task
+        )

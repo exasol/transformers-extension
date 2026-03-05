@@ -44,7 +44,7 @@ from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
-    AiClassifyExtendeUDF,
+    AiClassifyExtendedUDF,
 )
 
 
@@ -159,7 +159,7 @@ def test_ai_classify_extended(mock_local_path, mock_create_loc, params):
         zero_shot_models_output_df, expected_model_counter
     )
 
-    udf = AiClassifyExtendeUDF(
+    udf = AiClassifyExtendedUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,
@@ -223,7 +223,7 @@ def test_ai_classify_extended_with_span(mock_local_path, mock_create_loc, params
         zero_shot_models_output_df, expected_model_counter
     )
 
-    udf = AiClassifyExtendeUDF(
+    udf = AiClassifyExtendedUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

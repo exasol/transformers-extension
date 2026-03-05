@@ -10,7 +10,7 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.udfs.models.prediction_task import PredictionTask
 from exasol_transformers_extension.utils import dataframe_operations
 
-
+#todo dev docu: explain where they live
 class FillMaskPredictionTask(PredictionTask):
     def __init__(#todo name these after tasks?udfs? move them to seperate files?
             self,
@@ -18,7 +18,8 @@ class FillMaskPredictionTask(PredictionTask):
             new_columns: list[str],
     ):
         super().__init__()
-        self.last_created_pipeline = None
+        self.last_created_pipeline = None #todo make some sort of class to hold this stuf?
+        self.task_type = "fill-mask"
         self._desired_fields_in_prediction = desired_fields_in_prediction
         self.new_columns = new_columns
         self._mask_token = "<mask>"
@@ -138,5 +139,5 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
     ):
         super().__init__(
             exa, batch_size, pipeline, base_model, tokenizer,
-            task_type="fill-mask", prediction_task=prediction_task
+            prediction_task=prediction_task
         )
