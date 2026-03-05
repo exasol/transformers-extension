@@ -10,7 +10,7 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.deployment.constants import constants
-from exasol_transformers_extension.udfs.models.prediction_task import PredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
