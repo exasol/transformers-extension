@@ -1,3 +1,7 @@
+"""
+UDF for answering a given "question" about a given "context_text"
+"""
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
@@ -7,6 +11,10 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.question_answeri
 
 
 class AiAnswerExtendedUDF(BaseModelUDF):
+    """
+    UDF for answering a given "question" about a given "context_text"
+    """
+
     def __init__(
         self,
         exa,

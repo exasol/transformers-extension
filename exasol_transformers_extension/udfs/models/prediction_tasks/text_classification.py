@@ -1,3 +1,8 @@
+"""
+Task logic for using the "text-classification" transformers task in a prediction udf.
+Two classes, one for one text input, one for two text inputs.
+"""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -74,6 +79,12 @@ def _create_dataframes_from_predictions(
 
 
 class EntailmentPredictionTask(PredictionTask):
+    """
+    Task logic for using the "text-classification" transformers task in a
+    prediction udf.
+    Expects two text inputs per row.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],
@@ -123,6 +134,12 @@ class EntailmentPredictionTask(PredictionTask):
 
 
 class TextClassifyPredictionTask(PredictionTask):
+    """
+    Task logic for using the "text-classification" transformers task in
+    a prediction udf.
+    Expects one text inputs per row.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],

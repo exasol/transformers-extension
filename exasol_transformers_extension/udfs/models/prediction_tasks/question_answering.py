@@ -1,3 +1,7 @@
+"""
+Task logic for using the "question-answering" transformers task in a prediction udf.
+"""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -10,12 +14,17 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    create_rank_from_score,
     duplicate_input_rows_for_n_outputs,
     extract_unique_param_based_dataframes_top_k,
 )
 
 
 class AnswerPredictionTask(PredictionTask):
+    """
+    Task logic for using the "question-answering" transformers task in a prediction udf.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],
@@ -69,6 +78,7 @@ class AnswerPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
+        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """
@@ -84,18 +94,17 @@ class AnswerPredictionTask(PredictionTask):
         Convert predictions to dataframe.
 
         :param predictions: prediction results
-
         :return: List of prediction dataframes
         """
         results_df_list = []
         for result in predictions:
             result_df = (
-                pd.DataFrame([result]) if type(result) == dict else pd.DataFrame(result)
+                pd.DataFrame([result])
+                if isinstance(result, dict)
+                else pd.DataFrame(result)
             )
             result_df = result_df[self._desired_fields_in_prediction]
-            result_df["rank"] = (
-                result_df["score"].rank(ascending=False, method="dense").astype(int)
-            )
+            result_df = create_rank_from_score(result_df)
             results_df_list.append(result_df)
 
         return results_df_list

@@ -1,3 +1,7 @@
+"""
+Task logic for using the "translation" transformers task in a prediction udf.
+"""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -12,6 +16,10 @@ from exasol_transformers_extension.utils import dataframe_operations
 
 
 class TranslatePredictionTask(PredictionTask):
+    """
+    Task logic for using the "translation" transformers task in a prediction udf.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],
@@ -81,6 +89,7 @@ class TranslatePredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
+        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """

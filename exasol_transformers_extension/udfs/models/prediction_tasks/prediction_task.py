@@ -1,3 +1,8 @@
+"""
+Protocol for using transformers prediction tasks in an udf.
+Needs to be implemented for each task.
+"""
+
 from abc import (
     abstractmethod,
 )
@@ -23,16 +28,31 @@ class PredictionTask(Protocol):
     def create_dataframes_from_predictions(
         self, predictions: list[Any]
     ) -> list[pd.DataFrame]:
+        """
+        create_dataframes_from_predictions` : Converts list of predictions to
+        pandas dataframe.
+        """
         pass
 
     @abstractmethod
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
+        """
+        `extract_unique_param_based_dataframes` : Even if the data in a given
+        dataframe all have the same model, there might be differences within the given
+        dataframe with different model parameters.
+        This method is responsible for extracting unique dataframes which share both the
+        same model and model parameters.
+        """
         pass
 
     @abstractmethod
     def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
+        """
+        execute_prediction` : Performs prediction on a given text list using
+        recently loaded models.
+        """
         pass
 
     @abstractmethod
@@ -42,6 +62,10 @@ class PredictionTask(Protocol):
         pred_df_list: list[pd.DataFrame],
         work_with_spans: bool = False,
     ) -> pd.DataFrame:
+        """
+        append_predictions_to_input_dataframe`: Reformats the dataframe used in
+        prediction, such that each input row has a row for each prediction result.
+        """
         pass
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:

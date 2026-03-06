@@ -1,3 +1,9 @@
+"""
+UDF for finding and classifying a token/entity in a given text.
+If given an input span, text_data_char_begin and text_data_char_end should
+represent the entire input text and not indicate a substring.
+"""
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF

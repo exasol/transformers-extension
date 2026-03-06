@@ -39,9 +39,10 @@ class ListModelsUDF:
         for model_info in self._output:
             ctx.emit(*model_info)
 
+    @staticmethod
     def _check_if_model_config(self, filepath: Path) -> bool:
         try:
-            config = AutoConfig.from_pretrained(filepath)
+            AutoConfig.from_pretrained(filepath)
             return True
         except Exception:
             return False
@@ -50,7 +51,7 @@ class ListModelsUDF:
         self, sub_dir: str, bucketfs_location: PathLike
     ) -> set[str]:
         model_paths_list = set()
-        for main_dir, sub_dirs, files in os.walk(
+        for main_dir, _, files in os.walk(
             Path(bucketfs_location.as_udf_path()) / sub_dir
         ):
             if files:  # this means there is at least 1 file here

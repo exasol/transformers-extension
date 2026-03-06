@@ -1,3 +1,7 @@
+"""
+functions which get used in multiple PredictionTask implementations.
+"""
+
 from collections.abc import Iterator
 
 import pandas as pd
@@ -48,3 +52,49 @@ def select_result_on_return_rank(model_df: pd.DataFrame) -> pd.DataFrame:
         '(return_ranks == "ALL") or ((rank == 1) and (return_ranks == "HIGHEST"))'
     )
     return model_df
+
+
+def create_rank_from_score(result_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sorts the given dataframe by the "score" column and write
+    the result to the "rank" column
+    """
+    result_df["rank"] = (
+        result_df["score"].rank(ascending=False, method="dense").astype(int)
+    )
+    return result_df
+
+
+# def extract_unique_param_based_dataframes(
+#    model_df: pd.DataFrame
+# ) -> Iterator[pd.DataFrame]:
+#   """
+#    Extract unique dataframes having same max_new_tokens, source_language,
+#    and target_language parameter values
+
+#    :param model_df: Dataframe used in prediction
+
+#     :return: Unique model dataframes having same specified parameters
+#    """
+#    unique_column_names = ["max_new_tokens", "source_language", "target_language"]
+#    unique_params = dataframe_operations.get_unique_values(
+#        model_df, unique_column_names
+#   )
+#    for unique_param_set in unique_params:
+# todo how to build this? if work use
+#       param_based_model_df = model_df[
+#           (model_df[unique_column_names[i]] == unique_param_set[i]) for
+#           i in range(len(unique_param_set))
+#            #& (model_df["source_language"] == source_language)
+#            #& (model_df["target_language"] == target_language)
+#        ]
+#       model_df=param_based_model_df.copy()
+
+
+# param_based_model_df = model_df[
+#    (model_df["max_new_tokens"] == max_new_tokens)
+#    & (model_df["source_language"] == source_language)
+#    & (model_df["target_language"] == target_language)
+# ]
+
+#     yield param_based_model_df

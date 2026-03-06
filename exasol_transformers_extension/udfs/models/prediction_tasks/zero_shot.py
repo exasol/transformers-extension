@@ -1,3 +1,8 @@
+"""
+Task logic for using the "zero-shot-classification" transformers task in
+ a prediction udf.
+"""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -9,12 +14,18 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    create_rank_from_score,
     select_result_on_return_rank,
 )
 from exasol_transformers_extension.utils import dataframe_operations
 
 
 class ZeroShotPredictionTask(PredictionTask):
+    """
+    Task logic for using the "zero-shot-classification" transformers task
+    in a prediction udf.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],
@@ -92,9 +103,7 @@ class ZeroShotPredictionTask(PredictionTask):
             result_df = result_df[self._desired_fields_in_prediction].rename(
                 columns={"labels": "label", "scores": "score"}
             )
-            result_df["rank"] = (
-                result_df["score"].rank(ascending=False, method="dense").astype(int)
-            )
+            result_df = create_rank_from_score(result_df)
             results_df_list.append(result_df)
 
         return results_df_list
@@ -111,6 +120,7 @@ class ZeroShotPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
+        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """

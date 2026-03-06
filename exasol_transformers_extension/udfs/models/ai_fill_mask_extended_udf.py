@@ -1,3 +1,8 @@
+"""
+Udf for the "fill_mask" transformers task.
+Will fill any occurence of "<mask>" in the input text data with a generated substring.
+"""
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
@@ -7,6 +12,11 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.fill_mask import
 
 
 class AiFillMaskExtendedUDF(BaseModelUDF):
+    """
+    Udf for the "fill_mask" transformers task.
+    Will fill any occurence of "<mask>" in the input text data with a generated substring.
+    """
+
     def __init__(
         self,
         exa,

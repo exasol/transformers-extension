@@ -1,3 +1,7 @@
+"""
+Task logic for using the "token-classification" transformers task in a prediction udf.
+"""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -15,6 +19,10 @@ from exasol_transformers_extension.utils import dataframe_operations
 
 
 class TokenClassifyPredictionTask(PredictionTask):
+    """
+    Task logic for using the "token-classification" transformers task in a prediction udf.
+    """
+
     def __init__(
         self,
         desired_fields_in_prediction: list[str],
@@ -88,7 +96,9 @@ class TokenClassifyPredictionTask(PredictionTask):
         return results
 
     def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        # create new columns for use with spans
+        """
+        create new columns for use with spans
+        """
         model_df[["entity_doc_id", "entity_char_begin", "entity_char_end"]] = (
             None,
             None,
@@ -124,6 +134,7 @@ class TokenClassifyPredictionTask(PredictionTask):
         has a row for each label and its probability score
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
+        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """

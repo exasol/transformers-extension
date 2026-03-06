@@ -114,7 +114,7 @@ class BaseModelUDF(ABC):
                 continue
             try:
                 self.check_cache(model_df)
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 result_with_error_df = self.get_result_with_error(model_df, stack_trace)
                 result_df_list.append(result_with_error_df)
@@ -146,7 +146,7 @@ class BaseModelUDF(ABC):
             try:
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 result_with_error_df = self.get_result_with_error(
                     param_based_model_df, stack_trace
@@ -164,7 +164,6 @@ class BaseModelUDF(ABC):
             )
             raise ValueError(error_message)
 
-    @staticmethod
     def extract_unique_model_dataframes_from_batch(
         self, batch_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
@@ -231,7 +230,7 @@ class BaseModelUDF(ABC):
                 self.prediction_task.last_created_pipeline = (
                     self.model_loader.load_models()
                 )
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
                 self.model_loader.model_load_error = stack_trace

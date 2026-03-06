@@ -1,3 +1,8 @@
+"""
+UDF for continuing a given text. May be used to return whole text,
+or only the newly generated part.
+"""
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
@@ -7,6 +12,11 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.text_generation 
 
 
 class AiCompleteExtendedUDF(BaseModelUDF):
+    """
+    UDF for continuing a given text. May be used to return whole text,
+    or only the newly generated part.
+    """
+
     def __init__(
         self,
         exa,

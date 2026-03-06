@@ -1,3 +1,8 @@
+"""
+UDF for translating text. Will prompt the model with
+"translate <source_language> to <target_language>: <text-data>"
+"""
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
@@ -7,6 +12,11 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.translation impo
 
 
 class AiTranslateExtendedUDF(BaseModelUDF):
+    """
+    UDF for translating text. Will prompt the model with
+    "translate <source_language> to <target_language>: <text-data>"
+    """
+
     def __init__(
         self,
         exa,
