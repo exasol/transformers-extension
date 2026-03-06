@@ -20,8 +20,7 @@ class AiExtractExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForTokenClassification,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TokenClassifyPredictionTask(
-                desired_fields_in_prediction=["start", "end", "word", "entity", "score"],
-                new_columns=["start_pos","end_pos", "word","entity", "score","error_message"]
+                desired_fields_in_prediction=["start", "end", "word", "entity", "score"]
             ),
         work_with_spans: bool = False,
     ):
@@ -32,5 +31,6 @@ class AiExtractExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
+            new_columns=["start_pos", "end_pos", "word", "entity", "score", "error_message"],
             work_with_spans=work_with_spans,
         )

@@ -15,9 +15,9 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         tokenizer=transformers.AutoTokenizer,
         prediction_task=AnswerPredictionTask(
             desired_fields_in_prediction=["answer", "score"],
-            new_columns=["answer", "score", "rank", "error_message"]
         ),
     ):
         super().__init__(
-            exa, batch_size, pipeline, base_model, tokenizer, prediction_task
+            exa, batch_size, pipeline, base_model, tokenizer, prediction_task,
+            new_columns=["answer", "score", "rank", "error_message"]
         )

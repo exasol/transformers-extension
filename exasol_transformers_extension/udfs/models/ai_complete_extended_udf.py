@@ -15,7 +15,6 @@ class AiCompleteExtendedUDF(BaseModelUDF):
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TextGenPredictionTask(
                 desired_fields_in_prediction=[],
-                new_columns=["generated_text", "error_message"]
             ),
     ):
         super().__init__(
@@ -24,6 +23,7 @@ class AiCompleteExtendedUDF(BaseModelUDF):
             pipeline,
             base_model,
             tokenizer,
-            prediction_task=prediction_task
+            prediction_task=prediction_task,
+            new_columns=["generated_text", "error_message"]
         )
 

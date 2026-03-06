@@ -52,6 +52,7 @@ class BaseModelUDF(ABC):
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
         prediction_task: PredictionTask,#todo add docstr
+        new_columns: list[str],
         work_with_spans: bool = False,
 
     ):
@@ -62,7 +63,7 @@ class BaseModelUDF(ABC):
         self.tokenizer = tokenizer
         self.device = None
         self.model_loader = None
-        self.new_columns = []
+        self.new_columns = new_columns
         self.work_with_spans = work_with_spans
         self.prediction_task = prediction_task
 
@@ -253,7 +254,7 @@ class BaseModelUDF(ABC):
 
         predictions = self.prediction_task.execute_prediction(model_df)
         pred_df_list = self.prediction_task.create_dataframes_from_predictions(predictions)
-        pred_df = self.prediction_task.append_predictions_to_input_dataframe(model_df, pred_df_list)
+        pred_df = self.prediction_task.append_predictions_to_input_dataframe(model_df, pred_df_list, self.work_with_spans)
         pred_df["error_message"] = None
         return pred_df
 
@@ -267,22 +268,21 @@ class BaseModelUDF(ABC):
         :param model_df: The dataframe that received an error during prediction
         :param stack_trace: String of the stack traceback
         """
+        print(self.new_columns)
         for col in self.new_columns:
             model_df[col] = None
         if self.work_with_spans:
             # we need to change the df format to match the output columns
-            model_df = self.create_new_span_columns(model_df)
-            model_df = self.drop_old_data_for_span_execution(model_df)
+            model_df = self.prediction_task.create_new_span_columns(model_df)
+            model_df = self.prediction_task.drop_old_data_for_span_execution(model_df)
             # move error message column to the end of the df
             cols = model_df.columns.tolist()
             cols.remove("error_message")
             cols.append("error_message")
             model_df = model_df[cols]
         model_df["error_message"] = stack_trace
+        with pd.option_context('display.max_rows', None, 'display.max_columns',
+                               None):  # more options can be specified also
+            print(model_df)
         return model_df
 
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        return model_df
-
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        return model_df

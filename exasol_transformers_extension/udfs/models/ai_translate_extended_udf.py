@@ -14,11 +14,11 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForSeq2SeqLM,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TranslatePredictionTask(
-                desired_fields_in_prediction=[],
-                new_columns=["translation_text", "error_message"]
+                desired_fields_in_prediction=[]
             ),
     ):
         super().__init__(
-            exa, batch_size, pipeline, base_model, tokenizer, prediction_task=prediction_task
+            exa, batch_size, pipeline, base_model, tokenizer, prediction_task=prediction_task,
+                new_columns=["translation_text", "error_message"]
         )
 

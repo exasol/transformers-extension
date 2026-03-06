@@ -15,8 +15,7 @@ class AiCustomClassifyUDF(BaseModelUDF):
         base_model=transformers.AutoModelForSequenceClassification,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TextClassifyPredictionTask(
-                desired_fields_in_prediction=[],
-                new_columns= ["label", "score", "rank", "error_message"]
+                desired_fields_in_prediction=[]
             ),
     ):
         super().__init__(
@@ -25,5 +24,6 @@ class AiCustomClassifyUDF(BaseModelUDF):
             pipeline,
             base_model,
             tokenizer,
-            prediction_task=prediction_task
+            prediction_task=prediction_task,
+            new_columns= ["label", "score", "rank", "error_message"]
         )

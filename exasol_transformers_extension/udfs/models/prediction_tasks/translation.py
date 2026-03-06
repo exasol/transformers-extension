@@ -12,13 +12,11 @@ class TranslatePredictionTask(PredictionTask):
     def __init__(
             self,
             desired_fields_in_prediction: list[str],
-            new_columns: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
         self.task_type = "translation"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-        self.new_columns = new_columns
         self._translation_prefix = "translate {src_lang} to {target_lang}: "
 
 
@@ -70,7 +68,8 @@ class TranslatePredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
+            work_with_spans: bool = False
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input row

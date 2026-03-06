@@ -14,8 +14,7 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForSequenceClassification,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=EntailmentPredictionTask(
-                desired_fields_in_prediction=[],
-                new_columns=["label", "score", "rank", "error_message"]
+                desired_fields_in_prediction=[]
             ),
     ):
         super().__init__(
@@ -24,5 +23,6 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
             pipeline,
             base_model,
             tokenizer,
-            prediction_task=prediction_task
+            prediction_task=prediction_task,
+            new_columns=["label", "score", "rank", "error_message"]
         )

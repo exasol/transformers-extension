@@ -21,8 +21,7 @@ class AiClassifyExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForSequenceClassification,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=ZeroShotPredictionTask(
-            desired_fields_in_prediction=["labels", "scores"],
-            new_columns=["label", "score", "rank", "error_message"]
+            desired_fields_in_prediction=["labels", "scores"]
         ),
         work_with_spans: bool = False,
     ):
@@ -33,6 +32,7 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
+            new_columns=["label", "score", "rank", "error_message"],
             work_with_spans=work_with_spans,
         )
 

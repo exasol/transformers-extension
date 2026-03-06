@@ -12,13 +12,11 @@ class TokenClassifyPredictionTask(PredictionTask):
     def __init__(
             self,
             desired_fields_in_prediction: list[str],
-            new_columns: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
         self.task_type = "token-classification"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-        self.new_columns = new_columns
         self._default_aggregation_strategy = "simple"
 
 
@@ -111,7 +109,8 @@ class TokenClassifyPredictionTask(PredictionTask):
         return pd.Series([token_doc_id, token_char_begin, token_char_end])
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
+            work_with_spans: bool = False
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -128,7 +127,7 @@ class TokenClassifyPredictionTask(PredictionTask):
             [model_df, pred_df], axis=1, join="inner"
         )  # join='inner' -> drop rows where results are empty
 
-        if self.work_with_spans:
+        if work_with_spans:
             model_df = self.create_new_span_columns(model_df)
             model_df[["entity_doc_id", "entity_char_begin", "entity_char_end"]] = (
                 model_df.apply(self.make_entity_span, axis=1)

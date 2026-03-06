@@ -9,18 +9,16 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.utils import \
     extract_unique_param_based_dataframes_top_k, \
     duplicate_input_rows_for_n_outputs
 
-#todo dev docu: explain where they live
+
 class FillMaskPredictionTask(PredictionTask):
     def __init__(
             self,
             desired_fields_in_prediction: list[str],
-            new_columns: list[str],
     ):
         super().__init__()
-        self.last_created_pipeline = None #todo make some sort of class to hold this stuf?
+        self.last_created_pipeline = None
         self.task_type = "fill-mask"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-        self.new_columns = new_columns
         self._mask_token = "<mask>"
 
     def extract_unique_param_based_dataframes(
@@ -55,7 +53,8 @@ class FillMaskPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
+            work_with_spans: bool = False
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows

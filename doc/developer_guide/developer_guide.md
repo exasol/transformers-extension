@@ -119,8 +119,8 @@ They should be named in the schema of "Ai<Task>UDF".
 - manages the creation of model predictions and the preparation of results.
 
 #### 4.5 Implement Task Logic
-The >Your>PredictionTask class, in which we implement the logic of the desired task,
-must be defined under the `exasol_transformers_extension/udfs/models/` directory. This
+The <Your>PredictionTask class, in which we implement the logic of the desired task,
+must be defined under the `exasol_transformers_extension/udfs/models/prediction_tasks` directory. This
 class should extend the _PredictionTask_ class. 
 The _PredictionTask_ is a Protocol for ensuring the following methods are implemented
 and have correct input and output types:
@@ -139,7 +139,6 @@ pandas dataframe.
 prediction, such that each input row has a row for each prediction result.
 
 Moreover, Some parameters can be set to manage the (model)output:
-* new output columns expected from this task should be specified in the `new_columns` list.
 * we use `desired_fields_in_prediction` to filter the output of the model.
 
 ## Tests
