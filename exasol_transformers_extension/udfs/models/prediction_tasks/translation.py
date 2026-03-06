@@ -4,21 +4,23 @@ from typing import (
 )
 
 import pandas as pd
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
+
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 from exasol_transformers_extension.utils import dataframe_operations
 
 
 class TranslatePredictionTask(PredictionTask):
     def __init__(
-            self,
-            desired_fields_in_prediction: list[str],
+        self,
+        desired_fields_in_prediction: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
         self.task_type = "translation"
         self._desired_fields_in_prediction = desired_fields_in_prediction
         self._translation_prefix = "translate {src_lang} to {target_lang}: "
-
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -68,8 +70,10 @@ class TranslatePredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input row

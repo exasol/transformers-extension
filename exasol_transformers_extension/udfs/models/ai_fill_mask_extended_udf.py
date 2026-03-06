@@ -1,8 +1,9 @@
-
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.fill_mask import FillMaskPredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.fill_mask import (
+    FillMaskPredictionTask,
+)
 
 
 class AiFillMaskExtendedUDF(BaseModelUDF):
@@ -18,7 +19,11 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
         ),
     ):
         super().__init__(
-            exa, batch_size, pipeline, base_model, tokenizer,
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
             prediction_task=prediction_task,
-            new_columns=["filled_text", "score", "rank", "error_message"]
+            new_columns=["filled_text", "score", "rank", "error_message"],
         )

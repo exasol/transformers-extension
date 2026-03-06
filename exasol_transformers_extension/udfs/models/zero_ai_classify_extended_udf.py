@@ -1,8 +1,10 @@
-
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.zero_shot import ZeroShotPredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.zero_shot import (
+    ZeroShotPredictionTask,
+)
+
 
 class AiClassifyExtendedUDF(BaseModelUDF):
     """
@@ -35,4 +37,3 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             new_columns=["label", "score", "rank", "error_message"],
             work_with_spans=work_with_spans,
         )
-

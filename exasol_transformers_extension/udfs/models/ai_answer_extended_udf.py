@@ -1,8 +1,9 @@
-
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.question_answering import AnswerPredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.question_answering import (
+    AnswerPredictionTask,
+)
 
 
 class AiAnswerExtendedUDF(BaseModelUDF):
@@ -18,6 +19,11 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         ),
     ):
         super().__init__(
-            exa, batch_size, pipeline, base_model, tokenizer, prediction_task,
-            new_columns=["answer", "score", "rank", "error_message"]
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
+            prediction_task,
+            new_columns=["answer", "score", "rank", "error_message"],
         )

@@ -4,19 +4,22 @@ from typing import (
 )
 
 import pandas as pd
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
+
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 from exasol_transformers_extension.utils import dataframe_operations
+
 
 class TextGenPredictionTask(PredictionTask):
     def __init__(
-            self,
-            desired_fields_in_prediction: list[str],
+        self,
+        desired_fields_in_prediction: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
-        self.task_type="text-generation"
+        self.task_type = "text-generation"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -41,9 +44,7 @@ class TextGenPredictionTask(PredictionTask):
 
             yield param_based_model_df
 
-    def execute_prediction(
-            self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -66,8 +67,10 @@ class TextGenPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows

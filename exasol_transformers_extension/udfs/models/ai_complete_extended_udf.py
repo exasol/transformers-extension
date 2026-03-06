@@ -1,8 +1,9 @@
-
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.text_generation import TextGenPredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.text_generation import (
+    TextGenPredictionTask,
+)
 
 
 class AiCompleteExtendedUDF(BaseModelUDF):
@@ -14,8 +15,8 @@ class AiCompleteExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForCausalLM,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TextGenPredictionTask(
-                desired_fields_in_prediction=[],
-            ),
+            desired_fields_in_prediction=[],
+        ),
     ):
         super().__init__(
             exa,
@@ -24,6 +25,5 @@ class AiCompleteExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=["generated_text", "error_message"]
+            new_columns=["generated_text", "error_message"],
         )
-

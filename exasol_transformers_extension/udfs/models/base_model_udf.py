@@ -10,7 +10,9 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.deployment.constants import constants
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -51,10 +53,9 @@ class BaseModelUDF(ABC):
         pipeline: transformers.Pipeline,
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
-        prediction_task: PredictionTask,#todo add docstr
+        prediction_task: PredictionTask,  # todo add docstr
         new_columns: list[str],
         work_with_spans: bool = False,
-
     ):
         self.exa = exa
         self.batch_size = batch_size
@@ -139,9 +140,9 @@ class BaseModelUDF(ABC):
         :return: List of prediction results
         """
         result_df_list = []
-        for param_based_model_df in self.prediction_task.extract_unique_param_based_dataframes(
-            model_df
-        ):
+        for (
+            param_based_model_df
+        ) in self.prediction_task.extract_unique_param_based_dataframes(model_df):
             try:
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
@@ -165,8 +166,7 @@ class BaseModelUDF(ABC):
 
     @staticmethod
     def extract_unique_model_dataframes_from_batch(
-            self,
-            batch_df: pd.DataFrame
+        self, batch_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
@@ -228,7 +228,9 @@ class BaseModelUDF(ABC):
             self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
             try:
-                self.prediction_task.last_created_pipeline = self.model_loader.load_models()
+                self.prediction_task.last_created_pipeline = (
+                    self.model_loader.load_models()
+                )
             except Exception as exc:
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
@@ -253,8 +255,12 @@ class BaseModelUDF(ABC):
         """
 
         predictions = self.prediction_task.execute_prediction(model_df)
-        pred_df_list = self.prediction_task.create_dataframes_from_predictions(predictions)
-        pred_df = self.prediction_task.append_predictions_to_input_dataframe(model_df, pred_df_list, self.work_with_spans)
+        pred_df_list = self.prediction_task.create_dataframes_from_predictions(
+            predictions
+        )
+        pred_df = self.prediction_task.append_predictions_to_input_dataframe(
+            model_df, pred_df_list, self.work_with_spans
+        )
         pred_df["error_message"] = None
         return pred_df
 
@@ -281,8 +287,8 @@ class BaseModelUDF(ABC):
             cols.append("error_message")
             model_df = model_df[cols]
         model_df["error_message"] = stack_trace
-        with pd.option_context('display.max_rows', None, 'display.max_columns',
-                               None):  # more options can be specified also
+        with pd.option_context(
+            "display.max_rows", None, "display.max_columns", None
+        ):  # more options can be specified also
             print(model_df)
         return model_df
-

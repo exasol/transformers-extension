@@ -1,8 +1,9 @@
-
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.token_classification import TokenClassifyPredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.token_classification import (
+    TokenClassifyPredictionTask,
+)
 
 
 class AiExtractExtendedUDF(BaseModelUDF):
@@ -20,8 +21,8 @@ class AiExtractExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForTokenClassification,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TokenClassifyPredictionTask(
-                desired_fields_in_prediction=["start", "end", "word", "entity", "score"]
-            ),
+            desired_fields_in_prediction=["start", "end", "word", "entity", "score"]
+        ),
         work_with_spans: bool = False,
     ):
         super().__init__(
@@ -31,6 +32,13 @@ class AiExtractExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=["start_pos", "end_pos", "word", "entity", "score", "error_message"],
+            new_columns=[
+                "start_pos",
+                "end_pos",
+                "word",
+                "entity",
+                "score",
+                "error_message",
+            ],
             work_with_spans=work_with_spans,
         )

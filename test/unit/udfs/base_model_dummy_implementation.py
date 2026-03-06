@@ -12,19 +12,17 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 
 
 class DummyPredictionTask(PredictionTask):
-    def __init__(
-            self,
-            desired_fields_in_prediction: list[str]
-    ):
+    def __init__(self, desired_fields_in_prediction: list[str]):
         super().__init__()
         self.last_created_pipeline = None
         self.task_type = "dummy-task"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -39,8 +37,10 @@ class DummyPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
 
         model_df = model_df.reset_index(drop=True)
@@ -68,6 +68,7 @@ class DummyPredictionTask(PredictionTask):
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         model_df = model_df.drop(columns=["test_span_column_drop"])
         return model_df
+
 
 class DummyImplementationUDF(BaseModelUDF):
     """A dummy implementation for the  BaseModelUDF. used for testing BaseModelUDF functionality.

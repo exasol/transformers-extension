@@ -5,22 +5,25 @@ from typing import (
 )
 
 import pandas as pd
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
-from exasol_transformers_extension.udfs.models.prediction_tasks.utils import \
-    extract_unique_param_based_dataframes_top_k, \
-    duplicate_input_rows_for_n_outputs
+
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
+from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    duplicate_input_rows_for_n_outputs,
+    extract_unique_param_based_dataframes_top_k,
+)
 
 
 class AnswerPredictionTask(PredictionTask):
     def __init__(
-            self,
-            desired_fields_in_prediction: list[str],
+        self,
+        desired_fields_in_prediction: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
         self.task_type = "question-answering"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -55,8 +58,10 @@ class AnswerPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -71,7 +76,6 @@ class AnswerPredictionTask(PredictionTask):
         # Concat predictions and model_df
         model_df = pd.concat([model_df, pred_df], axis=1)
         return model_df
-
 
     def create_dataframes_from_predictions(
         self, predictions: list[Union[dict[str, Any], list[dict[str, Any]]]]

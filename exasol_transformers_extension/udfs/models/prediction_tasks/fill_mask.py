@@ -4,16 +4,20 @@ from typing import (
 )
 
 import pandas as pd
-from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import PredictionTask
-from exasol_transformers_extension.udfs.models.prediction_tasks.utils import \
-    extract_unique_param_based_dataframes_top_k, \
-    duplicate_input_rows_for_n_outputs
+
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
+from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    duplicate_input_rows_for_n_outputs,
+    extract_unique_param_based_dataframes_top_k,
+)
 
 
 class FillMaskPredictionTask(PredictionTask):
     def __init__(
-            self,
-            desired_fields_in_prediction: list[str],
+        self,
+        desired_fields_in_prediction: list[str],
     ):
         super().__init__()
         self.last_created_pipeline = None
@@ -26,9 +30,7 @@ class FillMaskPredictionTask(PredictionTask):
     ) -> Iterator[pd.DataFrame]:
         return extract_unique_param_based_dataframes_top_k(model_df)
 
-    def execute_prediction(
-            self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and filled texts
@@ -53,8 +55,10 @@ class FillMaskPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows

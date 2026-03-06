@@ -1,13 +1,12 @@
-
 from abc import (
     abstractmethod,
 )
-
 from collections.abc import Iterator
 from typing import (
     Any,
-    Protocol
+    Protocol,
 )
+
 import pandas as pd
 
 
@@ -33,17 +32,15 @@ class PredictionTask(Protocol):
         pass
 
     @abstractmethod
-    def execute_prediction(
-            self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         pass
 
     @abstractmethod
     def append_predictions_to_input_dataframe(
-            self,
-            model_df: pd.DataFrame,
-            pred_df_list: list[pd.DataFrame],
-            work_with_spans: bool = False
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         pass
 
