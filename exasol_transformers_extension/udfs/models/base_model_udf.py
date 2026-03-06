@@ -106,7 +106,7 @@ class BaseModelUDF(ABC):
         result_df_list = []
 
         unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(
-            self, batch_df
+            batch_df
         )
         for model_df in unique_model_dataframes:
             if "error_message" in model_df:
