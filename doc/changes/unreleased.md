@@ -27,8 +27,6 @@ T.B.D
 | TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
 | TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
 
-## Features
-
 ## Security
 
 * Updated urllib3 (2.5.0 -> 2.6.3)
@@ -43,7 +41,7 @@ T.B.D
 ## Documentation
 
 * #204: Split the user_guide into multiple files
-* #253, #341, #342: Fixed links and improveed parameter description in user guide
+* #253, #341, #342: Fixed links and improved parameter description in user guide
 
 ## Refactorings
 
@@ -51,8 +49,6 @@ T.B.D
 * #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
 * #350: Renamed all prediction UDFs.
 * #358: Refactored deployment configuration
-<<<<<<< refactoring/348-improve-max-new-token-in-unit-tests
 * #348: Improved mock model-output for testing max_new_tokens handling in translation unit tests
-=======
 * #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
->>>>>>> main
+* #370: Pulled new class PredictionTask out of BaseModelUdf
