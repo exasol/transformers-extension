@@ -104,7 +104,7 @@ we know which template belongs to which script during deployment.
 The UDF class, is a class which combines settings for transformers 
 with the udf input and a PredictionTask. The PredictionTask hold the 
 logic for a specific NLP-Task. Multiple UDF classes can use the same PredictionTask. 
-If none of the existing PredictionTask-implementation suit your task, you can write 
+If none of the existing PredictionTask implementations suit your task, you can write 
 your own. More information can be found in Section 4.5.
 
 The UDF class must be defined under the `exasol_transformers_extension/udfs/models/` directory. This

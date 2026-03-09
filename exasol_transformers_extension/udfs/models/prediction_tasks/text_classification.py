@@ -15,7 +15,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
     duplicate_input_rows_for_n_outputs,
-    select_result_on_return_rank,
+    select_result_on_return_rank, create_rank_from_score,
 )
 
 
@@ -70,9 +70,7 @@ def _create_dataframes_from_predictions(
     results_df_list = []
     for result in predictions:
         result_df = pd.DataFrame(result)
-        result_df["rank"] = (
-            result_df["score"].rank(ascending=False, method="dense").astype(int)
-        )
+        result_df = create_rank_from_score(result_df)
         results_df_list.append(result_df)
 
     return results_df_list

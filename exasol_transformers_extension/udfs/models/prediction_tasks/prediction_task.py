@@ -24,7 +24,6 @@ class PredictionTask(Protocol):
         - append_predictions_to_input_dataframe
     """
 
-    @abstractmethod
     def create_dataframes_from_predictions(
         self, predictions: list[Any]
     ) -> list[pd.DataFrame]:
@@ -34,7 +33,6 @@ class PredictionTask(Protocol):
         """
         pass
 
-    @abstractmethod
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
@@ -47,7 +45,6 @@ class PredictionTask(Protocol):
         """
         pass
 
-    @abstractmethod
     def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
         execute_prediction` : Performs prediction on a given text list using
@@ -55,7 +52,6 @@ class PredictionTask(Protocol):
         """
         pass
 
-    @abstractmethod
     def append_predictions_to_input_dataframe(
         self,
         model_df: pd.DataFrame,

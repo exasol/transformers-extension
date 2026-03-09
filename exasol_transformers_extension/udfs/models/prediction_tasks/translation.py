@@ -90,6 +90,7 @@ class TranslatePredictionTask(PredictionTask):
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
         :param work_with_spans: Bool used to determine if we are in a span udf or not
+        (not used since we don't have span variant of this udf)
 
         :return: Prepared dataframe including input data and predictions
         """
