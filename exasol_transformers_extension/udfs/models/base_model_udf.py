@@ -53,7 +53,7 @@ class BaseModelUDF(ABC):
         pipeline: transformers.Pipeline,
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
-        prediction_task: PredictionTask,  # todo add docstr
+        prediction_task: PredictionTask,
         new_columns: list[str],
         work_with_spans: bool = False,
     ):

@@ -6,7 +6,6 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.text_classificat
 )
 
 
-# todo update docu
 class AiCustomClassifyUDF(BaseModelUDF):
     def __init__(
         self,
