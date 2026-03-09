@@ -14,8 +14,9 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    create_rank_from_score,
     duplicate_input_rows_for_n_outputs,
-    select_result_on_return_rank, create_rank_from_score,
+    select_result_on_return_rank,
 )
 
 
