@@ -100,11 +100,16 @@ The added UDF template and defined UDF caller should be added to the dictionary
 in the `exasol_transformers_extension/deployment/constants.py` script. Thus,
 we know which template belongs to which script during deployment.
 
-### 4. Implement Task Logic in UDF Script
-The UDF class, in which we implement the logic of the desired task, must be
-defined under the `exasol_transformers_extension/udfs/models/` directory. This
-class should extend the _BaseModelUDF_ class. Moreover, new output columns
-expected from this task should be specified in the `new_columns` list.
+### 4. UDF Script
+The UDF class, is a class which combines settings for transformers 
+with the udf input and a PredictionTask. The PredictionTask hold the 
+logic for a specific NLP-Task. Multiple UDF classes can use the same PredictionTask. 
+If none of the existing PredictionTask implementations suit your task, you can write 
+your own. More information can be found in Section 4.5.
+
+The UDF class must be defined under the `exasol_transformers_extension/udfs/models/` directory. This
+class should extend the _BaseModelUDF_ class.
+They should be named in the schema of "Ai<Task>UDF".
 
 `BaseModelUDF` contains common operations for all task UDFs. For example:
 - accesses data in batches with predefined batch size
@@ -113,8 +118,13 @@ expected from this task should be specified in the `new_columns` list.
 - creates model pipeline through transformer api
 - manages the creation of model predictions and the preparation of results.
 
+#### 4.5 Implement Task Logic
+The <Your>PredictionTask class, in which we implement the logic of the desired task,
+must be defined under the `exasol_transformers_extension/udfs/models/prediction_tasks` directory. This
+class should extend the _PredictionTask_ class. 
+The _PredictionTask_ is a Protocol for ensuring the following methods are implemented
+and have correct input and output types:
 
-Users should implement the following methods in the UDF class
 that extends the `BaseModel UDF`:
  - `extract_unique_param_based_dataframes` : Even if the data in a given
 dataframe all have the same model, there might be differences within the given
@@ -128,7 +138,8 @@ pandas dataframe.
 - `append_predictions_to_input_dataframe`: Reformats the dataframe used in
 prediction, such that each input row has a row for each prediction result.
 
-
+Moreover, Some parameters can be set to manage the (model)output:
+* we use `desired_fields_in_prediction` to filter the output of the model.
 
 ## Tests
 

@@ -1,8 +1,8 @@
 from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
-    AiClassifyExtendeUDF,
+    AiClassifyExtendedUDF,
 )
 
-udf = AiClassifyExtendeUDF(exa)
+udf = AiClassifyExtendedUDF(exa)
 
 
 def run(ctx):

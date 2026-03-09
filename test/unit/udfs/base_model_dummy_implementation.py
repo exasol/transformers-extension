@@ -12,32 +12,17 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 
 
-class DummyImplementationUDF(BaseModelUDF):
-    """A dummy implementation for the  BaseModelUDF. used for testing BaseModelUDF functionality.
-    implements necessary functions as simply as possible"""
-
-    def __init__(
-        self,
-        exa,
-        batch_size=100,
-        pipeline=transformers.pipeline,
-        base_model=transformers.AutoModel,
-        tokenizer=transformers.AutoTokenizer,
-        work_with_spans: bool = False,
-    ):
-        super().__init__(
-            exa,
-            batch_size,
-            pipeline,
-            base_model,
-            tokenizer,
-            task_type="dummy_task",
-            work_with_spans=work_with_spans,
-        )
-        self._desired_fields_in_prediction = ["answer", "score"]
-        self.new_columns = ["answer", "score", "error_message"]
+class DummyPredictionTask(PredictionTask):
+    def __init__(self, desired_fields_in_prediction: list[str]):
+        super().__init__()
+        self.last_created_pipeline = None
+        self.task_type = "dummy-task"
+        self._desired_fields_in_prediction = desired_fields_in_prediction
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -52,14 +37,17 @@ class DummyImplementationUDF(BaseModelUDF):
         return results
 
     def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+        work_with_spans: bool = False,
     ) -> pd.DataFrame:
 
         model_df = model_df.reset_index(drop=True)
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
 
-        if self.work_with_spans:
+        if work_with_spans:
             model_df = self.create_new_span_columns(model_df)
             model_df = self.drop_old_data_for_span_execution(model_df)
         return model_df
@@ -80,3 +68,31 @@ class DummyImplementationUDF(BaseModelUDF):
     def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
         model_df = model_df.drop(columns=["test_span_column_drop"])
         return model_df
+
+
+class DummyImplementationUDF(BaseModelUDF):
+    """A dummy implementation for the  BaseModelUDF. used for testing BaseModelUDF functionality.
+    implements necessary functions as simply as possible"""
+
+    def __init__(
+        self,
+        exa,
+        batch_size=100,
+        pipeline=transformers.pipeline,
+        base_model=transformers.AutoModel,
+        tokenizer=transformers.AutoTokenizer,
+        prediction_task=DummyPredictionTask(
+            desired_fields_in_prediction=["answer", "score"]
+        ),
+        work_with_spans: bool = False,
+    ):
+        super().__init__(
+            exa,
+            batch_size,
+            pipeline,
+            base_model,
+            tokenizer,
+            prediction_task=prediction_task,
+            new_columns=["answer", "score", "error_message"],
+            work_with_spans=work_with_spans,
+        )

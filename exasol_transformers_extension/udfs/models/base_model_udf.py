@@ -1,13 +1,8 @@
 import traceback
 from abc import (
     ABC,
-    abstractmethod,
 )
 from collections.abc import Iterator
-from typing import (
-    Any,
-    List,
-)
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 import numpy as np
@@ -15,6 +10,9 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.deployment.constants import constants
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -38,12 +36,6 @@ class BaseModelUDF(ABC):
         - creates model pipeline through transformer api
         - manages the creation of predictions and the preparation of results.
 
-    Additionally, the following
-    methods should be implemented specifically for each UDF class:
-        - create_dataframes_from_predictions
-        - extract_unique_param_based_dataframes
-        - execute_prediction
-        - append_predictions_to_input_dataframe
 
     If your UDF changes output format depending on work_with_spans,
     consider also implementing:
@@ -61,7 +53,8 @@ class BaseModelUDF(ABC):
         pipeline: transformers.Pipeline,
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
-        task_type: str,
+        prediction_task: PredictionTask,
+        new_columns: list[str],
         work_with_spans: bool = False,
     ):
         self.exa = exa
@@ -69,12 +62,11 @@ class BaseModelUDF(ABC):
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
-        self.task_type = task_type
         self.device = None
         self.model_loader = None
-        self.last_created_pipeline = None
-        self.new_columns = []
+        self.new_columns = new_columns
         self.work_with_spans = work_with_spans
+        self.prediction_task = prediction_task
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
@@ -99,7 +91,7 @@ class BaseModelUDF(ABC):
             pipeline_factory=self.pipeline,
             base_model_factory=self.base_model,
             tokenizer_factory=self.tokenizer,
-            task_type=self.task_type,
+            task_type=self.prediction_task.task_type,
             device=self.device,
         )
 
@@ -114,7 +106,7 @@ class BaseModelUDF(ABC):
         result_df_list = []
 
         unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(
-            self, batch_df
+            batch_df
         )
         for model_df in unique_model_dataframes:
             if "error_message" in model_df:
@@ -122,7 +114,7 @@ class BaseModelUDF(ABC):
                 continue
             try:
                 self.check_cache(model_df)
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 result_with_error_df = self.get_result_with_error(model_df, stack_trace)
                 result_df_list.append(result_with_error_df)
@@ -148,13 +140,13 @@ class BaseModelUDF(ABC):
         :return: List of prediction results
         """
         result_df_list = []
-        for param_based_model_df in self.extract_unique_param_based_dataframes(
-            model_df
-        ):
+        for (
+            param_based_model_df
+        ) in self.prediction_task.extract_unique_param_based_dataframes(model_df):
             try:
                 result_df = self.get_prediction(param_based_model_df)
                 result_df_list.append(result_df)
-            except Exception as exc:
+            except Exception:
                 stack_trace = traceback.format_exc()
                 result_with_error_df = self.get_result_with_error(
                     param_based_model_df, stack_trace
@@ -172,7 +164,6 @@ class BaseModelUDF(ABC):
             )
             raise ValueError(error_message)
 
-    @staticmethod
     def extract_unique_model_dataframes_from_batch(
         self, batch_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
@@ -221,7 +212,7 @@ class BaseModelUDF(ABC):
         bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
         current_model_specification = BucketFSModelSpecification(
-            model_name, self.task_type, bucketfs_conn, sub_dir
+            model_name, self.prediction_task.task_type, bucketfs_conn, sub_dir
         )
 
         if self.model_loader.current_model_specification != current_model_specification:
@@ -236,8 +227,10 @@ class BaseModelUDF(ABC):
             self.model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
             try:
-                self.last_created_pipeline = self.model_loader.load_models()
-            except Exception as exc:
+                self.prediction_task.last_created_pipeline = (
+                    self.model_loader.load_models()
+                )
+            except Exception:
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
                 self.model_loader.model_load_error = stack_trace
@@ -260,9 +253,13 @@ class BaseModelUDF(ABC):
         prediction results
         """
 
-        predictions = self.execute_prediction(model_df)
-        pred_df_list = self.create_dataframes_from_predictions(predictions)
-        pred_df = self.append_predictions_to_input_dataframe(model_df, pred_df_list)
+        predictions = self.prediction_task.execute_prediction(model_df)
+        pred_df_list = self.prediction_task.create_dataframes_from_predictions(
+            predictions
+        )
+        pred_df = self.prediction_task.append_predictions_to_input_dataframe(
+            model_df, pred_df_list, self.work_with_spans
+        )
         pred_df["error_message"] = None
         return pred_df
 
@@ -276,44 +273,21 @@ class BaseModelUDF(ABC):
         :param model_df: The dataframe that received an error during prediction
         :param stack_trace: String of the stack traceback
         """
+        print(self.new_columns)
         for col in self.new_columns:
             model_df[col] = None
         if self.work_with_spans:
             # we need to change the df format to match the output columns
-            model_df = self.create_new_span_columns(model_df)
-            model_df = self.drop_old_data_for_span_execution(model_df)
+            model_df = self.prediction_task.create_new_span_columns(model_df)
+            model_df = self.prediction_task.drop_old_data_for_span_execution(model_df)
             # move error message column to the end of the df
             cols = model_df.columns.tolist()
             cols.remove("error_message")
             cols.append("error_message")
             model_df = model_df[cols]
         model_df["error_message"] = stack_trace
-        return model_df
-
-    @abstractmethod
-    def create_dataframes_from_predictions(
-        self, predictions: list[Any]
-    ) -> list[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def extract_unique_param_based_dataframes(
-        self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
-        pass
-
-    @abstractmethod
-    def append_predictions_to_input_dataframe(
-        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
-    ) -> pd.DataFrame:
-        pass
-
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        return model_df
-
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
+        with pd.option_context(
+            "display.max_rows", None, "display.max_columns", None
+        ):  # more options can be specified also
+            print(model_df)
         return model_df

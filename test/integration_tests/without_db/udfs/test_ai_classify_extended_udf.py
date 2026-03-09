@@ -21,7 +21,7 @@ import pytest
 import torch
 
 from exasol_transformers_extension.udfs.models.zero_ai_classify_extended_udf import (
-    AiClassifyExtendeUDF,
+    AiClassifyExtendedUDF,
 )
 
 
@@ -46,7 +46,7 @@ def run_test(sample_data, columns, bucketfs_conn_name, bucketfs_connection, batc
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiClassifyExtendeUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiClassifyExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
     result_df = ctx.get_emitted()[0][0]
