@@ -40,7 +40,7 @@ class ListModelsUDF:
             ctx.emit(*model_info)
 
     @staticmethod
-    def _check_if_model_config(self, filepath: Path) -> bool:
+    def _check_if_model_config(filepath: Path) -> bool:
         try:
             AutoConfig.from_pretrained(filepath)
             return True
