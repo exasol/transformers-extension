@@ -63,4 +63,3 @@ def create_rank_from_score(result_df: pd.DataFrame) -> pd.DataFrame:
         result_df["score"].rank(ascending=False, method="dense").astype(int)
     )
     return result_df
-
