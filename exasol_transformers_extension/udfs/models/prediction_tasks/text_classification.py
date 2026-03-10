@@ -121,8 +121,7 @@ class EntailmentPredictionTask(PredictionTask):
     def append_predictions_to_input_dataframe(
         self,
         model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         return _append_predictions_to_input_dataframe(model_df, pred_df_list)
 
@@ -169,8 +168,7 @@ class TextClassifyPredictionTask(PredictionTask):
     def append_predictions_to_input_dataframe(
         self,
         model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         return _append_predictions_to_input_dataframe(model_df, pred_df_list)
 

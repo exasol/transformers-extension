@@ -78,8 +78,41 @@ class BaseModelUDF(ABC):
             batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
-            predictions_df = self.get_predictions_from_batch(batch_df)
-            ctx.emit(predictions_df)
+            transformations = ["Add-Default-Transformation",
+                               "UniqueModelDataframeTransformation",
+                               # todo returns multiple dfs. make first ans special transformation?
+                               #  or have all transformations return "multiple"?
+                               "PredictionTask-Transformation",
+                               "Add-Spans_Transformation", #both span functions in this
+                               "Remove-Default-Transformation"]
+            in_dfs = [batch_df]
+            for transformation in transformations:
+                #todo append error messages instead of overwrite?
+                transform_result_dfs = []
+                for in_df in in_dfs:
+                    try:
+                        if "error_message" in in_df:
+                            transform_result_dfs.append(in_df)  #todo make this not teccessary even after UniqueModelDataframeTransformation
+                            continue
+                        transformation.check_input_format(in_df)
+                        self.check_cache(in_df) #todo this we now do a lot
+
+                        transform_result_dfs.append(transformation.transform(in_df))
+                    except Exception:
+                        #stack_trace = traceback.format_exc()
+                        #result_with_error_df = self.get_result_with_error(in_df, stack_trace)
+                        #result_df_list.append(result_with_error_df)
+                        #call get_results_with_error?
+                        in_df["error_message"] = message
+                        in_df = transformation.ensure_output_format(in_df)
+                        transform_result_dfs.append(in_df)
+
+                    finally:
+                        in_dfs = transform_result_dfs
+
+            result_df = pd.concat(in_dfs)
+            result_df = result_df.replace(np.nan, None)
+            ctx.emit(result_df)
 
         self.model_loader.clear_device_memory()
 
@@ -94,111 +127,6 @@ class BaseModelUDF(ABC):
             task_type=self.prediction_task.task_type,
             device=self.device,
         )
-
-    def get_predictions_from_batch(self, batch_df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Perform separate predictions for each model in the dataframe.
-
-        :param batch_df: A batch of dataframe retrieved from context
-
-        :return: Prediction results of the corresponding batched dataframe
-        """
-        result_df_list = []
-
-        unique_model_dataframes = self.extract_unique_model_dataframes_from_batch(
-            batch_df
-        )
-        for model_df in unique_model_dataframes:
-            if "error_message" in model_df:
-                result_df_list.append(model_df)
-                continue
-            try:
-                self.check_cache(model_df)
-            except Exception:
-                stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(model_df, stack_trace)
-                result_df_list.append(result_with_error_df)
-            else:
-                current_results_df_list = (
-                    self.get_prediction_from_unique_param_based_dataframes(model_df)
-                )
-                result_df_list.extend(current_results_df_list)
-
-        result_df = pd.concat(result_df_list)
-        return result_df.replace(np.nan, None)
-
-    def get_prediction_from_unique_param_based_dataframes(
-        self, model_df
-    ) -> list[pd.DataFrame]:
-        """
-        Performs separate predictions for data with the same parameters
-        in the same model dataframe.
-
-        :param model_df: Dataframe containing data that has the same model
-        but can have different parameters.
-
-        :return: List of prediction results
-        """
-        result_df_list = []
-        for (
-            param_based_model_df
-        ) in self.prediction_task.extract_unique_param_based_dataframes(model_df):
-            try:
-                result_df = self.get_prediction(param_based_model_df)
-                result_df_list.append(result_df)
-            except Exception:
-                stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(
-                    param_based_model_df, stack_trace
-                )
-                result_df_list.append(result_with_error_df)
-        return result_df_list
-
-    @staticmethod
-    def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
-        if not (model_name and bucketfs_conn and sub_dir):
-            error_message = (
-                f"For each model model_name, bucketfs_conn and sub_dir need to be "
-                f"provided. "
-                f"Found model_name = {model_name}, bucketfs_conn = {bucketfs_conn}, sub_dir = {sub_dir}."
-            )
-            raise ValueError(error_message)
-
-    def extract_unique_model_dataframes_from_batch(
-        self, batch_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
-        """
-        Extract unique model dataframes with the same model_name, bucketfs_conn,
-        and sub_dir from the dataframe.
-
-        :param batch_df: A batch of dataframe retrieved from context
-
-        :return: Unique model dataframe having same model_name,
-        bucketfs_connection, and sub_dir
-        """
-
-        unique_values = dataframe_operations.get_unique_values(
-            batch_df, constants.ordered_columns, sort=True
-        )
-
-        for model_name, bucketfs_conn, sub_dir in unique_values:
-            try:
-                self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
-            except ValueError:
-                stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(batch_df, stack_trace)
-                yield result_with_error_df
-                return
-
-            selections = (  # todo replace with specification in future?
-                (batch_df["model_name"] == model_name)
-                & (batch_df["bucketfs_conn"] == bucketfs_conn)
-                & (batch_df["sub_dir"] == sub_dir)
-            )
-
-            model_df = batch_df[selections]
-
-            yield model_df
 
     def check_cache(self, model_df: pd.DataFrame) -> None:
         """
@@ -242,26 +170,6 @@ class BaseModelUDF(ABC):
                 f"{self.model_loader.model_load_error}"
             )
 
-    def get_prediction(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Perform prediction of the given model and preparation of the prediction
-        results according to the format that the UDF can emit.
-
-        :param model_df: The dataframe to be predicted
-
-        :return: The dataframe where the model_df is formatted with the
-        prediction results
-        """
-
-        predictions = self.prediction_task.execute_prediction(model_df)
-        pred_df_list = self.prediction_task.create_dataframes_from_predictions(
-            predictions
-        )
-        pred_df = self.prediction_task.append_predictions_to_input_dataframe(
-            model_df, pred_df_list, self.work_with_spans
-        )
-        pred_df["error_message"] = None
-        return pred_df
 
     def get_result_with_error(
         self, model_df: pd.DataFrame, stack_trace: str
@@ -278,7 +186,7 @@ class BaseModelUDF(ABC):
             model_df[col] = None
         if self.work_with_spans:
             # we need to change the df format to match the output columns
-            model_df = self.prediction_task.create_new_span_columns(model_df)
+            model_df = self.prediction_task.create_new_span_columns(model_df)#todo
             model_df = self.prediction_task.drop_old_data_for_span_execution(model_df)
             # move error message column to the end of the df
             cols = model_df.columns.tolist()

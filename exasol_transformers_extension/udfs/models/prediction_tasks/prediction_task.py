@@ -55,8 +55,7 @@ class PredictionTask(Protocol):
     def append_predictions_to_input_dataframe(
         self,
         model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         append_predictions_to_input_dataframe`: Reformats the dataframe used in
@@ -64,8 +63,3 @@ class PredictionTask(Protocol):
         """
         pass
 
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        return model_df
-
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        return model_df

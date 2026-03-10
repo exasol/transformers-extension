@@ -78,7 +78,6 @@ class TextGenPredictionTask(PredictionTask):
         self,
         model_df: pd.DataFrame,
         pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -86,8 +85,6 @@ class TextGenPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
-        (not used since we don't have span variant of this udf)
 
         :return: Prepared dataframe including input data and predictions
         """
