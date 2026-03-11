@@ -1,4 +1,6 @@
 from typing import Protocol
+from collections.abc import Iterator
+
 
 from pandas import DataFrame
 
@@ -16,14 +18,14 @@ class Transformation(Protocol):
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
-    def transform(self, batch_df:DataFrame) -> DataFrame:
+    def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:
         """
         transformation logic
         may throw errors in case of prediction problems
         """
         pass
 
-    def check_input_format(self, batch_df:DataFrame):
+    def check_input_format(self, df_columns:list[str]) -> None:
         """
         checks if all needed columns for
         transform are present, throws error otherwise
@@ -35,3 +37,4 @@ class Transformation(Protocol):
         ensure all promised output columns are present
         """
         pass
+

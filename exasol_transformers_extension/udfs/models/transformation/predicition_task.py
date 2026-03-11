@@ -1,5 +1,5 @@
 import traceback
-
+from collections.abc import Iterator
 import pandas as pd
 from pandas import DataFrame
 
@@ -10,11 +10,12 @@ from exasol_transformers_extension.udfs.models.transformation.transformation imp
 class PredictionTaskTransformation(Transformation):
     def __init__(
             self,
-            expected_input_columns: list[str],
-            promised_output_columns: list[str],
-            new_columns: list[str],
-            removed_columns: list[str],
-            prediction_task: PredictionTask):
+            prediction_task: PredictionTask,
+            expected_input_columns: list[str] = [],
+            promised_output_columns: list[str] = [],
+            new_columns: list[str] = [],
+            removed_columns: list[str] = [],
+):
         self.prediction_task = prediction_task
         super().__init__(expected_input_columns,
                          promised_output_columns,
@@ -45,7 +46,7 @@ class PredictionTaskTransformation(Transformation):
 
     def get_prediction_from_unique_param_based_dataframes(
         self, model_df
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         Performs separate predictions for data with the same parameters
         in the same model dataframe.
@@ -55,23 +56,19 @@ class PredictionTaskTransformation(Transformation):
 
         :return: List of prediction results
         """
-        result_df_list = []
         for (
             param_based_model_df
         ) in self.prediction_task.extract_unique_param_based_dataframes(model_df):
             try:
                 result_df = self.get_prediction(param_based_model_df)
-                result_df_list.append(result_df)
-            except Exception:
-                stack_trace = traceback.format_exc()
-                result_with_error_df = self.get_result_with_error(
-                    param_based_model_df, stack_trace
-                )
-                result_df_list.append(result_with_error_df)
-        return result_df_list
+                yield result_df
+            except Exception as err:
+                stack_trace = traceback.format_exc()#todo this only apends to this part of df
+                result_with_error_df = self.get_result_with_error(param_based_model_df, stack_trace)
+                yield result_with_error_df
 
 
-    def transform(self, batch_df:DataFrame) -> DataFrame:
+    def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:
          return self.get_prediction_from_unique_param_based_dataframes(batch_df)
 
     def check_input_format(self, batch_df:DataFrame):
@@ -79,14 +76,14 @@ class PredictionTaskTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        #todo
+        #todo depends on task type?
         pass
 
     def ensure_output_format(self, batch_df:DataFrame) -> DataFrame:
         """
         ensure all promised output columns are present
         """
-        #todo
+        #todo depends on task type?
         pass
 
 

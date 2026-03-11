@@ -13,6 +13,11 @@ from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
+    UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
+from exasol_transformers_extension.udfs.models.transformation.span_columns import \
+    SpanColumnsTokenClassificationTransformation
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -79,12 +84,11 @@ class BaseModelUDF(ABC):
             if batch_df is None:
                 break
             transformations = ["Add-Default-Transformation",
-                               "UniqueModelDataframeTransformation",
-                               # todo returns multiple dfs. make first ans special transformation?
-                               #  or have all transformations return "multiple"?
-                               "PredictionTask-Transformation",
-                               "Add-Spans_Transformation", #both span functions in this
+
                                "Remove-Default-Transformation"]
+            transformations = [UniqueModelDataframeTransformation(),
+                               PredictionTaskTransformation(prediction_task=self.prediction_task),
+                               SpanColumnsTokenClassificationTransformation()]#as input
             in_dfs = [batch_df]
             for transformation in transformations:
                 #todo append error messages instead of overwrite?
@@ -94,7 +98,7 @@ class BaseModelUDF(ABC):
                         if "error_message" in in_df:
                             transform_result_dfs.append(in_df)  #todo make this not teccessary even after UniqueModelDataframeTransformation
                             continue
-                        transformation.check_input_format(in_df)
+                        transformation.check_input_format(in_df.columns)
                         self.check_cache(in_df) #todo this we now do a lot
 
                         transform_result_dfs.append(transformation.transform(in_df))
