@@ -61,7 +61,6 @@ class BaseModelUDF(ABC):
         tokenizer: ModelFactoryProtocol,
         prediction_task: PredictionTask,
         transformations: list[Transformation],
-        new_columns: list[str]
     ):
         self.exa = exa
         self.batch_size = batch_size
@@ -70,7 +69,6 @@ class BaseModelUDF(ABC):
         self.tokenizer = tokenizer
         self.device = None
         self.model_loader = None
-        self.new_columns = new_columns
         self.prediction_task = prediction_task
         self.transformations = transformations
 
@@ -198,14 +196,12 @@ class BaseModelUDF(ABC):
         :param model_df: The dataframe that received an error during prediction
         :param stack_trace: String of the stack traceback
         """
-        #print(self.new_columns)
-        #for col in self.new_columns:
-        #    model_df[col] = None
-        # move error message column to the end of the df
         cols = model_df.columns.tolist()
-        cols.remove("error_message")
-        cols.append("error_message")
-        model_df = model_df[cols]
+        if "error_message" in cols:
+            # move error message column to the end of the df
+            cols.remove("error_message")
+            cols.append("error_message")
+            model_df = model_df[cols]
         model_df["error_message"] = stack_trace
 
         return model_df

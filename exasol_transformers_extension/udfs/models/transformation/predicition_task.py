@@ -76,19 +76,22 @@ class PredictionTaskTransformation(Transformation):
     def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:
          return self.get_prediction_from_unique_param_based_dataframes(batch_df)
         #todo concat before return?
+
     def check_input_format(self, batch_df:DataFrame):
         """
         checks if all needed columns for
         transform are present, throws error otherwise
         """
         #todo depends on task type?
-        pass
+        return batch_df
 
     def ensure_output_format(self, batch_df:DataFrame) -> DataFrame:
         """
         ensure all promised output columns are present
         """
         #todo depends on task type?
-        pass
+        for col in self.new_columns:
+            batch_df[col] = None
+        return batch_df
 
 

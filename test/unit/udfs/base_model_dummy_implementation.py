@@ -130,7 +130,10 @@ class DummyImplementationUDF(BaseModelUDF):
         work_with_spans: bool = False,
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["answer", "score", "error_message"]
+                           )]
         if work_with_spans:
             transformations.append(SpanColumnsDummyTransformation())
         super().__init__(
@@ -140,6 +143,5 @@ class DummyImplementationUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=["answer", "score", "error_message"]
+            transformations=transformations
         )

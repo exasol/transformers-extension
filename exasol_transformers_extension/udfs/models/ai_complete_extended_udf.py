@@ -32,7 +32,10 @@ class AiCompleteExtendedUDF(BaseModelUDF):
         ),
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["generated_text", "error_message"],
+                           )]
         super().__init__(
             exa,
             batch_size,
@@ -41,5 +44,4 @@ class AiCompleteExtendedUDF(BaseModelUDF):
             tokenizer,
             prediction_task=prediction_task,
             transformations=transformations,
-            new_columns=["generated_text", "error_message"],
         )

@@ -30,7 +30,10 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         prediction_task=TranslatePredictionTask(desired_fields_in_prediction=[]),
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["translation_text", "error_message"],
+                           )]
         super().__init__(
             exa,
             batch_size,
@@ -38,6 +41,5 @@ class AiTranslateExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=["translation_text", "error_message"],
+            transformations=transformations
         )

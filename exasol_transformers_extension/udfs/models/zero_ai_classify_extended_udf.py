@@ -40,7 +40,10 @@ class AiClassifyExtendedUDF(BaseModelUDF):
         work_with_spans: bool = False,
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["label", "score", "rank", "error_message"],
+                           )]
         if work_with_spans:
             transformations.append(SpanColumnsZeroShotTransformation())
 
@@ -51,6 +54,5 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=["label", "score", "rank", "error_message"],
+            transformations=transformations
         )

@@ -31,7 +31,10 @@ class AiAnswerExtendedUDF(BaseModelUDF):
     ):
         transformations = [UniqueModelDataframeTransformation(),
                            PredictionTaskTransformation(
-                               prediction_task=prediction_task)]
+                               prediction_task=prediction_task,
+                               new_columns=["answer", "score", "rank", "error_message"]
+                           )
+                           ]
         super().__init__(
             exa,
             batch_size,
@@ -40,5 +43,4 @@ class AiAnswerExtendedUDF(BaseModelUDF):
             tokenizer,
             prediction_task,
             transformations,
-            new_columns=["answer", "score", "rank", "error_message"],#todo move?
         )

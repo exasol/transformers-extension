@@ -37,7 +37,17 @@ class AiExtractExtendedUDF(BaseModelUDF):
         work_with_spans: bool = False,
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=[
+                                   "start_pos",
+                                   "end_pos",
+                                   "word",
+                                   "entity",
+                                   "score",
+                                   "error_message",
+                               ]
+                           )]
         if work_with_spans:
             transformations.append(SpanColumnsTokenClassificationTransformation())
         super().__init__(
@@ -47,13 +57,5 @@ class AiExtractExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=[
-                "start_pos",
-                "end_pos",
-                "word",
-                "entity",
-                "score",
-                "error_message",
-            ]
+            transformations=transformations
         )

@@ -20,7 +20,10 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
         prediction_task=EntailmentPredictionTask(desired_fields_in_prediction=[]),
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["label", "score", "rank", "error_message"],
+                           )]
         super().__init__(
             exa,
             batch_size,
@@ -28,6 +31,5 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=["label", "score", "rank", "error_message"],
+            transformations=transformations
         )

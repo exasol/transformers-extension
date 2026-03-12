@@ -32,7 +32,10 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
         ),
     ):
         transformations = [UniqueModelDataframeTransformation(),
-                           PredictionTaskTransformation(prediction_task=prediction_task)]
+                           PredictionTaskTransformation(
+                               prediction_task=prediction_task,
+                               new_columns=["filled_text", "score", "rank", "error_message"],
+                           )]
         super().__init__(
             exa,
             batch_size,
@@ -40,6 +43,5 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
-            new_columns=["filled_text", "score", "rank", "error_message"],
+            transformations=transformations
         )
