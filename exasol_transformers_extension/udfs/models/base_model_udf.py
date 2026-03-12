@@ -18,6 +18,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 from exasol_transformers_extension.udfs.models.transformation.span_columns import \
     SpanColumnsTokenClassificationTransformation
+from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -59,8 +60,8 @@ class BaseModelUDF(ABC):
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
         prediction_task: PredictionTask,
-        new_columns: list[str],
-        work_with_spans: bool = False,
+        transformations: list[Transformation],
+        new_columns: list[str]
     ):
         self.exa = exa
         self.batch_size = batch_size
@@ -70,8 +71,8 @@ class BaseModelUDF(ABC):
         self.device = None
         self.model_loader = None
         self.new_columns = new_columns
-        self.work_with_spans = work_with_spans
         self.prediction_task = prediction_task
+        self.transformations = transformations
 
     def run(self, ctx):
         device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
@@ -83,36 +84,48 @@ class BaseModelUDF(ABC):
             batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
-            transformations = ["Add-Default-Transformation",
-
-                               "Remove-Default-Transformation"]
-            transformations = [UniqueModelDataframeTransformation(),
-                               PredictionTaskTransformation(prediction_task=self.prediction_task),
-                               SpanColumnsTokenClassificationTransformation()]#as input
+            #transformations = [UniqueModelDataframeTransformation(),
+            #                   PredictionTaskTransformation(prediction_task=self.prediction_task),
+            #                   SpanColumnsTokenClassificationTransformation()]#as input
             in_dfs = [batch_df]
-            for transformation in transformations:
+            for transformation in self.transformations:
+                print("start :" + transformation.__class__.__name__)
                 #todo append error messages instead of overwrite?
                 transform_result_dfs = []
                 for in_df in in_dfs:
+                    with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                           None):  # more options can be specified also
+                        print(in_df)
                     try:
-                        if "error_message" in in_df:
-                            transform_result_dfs.append(in_df)  #todo make this not teccessary even after UniqueModelDataframeTransformation
-                            continue
+                        #if "error_message" in in_df:
+                        #    transform_result_dfs.append(in_df)  #todo make this not teccessary even after UniqueModelDataframeTransformation
+                        #    continue
                         transformation.check_input_format(in_df.columns)
-                        self.check_cache(in_df) #todo this we now do a lot
-
-                        transform_result_dfs.append(transformation.transform(in_df))
+                        if transformation.needs_model():
+                            # dont need to load new model if transform does not use a model
+                            # todo in future pull model handling into seperate class?
+                            self.check_cache(in_df) #todo this we now do a lot
+                        transform_result_dfs = transform_result_dfs + transformation.transform(in_df)
+                        #transform_result_dfs.append(transformation.transform(in_df))
                     except Exception:
-                        #stack_trace = traceback.format_exc()
-                        #result_with_error_df = self.get_result_with_error(in_df, stack_trace)
-                        #result_df_list.append(result_with_error_df)
-                        #call get_results_with_error?
-                        in_df["error_message"] = message
-                        in_df = transformation.ensure_output_format(in_df)
-                        transform_result_dfs.append(in_df)
+                        stack_trace = traceback.format_exc()
+                        print(stack_trace)
+                        try:
+                            in_df = transformation.ensure_output_format(in_df)
+                        except Exception:
+                            #todo what happens if we can not ensure output format? add to stacktrace?
+                            # maybe append to error and hope udf can still emit ?
+                            continue
+                        result_with_error_df = self.get_result_with_error(in_df, stack_trace)
+                        transform_result_dfs.append(result_with_error_df)
 
                     finally:
                         in_dfs = transform_result_dfs
+                        print("finally:")
+                        for df in in_dfs:
+                            with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                                   None):  # more options can be specified also
+                                print(df)
 
             result_df = pd.concat(in_dfs)
             result_df = result_df.replace(np.nan, None)
@@ -185,21 +198,14 @@ class BaseModelUDF(ABC):
         :param model_df: The dataframe that received an error during prediction
         :param stack_trace: String of the stack traceback
         """
-        print(self.new_columns)
-        for col in self.new_columns:
-            model_df[col] = None
-        if self.work_with_spans:
-            # we need to change the df format to match the output columns
-            model_df = self.prediction_task.create_new_span_columns(model_df)#todo
-            model_df = self.prediction_task.drop_old_data_for_span_execution(model_df)
-            # move error message column to the end of the df
-            cols = model_df.columns.tolist()
-            cols.remove("error_message")
-            cols.append("error_message")
-            model_df = model_df[cols]
+        #print(self.new_columns)
+        #for col in self.new_columns:
+        #    model_df[col] = None
+        # move error message column to the end of the df
+        cols = model_df.columns.tolist()
+        cols.remove("error_message")
+        cols.append("error_message")
+        model_df = model_df[cols]
         model_df["error_message"] = stack_trace
-        with pd.option_context(
-            "display.max_rows", None, "display.max_columns", None
-        ):  # more options can be specified also
-            print(model_df)
+
         return model_df

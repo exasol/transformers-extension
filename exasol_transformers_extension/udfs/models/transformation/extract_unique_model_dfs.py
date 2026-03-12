@@ -17,10 +17,13 @@ class UniqueModelDataframeTransformation(Transformation):
             removed_columns: list[str] = [],
     ):
         expected_input_columns = constants.ordered_columns
-        super().__init__(expected_input_columns,
-                         promised_output_columns,
-                         new_columns,
-                         removed_columns)
+        self.expected_input_columns = expected_input_columns
+        self.promised_output_columns = promised_output_columns
+        self.new_columns = new_columns
+        self.removed_columns = removed_columns
+
+    def needs_model(self) -> bool:
+        return False
 
     @staticmethod
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
@@ -34,7 +37,7 @@ class UniqueModelDataframeTransformation(Transformation):
 
     def extract_unique_model_dataframes_from_batch(
         self, batch_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
         and sub_dir from the dataframe.
@@ -49,6 +52,7 @@ class UniqueModelDataframeTransformation(Transformation):
             batch_df, self.expected_input_columns, sort=True
         )
 
+        result_dfs = []
         for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
                 self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
@@ -62,18 +66,24 @@ class UniqueModelDataframeTransformation(Transformation):
             )
 
             model_df = batch_df[selections]
-            yield model_df
+            result_dfs.append(model_df)
+        return result_dfs
+            #yield model_df
 
 
     def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:
-         yield self.extract_unique_model_dataframes_from_batch(batch_df)
+        result = self.extract_unique_model_dataframes_from_batch(batch_df)
+        print("res: ")
+        print(result)
+        return result
+         #yield self.extract_unique_model_dataframes_from_batch(batch_df)
 
     def check_input_format(self, df_columns:list[str]):
         """
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        if not self.expected_input_columns in df_columns:
+        if not all(col in df_columns for col in self.expected_input_columns):
             raise ValueError("Missing expected input columns for "
                              "UniqueModelDataframeTransformation. "
                              "Expected at least the following columns: %s"

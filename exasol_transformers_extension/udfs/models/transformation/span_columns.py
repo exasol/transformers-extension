@@ -8,6 +8,11 @@ def _create_new_span_columns(model_df: DataFrame, new_columns) -> DataFrame:
     create new columns for use with spans
     """
     model_df[new_columns] = None
+    # move error message column to the end of the df
+    cols = model_df.columns.tolist()
+    cols.remove("error_message")
+    cols.append("error_message")
+    model_df = model_df[cols]
     return model_df
 
 
@@ -28,11 +33,13 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         new_columns = ["entity_doc_id", "entity_char_begin", "entity_char_end"]
         removed_columns = ["text_data", "start_pos", "end_pos"] #todo as input
         expected_input_columns = removed_columns + list(self.renamed_columns.keys()) + ["text_data_char_begin", "text_data_doc_id"]
-        super().__init__(expected_input_columns,
-                         promised_output_columns,
-                         new_columns,
-                         removed_columns)
+        self.expected_input_columns = expected_input_columns
+        self.promised_output_columns = promised_output_columns
+        self.new_columns = new_columns
+        self.removed_columns = removed_columns
 
+    def needs_model(self) -> bool:
+        return False
 
     def rename_columns(self, model_df: DataFrame) -> DataFrame:
 
@@ -69,7 +76,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        if not self.expected_input_columns in df_columns:#todo helper function?
+        if not all(col in df_columns for col in self.expected_input_columns):#todo helper function?
             raise ValueError("Missing expected input columns for "
                              "SpanColumnsTokenClassificationTransformation. "
                              "Expected at least the following columns: %s"
@@ -93,30 +100,33 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
 class SpanColumnsZeroShotTransformation(Transformation):
     def __init__(
             self,
-            expected_input_columns: list[str],
-            promised_output_columns: list[str],
-            new_columns: list[str],
-            removed_columns: list[str],):
+            expected_input_columns: list[str] = [],
+            promised_output_columns: list[str] = [],
+            new_columns: list[str] = [],
+            removed_columns: list[str] = []):
         # no new span so no new columns. we just return the input span
         new_columns = []#todo as input
         removed_columns = ["text_data", "candidate_labels"]
         expected_input_columns = removed_columns
-        super().__init__(expected_input_columns,
-                         promised_output_columns,
-                         new_columns,
-                         removed_columns)
+        self.expected_input_columns = expected_input_columns
+        self.promised_output_columns = promised_output_columns
+        self.new_columns = new_columns
+        self.removed_columns = removed_columns
 
-    def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:
+    def needs_model(self) -> bool:
+        return False
+
+    def transform(self, batch_df:DataFrame) -> list[DataFrame]:
         batch_df = _create_new_span_columns(batch_df, self.new_columns)
         batch_df = _drop_old_data_for_span_execution(batch_df, self.removed_columns)
-        yield batch_df
+        return [batch_df]
 
     def check_input_format(self, df_columns:list[str]):
         """
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        if not self.expected_input_columns in df_columns:#todo helper function?
+        if not all(col in df_columns for col in self.expected_input_columns):#todo helper function?
             raise ValueError("Missing expected input columns for "
                              "SpanColumnsZeroShotTransformation. "
                              "Expected at least the following columns: %s"

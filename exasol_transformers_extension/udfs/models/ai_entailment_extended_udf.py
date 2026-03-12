@@ -4,6 +4,9 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.udfs.models.prediction_tasks.text_classification import (
     EntailmentPredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
+    UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 
 
 class AiEntailmentExtendedUDF(BaseModelUDF):
@@ -16,6 +19,8 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
         tokenizer=transformers.AutoTokenizer,
         prediction_task=EntailmentPredictionTask(desired_fields_in_prediction=[]),
     ):
+        transformations = [UniqueModelDataframeTransformation(),
+                           PredictionTaskTransformation(prediction_task=prediction_task)]
         super().__init__(
             exa,
             batch_size,
@@ -23,5 +28,6 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
+            transformations=transformations,
             new_columns=["label", "score", "rank", "error_message"],
         )

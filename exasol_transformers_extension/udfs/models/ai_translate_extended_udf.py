@@ -9,6 +9,9 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.udfs.models.prediction_tasks.translation import (
     TranslatePredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
+    UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 
 
 class AiTranslateExtendedUDF(BaseModelUDF):
@@ -26,6 +29,8 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TranslatePredictionTask(desired_fields_in_prediction=[]),
     ):
+        transformations = [UniqueModelDataframeTransformation(),
+                           PredictionTaskTransformation(prediction_task=prediction_task)]
         super().__init__(
             exa,
             batch_size,
@@ -33,5 +38,6 @@ class AiTranslateExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
+            transformations=transformations,
             new_columns=["translation_text", "error_message"],
         )
