@@ -1,19 +1,35 @@
 """a dummy implementation for the base udf. used for testing base udf functionality."""
 
-from collections.abc import Iterator
 from typing import (
     Any,
-    Dict,
-    List,
     Union,
 )
 
 import pandas as pd
 import transformers
+from pandas import DataFrame
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
+    UniqueModelParamsDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.transformation import (
+    Transformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.utils import (
+    _check_input_format,
+    _create_new_empty_columns,
+    _drop_old_columns,
+    _ensure_output_format,
 )
 
 
@@ -26,8 +42,8 @@ class DummyPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
-        yield model_df
+    ) -> list[pd.DataFrame]:
+        return [model_df]
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -37,19 +53,13 @@ class DummyPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
 
         model_df = model_df.reset_index(drop=True)
         pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
         model_df = pd.concat([model_df, pred_df], axis=1)
 
-        if work_with_spans:
-            model_df = self.create_new_span_columns(model_df)
-            model_df = self.drop_old_data_for_span_execution(model_df)
         return model_df
 
     def create_dataframes_from_predictions(
@@ -61,13 +71,45 @@ class DummyPredictionTask(PredictionTask):
             results_df_list.append(result_df)
         return results_df_list
 
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        model_df[["test_span_column_add"]] = "add_this"
-        return model_df
 
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        model_df = model_df.drop(columns=["test_span_column_drop"])
-        return model_df
+class SpanColumnsDummyTransformation(Transformation):
+    def __init__(
+        self,
+        expected_input_columns: list[str] = [],
+        new_columns: list[str] = [],
+        removed_columns: list[str] = [],
+    ):
+        # no new span so no new columns. we just return the input span
+        new_columns = ["test_span_column_add"]  # todo as input
+        removed_columns = ["test_span_column_drop"]
+        expected_input_columns = removed_columns
+        self.expected_input_columns = expected_input_columns
+        self.new_columns = new_columns
+        self.removed_columns = removed_columns
+
+    def transform(self, batch_df: DataFrame) -> list[DataFrame]:
+        batch_df = _create_new_empty_columns(batch_df, self.new_columns)
+        batch_df[self.new_columns] = "add_this"
+        batch_df = _drop_old_columns(batch_df, self.removed_columns)
+        return [batch_df]
+
+    def check_input_format(self, df_columns: list[str]):
+        """
+        checks if all needed columns for
+        transform are present, throws error otherwise
+        """
+        try:
+            _check_input_format(
+                df_columns, self.expected_input_columns, self.__class__.__name__
+            )
+        except Exception as e:
+            raise e
+
+    def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
+        """
+        ensure all promised output columns are present
+        """
+        return _ensure_output_format(batch_df, self.new_columns, self.removed_columns)
 
 
 class DummyImplementationUDF(BaseModelUDF):
@@ -86,6 +128,19 @@ class DummyImplementationUDF(BaseModelUDF):
         ),
         work_with_spans: bool = False,
     ):
+        transformations = [
+            UniqueModelDataframeTransformation(),
+            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            PredictionTaskTransformation(
+                prediction_task=prediction_task,
+                new_columns=[
+                    "answer",
+                    "score",
+                ],
+            ),
+        ]
+        if work_with_spans:
+            transformations.append(SpanColumnsDummyTransformation())
         super().__init__(
             exa,
             batch_size,
@@ -93,6 +148,5 @@ class DummyImplementationUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=["answer", "score", "error_message"],
-            work_with_spans=work_with_spans,
+            transformations=transformations,
         )

@@ -35,7 +35,7 @@ class TokenClassifyPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Extract unique dataframes having same aggregation_strategy
         parameter values
@@ -51,13 +51,14 @@ class TokenClassifyPredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df, ["aggregation_strategy"]
         )
+        param_based_model_dfs = []
         for unique_param in unique_params:
             current_aggregation_strategy = unique_param[0]
             param_based_model_df = model_df[
                 model_df["aggregation_strategy"] == current_aggregation_strategy
             ]
-
-            yield param_based_model_df
+            param_based_model_dfs.append(param_based_model_df)
+        return param_based_model_dfs
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
@@ -124,17 +125,13 @@ class TokenClassifyPredictionTask(PredictionTask):
         return pd.Series([token_doc_id, token_char_begin, token_char_end])
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
         has a row for each label and its probability score
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """
@@ -145,12 +142,6 @@ class TokenClassifyPredictionTask(PredictionTask):
             [model_df, pred_df], axis=1, join="inner"
         )  # join='inner' -> drop rows where results are empty
 
-        if work_with_spans:
-            model_df = self.create_new_span_columns(model_df)
-            model_df[["entity_doc_id", "entity_char_begin", "entity_char_end"]] = (
-                model_df.apply(self.make_entity_span, axis=1)
-            )
-            model_df = self.drop_old_data_for_span_execution(model_df)
         return model_df
 
     def create_dataframes_from_predictions(

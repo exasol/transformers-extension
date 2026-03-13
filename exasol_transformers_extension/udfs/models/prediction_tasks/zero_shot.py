@@ -37,7 +37,7 @@ class ZeroShotPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Extract unique dataframes having same model parameter values. if there
         is no model specified parameter, the input dataframe return as it is.
@@ -53,13 +53,14 @@ class ZeroShotPredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df_with_sorted_labels, ["candidate_labels"]
         )
+        param_based_model_dfs = []
         for candidate_label in unique_params:
             current_label = candidate_label[0]
             param_based_model_df = model_df[
                 model_df["candidate_labels"] == current_label
             ]
-
-            yield param_based_model_df
+            param_based_model_dfs.append(param_based_model_df)
+        return param_based_model_dfs
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
@@ -112,7 +113,6 @@ class ZeroShotPredictionTask(PredictionTask):
         self,
         model_df: pd.DataFrame,
         pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -120,7 +120,6 @@ class ZeroShotPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """
@@ -131,9 +130,5 @@ class ZeroShotPredictionTask(PredictionTask):
             merged_df.reset_index()
             merged_df_list.append(merged_df)
         output_df = pd.concat(merged_df_list)
-
-        if work_with_spans:
-            output_df = self.create_new_span_columns(output_df)
-            output_df = self.drop_old_data_for_span_execution(output_df)
 
         return output_df

@@ -10,6 +10,18 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.udfs.models.prediction_tasks.token_classification import (
     TokenClassifyPredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
+    UniqueModelParamsDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.span_columns import (
+    SpanColumnsTokenClassificationTransformation,
+)
 
 
 class AiExtractExtendedUDF(BaseModelUDF):
@@ -31,6 +43,23 @@ class AiExtractExtendedUDF(BaseModelUDF):
         ),
         work_with_spans: bool = False,
     ):
+        transformations = [
+            UniqueModelDataframeTransformation(),
+            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            PredictionTaskTransformation(
+                prediction_task=prediction_task,
+                new_columns=[
+                    "start_pos",
+                    "end_pos",
+                    "word",
+                    "entity",
+                    "score",
+                    # "error_message",
+                ],
+            ),
+        ]
+        if work_with_spans:
+            transformations.append(SpanColumnsTokenClassificationTransformation())
         super().__init__(
             exa,
             batch_size,
@@ -38,13 +67,5 @@ class AiExtractExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=[
-                "start_pos",
-                "end_pos",
-                "word",
-                "entity",
-                "score",
-                "error_message",
-            ],
-            work_with_spans=work_with_spans,
+            transformations=transformations,
         )

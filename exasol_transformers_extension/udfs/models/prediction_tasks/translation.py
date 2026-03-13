@@ -32,7 +32,7 @@ class TranslatePredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Extract unique dataframes having same max_new_tokens, source_language,
         and target_language parameter values
@@ -45,14 +45,15 @@ class TranslatePredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df, ["max_new_tokens", "source_language", "target_language"]
         )
+        param_based_model_dfs = []
         for max_new_tokens, source_language, target_language in unique_params:
             param_based_model_df = model_df[
                 (model_df["max_new_tokens"] == max_new_tokens)
                 & (model_df["source_language"] == source_language)
                 & (model_df["target_language"] == target_language)
             ]
-
-            yield param_based_model_df
+            param_based_model_dfs.append(param_based_model_df)
+        return param_based_model_dfs
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[dict[str, Any]]:
         """
@@ -81,7 +82,6 @@ class TranslatePredictionTask(PredictionTask):
         self,
         model_df: pd.DataFrame,
         pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input row
@@ -89,8 +89,6 @@ class TranslatePredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
-        (not used since we don't have span variant of this udf)
 
         :return: Prepared dataframe including input data and predictions
         """

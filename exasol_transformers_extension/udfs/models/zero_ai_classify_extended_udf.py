@@ -1,6 +1,18 @@
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
+    UniqueModelParamsDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.span_columns import (
+    SpanColumnsZeroShotTransformation,
+)
 
 """
 UDF labeling a given text.
@@ -35,6 +47,17 @@ class AiClassifyExtendedUDF(BaseModelUDF):
         ),
         work_with_spans: bool = False,
     ):
+        transformations = [
+            UniqueModelDataframeTransformation(),
+            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            PredictionTaskTransformation(
+                prediction_task=prediction_task,
+                new_columns=["label", "score", "rank"],  # "error_message"]
+            ),
+        ]
+        if work_with_spans:
+            transformations.append(SpanColumnsZeroShotTransformation())
+
         super().__init__(
             exa,
             batch_size,
@@ -42,6 +65,5 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=["label", "score", "rank", "error_message"],
-            work_with_spans=work_with_spans,
+            transformations=transformations,
         )
