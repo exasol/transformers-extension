@@ -1,20 +1,25 @@
-
 import pandas as pd
 from pandas import DataFrame
 
 from exasol_transformers_extension.deployment.constants import constants
-from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
-from exasol_transformers_extension.udfs.models.transformation.utils import _check_input_format, _ensure_output_format
+from exasol_transformers_extension.udfs.models.transformation.transformation import (
+    Transformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.utils import (
+    _check_input_format,
+    _ensure_output_format,
+)
 from exasol_transformers_extension.utils import dataframe_operations
+
 
 class UniqueModelDataframeTransformation(Transformation):
     def __init__(
-            self,
-            expected_input_columns: list[str] = [],
-            new_columns: list[str] = [],
-            removed_columns: list[str] = [],
+        self,
+        expected_input_columns: list[str] = [],
+        new_columns: list[str] = [],
+        removed_columns: list[str] = [],
     ):
-        expected_input_columns = constants.ordered_columns#todo as input?
+        expected_input_columns = constants.ordered_columns  # todo as input?
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
@@ -65,31 +70,26 @@ class UniqueModelDataframeTransformation(Transformation):
             model_df = batch_df[selections]
             result_dfs.append(model_df)
         return result_dfs
-            #yield model_df
+        # yield model_df
 
-
-    def transform(self, batch_df:DataFrame) -> list[DataFrame]:
+    def transform(self, batch_df: DataFrame) -> list[DataFrame]:
         result = self.extract_unique_model_dataframes_from_batch(batch_df)
         return result
 
-    def check_input_format(self, df_columns:list[str]):
+    def check_input_format(self, df_columns: list[str]):
         """
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:#todo can protol have implementation?
-            _check_input_format(df_columns,
-                                self.expected_input_columns,
-                                self.__class__.__name__)
+        try:  # todo can protol have implementation?
+            _check_input_format(
+                df_columns, self.expected_input_columns, self.__class__.__name__
+            )
         except Exception as e:
             raise e
 
-
-    def ensure_output_format(self, batch_df:DataFrame) -> DataFrame:
+    def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         """
         ensure all promised output columns are present
         """
         return _ensure_output_format(batch_df, self.new_columns, self.removed_columns)
-
-
-

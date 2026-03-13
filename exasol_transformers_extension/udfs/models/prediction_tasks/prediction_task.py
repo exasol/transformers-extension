@@ -35,7 +35,9 @@ class PredictionTask(Protocol):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:#todo can probs use generators as output if also use them as input. better?
+    ) -> list[
+        pd.DataFrame
+    ]:  # todo can probs use generators as output if also use them as input. better?
         """
         `extract_unique_param_based_dataframes` : Even if the data in a given
         dataframe all have the same model, there might be differences within the given
@@ -53,13 +55,10 @@ class PredictionTask(Protocol):
         pass
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         append_predictions_to_input_dataframe`: Reformats the dataframe used in
         prediction, such that each input row has a row for each prediction result.
         """
         pass
-

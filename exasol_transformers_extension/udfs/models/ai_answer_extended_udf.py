@@ -8,11 +8,15 @@ from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUD
 from exasol_transformers_extension.udfs.models.prediction_tasks.question_answering import (
     AnswerPredictionTask,
 )
-from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
-    UniqueModelDataframeTransformation
-from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
-    UniqueModelParamsDataframeTransformation
-from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
+    UniqueModelParamsDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
 
 
 class AiAnswerExtendedUDF(BaseModelUDF):
@@ -31,14 +35,14 @@ class AiAnswerExtendedUDF(BaseModelUDF):
             desired_fields_in_prediction=["answer", "score"],
         ),
     ):
-        transformations = [UniqueModelDataframeTransformation(),
-                           UniqueModelParamsDataframeTransformation(
-                               prediction_task=prediction_task),
-                           PredictionTaskTransformation(
-                               prediction_task=prediction_task,
-                               new_columns=["answer", "score", "rank"] #"error_message"]
-                           )
-                           ]
+        transformations = [
+            UniqueModelDataframeTransformation(),
+            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            PredictionTaskTransformation(
+                prediction_task=prediction_task,
+                new_columns=["answer", "score", "rank"],  # "error_message"]
+            ),
+        ]
         super().__init__(
             exa,
             batch_size,

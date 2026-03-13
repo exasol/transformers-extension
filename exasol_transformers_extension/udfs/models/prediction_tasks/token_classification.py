@@ -125,9 +125,7 @@ class TokenClassifyPredictionTask(PredictionTask):
         return pd.Series([token_doc_id, token_char_begin, token_char_end])
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame]
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows

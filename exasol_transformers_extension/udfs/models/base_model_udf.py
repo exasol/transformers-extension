@@ -13,12 +13,18 @@ from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
-from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
-    UniqueModelDataframeTransformation
-from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
-from exasol_transformers_extension.udfs.models.transformation.span_columns import \
-    SpanColumnsTokenClassificationTransformation
-from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.span_columns import (
+    SpanColumnsTokenClassificationTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.transformation import (
+    Transformation,
+)
 from exasol_transformers_extension.utils import (
     dataframe_operations,
     device_management,
@@ -88,7 +94,9 @@ class BaseModelUDF(ABC):
                 for in_df in in_dfs:
                     if "error_message" in in_df:
                         correct_format_df_ = transformation.ensure_output_format(in_df)
-                        transform_result_dfs.append(correct_format_df_)#todo make this not teccessary even after UniqueModelDataframeTransformation
+                        transform_result_dfs.append(
+                            correct_format_df_
+                        )  # todo make this not teccessary even after UniqueModelDataframeTransformation
                         in_dfs = transform_result_dfs
                         continue
                     try:
@@ -98,16 +106,24 @@ class BaseModelUDF(ABC):
                             # todo in future pull model handling into seperate class?
                             #  then only call in transformations which use models
                             self.check_cache(in_df)
-                        transform_result_dfs = transform_result_dfs + transformation.transform(in_df)
+                        transform_result_dfs = (
+                            transform_result_dfs + transformation.transform(in_df)
+                        )
                     except Exception:
                         stack_trace = traceback.format_exc()
                         try:
-                            correct_format_df = transformation.ensure_output_format(in_df)
-                            result_with_error_df = self.get_result_with_error(correct_format_df, stack_trace)
+                            correct_format_df = transformation.ensure_output_format(
+                                in_df
+                            )
+                            result_with_error_df = self.get_result_with_error(
+                                correct_format_df, stack_trace
+                            )
                             transform_result_dfs.append(result_with_error_df)
                         except Exception:
                             stack_trace_2 = traceback.format_exc()
-                            result_with_error_df = self.get_result_with_error(in_df, stack_trace_2)
+                            result_with_error_df = self.get_result_with_error(
+                                in_df, stack_trace_2
+                            )
                             transform_result_dfs.append(result_with_error_df)
 
                     finally:
@@ -136,7 +152,7 @@ class BaseModelUDF(ABC):
         )
 
     @staticmethod
-    def error_message_last(df : pd.DataFrame) -> pd.DataFrame:
+    def error_message_last(df: pd.DataFrame) -> pd.DataFrame:
         cols = df.columns.tolist()
         if "error_message" in cols:
             # move error message column to the end of the df
@@ -187,7 +203,6 @@ class BaseModelUDF(ABC):
                 f"Model loading failed previously with : "
                 f"{self.model_loader.model_load_error}"
             )
-
 
     def get_result_with_error(
         self, model_df: pd.DataFrame, stack_trace: str
