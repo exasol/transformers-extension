@@ -1,10 +1,7 @@
 """a dummy implementation for the base udf. used for testing base udf functionality."""
 
-from collections.abc import Iterator
 from typing import (
     Any,
-    Dict,
-    List,
     Union,
 )
 
@@ -21,9 +18,9 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
     UniqueModelParamsDataframeTransformation
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
-from exasol_transformers_extension.udfs.models.transformation.span_columns import _create_new_span_columns, \
-    _drop_old_data_for_span_execution
 from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
+from exasol_transformers_extension.udfs.models.transformation.utils import _ensure_output_format, _check_input_format, \
+    _create_new_empty_columns, _drop_old_columns
 
 
 class DummyPredictionTask(PredictionTask):
@@ -71,7 +68,6 @@ class SpanColumnsDummyTransformation(Transformation):
     def __init__(
             self,
             expected_input_columns: list[str] = [],
-            promised_output_columns: list[str] = [],
             new_columns: list[str] = [],
             removed_columns: list[str] = []):
         # no new span so no new columns. we just return the input span
@@ -79,14 +75,13 @@ class SpanColumnsDummyTransformation(Transformation):
         removed_columns = ["test_span_column_drop"]
         expected_input_columns = removed_columns
         self.expected_input_columns = expected_input_columns
-        self.promised_output_columns = promised_output_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
     def transform(self, batch_df:DataFrame) -> list[DataFrame]:
-        batch_df = _create_new_span_columns(batch_df, self.new_columns)
+        batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df[self.new_columns] = "add_this"
-        batch_df = _drop_old_data_for_span_execution(batch_df, self.removed_columns)
+        batch_df = _drop_old_columns(batch_df, self.removed_columns)
         return [batch_df]
 
     def check_input_format(self, df_columns:list[str]):
@@ -94,25 +89,18 @@ class SpanColumnsDummyTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        if not all(col in df_columns for col in self.expected_input_columns):#todo helper function?
-            raise ValueError("Missing expected input columns for "
-                             "SpanColumnsZeroShotTransformation. "
-                             "Expected at least the following columns: %s"
-                             "got these input columns: %s".format(
-                self.expected_input_columns, df_columns))
-        pass
+        try:
+            _check_input_format(df_columns,
+                                self.expected_input_columns,
+                                self.__class__.__name__)
+        except Exception as e:
+            raise e
 
     def ensure_output_format(self, batch_df:DataFrame) -> DataFrame:
         """
         ensure all promised output columns are present
         """
-        for new_column in self.new_columns:
-            if not new_column in batch_df.columns:
-                _create_new_span_columns(batch_df, new_column)
-        for col in self.removed_columns:
-            if col in batch_df.columns:
-                batch_df = _drop_old_data_for_span_execution(batch_df, col)
-        return batch_df
+        return _ensure_output_format(batch_df, self.new_columns, self.removed_columns)
 
 
 

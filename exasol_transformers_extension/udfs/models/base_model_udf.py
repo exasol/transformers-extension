@@ -84,19 +84,14 @@ class BaseModelUDF(ABC):
                 break
             in_dfs = [batch_df]
             for transformation in self.transformations:
-                print("start :" + transformation.__class__.__name__)
-                #todo append error messages instead of overwrite?
                 transform_result_dfs = []
                 for in_df in in_dfs:
-                    with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                           None):  # more options can be specified also
-                        print(in_df)
                     if "error_message" in in_df:
-                        correct_format_df = transformation.ensure_output_format(in_df)
-                        transform_result_dfs.append(correct_format_df)#todo make this not teccessary even after UniqueModelDataframeTransformation
+                        correct_format_df_ = transformation.ensure_output_format(in_df)
+                        transform_result_dfs.append(correct_format_df_)#todo make this not teccessary even after UniqueModelDataframeTransformation
+                        in_dfs = transform_result_dfs
                         continue
                     try:
-                        print("___" +  transformation.__class__.__name__)
                         transformation.check_input_format(in_df.columns)
                         if transformation.needs_model():
                             # dont need to load new model if transform does not use a model
@@ -106,54 +101,22 @@ class BaseModelUDF(ABC):
                         transform_result_dfs = transform_result_dfs + transformation.transform(in_df)
                     except Exception:
                         stack_trace = traceback.format_exc()
-                        print("test print !!!! " + stack_trace)
                         try:
                             correct_format_df = transformation.ensure_output_format(in_df)
-                            print("correct_format_df:" )
-                            with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                                   None):  # more options can be specified also
-                                print(correct_format_df)
                             result_with_error_df = self.get_result_with_error(correct_format_df, stack_trace)
                             transform_result_dfs.append(result_with_error_df)
                         except Exception:
                             stack_trace_2 = traceback.format_exc()
-                            print("_____here____")
-                            #todo what happens if we can not ensure output format? add to stacktrace?
-                            # maybe append to error and hope udf can still emit ?
-                            print(stack_trace_2)
-                            with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                                   None):  # more options can be specified also
-                                print(in_df)
                             result_with_error_df = self.get_result_with_error(in_df, stack_trace_2)
                             transform_result_dfs.append(result_with_error_df)
 
                     finally:
                         in_dfs = transform_result_dfs
-                        print("finally:")
-                        for df in in_dfs:
-                            with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                                   None):  # more options can be specified also
-                                print(df)
-                                print("~~~~~~~~~~~")
             result_dfs = []
             for df in in_dfs:
-                with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                       None):  # more options can be specified also
-                    print(df)
-                    print("~~~~~h~~~~~~")
                 if not "error_message" in df.columns:
                     df["error_message"] = None
-                with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                       None):  # more options can be specified also
-                    print(df)
-                    print("~~~~~~df~~~~~")
                 result_dfs.append(self.error_message_last(df))
-            print("result_dfs:")
-            for df in result_dfs:
-                with pd.option_context('display.max_rows', None, 'display.max_columns',
-                                       None):  # more options can be specified also
-                    print(df)
-                    print("~~~~~~~~~~~")
             result_df = pd.concat(result_dfs)
             result_df = result_df.replace(np.nan, None)
             ctx.emit(result_df)
