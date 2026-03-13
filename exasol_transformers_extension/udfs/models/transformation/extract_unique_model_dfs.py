@@ -96,6 +96,6 @@ class UniqueModelDataframeTransformation(Transformation):
         ensure all promised output columns are present
         """
         #todo #we could fill expected input columns here if not present?
-        pass
+        return batch_df
 
 

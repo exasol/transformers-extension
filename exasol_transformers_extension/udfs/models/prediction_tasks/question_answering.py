@@ -36,7 +36,7 @@ class AnswerPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         return extract_unique_param_based_dataframes_top_k(model_df)
 
     def execute_prediction(

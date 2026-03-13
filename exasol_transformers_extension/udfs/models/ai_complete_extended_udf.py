@@ -11,6 +11,8 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.text_generation 
 )
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
     UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
+    UniqueModelParamsDataframeTransformation
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 
 
@@ -32,9 +34,11 @@ class AiCompleteExtendedUDF(BaseModelUDF):
         ),
     ):
         transformations = [UniqueModelDataframeTransformation(),
+                           UniqueModelParamsDataframeTransformation(
+                               prediction_task=prediction_task),
                            PredictionTaskTransformation(
                                prediction_task=prediction_task,
-                               new_columns=["generated_text", "error_message"],
+                               new_columns=["generated_text"] #"error_message"]
                            )]
         super().__init__(
             exa,

@@ -82,9 +82,6 @@ class BaseModelUDF(ABC):
             batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
-            #transformations = [UniqueModelDataframeTransformation(),
-            #                   PredictionTaskTransformation(prediction_task=self.prediction_task),
-            #                   SpanColumnsTokenClassificationTransformation()]#as input
             in_dfs = [batch_df]
             for transformation in self.transformations:
                 print("start :" + transformation.__class__.__name__)
@@ -94,28 +91,41 @@ class BaseModelUDF(ABC):
                     with pd.option_context('display.max_rows', None, 'display.max_columns',
                                            None):  # more options can be specified also
                         print(in_df)
+                    if "error_message" in in_df:
+                        correct_format_df = transformation.ensure_output_format(in_df)
+                        transform_result_dfs.append(correct_format_df)#todo make this not teccessary even after UniqueModelDataframeTransformation
+                        continue
                     try:
-                        #if "error_message" in in_df:
-                        #    transform_result_dfs.append(in_df)  #todo make this not teccessary even after UniqueModelDataframeTransformation
-                        #    continue
+                        print("___" +  transformation.__class__.__name__)
                         transformation.check_input_format(in_df.columns)
                         if transformation.needs_model():
                             # dont need to load new model if transform does not use a model
                             # todo in future pull model handling into seperate class?
-                            self.check_cache(in_df) #todo this we now do a lot
+                            #  then only call in transformations which use models
+                            self.check_cache(in_df)
                         transform_result_dfs = transform_result_dfs + transformation.transform(in_df)
-                        #transform_result_dfs.append(transformation.transform(in_df))
                     except Exception:
                         stack_trace = traceback.format_exc()
-                        print(stack_trace)
+                        print("test print !!!! " + stack_trace)
                         try:
-                            in_df = transformation.ensure_output_format(in_df)
+                            correct_format_df = transformation.ensure_output_format(in_df)
+                            print("correct_format_df:" )
+                            with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                                   None):  # more options can be specified also
+                                print(correct_format_df)
+                            result_with_error_df = self.get_result_with_error(correct_format_df, stack_trace)
+                            transform_result_dfs.append(result_with_error_df)
                         except Exception:
+                            stack_trace_2 = traceback.format_exc()
+                            print("_____here____")
                             #todo what happens if we can not ensure output format? add to stacktrace?
                             # maybe append to error and hope udf can still emit ?
-                            continue
-                        result_with_error_df = self.get_result_with_error(in_df, stack_trace)
-                        transform_result_dfs.append(result_with_error_df)
+                            print(stack_trace_2)
+                            with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                                   None):  # more options can be specified also
+                                print(in_df)
+                            result_with_error_df = self.get_result_with_error(in_df, stack_trace_2)
+                            transform_result_dfs.append(result_with_error_df)
 
                     finally:
                         in_dfs = transform_result_dfs
@@ -124,8 +134,27 @@ class BaseModelUDF(ABC):
                             with pd.option_context('display.max_rows', None, 'display.max_columns',
                                                    None):  # more options can be specified also
                                 print(df)
-
-            result_df = pd.concat(in_dfs)
+                                print("~~~~~~~~~~~")
+            result_dfs = []
+            for df in in_dfs:
+                with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                       None):  # more options can be specified also
+                    print(df)
+                    print("~~~~~h~~~~~~")
+                if not "error_message" in df.columns:
+                    df["error_message"] = None
+                with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                       None):  # more options can be specified also
+                    print(df)
+                    print("~~~~~~df~~~~~")
+                result_dfs.append(self.error_message_last(df))
+            print("result_dfs:")
+            for df in result_dfs:
+                with pd.option_context('display.max_rows', None, 'display.max_columns',
+                                       None):  # more options can be specified also
+                    print(df)
+                    print("~~~~~~~~~~~")
+            result_df = pd.concat(result_dfs)
             result_df = result_df.replace(np.nan, None)
             ctx.emit(result_df)
 
@@ -142,6 +171,16 @@ class BaseModelUDF(ABC):
             task_type=self.prediction_task.task_type,
             device=self.device,
         )
+
+    @staticmethod
+    def error_message_last(df : pd.DataFrame) -> pd.DataFrame:
+        cols = df.columns.tolist()
+        if "error_message" in cols:
+            # move error message column to the end of the df
+            cols.remove("error_message")
+            cols.append("error_message")
+            df = df[cols]
+        return df
 
     def check_cache(self, model_df: pd.DataFrame) -> None:
         """
@@ -174,6 +213,7 @@ class BaseModelUDF(ABC):
                     self.model_loader.load_models()
                 )
             except Exception:
+                print("load failed")
                 stack_trace = traceback.format_exc()
                 self.model_loader.last_model_loaded_successfully = False
                 self.model_loader.model_load_error = stack_trace
@@ -196,12 +236,8 @@ class BaseModelUDF(ABC):
         :param model_df: The dataframe that received an error during prediction
         :param stack_trace: String of the stack traceback
         """
-        cols = model_df.columns.tolist()
-        if "error_message" in cols:
-            # move error message column to the end of the df
-            cols.remove("error_message")
-            cols.append("error_message")
-            model_df = model_df[cols]
+        BaseModelUDF.error_message_last(model_df)
+        self.error_message_last(model_df)
         model_df["error_message"] = stack_trace
 
         return model_df

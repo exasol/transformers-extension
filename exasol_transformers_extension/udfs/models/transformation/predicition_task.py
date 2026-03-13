@@ -43,11 +43,10 @@ class PredictionTaskTransformation(Transformation):
         pred_df = self.prediction_task.append_predictions_to_input_dataframe(
             model_df, pred_df_list
         )
-        pred_df["error_message"] = None
         return pred_df
 
     def get_prediction_from_unique_param_based_dataframes(
-        self, model_df
+        self, param_based_model_df
     ) -> list[DataFrame]:
         """
         Performs separate predictions for data with the same parameters
@@ -58,19 +57,13 @@ class PredictionTaskTransformation(Transformation):
 
         :return: List of prediction results
         """
-        result_dfs = []
-        for (
-            param_based_model_df
-        ) in self.prediction_task.extract_unique_param_based_dataframes(model_df):
-            try:
-                result_df = self.get_prediction(param_based_model_df)
-                #yield result_df
-                result_dfs.append(result_df)
-            except Exception as err:
-                stack_trace = traceback.format_exc()#todo this only apends to this part of df
-                result_with_error_df = self.get_result_with_error(param_based_model_df, stack_trace)
-                result_dfs.append(result_with_error_df)
-        return result_dfs
+
+        try:
+            result_df = self.get_prediction(param_based_model_df)
+            #yield result_df
+        except Exception as err:
+            raise err
+        return [result_df]
 
 
     def transform(self, batch_df:DataFrame) -> Iterator[DataFrame]:

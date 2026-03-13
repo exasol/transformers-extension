@@ -18,6 +18,8 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
     UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
+    UniqueModelParamsDataframeTransformation
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 from exasol_transformers_extension.udfs.models.transformation.span_columns import _create_new_span_columns, \
     _drop_old_data_for_span_execution
@@ -33,8 +35,8 @@ class DummyPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
-        yield model_df
+    ) -> list[pd.DataFrame]:
+        return [model_df]
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -83,7 +85,6 @@ class SpanColumnsDummyTransformation(Transformation):
 
     def transform(self, batch_df:DataFrame) -> list[DataFrame]:
         batch_df = _create_new_span_columns(batch_df, self.new_columns)
-        print(batch_df[self.new_columns])
         batch_df[self.new_columns] = "add_this"
         batch_df = _drop_old_data_for_span_execution(batch_df, self.removed_columns)
         return [batch_df]
@@ -105,9 +106,12 @@ class SpanColumnsDummyTransformation(Transformation):
         """
         ensure all promised output columns are present
         """
+        for new_column in self.new_columns:
+            if not new_column in batch_df.columns:
+                _create_new_span_columns(batch_df, new_column)
         for col in self.removed_columns:
             if col in batch_df.columns:
-                batch_df = _drop_old_data_for_span_execution(batch_df, [col])
+                batch_df = _drop_old_data_for_span_execution(batch_df, col)
         return batch_df
 
 
@@ -130,9 +134,11 @@ class DummyImplementationUDF(BaseModelUDF):
         work_with_spans: bool = False,
     ):
         transformations = [UniqueModelDataframeTransformation(),
+                           UniqueModelParamsDataframeTransformation(
+                               prediction_task=prediction_task),
                            PredictionTaskTransformation(
                                prediction_task=prediction_task,
-                               new_columns=["answer", "score", "error_message"]
+                               new_columns=["answer", "score",]
                            )]
         if work_with_spans:
             transformations.append(SpanColumnsDummyTransformation())

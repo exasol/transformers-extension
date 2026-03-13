@@ -37,7 +37,7 @@ class ZeroShotPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Extract unique dataframes having same model parameter values. if there
         is no model specified parameter, the input dataframe return as it is.
@@ -53,13 +53,14 @@ class ZeroShotPredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df_with_sorted_labels, ["candidate_labels"]
         )
+        param_based_model_dfs = []
         for candidate_label in unique_params:
             current_label = candidate_label[0]
             param_based_model_df = model_df[
                 model_df["candidate_labels"] == current_label
             ]
-
-            yield param_based_model_df
+            param_based_model_dfs.append(param_based_model_df)
+        return param_based_model_dfs
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """

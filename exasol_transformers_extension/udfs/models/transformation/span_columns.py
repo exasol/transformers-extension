@@ -8,11 +8,6 @@ def _create_new_span_columns(model_df: DataFrame, new_columns) -> DataFrame:
     create new columns for use with spans
     """
     model_df[new_columns] = None
-    # move error message column to the end of the df
-    cols = model_df.columns.tolist()
-    cols.remove("error_message")
-    cols.append("error_message")
-    model_df = model_df[cols]
     return model_df
 
 

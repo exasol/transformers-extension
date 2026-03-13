@@ -11,6 +11,8 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.fill_mask import
 )
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
     UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
+    UniqueModelParamsDataframeTransformation
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 
 
@@ -32,9 +34,11 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
         ),
     ):
         transformations = [UniqueModelDataframeTransformation(),
+                           UniqueModelParamsDataframeTransformation(
+                               prediction_task=prediction_task),
                            PredictionTaskTransformation(
                                prediction_task=prediction_task,
-                               new_columns=["filled_text", "score", "rank", "error_message"],
+                               new_columns=["filled_text", "score", "rank",] #"error_message"]
                            )]
         super().__init__(
             exa,

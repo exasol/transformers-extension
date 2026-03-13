@@ -10,6 +10,8 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.question_answeri
 )
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import \
     UniqueModelDataframeTransformation
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import \
+    UniqueModelParamsDataframeTransformation
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import PredictionTaskTransformation
 
 
@@ -30,9 +32,11 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         ),
     ):
         transformations = [UniqueModelDataframeTransformation(),
+                           UniqueModelParamsDataframeTransformation(
+                               prediction_task=prediction_task),
                            PredictionTaskTransformation(
                                prediction_task=prediction_task,
-                               new_columns=["answer", "score", "rank", "error_message"]
+                               new_columns=["answer", "score", "rank"] #"error_message"]
                            )
                            ]
         super().__init__(
