@@ -93,9 +93,9 @@ class BaseModelUDF(ABC):
                 transform_result_dfs = []
                 for in_df in in_dfs:
                     if "error_message" in in_df:
-                        correct_format_df_ = transformation.ensure_output_format(in_df)
+                        correct_format_df = transformation.ensure_output_format(in_df)
                         transform_result_dfs.append(
-                            correct_format_df_
+                            correct_format_df
                         )  # todo make this not teccessary even after UniqueModelDataframeTransformation
                         in_dfs = transform_result_dfs
                         continue
@@ -126,8 +126,7 @@ class BaseModelUDF(ABC):
                             )
                             transform_result_dfs.append(result_with_error_df)
 
-                    finally:
-                        in_dfs = transform_result_dfs
+                in_dfs = transform_result_dfs
             result_dfs = []
             for df in in_dfs:
                 if not "error_message" in df.columns:

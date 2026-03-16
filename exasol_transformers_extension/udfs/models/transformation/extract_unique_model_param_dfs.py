@@ -16,12 +16,12 @@ class UniqueModelParamsDataframeTransformation(Transformation):
     def __init__(
         self,
         prediction_task: PredictionTask,
-        expected_input_columns: list[str] = [],
-        new_columns: list[str] = [],
-        removed_columns: list[str] = [],
+        expected_input_columns: list[str],
+        new_columns: list[str],
+        removed_columns: list[str],
     ):
         self.prediction_task = prediction_task
-        self.expected_input_columns = expected_input_columns  # todo depend on pre task
+        self.expected_input_columns = expected_input_columns #todo should these be collected out of prediction task?
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 

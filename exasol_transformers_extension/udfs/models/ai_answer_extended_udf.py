@@ -37,10 +37,15 @@ class AiAnswerExtendedUDF(BaseModelUDF):
     ):
         transformations = [
             UniqueModelDataframeTransformation(),
-            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=["top_k"],
+                new_columns=[],
+                removed_columns=[],
+            ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
-                new_columns=["answer", "score", "rank"],  # "error_message"]
+                new_columns=["answer", "score", "rank"],
             ),
         ]
         super().__init__(

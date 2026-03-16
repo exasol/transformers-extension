@@ -15,14 +15,10 @@ from exasol_transformers_extension.utils import dataframe_operations
 class UniqueModelDataframeTransformation(Transformation):
     def __init__(
         self,
-        expected_input_columns: list[str] = [],
-        new_columns: list[str] = [],
-        removed_columns: list[str] = [],
     ):
-        expected_input_columns = constants.ordered_columns  # todo as input?
-        self.expected_input_columns = expected_input_columns
-        self.new_columns = new_columns
-        self.removed_columns = removed_columns
+        self.expected_input_columns = constants.ordered_columns
+        self.new_columns = []
+        self.removed_columns = []
 
     def needs_model(self) -> bool:
         return False

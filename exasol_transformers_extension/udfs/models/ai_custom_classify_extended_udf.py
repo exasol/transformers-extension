@@ -27,7 +27,12 @@ class AiCustomClassifyUDF(BaseModelUDF):
     ):
         transformations = [
             UniqueModelDataframeTransformation(),
-            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=[],
+                new_columns=[],
+                removed_columns=[],
+            ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["label", "score", "rank"],  # "error_message"]

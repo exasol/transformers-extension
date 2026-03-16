@@ -39,10 +39,15 @@ class AiCompleteExtendedUDF(BaseModelUDF):
     ):
         transformations = [
             UniqueModelDataframeTransformation(),
-            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=["max_new_tokens", "return_full_text"],
+                new_columns=[],
+                removed_columns=[],
+            ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
-                new_columns=["generated_text"],  # "error_message"]
+                new_columns=["generated_text"],
             ),
         ]
         super().__init__(

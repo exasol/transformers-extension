@@ -19,18 +19,11 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
 class SpanColumnsTokenClassificationTransformation(Transformation):
     def __init__(
         self,
-        expected_input_columns: list[str] = [],
-        new_columns: list[str] = [],
-        removed_columns: list[str] = [],
+        expected_input_columns: list[str],
+        new_columns: list[str],
+        removed_columns: list[str],
     ):
         self.renamed_columns = {"word": "entity_covered_text", "entity": "entity_type"}
-        new_columns = ["entity_doc_id", "entity_char_begin", "entity_char_end"]
-        removed_columns = ["text_data", "start_pos", "end_pos"]  # todo as input
-        expected_input_columns = (
-            removed_columns
-            + list(self.renamed_columns.keys())
-            + ["text_data_char_begin", "text_data_doc_id"]
-        )
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
@@ -80,6 +73,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         """
         ensure all promised output columns are present
         """
+        batch_df = self.rename_columns(batch_df)
         return _ensure_output_format(batch_df, self.new_columns, self.removed_columns)
 
 
@@ -88,14 +82,10 @@ class SpanColumnsZeroShotTransformation(
 ):  # todo make base class for these?
     def __init__(
         self,
-        expected_input_columns: list[str] = [],
-        new_columns: list[str] = [],
-        removed_columns: list[str] = [],
+        expected_input_columns: list[str],
+        new_columns: list[str],
+        removed_columns: list[str],
     ):
-        # no new span so no new columns. we just return the input span
-        new_columns = []  # todo as input
-        removed_columns = ["text_data", "candidate_labels"]
-        expected_input_columns = removed_columns
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns

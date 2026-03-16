@@ -128,9 +128,14 @@ class DummyImplementationUDF(BaseModelUDF):
         ),
         work_with_spans: bool = False,
     ):
-        transformations = [
+        transformations: list[Transformation] = [
             UniqueModelDataframeTransformation(),
-            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=[],
+                new_columns=[],
+                removed_columns=[],
+            ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=[
@@ -140,7 +145,11 @@ class DummyImplementationUDF(BaseModelUDF):
             ),
         ]
         if work_with_spans:
-            transformations.append(SpanColumnsDummyTransformation())
+            transformations.append(SpanColumnsDummyTransformation(
+                new_columns = ["test_span_column_add"],
+                removed_columns = ["test_span_column_drop"],
+                expected_input_columns = ["test_span_column_drop"])
+            )
         super().__init__(
             exa,
             batch_size,

@@ -37,10 +37,15 @@ class AiTranslateExtendedUDF(BaseModelUDF):
     ):
         transformations = [
             UniqueModelDataframeTransformation(),
-            UniqueModelParamsDataframeTransformation(prediction_task=prediction_task),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=["max_new_tokens", "source_language", "target_language"],
+                new_columns=[],
+                removed_columns=[]
+            ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
-                new_columns=["translation_text"],  # "error_message"]
+                new_columns=["translation_text"],
             ),
         ]
         super().__init__(
