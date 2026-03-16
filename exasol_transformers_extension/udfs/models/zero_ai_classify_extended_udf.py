@@ -59,6 +59,8 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["label", "score", "rank"],
+                expected_input_columns=["text_data", "candidate_labels"],
+                removed_columns=["labels", "scores"], # get created and renamed, might need to be removed incase of errors
             ),
         ]
         if work_with_spans:

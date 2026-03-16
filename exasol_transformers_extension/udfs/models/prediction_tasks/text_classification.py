@@ -150,7 +150,7 @@ class TextClassifyPredictionTask(PredictionTask):
     ) -> list[pd.DataFrame]:
         return _extract_unique_param_based_dataframes(model_df)
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels

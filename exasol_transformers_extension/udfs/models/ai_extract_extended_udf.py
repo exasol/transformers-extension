@@ -58,13 +58,14 @@ class AiExtractExtendedUDF(BaseModelUDF):
                     "start_pos",
                     "end_pos",
                     "word",
-                    "entity",#todo what about "entity_group"?
+                    "entity",
                     "score",
                 ],
                 removed_columns=[
                     "start",
                     "end",
-                    "entity_group",]
+                    "entity_group",], #this one might get created. it should then be renamed, but in case that fais we need to remove it
+                expected_input_columns=["text_data", "aggregation_strategy",]
             ),
         ]
         if work_with_spans:

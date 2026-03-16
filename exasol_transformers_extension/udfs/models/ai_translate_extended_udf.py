@@ -46,6 +46,8 @@ class AiTranslateExtendedUDF(BaseModelUDF):
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["translation_text"],
+                expected_input_columns=["source_language", "target_language", "text_data", "max_new_tokens"],
+                removed_columns=[]
             ),
         ]
         super().__init__(

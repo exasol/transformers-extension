@@ -35,7 +35,9 @@ class AiCustomClassifyUDF(BaseModelUDF):
             ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
-                new_columns=["label", "score", "rank"],  # "error_message"]
+                new_columns=["label", "score", "rank"],
+                expected_input_columns=["text_data"],
+                removed_columns=[],
             ),
         ]
         super().__init__(

@@ -35,7 +35,9 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
             ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
-                new_columns=["label", "score", "rank"],  # "error_message"]
+                new_columns=["label", "score", "rank"],
+                expected_input_columns=["first_text", "second_text"],
+                removed_columns=[],
             ),
         ]
         super().__init__(

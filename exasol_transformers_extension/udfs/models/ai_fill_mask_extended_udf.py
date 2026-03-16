@@ -52,6 +52,8 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
                     "score",
                     "rank",
                 ],
+                expected_input_columns=["top_k","text_data"],
+                removed_columns=["sequence"],#this will be created and the renamed. if that fails we need to remove it
             ),
         ]
         super().__init__(

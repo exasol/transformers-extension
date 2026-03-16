@@ -48,6 +48,8 @@ class AiCompleteExtendedUDF(BaseModelUDF):
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["generated_text"],
+                expected_input_columns=["text_data", "max_new_tokens", "return_full_text"],
+                removed_columns=[],
             ),
         ]
         super().__init__(

@@ -75,14 +75,10 @@ class DummyPredictionTask(PredictionTask):
 class SpanColumnsDummyTransformation(Transformation):
     def __init__(
         self,
-        expected_input_columns: list[str] = [],
-        new_columns: list[str] = [],
-        removed_columns: list[str] = [],
+        expected_input_columns: list[str],
+        new_columns: list[str],
+        removed_columns: list[str],
     ):
-        # no new span so no new columns. we just return the input span
-        new_columns = ["test_span_column_add"]  # todo as input
-        removed_columns = ["test_span_column_drop"]
-        expected_input_columns = removed_columns
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
@@ -142,6 +138,8 @@ class DummyImplementationUDF(BaseModelUDF):
                     "answer",
                     "score",
                 ],
+                expected_input_columns=["input_data",],
+                removed_columns=[],
             ),
         ]
         if work_with_spans:

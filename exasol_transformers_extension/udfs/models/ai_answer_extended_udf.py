@@ -45,7 +45,9 @@ class AiAnswerExtendedUDF(BaseModelUDF):
             ),
             PredictionTaskTransformation(
                 prediction_task=prediction_task,
+                expected_input_columns=["question","context_text","top_k"],
                 new_columns=["answer", "score", "rank"],
+                removed_columns=[],
             ),
         ]
         super().__init__(

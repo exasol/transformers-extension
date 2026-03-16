@@ -76,15 +76,6 @@ class ZeroShotPredictionTask(PredictionTask):
         results = self.last_created_pipeline(sequences, candidate_labels)
         return results
 
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        # no new span so no new columns. we just return the input span
-        return model_df
-
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(columns=["text_data", "candidate_labels"])
-        return model_df
-
     def create_dataframes_from_predictions(
         self, predictions: list[list[dict[str, Any]]]
     ) -> list[pd.DataFrame]:
