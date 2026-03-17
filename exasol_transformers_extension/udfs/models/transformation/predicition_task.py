@@ -14,7 +14,9 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _check_input_format,
     _ensure_output_format,
 )
-from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import (
+    WithModelTransformation,
+)
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
@@ -27,9 +29,7 @@ class PredictionTaskTransformation(Transformation):
         removed_columns: list[str],
     ):
         self.prediction_task = prediction_task
-        self.expected_input_columns = (
-            expected_input_columns
-        )
+        self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
@@ -72,7 +72,9 @@ class PredictionTaskTransformation(Transformation):
             raise err
         return [result_df]
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         return self.get_prediction_from_unique_param_based_dataframes(batch_df)
 
     def check_input_format(self, df_columns: list[str]):

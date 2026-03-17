@@ -11,7 +11,9 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 class Transformation(Protocol):
     # needs input and output columns specified
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         """
         transformation logic
         may throw errors in case of prediction problems
@@ -34,11 +36,11 @@ class Transformation(Protocol):
 
 class TransformationGenerator:
 
-    def __init__(self, transformation:Transformation, model_loader: LoadLocalModel):
+    def __init__(self, transformation: Transformation, model_loader: LoadLocalModel):
         self._transformation = transformation
         self._model_loader = model_loader
 
-    def transform(self, dfs: Iterator[DataFrame])-> Iterator[DataFrame]:
+    def transform(self, dfs: Iterator[DataFrame]) -> Iterator[DataFrame]:
         for df in dfs:
             if "error_message" in df.columns:
                 correct_format_df = self._transformation.ensure_output_format(df)
@@ -57,9 +59,7 @@ class TransformationGenerator:
                     yield result_with_error_df
                 except Exception:
                     stack_trace_2 = traceback.format_exc()
-                    result_with_error_df = self.get_result_with_error(
-                        df, stack_trace_2
-                    )
+                    result_with_error_df = self.get_result_with_error(df, stack_trace_2)
                     yield result_with_error_df
 
     def get_result_with_error(
@@ -85,4 +85,3 @@ class TransformationGenerator:
             cols.append("error_message")
             df = df[cols]
         return df
-

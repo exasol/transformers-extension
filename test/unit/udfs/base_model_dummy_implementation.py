@@ -31,7 +31,9 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _drop_old_columns,
     _ensure_output_format,
 )
-from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import (
+    WithModelTransformation,
+)
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
@@ -85,7 +87,9 @@ class SpanColumnsDummyTransformation(Transformation):
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df[self.new_columns] = "add_this"
         batch_df = _drop_old_columns(batch_df, self.removed_columns)
@@ -134,21 +138,28 @@ class DummyImplementationUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[],
             ),
-            WithModelTransformation(exa,PredictionTaskTransformation(
-                prediction_task=prediction_task,
-                new_columns=[
-                    "answer",
-                    "score",
-                ],
-                expected_input_columns=["input_data",],
-                removed_columns=[],
-            )),
+            WithModelTransformation(
+                exa,
+                PredictionTaskTransformation(
+                    prediction_task=prediction_task,
+                    new_columns=[
+                        "answer",
+                        "score",
+                    ],
+                    expected_input_columns=[
+                        "input_data",
+                    ],
+                    removed_columns=[],
+                ),
+            ),
         ]
         if work_with_spans:
-            transformations.append(SpanColumnsDummyTransformation(
-                new_columns = ["test_span_column_add"],
-                removed_columns = ["test_span_column_drop"],
-                expected_input_columns = ["test_span_column_drop"])
+            transformations.append(
+                SpanColumnsDummyTransformation(
+                    new_columns=["test_span_column_add"],
+                    removed_columns=["test_span_column_drop"],
+                    expected_input_columns=["test_span_column_drop"],
+                )
             )
         super().__init__(
             batch_size,

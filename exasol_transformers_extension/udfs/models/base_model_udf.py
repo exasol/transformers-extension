@@ -1,20 +1,20 @@
 from abc import (
     ABC,
 )
+
 import numpy as np
 import transformers
 
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
-
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
-    Transformation, TransformationGenerator,
+    Transformation,
+    TransformationGenerator,
 )
 from exasol_transformers_extension.utils import (
     device_management,
 )
-
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 from exasol_transformers_extension.utils.model_factory_protocol import (
     ModelFactoryProtocol,
@@ -72,7 +72,9 @@ class BaseModelUDF(ABC):
 
             last_generator = iter([batch_df])
             for transformation in self.transformations:
-                transformation_generator = TransformationGenerator(transformation, self.model_loader)
+                transformation_generator = TransformationGenerator(
+                    transformation, self.model_loader
+                )
                 current_generator = transformation_generator.transform(last_generator)
                 last_generator = current_generator
 

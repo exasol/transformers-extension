@@ -65,7 +65,9 @@ class UniqueModelDataframeTransformation(Transformation):
             result_dfs.append(model_df)
         return result_dfs
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         result = self.extract_unique_model_dataframes_from_batch(batch_df)
         return result
 

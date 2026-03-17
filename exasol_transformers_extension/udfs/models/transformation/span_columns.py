@@ -47,7 +47,9 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         batch_df[self.new_columns] = batch_df.apply(self.make_entity_span, axis=1)
         return batch_df
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df = self.rename_columns(batch_df)
         batch_df = self.fill_span_columns(batch_df)
@@ -75,9 +77,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         return _ensure_output_format(batch_df, self.new_columns, self.removed_columns)
 
 
-class SpanColumnsZeroShotTransformation(
-    Transformation
-):
+class SpanColumnsZeroShotTransformation(Transformation):
     def __init__(
         self,
         expected_input_columns: list[str],
@@ -88,7 +88,9 @@ class SpanColumnsZeroShotTransformation(
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
-    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         # drop columns which are made superfluous by the spans to save data transfer
         batch_df = _drop_old_columns(batch_df, self.removed_columns)

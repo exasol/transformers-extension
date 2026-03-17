@@ -26,7 +26,9 @@ class UniqueModelParamsDataframeTransformation(Transformation):
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
-    def transform(self, model_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
+    def transform(
+        self, model_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
         result = self.prediction_task.extract_unique_param_based_dataframes(model_df)
 
         return result

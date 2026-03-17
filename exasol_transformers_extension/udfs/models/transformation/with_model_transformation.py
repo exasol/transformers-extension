@@ -1,26 +1,32 @@
 import traceback
 
-from pandas import DataFrame
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
-from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
-from exasol_transformers_extension.utils.bucketfs_model_specification import BucketFSModelSpecification
+from pandas import DataFrame
+
+from exasol_transformers_extension.udfs.models.transformation.transformation import (
+    Transformation,
+)
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
+)
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class WithModelTransformation(Transformation):
     def __init__(
-            self,
-            exa,
-            transformation: Transformation,
-
+        self,
+        exa,
+        transformation: Transformation,
     ):
         self._transformation = transformation
         self.exa = exa
 
-    def transform(self, model_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
-        self.check_cache(model_df,
-                         self._transformation.prediction_task.task_type,
-                         model_loader)
+    def transform(
+        self, model_df: DataFrame, model_loader: LoadLocalModel
+    ) -> list[DataFrame]:
+        self.check_cache(
+            model_df, self._transformation.prediction_task.task_type, model_loader
+        )
         return self._transformation.transform(model_df, model_loader)
 
     def check_input_format(self, df_columns: list[str]) -> None:
@@ -29,7 +35,9 @@ class WithModelTransformation(Transformation):
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         return self._transformation.ensure_output_format(batch_df)
 
-    def check_cache(self, model_df: DataFrame, task_type: str, model_loader: LoadLocalModel) -> None:
+    def check_cache(
+        self, model_df: DataFrame, task_type: str, model_loader: LoadLocalModel
+    ) -> None:
         """
         If the model for the given dataframe is not cached, it is loaded into
         the cache before performing the prediction.
@@ -50,9 +58,7 @@ class WithModelTransformation(Transformation):
             )
 
             model_loader.clear_device_memory()
-            model_loader.set_current_model_specification(
-                current_model_specification
-            )
+            model_loader.set_current_model_specification(current_model_specification)
             model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
             try:
