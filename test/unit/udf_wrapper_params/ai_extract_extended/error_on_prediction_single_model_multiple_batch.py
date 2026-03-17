@@ -58,7 +58,7 @@ class ErrorOnPredictionSingleModelMultipleBatch:
                 None,
                 None,
                 None,
-                text_doc_id,#todo why
+                None,
                 None,
                 None,
                 "Traceback",
