@@ -18,6 +18,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
     PredictionTaskTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
 
 
 class AiFillMaskExtendedUDF(BaseModelUDF):
@@ -45,7 +46,7 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[],
             ),
-            PredictionTaskTransformation(
+            WithModelTransformation(exa,PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=[
                     "filled_text",
@@ -54,10 +55,9 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
                 ],
                 expected_input_columns=["top_k","text_data"],
                 removed_columns=["sequence"],#this will be created and the renamed. if that fails we need to remove it
-            ),
+            )),
         ]
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,

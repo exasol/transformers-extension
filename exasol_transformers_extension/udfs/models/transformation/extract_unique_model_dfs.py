@@ -10,6 +10,7 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _ensure_output_format,
 )
 from exasol_transformers_extension.utils import dataframe_operations
+from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class UniqueModelDataframeTransformation(Transformation):
@@ -19,9 +20,6 @@ class UniqueModelDataframeTransformation(Transformation):
         self.expected_input_columns = constants.ordered_columns
         self.new_columns = []
         self.removed_columns = []
-
-    def needs_model(self) -> bool:
-        return False
 
     @staticmethod
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
@@ -68,7 +66,7 @@ class UniqueModelDataframeTransformation(Transformation):
         return result_dfs
         # yield model_df
 
-    def transform(self, batch_df: DataFrame) -> list[DataFrame]:
+    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
         result = self.extract_unique_model_dataframes_from_batch(batch_df)
         return result
 
@@ -77,7 +75,7 @@ class UniqueModelDataframeTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:  # todo can protol have implementation?
+        try:  # todo can protol have implementation? or make a "basic transformation" class to inherit from to reduce code duplication?
             _check_input_format(
                 df_columns, self.expected_input_columns, self.__class__.__name__
             )

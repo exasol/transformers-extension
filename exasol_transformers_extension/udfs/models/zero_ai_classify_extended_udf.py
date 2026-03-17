@@ -14,6 +14,7 @@ from exasol_transformers_extension.udfs.models.transformation.span_columns impor
     SpanColumnsZeroShotTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
 
 """
 UDF labeling a given text.
@@ -56,12 +57,12 @@ class AiClassifyExtendedUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[]
             ),
-            PredictionTaskTransformation(
+            WithModelTransformation(exa,PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["label", "score", "rank"],
                 expected_input_columns=["text_data", "candidate_labels"],
                 removed_columns=["labels", "scores"], # get created and renamed, might need to be removed incase of errors
-            ),
+            )),
         ]
         if work_with_spans:
             transformations.append(SpanColumnsZeroShotTransformation(
@@ -71,7 +72,6 @@ class AiClassifyExtendedUDF(BaseModelUDF):
             ))
 
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,

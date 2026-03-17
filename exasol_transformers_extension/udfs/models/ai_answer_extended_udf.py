@@ -17,6 +17,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
     PredictionTaskTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
 
 
 class AiAnswerExtendedUDF(BaseModelUDF):
@@ -35,6 +36,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
             desired_fields_in_prediction=["answer", "score"],
         ),
     ):
+
         transformations = [
             UniqueModelDataframeTransformation(),
             UniqueModelParamsDataframeTransformation(
@@ -43,15 +45,14 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[],
             ),
-            PredictionTaskTransformation(
+            WithModelTransformation(exa,PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 expected_input_columns=["question","context_text","top_k"],
                 new_columns=["answer", "score", "rank"],
                 removed_columns=[],
-            ),
+            )),
         ]
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,

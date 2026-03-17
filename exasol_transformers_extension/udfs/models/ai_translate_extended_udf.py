@@ -18,6 +18,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
     PredictionTaskTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
 
 
 class AiTranslateExtendedUDF(BaseModelUDF):
@@ -43,15 +44,14 @@ class AiTranslateExtendedUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[]
             ),
-            PredictionTaskTransformation(
+            WithModelTransformation(exa, PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=["translation_text"],
                 expected_input_columns=["source_language", "target_language", "text_data", "max_new_tokens"],
                 removed_columns=[]
-            ),
+            )),
         ]
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,

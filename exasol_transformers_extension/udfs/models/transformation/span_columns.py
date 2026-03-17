@@ -14,6 +14,7 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _drop_old_columns,
     _ensure_output_format,
 )
+from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class SpanColumnsTokenClassificationTransformation(Transformation):
@@ -27,9 +28,6 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
-
-    def needs_model(self) -> bool:
-        return False
 
     def rename_columns(self, model_df: DataFrame) -> DataFrame:
         # we use different names in udf with span and without, so need to rename
@@ -49,7 +47,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         batch_df[self.new_columns] = batch_df.apply(self.make_entity_span, axis=1)
         return batch_df
 
-    def transform(self, batch_df: DataFrame) -> list[DataFrame]:
+    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df = self.rename_columns(batch_df)
         batch_df = self.fill_span_columns(batch_df)
@@ -90,10 +88,7 @@ class SpanColumnsZeroShotTransformation(
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 
-    def needs_model(self) -> bool:
-        return False
-
-    def transform(self, batch_df: DataFrame) -> list[DataFrame]:
+    def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         # drop columns which are made superfluous by the spans to save data transfer
         batch_df = _drop_old_columns(batch_df, self.removed_columns)

@@ -23,6 +23,7 @@ from exasol_transformers_extension.udfs.models.transformation.span_columns impor
     SpanColumnsTokenClassificationTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation import Transformation
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import WithModelTransformation
 
 
 class AiExtractExtendedUDF(BaseModelUDF):
@@ -52,7 +53,7 @@ class AiExtractExtendedUDF(BaseModelUDF):
                 new_columns=[],
                 removed_columns=[],
             ),
-            PredictionTaskTransformation(
+            WithModelTransformation(exa,PredictionTaskTransformation(
                 prediction_task=prediction_task,
                 new_columns=[
                     "start_pos",
@@ -66,7 +67,7 @@ class AiExtractExtendedUDF(BaseModelUDF):
                     "end",
                     "entity_group",], #this one might get created. it should then be renamed, but in case that fais we need to remove it
                 expected_input_columns=["text_data", "aggregation_strategy",]
-            ),
+            )),
         ]
         if work_with_spans:
             transformations.append(SpanColumnsTokenClassificationTransformation(
@@ -76,7 +77,6 @@ class AiExtractExtendedUDF(BaseModelUDF):
 
             ))
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,
