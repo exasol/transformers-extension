@@ -77,7 +77,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
 
 class SpanColumnsZeroShotTransformation(
     Transformation
-):  # todo make base class for these?
+):
     def __init__(
         self,
         expected_input_columns: list[str],

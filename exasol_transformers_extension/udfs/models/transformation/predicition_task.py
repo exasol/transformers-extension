@@ -28,7 +28,7 @@ class PredictionTaskTransformation(Transformation):
     ):
         self.prediction_task = prediction_task
         self.expected_input_columns = (
-            expected_input_columns  # todo depends on task_type?
+            expected_input_columns
         )
         self.new_columns = new_columns
         self.removed_columns = removed_columns
@@ -74,8 +74,6 @@ class PredictionTaskTransformation(Transformation):
 
     def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
         return self.get_prediction_from_unique_param_based_dataframes(batch_df)
-
-    # todo concat before return?
 
     def check_input_format(self, df_columns: list[str]):
         """

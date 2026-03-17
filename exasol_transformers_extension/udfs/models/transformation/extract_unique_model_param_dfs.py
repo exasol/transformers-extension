@@ -22,7 +22,7 @@ class UniqueModelParamsDataframeTransformation(Transformation):
         removed_columns: list[str],
     ):
         self.prediction_task = prediction_task
-        self.expected_input_columns = expected_input_columns #todo should these be collected out of prediction task?
+        self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
 

@@ -1,9 +1,7 @@
-import traceback
 from abc import (
     ABC,
 )
 import numpy as np
-import pandas as pd
 import transformers
 
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
@@ -11,7 +9,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
-    Transformation,
+    Transformation, TransformationGenerator,
 )
 from exasol_transformers_extension.utils import (
     device_management,
@@ -71,48 +69,19 @@ class BaseModelUDF(ABC):
             batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
             if batch_df is None:
                 break
-            in_dfs = [batch_df]
-            for transformation in self.transformations:
-                transform_result_dfs = []
-                for in_df in in_dfs:
-                    if "error_message" in in_df:
-                        correct_format_df = transformation.ensure_output_format(in_df)
-                        transform_result_dfs.append(
-                            correct_format_df
-                        )  # todo make this not teccessary even after UniqueModelDataframeTransformation
-                        in_dfs = transform_result_dfs
-                        continue
-                    try:
-                        transformation.check_input_format(in_df.columns)
-                        transform_result_dfs = (
-                            transform_result_dfs + transformation.transform(in_df, self.model_loader)
-                        )
-                    except Exception:
-                        stack_trace = traceback.format_exc()
-                        try:
-                            correct_format_df = transformation.ensure_output_format(
-                                in_df
-                            )
-                            result_with_error_df = self.get_result_with_error(
-                                correct_format_df, stack_trace
-                            )
-                            transform_result_dfs.append(result_with_error_df)
-                        except Exception:
-                            stack_trace_2 = traceback.format_exc()
-                            result_with_error_df = self.get_result_with_error(
-                                in_df, stack_trace_2
-                            )
-                            transform_result_dfs.append(result_with_error_df)
 
-                in_dfs = transform_result_dfs
-            result_dfs = []
-            for df in in_dfs:
+            last_generator = iter([batch_df])
+            for transformation in self.transformations:
+                transformation_generator = TransformationGenerator(transformation, self.model_loader)
+                current_generator = transformation_generator.transform(last_generator)
+                last_generator = current_generator
+
+            for df in last_generator:
                 if not "error_message" in df.columns:
                     df["error_message"] = None
-                result_dfs.append(self.error_message_last(df))
-            result_df = pd.concat(result_dfs)
-            result_df = result_df.replace(np.nan, None)
-            ctx.emit(result_df)
+                result_df = TransformationGenerator.error_message_last(df)
+                result_df = result_df.replace(np.nan, None)
+                ctx.emit(result_df)
 
         self.model_loader.clear_device_memory()
 
@@ -127,29 +96,3 @@ class BaseModelUDF(ABC):
             task_type=self.prediction_task.task_type,
             device=self.device,
         )
-
-    @staticmethod
-    def error_message_last(df: pd.DataFrame) -> pd.DataFrame:
-        cols = df.columns.tolist()
-        if "error_message" in cols:
-            # move error message column to the end of the df
-            cols.remove("error_message")
-            cols.append("error_message")
-            df = df[cols]
-        return df
-
-    def get_result_with_error(
-        self, model_df: pd.DataFrame, stack_trace: str
-    ) -> pd.DataFrame:
-        """
-        Add the stack trace to the dataframe that received an error
-        during prediction.
-
-        :param model_df: The dataframe that received an error during prediction
-        :param stack_trace: String of the stack traceback
-        """
-        BaseModelUDF.error_message_last(model_df)
-        self.error_message_last(model_df)
-        model_df["error_message"] = stack_trace
-
-        return model_df

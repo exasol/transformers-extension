@@ -64,7 +64,6 @@ class UniqueModelDataframeTransformation(Transformation):
             model_df = batch_df[selections]
             result_dfs.append(model_df)
         return result_dfs
-        # yield model_df
 
     def transform(self, batch_df: DataFrame, model_loader: LoadLocalModel) -> list[DataFrame]:
         result = self.extract_unique_model_dataframes_from_batch(batch_df)
@@ -75,7 +74,7 @@ class UniqueModelDataframeTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:  # todo can protol have implementation? or make a "basic transformation" class to inherit from to reduce code duplication?
+        try:
             _check_input_format(
                 df_columns, self.expected_input_columns, self.__class__.__name__
             )
