@@ -1,6 +1,24 @@
 import transformers
 
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
+    UniqueModelDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
+    UniqueModelParamsDataframeTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+    PredictionTaskTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.span_columns import (
+    SpanColumnsZeroShotTransformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.transformation import (
+    Transformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import (
+    WithModelTransformation,
+)
 
 """
 UDF labeling a given text.
@@ -35,13 +53,41 @@ class AiClassifyExtendedUDF(BaseModelUDF):
         ),
         work_with_spans: bool = False,
     ):
+        transformations: list[Transformation] = [
+            UniqueModelDataframeTransformation(),
+            UniqueModelParamsDataframeTransformation(
+                prediction_task=prediction_task,
+                expected_input_columns=["candidate_labels"],
+                new_columns=[],
+                removed_columns=[],
+            ),
+            WithModelTransformation(
+                exa,
+                PredictionTaskTransformation(
+                    prediction_task=prediction_task,
+                    new_columns=["label", "score", "rank"],
+                    expected_input_columns=["text_data", "candidate_labels"],
+                    removed_columns=[
+                        "labels",
+                        "scores",
+                    ],  # get created and renamed, might need to be removed incase of errors
+                ),
+            ),
+        ]
+        if work_with_spans:
+            transformations.append(
+                SpanColumnsZeroShotTransformation(
+                    expected_input_columns=["text_data", "candidate_labels"],
+                    new_columns=[],  # no new span so no new columns. we just return the input span
+                    removed_columns=["text_data", "candidate_labels"],
+                )
+            )
+
         super().__init__(
-            exa,
             batch_size,
             pipeline,
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            new_columns=["label", "score", "rank", "error_message"],
-            work_with_spans=work_with_spans,
+            transformations=transformations,
         )
