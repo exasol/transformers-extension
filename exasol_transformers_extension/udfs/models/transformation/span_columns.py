@@ -18,6 +18,11 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class SpanColumnsTokenClassificationTransformation(Transformation):
+    """
+    Transformation for adding result span columns to the output of the
+    token-classification prediction task
+    """
+
     def __init__(
         self,
         expected_input_columns: list[str],
@@ -30,26 +35,37 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         self.removed_columns = removed_columns
 
     def rename_columns(self, model_df: DataFrame) -> DataFrame:
-        # we use different names in udf with span and without, so need to rename
-        # this decision was made as to improve the naming of the columns without
-        # breaking the interface of the existing udf
+        """
+        we use different column-names in udf with span and without, so need to rename them.
+        this decision was made as to improve the naming of the columns without
+        breaking the interface of the existing udf
+        """
         model_df = model_df.rename(columns=self.renamed_columns)
         return model_df
 
     @staticmethod
     def make_entity_span(df_row):
+        """
+        create the valued for the span describing a found entity.
+        """
         token_doc_id = df_row["text_data_doc_id"]
         token_char_begin = df_row["start_pos"] + df_row["text_data_char_begin"]
         token_char_end = df_row["end_pos"] + df_row["text_data_char_begin"]
         return Series([token_doc_id, token_char_begin, token_char_end])
 
     def fill_span_columns(self, batch_df: DataFrame) -> DataFrame:
+        """
+        fill span columns with values using make_entity_span
+        """
         batch_df[self.new_columns] = batch_df.apply(self.make_entity_span, axis=1)
         return batch_df
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> list[DataFrame]:
+        """
+        create and fill span columns, drop old columns.
+        """
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df = self.rename_columns(batch_df)
         batch_df = self.fill_span_columns(batch_df)
@@ -78,6 +94,11 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
 
 
 class SpanColumnsZeroShotTransformation(Transformation):
+    """
+    Transformation for adding result span columns to the output of the
+    zero-shot-classification prediction task
+    """
+
     def __init__(
         self,
         expected_input_columns: list[str],

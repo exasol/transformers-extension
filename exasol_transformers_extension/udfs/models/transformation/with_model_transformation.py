@@ -13,6 +13,9 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class WithModelTransformation(Transformation):
+    """
+    Transformation which loads a model if needed, then calls _transformation.transform
+    """
     def __init__(
         self,
         exa,
@@ -24,6 +27,9 @@ class WithModelTransformation(Transformation):
     def transform(
         self, model_df: DataFrame, model_loader: LoadLocalModel
     ) -> list[DataFrame]:
+        """
+        loads a model if needed, then calls _transformation.transform
+        """
         self.check_cache(
             model_df, self._transformation.prediction_task.task_type, model_loader
         )

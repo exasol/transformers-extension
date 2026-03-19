@@ -14,6 +14,12 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class UniqueModelDataframeTransformation(Transformation):
+    """
+    Transformation which Splits the input DataFrame into multiple DataFrames,
+    based on which model is found in the model_name, bucketfs_conn and sub_dir columns.
+    Fails if one of the columns is empty for a given row.
+    """
+
     def __init__(
         self,
     ):
@@ -23,6 +29,10 @@ class UniqueModelDataframeTransformation(Transformation):
 
     @staticmethod
     def _check_values_not_null(model_name, bucketfs_conn, sub_dir):
+        """
+        Fails if one of the model columns( model_name, bucketfs_conn and sub_dir)
+        is empty for a given row.
+        """
         if not (model_name and bucketfs_conn and sub_dir):
             error_message = (
                 f"For each model model_name, bucketfs_conn and sub_dir need to be "
@@ -68,8 +78,10 @@ class UniqueModelDataframeTransformation(Transformation):
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> list[DataFrame]:
-        result = self.extract_unique_model_dataframes_from_batch(batch_df)
-        return result
+        """
+        calls transformation logic.
+        """
+        return self.extract_unique_model_dataframes_from_batch(batch_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

@@ -14,6 +14,14 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class UniqueModelParamsDataframeTransformation(Transformation):
+    """
+    Transformation which Splits the input DataFrame into multiple DataFrames,
+    based on which model-parameters are found.
+    Calls PredictionTask.extract_unique_param_based_dataframes, since the
+    model-parameters are tied to the transformers task-type.
+    Fails if one of the columns is empty for a given row.
+    """
+
     def __init__(
         self,
         prediction_task: PredictionTask,
@@ -29,9 +37,10 @@ class UniqueModelParamsDataframeTransformation(Transformation):
     def transform(
         self, model_df: DataFrame, model_loader: LoadLocalModel
     ) -> list[DataFrame]:
-        result = self.prediction_task.extract_unique_param_based_dataframes(model_df)
-
-        return result
+        """
+        calls transformation logic.
+        """
+        return self.prediction_task.extract_unique_param_based_dataframes(model_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

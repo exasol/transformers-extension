@@ -21,6 +21,14 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
 class PredictionTaskTransformation(Transformation):
+    """
+    Transformation which calls
+        prediction_task.execute_prediction
+        prediction_task.create_dataframes_from_predictions
+        prediction_task.append_predictions_to_input_dataframe
+    and returns a DataFrame containing input and  prediction results.
+    """
+
     def __init__(
         self,
         prediction_task: PredictionTask,
@@ -75,6 +83,9 @@ class PredictionTaskTransformation(Transformation):
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> list[DataFrame]:
+        """
+        calls transformation logic.
+        """
         return self.get_prediction_from_unique_param_based_dataframes(batch_df)
 
     def check_input_format(self, df_columns: list[str]):
