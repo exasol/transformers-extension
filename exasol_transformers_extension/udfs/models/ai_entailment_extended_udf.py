@@ -19,6 +19,16 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 
 
 class AiEntailmentExtendedUDF(BaseModelUDF):
+    """
+    UDf for measuring the similarity of two input tet-sequences.
+
+    Needs to have "first_text", "second_text" in the input.
+    Will output to "label", "score", "rank".
+    Does not use default values.
+
+    Uses models compatible with the "text-classification" transformers task, and uses
+    AutoModelForSequenceClassification to load said model.
+    """
     def __init__(
         self,
         exa,

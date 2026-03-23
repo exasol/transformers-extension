@@ -33,8 +33,19 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 class AiExtractExtendedUDF(BaseModelUDF):
     """
     UDF for finding and classifying a token/entity in a given text.
+
+    Can be used with or without input span for input and output
+    (configure with "work_with_spans" parameter).
     If given an input span, text_data_char_begin and text_data_char_end should
     represent the entire input text and not indicate a substring.
+
+    Needs to have "text_data", "aggregation_strategy" in the input.
+    Will output to "word", "entity", "score", as well as
+    describe the position of the entity, depending on span usage.
+    Does not use default values.
+
+    Uses models compatible with the "token-classification" transformers task, and uses
+    AutoModelForTokenClassification to load said model.
     """
 
     def __init__(

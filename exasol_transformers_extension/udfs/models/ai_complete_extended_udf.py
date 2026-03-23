@@ -25,8 +25,15 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 
 class AiCompleteExtendedUDF(BaseModelUDF):
     """
-    UDF for continuing a given text. May be used to return whole text,
-    or only the newly generated part.
+    UDF for continuing a given text. Can be configured to do one or the other:
+        * return the whole text ( input text + generated continuation )
+        * return only the newly generated part
+
+    Needs to have "text_data", "max_new_tokens", "return_full_text" in the input.
+    Will output to "generated_text".
+    Does not use default values.
+    Uses models compatible with the "text-generation" transformers task, and uses
+    AutoModelForCausalLM to load said model.
     """
 
     def __init__(

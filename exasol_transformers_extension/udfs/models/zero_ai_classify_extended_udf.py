@@ -34,11 +34,19 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.zero_shot import
 
 class AiClassifyExtendedUDF(BaseModelUDF):
     """
-    UDF labeling a given text.
+    UDF labeling a given text, selecting the label from a defined list of candidate labels.
+
     If given an input span as input columns
     text_data_doc_id, text_data_char_begin, text_data_char_end, the span should
     represent the entire input text_data. This udf is not equipped to
     select substrings of the input text for classification based on the input span.
+
+    Needs to have "text_data", "candidate_labels" in the input.
+    Will output to "label", "score", "rank".
+    Does not use default values.
+
+    Uses models compatible with the "zero-shot-classification" transformers task, and uses
+    AutoModelForSequenceClassification to load said model.
     """
 
     def __init__(

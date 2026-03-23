@@ -23,22 +23,8 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 
 class BaseModelUDF(ABC):
     """
-    This base class should be extended by each UDF class containing model logic.
-    This class contains common operations for all prediction UDFs:
-        - accesses data part-by-part based on predefined batch size
-        - manages the model cache
-        - reads the corresponding model from BucketFS into cache
-        - creates model pipeline through transformer api
-        - manages the creation of predictions and the preparation of results.
-
-
-    If your UDF changes output format depending on work_with_spans,
-    consider also implementing:
-        - drop_old_data_for_span_execution
-        - create_new_span_columns
-    These can be used to help making sure df output format is correct even if an error
-    occurs before the format is changed in the UDF itself
-
+    This base class for prediction udfs. Calls transform function of the given Transformations in
+    "transformations" in order.
     """
 
     def __init__(
@@ -60,6 +46,14 @@ class BaseModelUDF(ABC):
         self.transformations = transformations
 
     def run(self, ctx):
+        """
+        run function for prediction udfs. This is where the execution of the udf starts.
+        Calls transform function of the given Transformations in "self.transformations"
+        in order.
+        Emits the resulting dataframes. Results might be split into many dataframes,
+        depending on which Transformations are used.
+        You can also change the input and output columns via the transformations.
+        """
         device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
         self.device = device_management.get_torch_device(device_id)
         self.create_model_loader()

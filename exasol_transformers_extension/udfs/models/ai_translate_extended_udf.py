@@ -27,6 +27,14 @@ class AiTranslateExtendedUDF(BaseModelUDF):
     """
     UDF for translating text. Will prompt the model with
     "translate <source_language> to <target_language>: <text-data>"
+
+    Needs to have  "max_new_tokens", "text_data", "source_language",
+    "target_language" in the input.
+    Will output to "translation_text".
+    Does not use default values.
+
+    Uses models compatible with the "translation" transformers task, and uses
+    AutoModelForSeq2SeqLM to load said model.
     """
 
     def __init__(

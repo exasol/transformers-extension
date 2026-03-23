@@ -25,6 +25,11 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 class AiAnswerExtendedUDF(BaseModelUDF):
     """
     UDF for answering a given "question" about a given "context_text"
+    Needs to have "question", "context_text", "top_k" in the input.
+    Will output to "answer", "score", "rank".
+    Does not use default values.
+    Uses models compatible with the "question-answering" transformers task,
+     and uses AutoModelForQuestionAnswering to load said model.
     """
 
     def __init__(

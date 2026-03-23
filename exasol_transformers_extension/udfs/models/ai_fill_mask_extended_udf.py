@@ -25,8 +25,15 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 
 class AiFillMaskExtendedUDF(BaseModelUDF):
     """
-    Udf for the "fill_mask" transformers task.
-    Will fill any occurence of "<mask>" in the input text data with a generated substring.
+    Udf for the generating replacement substrings for any "<mask>"-substring found in the
+    input text. .
+
+    Needs to have "top_k", "text_data" in the input.
+    Will output to "filled_text", "score", "rank".
+    Does not use default values.
+
+    Uses models compatible with the "fill_mask" transformers task, and uses
+    AutoModelForMaskedLM to load said model.
     """
 
     def __init__(
