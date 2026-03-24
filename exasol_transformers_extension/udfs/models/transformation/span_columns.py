@@ -62,7 +62,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         create and fill span columns, drop old columns.
         """
@@ -71,7 +71,7 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
         batch_df = self.fill_span_columns(batch_df)
         # drop columns which are made superfluous by the spans to save data transfer
         batch_df = _drop_old_columns(batch_df, self.removed_columns)
-        return [batch_df]
+        yield batch_df
 
     def check_input_format(self, df_columns: list[str]):
         """
@@ -111,11 +111,10 @@ class SpanColumnsZeroShotTransformation(Transformation):
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         # drop columns which are made superfluous by the spans to save data transfer
-        batch_df = _drop_old_columns(batch_df, self.removed_columns)
-        return [batch_df]
+        yield _drop_old_columns(batch_df, self.removed_columns)
 
     def check_input_format(self, df_columns: list[str]):
         """

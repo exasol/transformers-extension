@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 from pandas import DataFrame
 
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
@@ -36,11 +38,11 @@ class UniqueModelParamsDataframeTransformation(Transformation):
 
     def transform(
         self, model_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         calls transformation logic.
         """
-        return self.prediction_task.extract_unique_param_based_dataframes(model_df)
+        yield from self.prediction_task.extract_unique_param_based_dataframes(model_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

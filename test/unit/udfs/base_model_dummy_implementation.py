@@ -1,5 +1,5 @@
 """a dummy implementation for the base udf. used for testing base udf functionality."""
-
+from collections.abc import Iterator
 from typing import (
     Any,
     Union,
@@ -89,11 +89,10 @@ class SpanColumnsDummyTransformation(Transformation):
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         batch_df[self.new_columns] = "add_this"
-        batch_df = _drop_old_columns(batch_df, self.removed_columns)
-        return [batch_df]
+        yield _drop_old_columns(batch_df, self.removed_columns)
 
     def check_input_format(self, df_columns: list[str]):
         """

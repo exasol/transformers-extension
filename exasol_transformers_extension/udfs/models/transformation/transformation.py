@@ -35,7 +35,7 @@ class Transformation(Protocol):
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         Transformation logic.
         May throw errors in case the transformation fails.

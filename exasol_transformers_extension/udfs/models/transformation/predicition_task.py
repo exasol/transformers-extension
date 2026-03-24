@@ -63,7 +63,7 @@ class PredictionTaskTransformation(Transformation):
 
     def get_prediction_from_unique_param_based_dataframes(
         self, param_based_model_df
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         Performs separate predictions for data with the same parameters
         in the same model dataframe.
@@ -75,18 +75,17 @@ class PredictionTaskTransformation(Transformation):
         """
 
         try:
-            result_df = self.get_prediction(param_based_model_df)
+            yield self.get_prediction(param_based_model_df)
         except Exception as err:
             raise err
-        return [result_df]
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         calls transformation logic.
         """
-        return self.get_prediction_from_unique_param_based_dataframes(batch_df)
+        yield from self.get_prediction_from_unique_param_based_dataframes(batch_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

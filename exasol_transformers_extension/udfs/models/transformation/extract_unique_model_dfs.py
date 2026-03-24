@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 import pandas as pd
 from pandas import DataFrame
 
@@ -43,7 +45,7 @@ class UniqueModelDataframeTransformation(Transformation):
 
     def extract_unique_model_dataframes_from_batch(
         self, batch_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[pd.DataFrame]:
         """
         Extract unique model dataframes with the same model_name, bucketfs_conn,
         and sub_dir from the dataframe.
@@ -58,7 +60,6 @@ class UniqueModelDataframeTransformation(Transformation):
             batch_df, self.expected_input_columns, sort=True
         )
 
-        result_dfs = []
         for model_name, bucketfs_conn, sub_dir in unique_values:
             try:
                 self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
@@ -71,17 +72,15 @@ class UniqueModelDataframeTransformation(Transformation):
                 & (batch_df["sub_dir"] == sub_dir)
             )
 
-            model_df = batch_df[selections]
-            result_dfs.append(model_df)
-        return result_dfs
+            yield batch_df[selections]
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         calls transformation logic.
         """
-        return self.extract_unique_model_dataframes_from_batch(batch_df)
+        yield from self.extract_unique_model_dataframes_from_batch(batch_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

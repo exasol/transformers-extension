@@ -1,4 +1,5 @@
 import traceback
+from collections.abc import Iterator
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 from pandas import DataFrame
@@ -27,14 +28,14 @@ class WithModelTransformation(Transformation):
 
     def transform(
         self, model_df: DataFrame, model_loader: LoadLocalModel
-    ) -> list[DataFrame]:
+    ) -> Iterator[DataFrame]:
         """
         loads a model if needed, then calls _transformation.transform
         """
         self.check_cache(
             model_df, self._transformation.prediction_task.task_type, model_loader
         )
-        return self._transformation.transform(model_df, model_loader)
+        yield from self._transformation.transform(model_df, model_loader)
 
     def check_input_format(self, df_columns: list[str]) -> None:
         self._transformation.check_input_format(df_columns)

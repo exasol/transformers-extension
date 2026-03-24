@@ -2,7 +2,7 @@
 Protocol for using transformers prediction tasks in an udf.
 Needs to be implemented for each task.
 """
-
+from collections.abc import Iterator
 from typing import (
     Any,
     Protocol,
@@ -33,7 +33,7 @@ class PredictionTask(Protocol):
 
     def create_dataframes_from_predictions(
         self, predictions: list[Any]
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[pd.DataFrame]:
         """
         Converts list of predictions to pandas dataframe.
         """
@@ -41,7 +41,7 @@ class PredictionTask(Protocol):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[pd.DataFrame]:
         """
         Even if the data in a given
         dataframe all have the same model, there might be differences within the given
