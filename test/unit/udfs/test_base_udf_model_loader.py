@@ -145,8 +145,7 @@ def test_model_loader_missing_parameters(
     res, mock_meta = setup_model_loader_tests_and_run(
         bucketfs_conn_name, bucketfs_conn, input_data, model_output_data
     )
-    print("________")
-    print(res)
+
     error_field = res[0][-1]
     expected_error = regex_matcher(
         ".*For each model model_name, bucketfs_conn and sub_dir need to be provided."

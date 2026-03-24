@@ -29,6 +29,7 @@ class AiEntailmentExtendedUDF(BaseModelUDF):
     Uses models compatible with the "text-classification" transformers task, and uses
     AutoModelForSequenceClassification to load said model.
     """
+
     def __init__(
         self,
         exa,

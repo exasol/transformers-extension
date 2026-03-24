@@ -12,8 +12,6 @@ class regex_matcher:
         self._regex = re.compile(pattern, flags)
 
     def __eq__(self, actual):
-        print(self._regex)
-        print(actual)
         return bool(self._regex.match(actual))
 
     def __repr__(self):

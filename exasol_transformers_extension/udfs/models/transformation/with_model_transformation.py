@@ -16,6 +16,7 @@ class WithModelTransformation(Transformation):
     """
     Transformation which loads a model if needed, then calls _transformation.transform
     """
+
     def __init__(
         self,
         exa,
