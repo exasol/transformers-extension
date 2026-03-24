@@ -70,7 +70,7 @@ mainly because we run our integration tests differently here.
 In the transformers-extension library, the 8 most popular NLP tasks provided by
 [Transformers API](https://huggingface.co/docs/transformers/index) have already
 been defined. We created separate UDF scripts for each NLP task. You can find
-these tasks and UDF script usage details in the [User Guide](../user_guide/user_guide.md#prediction-udfs).
+these tasks and UDF script usage details in the [User Guide](../user_guide/invoke_models.md).
 This section shows you step by step how to add a new NLP task to this library.
 
 ### 1. Add a UDF Template
@@ -101,15 +101,15 @@ in the `exasol_transformers_extension/deployment/constants.py` script. Thus,
 we know which template belongs to which script during deployment.
 
 ### 4. UDF Script
-The UDF script should be a subclass of `BaseModelUDF`.
+The UDF script should be a subclass of [BaseModelUDF](../../exasol_transformers_extension/udfs/models/base_model_udf.py).
 
 The UDF class must be defined under the `exasol_transformers_extension/udfs/models/` 
 directory.
 It should be named in the schema of "Ai<Task>UDF".
 
-Here, you can define settings for transformers , as well as a `TransformationPipeline`.
+Here, you can define settings for transformers , as well as a [TransformationPipeline](../../exasol_transformers_extension/udfs/models/transformation/transformation_pipeline.py).
 The `TransformationPipeline` holds a list of `Transformation`s. A transformation is an 
-implementation of the `Transformation`-Protocol. 
+implementation of the [Transformation-Protocol](../../exasol_transformers_extension/udfs/models/transformation/transformation.py). 
 They get a DataFrame as input, and transform it in some way. You may also define 
 `expected_input_columns`, `new_columns` and `removed_columns` for each `Transformation`.
 
@@ -123,15 +123,15 @@ the data input and output. Here, the
 For a prediction udf you will want one of the `Transformation` to be a
 `WithModelTransformation(PredictionTaskTransformation(PredictionTask)`
 
-The PredictionTask is an implementation of the `PredictionTask`-Protocol. 
+The PredictionTask is an implementation of the [PredictionTask-Protocol](../../exasol_transformers_extension/udfs/models/prediction_tasks/prediction_task.py). 
 It holds the 
 logic for a specific NLP-Task. Multiple UDF classes can use the same `PredictionTask`. 
 If none of the existing `PredictionTask` implementations (see Section 4.3) suit your task, you can write 
 your own. More information can be found in Section 4.4.
 
-The `PredictionTask` get then wrapped in the `PredictionTaskTransformation` which 
-handles calling the `PredictionTask` functions. Then, the `PredictionTaskTransformation` 
-gets wrapped in the `WithModelTransformation` which handles loading the required 
+The `PredictionTask` get then wrapped in the [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py) which 
+handles calling the `PredictionTask`s functions. Then, the `PredictionTaskTransformation` 
+gets wrapped in the [WithModelTransformation](../../exasol_transformers_extension/udfs/models/transformation/with_model_transformation.py) which handles loading the required 
 transformers models.
 
 A typical UDF script will look like this:
@@ -183,26 +183,26 @@ class Ai<name>UDF(BaseModelUDF):
 We have already implemented the following `Transformation`s, 
 which you might want to use in your UDF:
 
- - `UniqueModelDataframeTransformation` :  Splits the input DataFrame into multiple 
+ - [UniqueModelDataframeTransformation](../../exasol_transformers_extension/udfs/models/transformation/extract_unique_model_dfs.py) :  Splits the input DataFrame into multiple 
     DataFrames, based on which model is found in the model_name, 
     bucketfs_conn and sub_dir columns.
- - `UniqueModelParamsDataframeTransformation` : Splits the input DataFrame into 
+ - [UniqueModelParamsDataframeTransformation](../../exasol_transformers_extension/udfs/models/transformation/extract_unique_model_param_dfs.py) : Splits the input DataFrame into 
     multiple DataFrames, based on which model-parameters are found. 
     Calls PredictionTask.extract_unique_param_based_dataframes, since the
     model-parameters are tied to the transformers task-type.
- - `PredictionTaskTransformation` : Calls
+ - [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py) : Calls
         prediction_task.execute_prediction, 
         prediction_task.create_dataframes_from_predictions, 
         prediction_task.append_predictions_to_input_dataframe 
     and returns a DataFrame containing input and  prediction results.
- - `SpanColumnsTokenClassificationTransformation` : Transformation for adding result span 
+ - [SpanColumnsTokenClassificationTransformation](../../exasol_transformers_extension/udfs/models/transformation/span_columns.py) : Transformation for adding result span 
    columns to the output of the token-classification prediction task.
- - `SpanColumnsZeroShotTransformation` : Transformation for adding result span columns 
+ - [SpanColumnsZeroShotTransformation](../../exasol_transformers_extension/udfs/models/transformation/span_columns.py) : Transformation for adding result span columns 
    to the output of the zero-shot-classification prediction task.
 
 #### 4.2 Implement a new Transformation
 
-You can implement new `Transformation`s if needed, please do so in the
+You can add your own implementation of the [Transformation-Protocol](../../exasol_transformers_extension/udfs/models/transformation/transformation.py) if needed, please do so in the
  `exasol_transformers_extension/udfs/models/transformation` 
 directory.
 Typical `Transformation`s have lists of columns as input, which can be used to ensure 
@@ -228,29 +228,29 @@ which you might want to use in your UDF:
 
  - [FillMaskPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/fill_mask.py): 
    Task logic for using the "fill-mask" transformers task.
- - AnswerPredictionTask :     
+ - [AnswerPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/question_answering.py) :     
    Task logic for using the "question-answering" transformers task.
- - EntailmentPredictionTask : 
+ - [EntailmentPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/text_classification.py) : 
     Task logic for using the "text-classification" transformers task.
     Expects two text inputs per row.
- - TextClassifyPredictionTask :  
+ - [TextClassifyPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/text_classification.py) :  
     Task logic for using the "text-classification" transformers task in
     a prediction udf.
     Expects one text inputs per row.
- - TextGenPredictionTask : 
+ - [TextGenPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/text_generation.py) : 
    Task logic for using the "text-generation" transformers task.
- - TokenClassifyPredictionTask : 
+ - [TokenClassifyPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/token_classification.py) : 
    Task logic for using the "token-classification" transformers task.
- - TranslatePredictionTask : 
+ - [TranslatePredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/translation.py): 
    Task logic for using the "translation" transformers task.
- - ZeroShotPredictionTask : 
+ - [ZeroShotPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/zero_shot.py) : 
     Task logic for using the "zero-shot-classification" transformers task.
 
 #### 4.4 Implement a new PredictionTask
 
 The `<YourTask>PredictionTask` class, in which we implement the logic of the desired task,
 must be defined under the `exasol_transformers_extension/udfs/models/prediction_tasks` 
-directory. This class should extend the `PredictionTask`-Protocol. 
+directory. This class should extend the [PredictionTask-Protocol](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py). 
 The `PredictionTask` is a Protocol for ensuring the following methods are implemented
 and have correct input and output types:
 
