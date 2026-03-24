@@ -16,6 +16,9 @@ from exasol_transformers_extension.udfs.models.transformation.span_columns impor
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
+    TransformationPipeline,
+)
 from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import (
     WithModelTransformation,
 )
@@ -91,11 +94,13 @@ class AiClassifyExtendedUDF(BaseModelUDF):
                 )
             )
 
+        transformations_p = TransformationPipeline(transformations)
+
         super().__init__(
             batch_size,
             pipeline,
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
+            transformations=transformations_p,
         )

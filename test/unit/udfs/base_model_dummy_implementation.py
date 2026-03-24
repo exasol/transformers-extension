@@ -1,4 +1,5 @@
 """a dummy implementation for the base udf. used for testing base udf functionality."""
+
 from collections.abc import Iterator
 from typing import (
     Any,
@@ -24,6 +25,9 @@ from exasol_transformers_extension.udfs.models.transformation.predicition_task i
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
+)
+from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
+    TransformationPipeline,
 )
 from exasol_transformers_extension.udfs.models.transformation.utils import (
     _check_input_format,
@@ -160,11 +164,14 @@ class DummyImplementationUDF(BaseModelUDF):
                     expected_input_columns=["test_span_column_drop"],
                 )
             )
+
+        transformations_p = TransformationPipeline(transformations)
+
         super().__init__(
             batch_size,
             pipeline,
             base_model,
             tokenizer,
             prediction_task=prediction_task,
-            transformations=transformations,
+            transformations=transformations_p,
         )

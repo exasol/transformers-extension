@@ -61,7 +61,7 @@ class Transformation(Protocol):
         pass
 
 
-class TransformationGenerator:
+class TransformationErrorHandler:
     """
     A Generator which wraps around a Transformation. Responsible for calling the
     transformation and managing error handling.

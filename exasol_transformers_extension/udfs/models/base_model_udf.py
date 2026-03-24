@@ -10,7 +10,10 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
-    TransformationGenerator,
+    TransformationErrorHandler,
+)
+from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
+    TransformationPipeline,
 )
 from exasol_transformers_extension.utils import (
     device_management,
@@ -34,7 +37,7 @@ class BaseModelUDF(ABC):
         base_model: ModelFactoryProtocol,
         tokenizer: ModelFactoryProtocol,
         prediction_task: PredictionTask,
-        transformations: list[Transformation],
+        transformations: TransformationPipeline,
     ):
         self.batch_size = batch_size
         self.pipeline = pipeline
@@ -64,19 +67,9 @@ class BaseModelUDF(ABC):
             if batch_df is None:
                 break
 
-            last_generator = iter([batch_df])
-            for transformation in self.transformations:
-                transformation_generator = TransformationGenerator(
-                    transformation, self.model_loader
-                )
-                current_generator = transformation_generator.transform(last_generator)
-                last_generator = current_generator
+            output_generator = self.transformations.execute(batch_df, self.model_loader)
 
-            for df in last_generator:
-                if not "error_message" in df.columns:
-                    df["error_message"] = None
-                result_df = TransformationGenerator.error_message_last(df)
-                result_df = result_df.replace(np.nan, None)
+            for result_df in output_generator:
                 ctx.emit(result_df)
 
         self.model_loader.clear_device_memory()

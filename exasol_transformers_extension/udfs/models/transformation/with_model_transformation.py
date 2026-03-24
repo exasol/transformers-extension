@@ -15,7 +15,8 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 class WithModelTransformation(Transformation):
     """
-    Transformation which loads a model if needed, then calls _transformation.transform
+    Wrapper for a Transformation which needs to load a model.
+    Loads a model if needed, then calls _transformation.transform
     """
 
     def __init__(

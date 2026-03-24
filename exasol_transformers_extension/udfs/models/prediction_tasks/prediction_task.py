@@ -2,6 +2,7 @@
 Protocol for using transformers prediction tasks in an udf.
 Needs to be implemented for each task.
 """
+
 from collections.abc import Iterator
 from typing import (
     Any,
