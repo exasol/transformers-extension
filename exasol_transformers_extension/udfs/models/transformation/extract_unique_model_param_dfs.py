@@ -17,7 +17,7 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 class UniqueModelParamsDataframeTransformation(Transformation):
     """
-    Transformation which Splits the input DataFrame into multiple DataFrames,
+    Transformation which splits the input DataFrame into multiple DataFrames,
     based on which model-parameters are found.
     Calls PredictionTask.extract_unique_param_based_dataframes, since the
     model-parameters are tied to the transformers task-type.

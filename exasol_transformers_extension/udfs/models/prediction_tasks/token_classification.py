@@ -35,7 +35,7 @@ class TokenClassifyPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[pd.DataFrame]:
         """
         Extract unique dataframes having same aggregation_strategy
         parameter values
@@ -51,14 +51,12 @@ class TokenClassifyPredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df, ["aggregation_strategy"]
         )
-        param_based_model_dfs = []
         for unique_param in unique_params:
             current_aggregation_strategy = unique_param[0]
             param_based_model_df = model_df[
                 model_df["aggregation_strategy"] == current_aggregation_strategy
             ]
-            param_based_model_dfs.append(param_based_model_df)
-        return param_based_model_dfs
+            yield param_based_model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """

@@ -17,9 +17,10 @@ from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 class UniqueModelDataframeTransformation(Transformation):
     """
-    Transformation which Splits the input DataFrame into multiple DataFrames,
+    Transformation which splits the input DataFrame into multiple DataFrames,
     based on which model is found in the model_name, bucketfs_conn and sub_dir columns.
     Fails if one of the columns is empty for a given row.
+    Will not change the content of the data.
     """
 
     def __init__(

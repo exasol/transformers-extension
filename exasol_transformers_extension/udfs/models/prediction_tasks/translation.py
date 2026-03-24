@@ -32,7 +32,7 @@ class TranslatePredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
+    ) -> Iterator[pd.DataFrame]:
         """
         Extract unique dataframes having same max_new_tokens, source_language,
         and target_language parameter values
@@ -45,15 +45,13 @@ class TranslatePredictionTask(PredictionTask):
         unique_params = dataframe_operations.get_unique_values(
             model_df, ["max_new_tokens", "source_language", "target_language"]
         )
-        param_based_model_dfs = []
         for max_new_tokens, source_language, target_language in unique_params:
             param_based_model_df = model_df[
                 (model_df["max_new_tokens"] == max_new_tokens)
                 & (model_df["source_language"] == source_language)
                 & (model_df["target_language"] == target_language)
             ]
-            param_based_model_dfs.append(param_based_model_df)
-        return param_based_model_dfs
+            yield param_based_model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[dict[str, Any]]:
         """
