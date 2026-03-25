@@ -37,7 +37,7 @@ class AnswerPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        return extract_unique_param_based_dataframes_top_k(model_df)
+        yield from extract_unique_param_based_dataframes_top_k(model_df)
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -70,7 +70,6 @@ class AnswerPredictionTask(PredictionTask):
         self,
         model_df: pd.DataFrame,
         pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -78,8 +77,6 @@ class AnswerPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
-        (not used since we don't have span variant of this udf)
 
         :return: Prepared dataframe including input data and predictions
         """

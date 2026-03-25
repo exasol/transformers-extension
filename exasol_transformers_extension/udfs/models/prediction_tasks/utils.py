@@ -31,7 +31,7 @@ def duplicate_input_rows_for_n_outputs(
     model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
-    Repeat each row consecutively as the number of entities. At the end,
+    Repeat each row consecutively as the number of found predictions. At the end,
     the dataframe is expanded from (m, n) to (m*n_labels, n)
     """
     # n_labels can also represent n_entities or topk results

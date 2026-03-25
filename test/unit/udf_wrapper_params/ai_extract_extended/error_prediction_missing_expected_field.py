@@ -61,7 +61,7 @@ class ErrorPredictionMissingExpectedFields:
             None,
             None,
             None,
-            text_doc_id,
+            None,
             None,
             None,
             "Traceback",

@@ -97,7 +97,8 @@ def test_ai_translate_extended_udf(
     sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
@@ -198,7 +199,8 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
     sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
@@ -229,7 +231,7 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
             [("English", "French")] * 3,
         ),
         (
-            "on CPU with batch input, multi language",
+            "on CPU with batch input, multi language",  ###
             None,
             [("English", "French"), ("English", "German"), ("English", "Romanian")],
         ),
@@ -290,7 +292,8 @@ def test_ai_translate_extended_udf_on_error_handling(
     sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)

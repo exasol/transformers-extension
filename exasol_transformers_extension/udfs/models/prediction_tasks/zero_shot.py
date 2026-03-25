@@ -58,7 +58,6 @@ class ZeroShotPredictionTask(PredictionTask):
             param_based_model_df = model_df[
                 model_df["candidate_labels"] == current_label
             ]
-
             yield param_based_model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
@@ -74,15 +73,6 @@ class ZeroShotPredictionTask(PredictionTask):
         candidate_labels = model_df["candidate_labels"].iloc[0].split(",")
         results = self.last_created_pipeline(sequences, candidate_labels)
         return results
-
-    def create_new_span_columns(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        # no new span so no new columns. we just return the input span
-        return model_df
-
-    def drop_old_data_for_span_execution(self, model_df: pd.DataFrame) -> pd.DataFrame:
-        # drop columns which are made superfluous by the spans to save data transfer
-        model_df = model_df.drop(columns=["text_data", "candidate_labels"])
-        return model_df
 
     def create_dataframes_from_predictions(
         self, predictions: list[list[dict[str, Any]]]
@@ -112,7 +102,6 @@ class ZeroShotPredictionTask(PredictionTask):
         self,
         model_df: pd.DataFrame,
         pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
     ) -> pd.DataFrame:
         """
         Reformat the dataframe used in prediction, such that each input rows
@@ -120,7 +109,6 @@ class ZeroShotPredictionTask(PredictionTask):
 
         :param model_df: Dataframe used in prediction
         :param pred_df_list: List of predictions dataframes
-        :param work_with_spans: Bool used to determine if we are in a span udf or not
 
         :return: Prepared dataframe including input data and predictions
         """
@@ -131,9 +119,5 @@ class ZeroShotPredictionTask(PredictionTask):
             merged_df.reset_index()
             merged_df_list.append(merged_df)
         output_df = pd.concat(merged_df_list)
-
-        if work_with_spans:
-            output_df = self.create_new_span_columns(output_df)
-            output_df = self.drop_old_data_for_span_execution(output_df)
 
         return output_df
