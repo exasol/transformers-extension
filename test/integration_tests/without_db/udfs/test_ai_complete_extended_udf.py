@@ -81,7 +81,8 @@ def test_ai_complete_extended_udf(
     sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["generated_text", "error_message"]
 
     result = Result(result_df)
@@ -164,7 +165,8 @@ def test_max_new_tokens_ai_complete_extended(
     sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["generated_text", "error_message"]
 
     result = Result(result_df)
@@ -238,7 +240,8 @@ def test_ai_complete_extended_udf_on_error_handlig(
     sequence_classifier = AiCompleteExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["generated_text", "error_message"]
 
     result = Result(result_df)
