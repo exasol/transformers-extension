@@ -11,7 +11,7 @@ from exasol_transformers_extension.utils import dataframe_operations
 
 def extract_unique_param_based_dataframes_top_k(
     model_df: pd.DataFrame,
-) -> list[pd.DataFrame]:
+) -> Iterator[pd.DataFrame]:
     """
     Extract unique dataframes having same top_k parameter values
 
@@ -20,13 +20,11 @@ def extract_unique_param_based_dataframes_top_k(
      :return: Unique model dataframes having specified parameters
     """
     unique_params = dataframe_operations.get_unique_values(model_df, ["top_k"])
-    param_based_model_dfs = []
     for top_k in unique_params:
         current_top_k = top_k[0]
         param_based_model_df = model_df[model_df["top_k"] == current_top_k]
 
-        param_based_model_dfs.append(param_based_model_df)
-    return param_based_model_dfs
+        yield param_based_model_df
 
 
 def duplicate_input_rows_for_n_outputs(

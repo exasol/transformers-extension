@@ -34,7 +34,7 @@ class PredictionTask(Protocol):
 
     def create_dataframes_from_predictions(
         self, predictions: list[Any]
-    ) -> Iterator[pd.DataFrame]:
+    ) -> list[pd.DataFrame]:
         """
         Converts list of predictions to pandas dataframe.
         """

@@ -50,12 +50,10 @@ class DummyPredictionTask(PredictionTask):
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
-    ) -> list[pd.DataFrame]:
-        return [model_df]
+    ) -> Iterator[pd.DataFrame]:
+        yield model_df
 
-    def execute_prediction(
-        self, model_df: pd.DataFrame
-    ) -> list[Union[dict[str, Any], list[dict[str, Any]]]]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         input_data = list(model_df["input_data"])
         results = self.last_created_pipeline(input_data)
         return results
