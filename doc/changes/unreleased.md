@@ -6,11 +6,6 @@ Code name: T.B.D
 
 T.B.D
 
-## Features
-
- * #351: Added functionality for installing default models.
-
-## Bugfixes
 #### BREAKING CHANGES:
 
 * The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
@@ -26,6 +21,10 @@ T.B.D
 | TE_TRANSLATION_UDF                         | AI_TRANSLATE_EXTENDED       |
 | TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
 | TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
+
+## Features
+
+ * #351: Added functionality for installing default models.
 
 ## Security
 
@@ -52,3 +51,5 @@ T.B.D
 * #348: Improved mock model-output for testing max_new_tokens handling in translation unit tests
 * #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
 * #370: Pulled new class PredictionTask out of BaseModelUdf
+* #372: Added Transformation Protocol and extracted GetPredictionFromBatch into Transformations
+* #374: Extracted Span handling into Transformations
