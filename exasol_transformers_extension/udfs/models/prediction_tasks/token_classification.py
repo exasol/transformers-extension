@@ -13,7 +13,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
-    duplicate_input_rows_for_n_outputs,
+    duplicate_input_rows_for_n_outputs, extract_unique_param_based_dataframes_on_col_list,
 )
 from exasol_transformers_extension.utils import dataframe_operations
 
@@ -48,15 +48,7 @@ class TokenClassifyPredictionTask(PredictionTask):
             self._default_aggregation_strategy
         )
 
-        unique_params = dataframe_operations.get_unique_values(
-            model_df, ["aggregation_strategy"]
-        )
-        for unique_param in unique_params:
-            current_aggregation_strategy = unique_param[0]
-            param_based_model_df = model_df[
-                model_df["aggregation_strategy"] == current_aggregation_strategy
-            ]
-            yield param_based_model_df
+        yield from extract_unique_param_based_dataframes_on_col_list(model_df, ["aggregation_strategy"])
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """

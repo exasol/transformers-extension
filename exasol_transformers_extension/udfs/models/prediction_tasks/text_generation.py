@@ -12,6 +12,8 @@ import pandas as pd
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
+from exasol_transformers_extension.udfs.models.prediction_tasks.utils import \
+    extract_unique_param_based_dataframes_on_col_list
 from exasol_transformers_extension.utils import dataframe_operations
 
 
@@ -40,17 +42,7 @@ class TextGenPredictionTask(PredictionTask):
 
          :return: Unique model dataframes having same specified parameters
         """
-
-        unique_params = dataframe_operations.get_unique_values(
-            model_df, ["max_new_tokens", "return_full_text"]
-        )
-
-        for max_new_tokens, return_full_text in unique_params:
-            param_based_model_df = model_df[
-                (model_df["max_new_tokens"] == max_new_tokens)
-                & (model_df["return_full_text"] == return_full_text)
-            ]
-            yield param_based_model_df
+        yield from extract_unique_param_based_dataframes_on_col_list(model_df, ["max_new_tokens", "return_full_text"])
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """

@@ -15,8 +15,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
     create_rank_from_score,
-    duplicate_input_rows_for_n_outputs,
-    extract_unique_param_based_dataframes_top_k,
+    duplicate_input_rows_for_n_outputs, extract_unique_param_based_dataframes_on_col_list,
 )
 
 
@@ -37,7 +36,7 @@ class AnswerPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield from extract_unique_param_based_dataframes_top_k(model_df)
+        yield from extract_unique_param_based_dataframes_on_col_list(model_df, ["top_k"])
 
     def execute_prediction(
         self, model_df: pd.DataFrame

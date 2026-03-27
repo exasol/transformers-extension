@@ -12,7 +12,8 @@ import pandas as pd
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
-from exasol_transformers_extension.utils import dataframe_operations
+from exasol_transformers_extension.udfs.models.prediction_tasks.utils import \
+    extract_unique_param_based_dataframes_on_col_list
 
 
 class TranslatePredictionTask(PredictionTask):
@@ -41,17 +42,8 @@ class TranslatePredictionTask(PredictionTask):
 
          :return: Unique model dataframes having same specified parameters
         """
-
-        unique_params = dataframe_operations.get_unique_values(
-            model_df, ["max_new_tokens", "source_language", "target_language"]
-        )
-        for max_new_tokens, source_language, target_language in unique_params:
-            param_based_model_df = model_df[
-                (model_df["max_new_tokens"] == max_new_tokens)
-                & (model_df["source_language"] == source_language)
-                & (model_df["target_language"] == target_language)
-            ]
-            yield param_based_model_df
+        unique_column_names = ["max_new_tokens", "source_language", "target_language"]
+        yield from extract_unique_param_based_dataframes_on_col_list(model_df, unique_column_names)
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[dict[str, Any]]:
         """
