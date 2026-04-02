@@ -1,0 +1,58 @@
+workflows:
+  - name: cd
+    remove_jobs:
+      # This should be activated in #298
+      - publish-docs
+
+  - name: pr-merge
+    remove_jobs:
+      # This should be activated in #298
+      - publish-docs
+
+  - name: checks
+    remove_jobs:
+      # This should be activated in #298
+      - build-documentation-and-check-links
+
+    step_customizations:
+      - action: INSERT_AFTER
+        job: check-version
+        step_id: check-out-repository
+        content:
+          - name: Free Disk Space
+            id: free-disk-space
+            uses: ./.github/actions/free-diskspace
+
+      - action: INSERT_AFTER
+        job: lint-code
+        step_id: check-out-repository
+        content:
+          - name: Free Disk Space
+            id: free-disk-space
+            uses: ./.github/actions/free-diskspace
+
+      - action: INSERT_AFTER
+        job: lint-typing
+        step_id: check-out-repository
+        content:
+          - name: Free Disk Space
+            id: free-disk-space
+            uses: ./.github/actions/free-diskspace
+
+      - action: INSERT_AFTER
+        job: check-format
+        step_id: check-out-repository
+        content:
+          - name: Free Disk Space
+            id: free-disk-space
+            uses: ./.github/actions/free-diskspace
+
+      - action: INSERT_AFTER
+        job: run-unit-tests
+        step_id: check-out-repository
+        content:
+          - name: Free Disk Space
+            id: free-disk-space
+            uses: ./.github/actions/free-diskspace
+
+
