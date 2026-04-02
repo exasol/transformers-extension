@@ -1,5 +1,4 @@
-name: 'FDS'
-description: Free disk space
+name: Free disk space
 
 runs:
   using: "composite"
