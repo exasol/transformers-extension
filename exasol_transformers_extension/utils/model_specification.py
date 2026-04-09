@@ -11,7 +11,7 @@ import transformers
 
 
 @dataclass(frozen=True)
-class ModelTypeData:
+class ModelTypeData:#todo this should be single point of truth for these?
     model_factory_dict = {
         "fill-mask": transformers.AutoModelForMaskedLM,
         "translation": transformers.AutoModelForSeq2SeqLM,
@@ -28,13 +28,15 @@ class ModelSpecification:
     Class describing a model.
     """
 
-    def __init__(self, model_name: str, task_type: str):
+    def __init__(self, model_name: str, task_type: str, version: str = None):
         """
         :param model_name: Name of the model
         :param task_type: Name of the task model is intended for
+        :param version: Optional. Version of the model.
         """
         self.model_name = model_name
         self.task_type = self._set_task_type_from_udf_name(task_type)
+        self.version = version
 
     def _set_task_type_from_udf_name(self, text):
         """
@@ -64,14 +66,21 @@ class ModelSpecification:
             return (
                 self.model_name == other.model_name
                 and self.task_type == other.task_type
+                and self.version == other.version
             )
         return False
 
     def get_model_specific_path_suffix(self) -> PurePosixPath:
         """Returns path suffix specific to the model"""
-        return PurePosixPath(
-            self.model_name.replace(".", "_") + "_" + self.task_type
-        )  # model_name-version-task
+        if self.version:
+            return PurePosixPath(
+                self.model_name.replace(".", "_") + "_" + self.version + "_" + self.task_type
+                #todo have sep directories? what if version is None?
+            )
+        else:
+            return PurePosixPath(
+                self.model_name.replace(".", "_") + "_" + self.task_type
+            )
 
     def get_model_factory(self):
         """
@@ -137,7 +146,7 @@ def best_guess_model_specs(
 
 
 def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_prefix):
-    task_name = ""
+    task_name = ""#todo this need to account for version
     model_name = ""
     warning = None
     if not found_task_names:
@@ -198,5 +207,5 @@ def create_model_specs_from_path(
         )
     except ValueError as e:
         raise e
-
-    return ModelSpecification(model_name, task_name), warning
+    version = "not_a_real_version"#todo
+    return ModelSpecification(model_name, task_name, version), warning

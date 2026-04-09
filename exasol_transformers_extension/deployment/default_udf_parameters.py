@@ -11,6 +11,7 @@ DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_FUNCTION_MODEL_LOCATION"
 
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one
+    # todo do we want a version? probs no?
     "model_for_a_specific_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="task",

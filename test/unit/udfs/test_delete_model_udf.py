@@ -55,7 +55,7 @@ def create_mock_metadata() -> MockMetaData:
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
 @patch("exasol_transformers_extension.udfs.models.delete_model_udf.delete_model")
-def test_delete_model(mock_delete_model, mock_create_loc, count):
+def test_delete_model(mock_delete_model, mock_create_loc, count): #todo make test with versiob
     mock_bucketfs_locations = [Mock() for i in range(count)]
     mock_create_loc.side_effect = mock_bucketfs_locations
     base_model_names = [f"base_model_name_{i}" for i in range(count)]

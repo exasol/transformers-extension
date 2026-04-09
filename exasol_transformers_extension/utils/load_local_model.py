@@ -57,9 +57,6 @@ class LoadLocalModel:
         """
         Loads a locally saved model and tokenizer from model_path.
         Returns new pipeline corresponding to the model and task.
-
-        :param model_path:            Location of the saved model and tokenizer
-        :param current_model_key:     Key of the model to be loaded
         """
 
         loaded_model = self._base_model_factory.from_pretrained(

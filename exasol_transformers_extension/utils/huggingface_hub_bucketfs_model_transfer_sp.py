@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import exasol.bucketfs as bfs
+from docutils.nodes import revision
 
 from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
@@ -84,8 +85,10 @@ class HuggingFaceHubBucketFSModelTransferSP:
         it with save_pretrained in a temporary directory.
         """
         model_name = self._model_specification.model_name
+        version = self._model_specification.version
         model = model_factory.from_pretrained(
-            model_name, cache_dir=self._tmpdir_name / "cache", token=self._token
+            model_name, cache_dir=self._tmpdir_name / "cache",
+            token=self._token, revision=version
         )
         make_parameters_of_model_contiguous_tensors(model)
         model.save_pretrained(self._save_pretrained_model_path)

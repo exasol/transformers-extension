@@ -37,11 +37,11 @@ class ModelDownloaderUDF:
                 break
 
     def _download_model(self, ctx) -> tuple[str, str]:
-        # parameters
+        # parameters#todo how version get in ctx
         bucketfs_conn = ctx.bucketfs_conn  # BucketFS connection
         token_conn = ctx.token_conn  # name of token connection
         current_model_specification = self._current_model_specification_factory.create(
-            ctx.model_name, ctx.task_type, bucketfs_conn, ctx.sub_dir
+            ctx.model_name, ctx.task_type, bucketfs_conn, ctx.sub_dir, ctx.version
         )  # specifies details of Huggingface model
         model_downloader = InUDFModelDownloader()
         model_path, model_tar_file_path = model_downloader.download_model(

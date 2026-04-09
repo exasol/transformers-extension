@@ -14,7 +14,8 @@ class BucketFSModelSpecification(ModelSpecification):
     """
 
     def __init__(
-        self, model_name: str, task_type: str, bucketfs_conn_name: str, sub_dir: Path
+        self, model_name: str, task_type: str, bucketfs_conn_name: str, sub_dir: Path,
+            version: str = None
     ):
         """
         model_name:
@@ -28,8 +29,9 @@ class BucketFSModelSpecification(ModelSpecification):
             Name of the BucketFS connection to retrieve the BucketFS location from.
         sub_dir:
             Subdirectory in the BucketFS where the model can be found at.
+        version: Optional. Version of the model.
         """
-        ModelSpecification.__init__(self, model_name, task_type)
+        ModelSpecification.__init__(self, model_name, task_type, version)
         self.bucketfs_conn_name = bucketfs_conn_name
         self.sub_dir = sub_dir
 
@@ -53,19 +55,21 @@ class BucketFSModelSpecification(ModelSpecification):
 
 class BucketFSModelSpecificationFactory:
     def create(
-        self, model_name: str, task_type: str, bucketfs_conn_name: str, sub_dir: Path
+            self, model_name: str, task_type: str,
+            bucketfs_conn_name: str, sub_dir: Path, version: str = None
     ):
         return BucketFSModelSpecification(
-            model_name, task_type, bucketfs_conn_name, sub_dir
+            model_name, task_type, bucketfs_conn_name, sub_dir, version
         )
 
 
 def get_BucketFSModelSpecification_from_model_Specs(
-    model_specification: ModelSpecification, bucketfs_conn_name: str, sub_dir: Path
+        model_specification: ModelSpecification,
+        bucketfs_conn_name: str, sub_dir: Path
 ):
     return BucketFSModelSpecification(
         model_name=model_specification.model_name,
         task_type=model_specification.task_type,
         bucketfs_conn_name=bucketfs_conn_name,
-        sub_dir=sub_dir,
+        sub_dir=sub_dir
     )

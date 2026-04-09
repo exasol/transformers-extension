@@ -73,7 +73,7 @@ def test_model_downloader(
     token_conn_obj,
     expected_token,
     monkeypatch: MonkeyPatch,
-):
+):#todo make test with version
     base_model_names = [f"base_model_name_{i}" for i in range(count)]
     sub_directory_names = [f"sub_dir_{i}" for i in range(count)]
     task_type = [f"task_type_{i}" for i in range(count)]

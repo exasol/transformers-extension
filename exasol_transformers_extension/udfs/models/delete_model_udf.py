@@ -37,17 +37,18 @@ class DeleteModelUDF:
             if not ctx.next():
                 break
 
-    def _delete_model(self, ctx) -> tuple[str, str, str, str, bool, str]:
-        # parameters
-        bucketfs_conn, sub_dir, model_name, task_type = (
+    def _delete_model(self, ctx) -> tuple[str, str, str, str, str, bool, str]:
+        # parameters#todo calls
+        bucketfs_conn, sub_dir, model_name, task_type, version = (
             ctx.bucketfs_conn,
             ctx.sub_dir,
             ctx.model_name,
             ctx.task_type,
+            ctx.version
         )
 
         current_model_specification = self._current_model_specification_factory.create(
-            model_name, task_type, bucketfs_conn, Path(sub_dir)
+            model_name, task_type, bucketfs_conn, Path(sub_dir), version
         )  # specifies details of Huggingface model
         try:
             # create bucketfs location
@@ -58,6 +59,6 @@ class DeleteModelUDF:
             )
             delete_model(bucketfs_location, current_model_specification)
         except Exception as e:
-            return bucketfs_conn, sub_dir, model_name, task_type, False, str(e)
+            return bucketfs_conn, sub_dir, model_name, task_type, version, False, str(e)
 
-        return bucketfs_conn, sub_dir, model_name, task_type, True, ""
+        return bucketfs_conn, sub_dir, model_name, task_type, version, True, ""
