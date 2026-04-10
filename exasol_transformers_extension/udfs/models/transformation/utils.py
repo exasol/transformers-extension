@@ -49,6 +49,6 @@ def _check_input_format(
             "got these input columns: {df_columns}".format(
                 transformation_name=transformation_name,
                 expected_input_columns=expected_input_columns,
-                df_columns=df_columns
+                df_columns=df_columns,
             )
         )

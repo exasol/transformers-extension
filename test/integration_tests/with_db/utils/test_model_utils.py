@@ -74,13 +74,15 @@ def test_install_and_load_huggingface_model(
         tokenizer_factory=huggingface.AutoTokenizer,
         huggingface_token=None,
     )
-    query = cleandoc(f"""
+    query = cleandoc(
+        f"""
         SELECT "{db_schema_name}"."TE_LOAD_MODEL"(
           '{mspec.model_name}',
           '{mspec.task_type}',
           '{mspec.sub_dir}',
           '{bucketfs_conn_name}'
         )
-        """)
+        """
+    )
     with not_raises(Exception):
         db_conn.execute(query)

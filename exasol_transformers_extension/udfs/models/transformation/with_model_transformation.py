@@ -4,7 +4,9 @@ from collections.abc import Iterator
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 from pandas import DataFrame
 
-from exasol_transformers_extension.udfs.models.transformation.prediction_task import PredictionTaskTransformation
+from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
+    PredictionTaskTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )

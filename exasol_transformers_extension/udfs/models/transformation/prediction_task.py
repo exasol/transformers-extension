@@ -13,7 +13,6 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _check_input_format,
     _ensure_output_format,
 )
-
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
@@ -86,7 +85,7 @@ class PredictionTaskTransformation(Transformation):
         transform are present, throws error otherwise
         """
         _check_input_format(
-               df_columns, self.expected_input_columns, self.__class__.__name__
+            df_columns, self.expected_input_columns, self.__class__.__name__
         )
 
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:

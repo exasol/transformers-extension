@@ -64,7 +64,6 @@ class UniqueModelDataframeTransformation(Transformation):
         for model_name, bucketfs_conn, sub_dir in unique_values:
             self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
 
-
             selections = (
                 (batch_df["model_name"] == model_name)
                 & (batch_df["bucketfs_conn"] == bucketfs_conn)

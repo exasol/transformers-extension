@@ -1,12 +1,12 @@
 from abc import (
     ABC,
 )
+
 import transformers
 
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
-
 from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
     TransformationPipeline,
 )
