@@ -19,6 +19,9 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
 This UDF classifies the given text according to a given number of classes of the specified model.
 
+Should be called using a model compatible with the "text-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
+
 Example usage:
 
 ```sql
@@ -57,7 +60,11 @@ Example:
 
 ### AI Entailment Extended
 
-This UDF takes two input texts and compares them. Among other things, it can be used to determine if two texts are paraphrases of each other.
+This UDF takes two input texts and compares them. Among other things, it can be used to determine if two 
+texts are paraphrases of each other.
+
+Should be called using a model compatible with the "text-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
 
 Example usage:
 
@@ -101,6 +108,9 @@ Additional output columns
 
 This UDF extracts answer(s) from a given question text. With the `top_k`
 input parameter, up to `k` answers with the best inference scores can be returned.
+Should be called using a model compatible with the "question-answering" transformers 
+task, and uses AutoModelForQuestionAnswering to load said model.
+
 An example usage is given below:
 
 ```sql
@@ -151,6 +161,10 @@ I.E the input text could be "<mask> is the best database Software for Machine
 Learning Enthusiasts.", resulting in an output like "Exasol is the best database 
 Software for Machine Learning Enthusiasts."
 
+Should be called using a model compatible with the "fill_mask" transformers task, and uses 
+AutoModelForMaskedLM to load said model.
+
+
 Example usage:
 
 ```sql
@@ -192,6 +206,12 @@ Example:
 ### AI Complete Extended
 
 This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
+Can be configured to do one or the other:
+        * return the whole text ( input text + generated continuation )
+        * return only the newly generated part
+
+Should be called using a model compatible with the "text-generation" transformers task, and uses 
+AutoModelForCausalLM to load said model.
 
 Example usage:
 
@@ -239,6 +259,10 @@ There are two popular subtasks of token classification:
 *  Named Entity Recognition (NER) which identifies specific entities in a text, such as dates, people, and places.
 *  Part of Speech (PoS) which identifies which words in a text are verbs, nouns, and punctuation.
 
+Should be called using a model compatible with the "token-classification" transformers task, and uses 
+AutoModelForTokenClassification to load said model.
+
+
 ```sql
 SELECT AI_EXTRACT_EXTENDED(
     device_id,
@@ -280,6 +304,9 @@ Example:
 
 This UDF translates a given text from one language to another.
 
+Should be called using a model compatible with the "translation" transformers task, and uses 
+AutoModelForSeq2SeqLM to load said model.
+
 ```sql
 SELECT AI_TRANSLATE_EXTENDED(
     device_id,
@@ -317,10 +344,13 @@ Example:
 
 ### AI Classify Extended
 
-This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known during the original model training.
+This UDF classifies the input text into classes defined by the user. 
+The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
+Should be called using a model compatible with the "zero-shot-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
 
 ```sql
 SELECT AI_CLASSIFY_EXTENDED(

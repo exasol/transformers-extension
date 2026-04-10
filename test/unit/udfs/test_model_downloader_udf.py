@@ -148,6 +148,5 @@ def test_model_downloader(
         call(token_conn_name, mock_bucketfs_model_specs[i], mock_exa)
         for i in range(count)
     ]
-    print(mock_ctx.output)
     assert mock_ctx.output == mock_return_paths
     assert expected_download_model_calls == download_model_mock.call_args_list
