@@ -4,6 +4,7 @@ from collections.abc import Iterator
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 from pandas import DataFrame
 
+from exasol_transformers_extension.udfs.models.transformation.prediction_task import PredictionTaskTransformation
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )
@@ -22,7 +23,7 @@ class WithModelTransformation(Transformation):
     def __init__(
         self,
         exa,
-        transformation: Transformation,
+        transformation: PredictionTaskTransformation,
     ):
         self._transformation = transformation
         self.exa = exa
@@ -75,7 +76,6 @@ class WithModelTransformation(Transformation):
                     model_loader.load_models()
                 )
             except Exception:
-                print("load failed")
                 stack_trace = traceback.format_exc()
                 model_loader.last_model_loaded_successfully = False
                 model_loader.model_load_error = stack_trace

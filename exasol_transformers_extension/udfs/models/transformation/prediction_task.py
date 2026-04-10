@@ -1,4 +1,3 @@
-import traceback
 from collections.abc import Iterator
 
 import pandas as pd
@@ -14,9 +13,7 @@ from exasol_transformers_extension.udfs.models.transformation.utils import (
     _check_input_format,
     _ensure_output_format,
 )
-from exasol_transformers_extension.udfs.models.transformation.with_model_transformation import (
-    WithModelTransformation,
-)
+
 from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
 
 
@@ -73,11 +70,7 @@ class PredictionTaskTransformation(Transformation):
 
         :return: List of prediction results
         """
-
-        try:
-            yield self.get_prediction(param_based_model_df)
-        except Exception as err:
-            raise err
+        yield self.get_prediction(param_based_model_df)
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
@@ -92,12 +85,9 @@ class PredictionTaskTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:
-            _check_input_format(
-                df_columns, self.expected_input_columns, self.__class__.__name__
-            )
-        except Exception as e:
-            raise e
+        _check_input_format(
+               df_columns, self.expected_input_columns, self.__class__.__name__
+        )
 
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         """

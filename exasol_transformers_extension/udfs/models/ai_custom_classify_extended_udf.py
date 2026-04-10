@@ -7,10 +7,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.text_classificat
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )
-from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
-    UniqueModelParamsDataframeTransformation,
-)
-from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
@@ -45,12 +42,6 @@ class AiCustomClassifyUDF(BaseModelUDF):
         transformations = TransformationPipeline(
             [
                 UniqueModelDataframeTransformation(),
-                UniqueModelParamsDataframeTransformation(
-                    prediction_task=prediction_task,
-                    expected_input_columns=[],
-                    new_columns=[],
-                    removed_columns=[],
-                ),
                 WithModelTransformation(
                     exa,
                     PredictionTaskTransformation(

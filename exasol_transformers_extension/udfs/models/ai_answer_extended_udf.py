@@ -14,7 +14,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
     UniqueModelParamsDataframeTransformation,
 )
-from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (

@@ -62,12 +62,10 @@ class UniqueModelDataframeTransformation(Transformation):
         )
 
         for model_name, bucketfs_conn, sub_dir in unique_values:
-            try:
-                self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
-            except ValueError as err:
-                raise err
+            self._check_values_not_null(model_name, bucketfs_conn, sub_dir)
 
-            selections = (  # todo replace with specification in future?
+
+            selections = (
                 (batch_df["model_name"] == model_name)
                 & (batch_df["bucketfs_conn"] == bucketfs_conn)
                 & (batch_df["sub_dir"] == sub_dir)
@@ -88,12 +86,10 @@ class UniqueModelDataframeTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:
-            _check_input_format(
-                df_columns, self.expected_input_columns, self.__class__.__name__
-            )
-        except Exception as e:
-            raise e
+
+        _check_input_format(
+            df_columns, self.expected_input_columns, self.__class__.__name__
+        )
 
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         """

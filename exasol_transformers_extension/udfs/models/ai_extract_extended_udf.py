@@ -16,7 +16,7 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_param_dfs import (
     UniqueModelParamsDataframeTransformation,
 )
-from exasol_transformers_extension.udfs.models.transformation.predicition_task import (
+from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.span_columns import (
@@ -86,7 +86,7 @@ class AiExtractExtendedUDF(BaseModelUDF):
                         "start",
                         "end",
                         "entity_group",
-                    ],  # this one might get created. it should then be renamed, but in case that fais we need to remove it
+                    ],  # this one might get created. it should then be renamed, but in case that fails we need to remove it
                     expected_input_columns=[
                         "text_data",
                         "aggregation_strategy",

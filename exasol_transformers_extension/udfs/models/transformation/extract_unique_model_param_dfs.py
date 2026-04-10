@@ -49,12 +49,9 @@ class UniqueModelParamsDataframeTransformation(Transformation):
         checks if all needed columns for
         transform are present, throws error otherwise
         """
-        try:
-            _check_input_format(
-                df_columns, self.expected_input_columns, self.__class__.__name__
-            )
-        except Exception as e:
-            raise e
+        _check_input_format(
+            df_columns, self.expected_input_columns, self.__class__.__name__
+        )
 
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         """

@@ -231,7 +231,7 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
             [("English", "French")] * 3,
         ),
         (
-            "on CPU with batch input, multi language",  ###
+            "on CPU with batch input, multi language",
             None,
             [("English", "French"), ("English", "German"), ("English", "Romanian")],
         ),

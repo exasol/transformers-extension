@@ -129,7 +129,7 @@ logic for a specific NLP-Task. Multiple UDF classes can use the same `Prediction
 If none of the existing `PredictionTask` implementations (see Section 4.3) suit your task, you can write 
 your own. More information can be found in Section 4.4.
 
-The `PredictionTask` get then wrapped in the [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py) which 
+The `PredictionTask` get then wrapped in the [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/prediction_task.py) which 
 handles calling the `PredictionTask`s functions. Then, the `PredictionTaskTransformation` 
 gets wrapped in the [WithModelTransformation](../../exasol_transformers_extension/udfs/models/transformation/with_model_transformation.py) which handles loading the required 
 transformers models.
@@ -190,7 +190,7 @@ which you might want to use in your UDF:
     multiple DataFrames, based on which model-parameters are found. 
     Calls PredictionTask.extract_unique_param_based_dataframes, since the
     model-parameters are tied to the transformers task-type.
- - [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py) : Calls
+ - [PredictionTaskTransformation](../../exasol_transformers_extension/udfs/models/transformation/prediction_task.py) : Calls
         prediction_task.execute_prediction, 
         prediction_task.create_dataframes_from_predictions, 
         prediction_task.append_predictions_to_input_dataframe 
@@ -250,7 +250,7 @@ which you might want to use in your UDF:
 
 The `<YourTask>PredictionTask` class, in which we implement the logic of the desired task,
 must be defined under the `exasol_transformers_extension/udfs/models/prediction_tasks` 
-directory. This class should extend the [PredictionTask-Protocol](../../exasol_transformers_extension/udfs/models/transformation/predicition_task.py). 
+directory. This class should extend the [PredictionTask-Protocol](../../exasol_transformers_extension/udfs/models/prediction_tasks/prediction_task.py). 
 The `PredictionTask` is a Protocol for ensuring the following methods are implemented
 and have correct input and output types:
 

@@ -18,8 +18,8 @@ class Transformation(Protocol):
     Any change which should be made to the input/prediction DataFrame of the UDF
     should be wrapped in a Transformation.
     These transformations are then given to the UDF as input, and executed in order.
-    A transformation May change the number of rows it returns in a given UDF.
-    It May also return multiple DataFrames, for example if it needs to split the input.
+    A transformation may change the number of rows it returns in a given UDF.
+    It may also return multiple DataFrames, for example if it needs to split the input.
     All returned DataFrames should have the same columns.
 
     A Transformations __init__ should have the following inputs if the use of the
@@ -116,7 +116,7 @@ class TransformationErrorHandler:
         :param model_df: The dataframe that received an error during transformation
         :param stack_trace: String of the stack traceback
         """
-        self.error_message_last(model_df)
+        model_df = self.error_message_last(model_df)
         model_df["error_message"] = stack_trace
         return model_df
 
