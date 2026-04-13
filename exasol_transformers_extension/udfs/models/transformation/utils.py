@@ -26,7 +26,7 @@ def _ensure_output_format(
     ensure all promised output columns are present
     """
     for new_column in new_columns:
-        if not new_column in batch_df.columns:
+        if new_column not in batch_df.columns:
             batch_df = _create_new_empty_columns(batch_df, new_column)
     for del_col in removed_columns:
         if del_col in batch_df.columns:

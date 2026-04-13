@@ -33,7 +33,7 @@ class TransformationPipeline:
             last_generator = current_generator
 
         for df in last_generator:
-            if not "error_message" in df.columns:
+            if "error_message" not in df.columns:
                 df["error_message"] = None
             result_df = TransformationErrorHandler.error_message_last(df)
             yield result_df.replace(np.nan, None)
