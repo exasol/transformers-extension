@@ -71,5 +71,5 @@ def extract_unique_param_based_dataframes_on_col_list(
             "`" + unique_column_names[i] + "` == @unique_param_set[" + str(i) + "] & "
         )
 
-    for unique_param_set in unique_params:
+    for unique_param_set in unique_params: # NOSONAR (S1481) "unique_param_set is used inside query_string"
         yield model_df.query(query_sting[:-2])
