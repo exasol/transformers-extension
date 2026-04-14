@@ -1,5 +1,4 @@
 from test.utils.mock_cast import mock_cast
-from typing import Union
 from unittest.mock import (
     MagicMock,
     Mock,
@@ -23,18 +22,18 @@ from exasol_transformers_extension.utils.model_specification import ModelSpecifi
 class TestSetup:
     def __init__(self):
 
-        self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = (
-            create_autospec(ModelFactoryProtocol)
+        self.model_factory_mock: ModelFactoryProtocol | MagicMock = create_autospec(
+            ModelFactoryProtocol
         )
-        self.tokenizer_factory_mock: Union[ModelFactoryProtocol, MagicMock] = (
-            create_autospec(ModelFactoryProtocol)
+        self.tokenizer_factory_mock: ModelFactoryProtocol | MagicMock = create_autospec(
+            ModelFactoryProtocol
         )
         self.token = "token"
         self.model_name = "model_name"
         self.model_task = "test_task"
-        self.mock_current_model_specification: Union[
-            BucketFSModelSpecification, MagicMock
-        ] = create_autospec(BucketFSModelSpecification)
+        self.mock_current_model_specification: (
+            BucketFSModelSpecification | MagicMock
+        ) = create_autospec(BucketFSModelSpecification)
         self.cache_dir = "test/Path"
 
         self.mock_pipeline = Mock()

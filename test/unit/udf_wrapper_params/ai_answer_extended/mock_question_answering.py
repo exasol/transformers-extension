@@ -3,10 +3,7 @@ from test.unit.udf_wrapper_params.ai_answer_extended.mock_sequence_tokenizer imp
     MockSequenceTokenizer,
 )
 from typing import (
-    Dict,
-    List,
     NewType,
-    Union,
 )
 
 
@@ -28,7 +25,7 @@ class MockQuestionAnsweringFactory:
 
 
 class MockPipeline:
-    ResultDict = NewType("ResultDict", dict[str, Union[str, float]])
+    ResultDict = NewType("ResultDict", dict[str, str | float])
     counter = 0
 
     def __init__(
@@ -48,7 +45,7 @@ class MockPipeline:
 
     def __call__(
         self, question: list[str], context: list[str], top_k: int
-    ) -> Union[ResultDict, list[ResultDict], list[list[ResultDict]]]:
+    ) -> ResultDict | list[ResultDict] | list[list[ResultDict]]:
         if "error" in context[0]:
             raise Exception("Error while performing prediction.")
 

@@ -1,6 +1,5 @@
 # default values, used for input/output rows if no other params are given
 from dataclasses import dataclass
-from typing import Union
 
 device_id = None  # todo rename parameters
 bucketfs_conn = "bfs_conn"
@@ -19,9 +18,9 @@ error_msg = None
 
 @dataclass
 class LabelScore:
-    label: Union[str, None]
-    score: Union[float, None]
-    rank: Union[int, None]
+    label: str | None
+    score: float | None
+    rank: int | None
 
 
 @dataclass

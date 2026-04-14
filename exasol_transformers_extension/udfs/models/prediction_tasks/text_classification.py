@@ -96,7 +96,7 @@ class EntailmentPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        return _extract_unique_param_based_dataframes(model_df)
+        yield from _extract_unique_param_based_dataframes(model_df)
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
@@ -119,10 +119,7 @@ class EntailmentPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         return _append_predictions_to_input_dataframe(model_df, pred_df_list)
 
@@ -151,9 +148,9 @@ class TextClassifyPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        return _extract_unique_param_based_dataframes(model_df)
+        yield from _extract_unique_param_based_dataframes(model_df)
 
-    def execute_prediction(self, model_df: pd.DataFrame) -> Iterator[pd.DataFrame]:
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
         Predict the given text list using recently loaded models, return
         probability scores and labels
@@ -167,10 +164,7 @@ class TextClassifyPredictionTask(PredictionTask):
         return results
 
     def append_predictions_to_input_dataframe(
-        self,
-        model_df: pd.DataFrame,
-        pred_df_list: list[pd.DataFrame],
-        work_with_spans: bool = False,
+        self, model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
     ) -> pd.DataFrame:
         return _append_predictions_to_input_dataframe(model_df, pred_df_list)
 

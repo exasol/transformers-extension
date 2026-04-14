@@ -49,7 +49,8 @@ def run_test(sample_data, columns, bucketfs_conn_name, bucketfs_connection, batc
     sequence_classifier = AiClassifyExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
 
     return result_df
 

@@ -28,12 +28,6 @@ This release fixes vulnerabilities by updating dependencies:
 | urllib3      | 2.5.0    | GHSA-38jv-5279-wg99 | 2.6.3    | 2.6.3      |
 | virtualenv   | 20.34.0  | GHSA-597g-3phw-6986 | 20.36.1  | 21.2.0     |
 
-## Features
-
- * #351: Added functionality for installing default models.
-
-## Bugfixes
-
 #### BREAKING CHANGES:
 
 * The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
@@ -49,6 +43,10 @@ This release fixes vulnerabilities by updating dependencies:
 | TE_TRANSLATION_UDF                         | AI_TRANSLATE_EXTENDED       |
 | TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
 | TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
+
+## Features
+
+ * #351: Added functionality for installing default models.
 
 ## Security
 
@@ -75,3 +73,5 @@ This release fixes vulnerabilities by updating dependencies:
 * #348: Improved mock model-output for testing max_new_tokens handling in translation unit tests
 * #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
 * #370: Pulled new class PredictionTask out of BaseModelUdf
+* #372: Added Transformation Protocol and extracted GetPredictionFromBatch into Transformations
+* #374: Extracted Span handling into Transformations

@@ -4,9 +4,6 @@ from test.unit.utils.utils_for_udf_tests import (
     create_mock_udf_context,
 )
 from test.utils.matchers import AnyOrder
-from typing import (
-    Union,
-)
 from unittest.mock import (
     MagicMock,
     Mock,
@@ -66,9 +63,9 @@ def test_delete_model(mock_delete_model, mock_create_loc, count):
     ]
     bfs_conn_name = [f"bfs_conn_name_{i}" for i in bucketfs_connections]
 
-    mock_current_model_specification_factory: Union[
-        BucketFSModelSpecificationFactory, MagicMock
-    ] = create_autospec(BucketFSModelSpecificationFactory)
+    mock_current_model_specification_factory: (
+        BucketFSModelSpecificationFactory | MagicMock
+    ) = create_autospec(BucketFSModelSpecificationFactory)
     model_spec_mock = MagicMock(spec=BucketFSModelSpecification)
     mock_current_model_specification_factory.create.return_value = model_spec_mock
 

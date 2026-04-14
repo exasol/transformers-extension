@@ -2,7 +2,6 @@ import tempfile
 from pathlib import Path
 from test.utils.mock_cast import mock_cast
 from test.utils.parameters import model_params
-from typing import Union
 from unittest.mock import (
     MagicMock,
     Mock,
@@ -39,10 +38,10 @@ class TestSetup:
         """
         self.bucketfs_location = bucketfs_location
         self.temporary_directory_factory = TemporaryDirectoryFactory()
-        self.bucketfs_model_uploader_factory_mock: Union[
-            BucketFSModelUploaderFactory, MagicMock
-        ] = create_autospec(BucketFSModelUploaderFactory)
-        self.bucketfs_model_uploader_mock: Union[BucketFSModelUploader, MagicMock] = (
+        self.bucketfs_model_uploader_factory_mock: (
+            BucketFSModelUploaderFactory | MagicMock
+        ) = create_autospec(BucketFSModelUploaderFactory)
+        self.bucketfs_model_uploader_mock: BucketFSModelUploader | MagicMock = (
             create_autospec(BucketFSModelUploader)
         )
         mock_cast(self.bucketfs_model_uploader_factory_mock.create).side_effect = [

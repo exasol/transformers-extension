@@ -4,7 +4,7 @@ class MockContext:
         self._emitted = []
         self._is_accessed_once = False
 
-    def emit(self, *args):
+    def emit(self, args):
         self._emitted.append(args)
 
     def reset(self):
