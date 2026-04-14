@@ -109,7 +109,7 @@ opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignor
 
 def deploy(**kwargs):
     """Deploy TE slc, scripts, create bucketfs connection object and
-    token connection object."""
+    token connection object."""#todo should we create default bucketfsconn here?
     # Deploy the SLC
     if kwargs[DEPLOY_SLC_ARG]:
         slc_deployer = LanguageContainerDeployerCli(

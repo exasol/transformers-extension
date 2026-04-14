@@ -13,6 +13,10 @@ from typing import BinaryIO
 import exasol.bucketfs as bfs
 from exasol.saas.client.api_access import get_database_id  # type: ignore
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
 
@@ -76,3 +80,20 @@ def relative_to(parent: bfs.path.PathLike, child: bfs.path.PathLike) -> Path:
     if absolute.startswith(prefix):
         return Path(absolute.removeprefix(prefix))
     raise NotParentError(f"{parent} is not a parent of {child}.")
+
+
+from exasol.python_extension_common.connections.bucketfs_location import (
+#    create_bucketfs_conn_object,
+# )
+
+def check_default_bfs_conn():
+    bfs_conn_name = DEFAULT_BUCKETFS_CONN_NAME
+
+# def create_default_bfs_conn(**kwargs):
+#    # todo check for con?
+#    # todo docu
+#    # todo make cli thing
+#    bfs_conn_name = DEFAULT_BUCKETFS_CONN_NAME
+#    create_bucketfs_conn_object(bfs_conn_name, **kwargs)
+# + check in base-udf for con existing
+    #write_bucketfs_conn_object()

@@ -10,6 +10,7 @@ import pandas as pd
 import transformers
 
 from exasol_transformers_extension.deployment.constants import constants
+from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
 from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
     PredictionTask,
 )
@@ -216,8 +217,23 @@ class BaseModelUDF(ABC):
         )
 
         if self.model_loader.current_model_specification != current_model_specification:
+            try:
+                conn =  self.exa.get_connection(bucketfs_conn) #does this fail with non exist con name?
+            except Exception as e:#todo which type?
+                stack_trace = traceback.format_exc()
+                msg = ""
+                if bucketfs_conn == DEFAULT_BUCKETFS_CONN_NAME:
+                    msg = ("In order to use this UDF, a BucketFSConnection by the name '{DEFAULT_BUCKETFS_CONN_NAME}' "
+                           "must be created in the Exasol Database. If you can not create this connection yourself, "
+                           "ask your admin.").format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME) +
+                    f"CREATE OR REPLACE  CONNECTION {DEFAULT_BUCKETFS_CONN_NAME} "
+                    f"TO '{conn_obj.address}' " #todo is this default?
+                    f"USER 'user' "
+                    f"IDENTIFIED BY 'password'"
+                raise msg from e
+
             bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
-                self.exa.get_connection(bucketfs_conn)
+                conn
             )
 
             self.model_loader.clear_device_memory()
