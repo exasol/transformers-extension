@@ -30,4 +30,6 @@ class ModelFactoryProtocol(Protocol):
         """
 
     def save_pretrained(self, save_directory: str | Path):
-        pass
+        """
+        Saves the model to save_directory
+        """

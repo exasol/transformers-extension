@@ -14,6 +14,10 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 
 
+class ModelLoadError(Exception):
+    """Exception raised when we fail to load a Model."""
+
+
 class LoadLocalModel:
     """
     Class for loading locally saved models and tokenizers. Also stores information
@@ -82,7 +86,7 @@ class LoadLocalModel:
         except Exception as e:
             self.last_model_loaded_successfully = False
             stack_trace = traceback.format_exc()
-            raise f"Model loading failed with : {stack_trace}" from e
+            raise ModelLoadError(f"Model loading failed with : {stack_trace}") from e
 
     def set_bucketfs_model_cache_dir(self, bucketfs_location) -> None:
         """
