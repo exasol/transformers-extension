@@ -14,6 +14,7 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
     duplicate_input_rows_for_n_outputs,
+    extract_unique_param_based_dataframes_on_col_list,
 )
 from exasol_transformers_extension.utils import dataframe_operations
 
@@ -48,15 +49,9 @@ class TokenClassifyPredictionTask(PredictionTask):
             self._default_aggregation_strategy
         )
 
-        unique_params = dataframe_operations.get_unique_values(
+        yield from extract_unique_param_based_dataframes_on_col_list(
             model_df, ["aggregation_strategy"]
         )
-        for unique_param in unique_params:
-            current_aggregation_strategy = unique_param[0]
-            param_based_model_df = model_df[
-                model_df["aggregation_strategy"] == current_aggregation_strategy
-            ]
-            yield param_based_model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
@@ -151,7 +146,7 @@ class TokenClassifyPredictionTask(PredictionTask):
                 # if the result for an input is empty, just append an empty result df,
                 # and the input will be dropped during concatenation
                 # we need to keep an empty dataframe, to make sure we have the same
-                # amount of resul_df's in our list as we have input rows.
+                # amount of result_df's in our list as we have input rows.
                 # this way merging the df's later works smoothly.
                 result_df = pd.DataFrame({})
             results_df_list.append(result_df)

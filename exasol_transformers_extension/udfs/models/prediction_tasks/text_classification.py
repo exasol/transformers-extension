@@ -20,21 +20,6 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
 )
 
 
-def _extract_unique_param_based_dataframes(
-    model_df: pd.DataFrame,
-) -> Iterator[pd.DataFrame]:
-    """
-    Extract unique dataframes having same model parameter values. if there
-    is no model specified parameter, the input dataframe return as it is.
-
-    :param model_df: Dataframe used in prediction
-
-    :return: Unique model dataframes having specified parameters
-    """
-
-    yield model_df
-
-
 def _append_predictions_to_input_dataframe(
     model_df: pd.DataFrame, pred_df_list: list[pd.DataFrame]
 ) -> pd.DataFrame:
@@ -96,7 +81,7 @@ class EntailmentPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield from _extract_unique_param_based_dataframes(model_df)
+        yield model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[list[dict[str, Any]]]:
         """
@@ -148,7 +133,7 @@ class TextClassifyPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield from _extract_unique_param_based_dataframes(model_df)
+        yield model_df
 
     def execute_prediction(self, model_df: pd.DataFrame) -> list[pd.DataFrame]:
         """
