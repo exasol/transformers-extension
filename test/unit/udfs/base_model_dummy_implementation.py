@@ -3,7 +3,6 @@
 from collections.abc import Iterator
 from typing import (
     Any,
-    Union,
 )
 
 import pandas as pd
@@ -69,7 +68,7 @@ class DummyPredictionTask(PredictionTask):
         return model_df
 
     def create_dataframes_from_predictions(
-        self, predictions: list[Union[dict[str, Any], list[dict[str, Any]]]]
+        self, predictions: list[dict[str, Any] | list[dict[str, Any]]]
     ) -> list[pd.DataFrame]:
         results_df_list = []
         for result in predictions:

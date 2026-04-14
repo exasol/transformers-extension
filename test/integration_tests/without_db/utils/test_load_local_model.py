@@ -2,7 +2,6 @@ import tarfile
 from pathlib import Path
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
-from typing import Union
 from unittest.mock import (
     MagicMock,
     create_autospec,
@@ -41,9 +40,9 @@ class TestSetup:
         self.token = "token"
         self.model_specification = model_params.tiny_model_specs
 
-        self.mock_current_model_specification: Union[
-            BucketFSModelSpecification, MagicMock
-        ] = create_autospec(BucketFSModelSpecification)
+        self.mock_current_model_specification: (
+            BucketFSModelSpecification | MagicMock
+        ) = create_autospec(BucketFSModelSpecification)
         test_pipeline = pipeline
         self.loader = LoadLocalModel(
             test_pipeline,

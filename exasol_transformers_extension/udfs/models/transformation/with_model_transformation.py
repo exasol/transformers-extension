@@ -89,11 +89,13 @@ class WithModelTransformation(Transformation):
             model_name, task_type, bucketfs_conn, sub_dir
         )
 
-        if model_loader.current_model_specification != current_model_specification:
-            # if we need to load a different model
-            self._load_model(model_loader, bucketfs_conn, current_model_specification)
-
-        elif not model_loader.last_model_loaded_successfully:
-            # if the model should have been loaded for the previous batch but failed,
+        if (
+            model_loader.current_model_specification != current_model_specification
+            or not model_loader.last_model_loaded_successfully
+        ):
+            # if
+            # we need to load a different model
+            # or if
+            # the model should have been loaded for the previous batch but failed,
             # we try again
             self._load_model(model_loader, bucketfs_conn, current_model_specification)

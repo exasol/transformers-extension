@@ -82,8 +82,7 @@ class LoadLocalModel:
         except Exception as e:
             self.last_model_loaded_successfully = False
             stack_trace = traceback.format_exc()
-            self.model_load_error = stack_trace
-            raise Exception(f"Model loading failed with : " f"{stack_trace}") from e
+            raise f"Model loading failed with : {stack_trace}" from e
 
     def set_bucketfs_model_cache_dir(self, bucketfs_location) -> None:
         """

@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import (
     Optional,
     Protocol,
-    Union,
     runtime_checkable,
 )
 
@@ -30,5 +29,5 @@ class ModelFactoryProtocol(Protocol):
         :use_auth_token:    optional. token for Huggingface hub private models
         """
 
-    def save_pretrained(self, save_directory: Union[str, Path]):
+    def save_pretrained(self, save_directory: str | Path):
         pass
