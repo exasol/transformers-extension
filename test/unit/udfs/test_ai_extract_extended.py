@@ -174,6 +174,8 @@ def test_ai_extract_extended_with_span(mock_local_path, mock_create_loc, params)
     udf.run(mock_ctx)
     result = mock_ctx.output
 
+    print(result)
+
     assert_correct_number_of_results(
         result, mock_meta.output_columns, expected_output_data
     )
