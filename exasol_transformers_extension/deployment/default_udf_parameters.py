@@ -11,11 +11,11 @@ DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_FUNCTION_MODEL_LOCATION"
 
 DEFAULT_VALUES = {
     "sub_dir": DEFAULT_SUBDIR,
-    "bucketfs_conn": DEFAULT_BUCKETFS_CONN_NAME ,
+    "bucketfs_conn": DEFAULT_BUCKETFS_CONN_NAME,
     "device_id": None,
     "top_k": 1,
     "return_ranks": "HIGHEST",
-    "max_new_tokens": "?",#todo fill placeholders
+    "max_new_tokens": "?",  # todo fill placeholders
     "return_full_text": "?",
     "aggregation_strategy": "?",
 }

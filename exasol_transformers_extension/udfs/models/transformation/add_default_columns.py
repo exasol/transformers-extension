@@ -2,7 +2,10 @@ from collections.abc import Iterator
 
 from pandas import DataFrame
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_VALUES, DEFAULT_MODEL_SPECS
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+    DEFAULT_VALUES,
+)
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )
@@ -39,7 +42,7 @@ class AddDefaultColumnsTransformation(Transformation):
         self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> Iterator[DataFrame]:
         """
-       add default columns filled with default values to input dataframe.
+        add default columns filled with default values to input dataframe.
         """
         for default_column in self.new_columns:
 
@@ -48,7 +51,7 @@ class AddDefaultColumnsTransformation(Transformation):
                 batch_df[default_column] = default_model_specs.model_name
             else:
                 batch_df[default_column] = DEFAULT_VALUES[default_column]
-                #todo do we want a error message if this fails, or is the standard ok?
+                # todo do we want a error message if this fails, or is the standard ok?
                 # standard message is "(...) KeyError: column name"
         yield batch_df
 
