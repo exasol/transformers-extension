@@ -9,6 +9,17 @@ model_spec_factory = BucketFSModelSpecificationFactory()
 DEFAULT_SUBDIR = "TE_default_models"
 DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_FUNCTION_MODEL_LOCATION"
 
+DEFAULT_VALUES = {
+    "sub_dir": DEFAULT_SUBDIR,
+    "bucketfs_conn": DEFAULT_BUCKETFS_CONN_NAME ,
+    "device_id": None,
+    "top_k": 1,
+    "return_ranks": "HIGHEST",
+    "max_new_tokens": "?",#todo fill placeholders
+    "return_full_text": "?",
+    "aggregation_strategy": "?",
+}
+
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one
     "model_for_a_specific_udf": model_spec_factory.create(

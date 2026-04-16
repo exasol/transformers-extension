@@ -54,13 +54,10 @@ def test_remove_columns_transformation(
     output_generator = transformations.execute(in_dataframe, model_loader_mock)
 
     for output_df in output_generator:
-        print(output_df["error_message"])
         assert all(
             expected_error_message in str(error_message)
             for error_message in output_df["error_message"]
         )
-        print(expected_dataframe)
-        print(output_df.drop(columns=["error_message"]))
         if expected_dataframe.empty:
             assert output_df.drop(
                 columns=["error_message"]
