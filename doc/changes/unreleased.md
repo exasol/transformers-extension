@@ -23,6 +23,8 @@ Code name: T.B.D
 ## Features
 
  * #351: Added functionality for installing default models.
+ * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
+ * #381: Added Transformation for removing columns from DataFrame
 
 ## Security
 

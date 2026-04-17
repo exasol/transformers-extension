@@ -33,6 +33,13 @@ class AddDefaultColumnsTransformation(Transformation):
         removed_columns: list[str],
         udf_name: str,
     ):
+        """
+        :param expected_input_columns: Transformation does not use any column of  batch_df, so can be empty
+        :param new_columns: Names of the columns to be added to batch_df. Will throw KeyError if column name not known.
+        :param removed_columns: Transformation does not remove any column of  batch_df, So can be empty
+        :param udf_name: Name of the calling UDF class "Ai<name>UDF".
+                         Used to decide which default model to load if model_name is in new_columns.
+        """
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
@@ -51,8 +58,6 @@ class AddDefaultColumnsTransformation(Transformation):
                 batch_df[default_column] = default_model_specs.model_name
             else:
                 batch_df[default_column] = DEFAULT_VALUES[default_column]
-                # todo do we want a error message if this fails, or is the standard ok?
-                # standard message is "(...) KeyError: column name"
         yield batch_df
 
     def check_input_format(self, df_columns: list[str]):

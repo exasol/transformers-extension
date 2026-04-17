@@ -20,7 +20,6 @@ _err = {"error_message": [None, None, None]}
 _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
 
 
-# todo we dont check existing cols dont get changed. do we need to?
 @pytest.mark.parametrize(
     "description, in_dataframe, default_cols, expected_dataframe_shape, expected_error_message, udf_name",
     [

@@ -24,6 +24,11 @@ class RemoveColumnsTransformation(Transformation):
         new_columns: list[str],
         removed_columns: list[str],
     ):
+        """
+        :param expected_input_columns: List of expected input columns. Need to be at least removed_columns.
+        :param new_columns: Transformation does not add any column to batch_df,  so can be empty.
+        :param removed_columns: List of columns to be removed from batch_df.
+        """
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
