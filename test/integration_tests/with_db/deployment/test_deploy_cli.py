@@ -22,6 +22,7 @@ BUCKETFS_CONN_NAME = "TE_E2E_BFS_CONN"
 LANGUAGE_ALIAS = "TE_E2E_LANG_ALIAS"
 
 
+# todo test default_bfs_creation
 def test_deploy_cli(
     backend,
     pyexasol_connection,

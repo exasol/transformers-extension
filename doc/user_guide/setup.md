@@ -6,11 +6,12 @@ Here you find information on prerequisites for using the Transformers Extension,
 
 * [Prerequisites](#prerequisites)
   * [Exasol DB](#exasol-db)
-  * [BucketFS Connection](#bucketfs-connection)
-    * [Parameters of the Address Part of the Connection Object](#parameters-of-the-address-part-of-the-connection-object)
-    * [Custom Certificates and Certificate Authorities](#custom-certificates-and-certificate-authorities)
-      * [Uploading to the BucketFS of an On-Prem Database](#uploading-to-the-bucketfs-of-an-on-prem-database)
-      * [Uploading to the BucketFS of a SaaS Database](#uploading-to-the-bucketfs-of-a-saas-database)
+    * [BucketFS Connections](#bucketfs-connections)
+        * [Default BucketFS Connection](#default-bucketfs-connection)
+        * [Parameters of the Address Part of the Connection Object](#parameters-of-the-address-part-of-the-connection-object)
+        * [Custom Certificates and Certificate Authorities](#custom-certificates-and-certificate-authorities)
+          * [Uploading to the BucketFS of an On-Prem Database](#uploading-to-the-bucketfs-of-an-on-prem-database)
+          * [Uploading to the BucketFS of a SaaS Database](#uploading-to-the-bucketfs-of-a-saas-database)
   * [Hugging Face Token](#hugging-face-token)
 * [Setup](#setup)
   * [Install the Python Package](#install-the-python-package)
@@ -28,7 +29,7 @@ Here you find information on prerequisites for using the Transformers Extension,
 * The Exasol cluster must already be running with version 7.1 or later.
 * The database connection information and credentials are needed.
 
-### BucketFS Connection
+### BucketFS Connections
 
 An Exasol connection object must be created with the Exasol BucketFS connection information and credentials.
 
@@ -51,6 +52,19 @@ Below is the description of the parameters that need to be passed for On-Prem an
 The distribution of the parameters among those three JSON strings do not matter.
 
 However, we recommend to put secrets like passwords and or access tokens into the `<BUCKETFS_PASSWORD>` part.
+
+#### Default BucketFS Connection
+
+This Connection is used in UDF's without a bfs_conn parameter. You can create this connection by using the (see the [Setup section](#deploy-the-extension-to-the-database) below).
+It is also possible to create this connection manually. This works like 
+any other Exasol BucketFS connection, but needs to have the name "EXA_AI_UDF_MODEL_LOCATION".
+
+  ```sql
+  CREATE OR REPLACE CONNECTION <EXA_AI_UDF_MODEL_LOCATION>
+      TO '<BUCKETFS_ADDRESS>'
+      USER '<BUCKETFS_USER>'
+      IDENTIFIED BY '<BUCKETFS_PASSWORD>'
+  ```
 
 #### Parameters of the Address Part of the Connection Object
 
@@ -205,12 +219,12 @@ For information about the available options common to all Exasol extensions, ple
 
 In addition, this extension provides the following installation options:
 
-| Option name             | Default   | Comment                                                                 |
-|-------------------------|-----------|-------------------------------------------------------------------------|
-| `--[no-]deploy-slc`     | True      | Install SLC as part of the deployment                                   |
-| `--[no-]deploy-scripts` | True      | Install scripts as part of the deployment                               |
-| `--bucketfs-conn-name`  |           | Name of the [BucketFS connection object](#bucketfs-connection)          |
-| `--token-conn-name`     |           | Name of the [token connection object](#huggingface-token) if required   |
-| `--token`               |           | The [Huggingface token](#huggingface-token) if required                 |
+| Option name                      | Default | Comment                                                                                                                      |
+|----------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------|
+| `--[no-]deploy-slc`              | True    | Install SLC as part of the deployment. If False will skip SLC installation                                                   |
+| `--[no-]deploy-scripts`          | True    | Install scripts as part of the deployment. If False will skip script installation                                            |
+| `--[no-]create-default-bfs-conn` | True    | Creates the [default BucketfsConnection](#default-bucketfs-connection). If False will skip connection creation.              |
+| `--bucketfs-conn-name`           |         | Optional. Name of the [BucketFS connection object](#bucketfs-connections). If empty will not create connection object        |
+| `--token-conn-name`              |         | Optional. Name of the [token connection object](#hugging-face-token) if required. If empty will not create connection object |
+| `--token`                        |         | Optional. The [Huggingface token](#hugging-face-token) if required                                                           |
 
-The connection objects will not be created if their names are not provided.

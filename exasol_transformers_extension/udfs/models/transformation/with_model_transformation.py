@@ -1,9 +1,13 @@
 import traceback
 from collections.abc import Iterator
+from os import PathLike
 
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 from pandas import DataFrame
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
 from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
@@ -50,14 +54,14 @@ class WithModelTransformation(Transformation):
     def _load_model(
         self,
         model_loader: LoadLocalModel,
-        bucketfs_conn: str,
+        bucketfs_conn: PathLike,
         current_model_specification: BucketFSModelSpecification,
     ):
         """
         load a model into the cache
         """
         bucketfs_location = bfs_loc.create_bucketfs_location_from_conn_object(
-            self.exa.get_connection(bucketfs_conn)
+            bucketfs_conn
         )
 
         model_loader.clear_device_memory()
@@ -83,16 +87,45 @@ class WithModelTransformation(Transformation):
         bucketfs_connection, and sub_dir
         """
         model_name = model_df["model_name"].iloc[0]
-        bucketfs_conn = model_df["bucketfs_conn"].iloc[0]
+        bucketfs_conn_name = model_df["bucketfs_conn"].iloc[0]
         sub_dir = model_df["sub_dir"].iloc[0]
         current_model_specification = BucketFSModelSpecification(
-            model_name, task_type, bucketfs_conn, sub_dir
+            model_name, task_type, bucketfs_conn_name, sub_dir
         )
 
         if (
             model_loader.current_model_specification != current_model_specification
             or not model_loader.last_model_loaded_successfully
         ):
+            try:
+                bucketfs_conn = self.exa.get_connection(
+                    bucketfs_conn_name
+                )  # does this fail with non exist con name?
+            except Exception as e:  # todo which type?
+                # todo make test which checks for these messages?
+                stack_trace = traceback.format_exc()
+                main_msg = (
+                    "You can create the required bucketfs connection by using the 'deploy' command, "
+                    "or manually by executing the following: "
+                    "CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n"
+                    "TO 'bucktfs_address' \n"
+                    "USER 'bucketfs_user'  \n"
+                    "IDENTIFIED BY 'bucketfs_password'"
+                    "If you can not create this connection yourself, "
+                    "ask your admin. \n".format(bucketfs_conn_name=bucketfs_conn_name)
+                )
+
+                if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
+                    msg = (
+                        "In order to use this UDF, a BucketFSConnection by the name '{DEFAULT_BUCKETFS_CONN_NAME}' "
+                        "must be created in the Exasol Database."
+                    ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
+                else:
+                    msg = (
+                        "The given bucketfs connection by the name of {bucketfs_conn_name} does not exist. "
+                        "Either us another connection, or create it in the Exasol Database. "
+                    )
+                raise msg + main_msg from e
             # if
             # we need to load a different model
             # or if
