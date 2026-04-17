@@ -15,9 +15,9 @@ DEFAULT_VALUES = {
     "device_id": None,
     "top_k": 1,
     "return_ranks": "HIGHEST",
-    "max_new_tokens": "?",  # todo fill placeholders
-    "return_full_text": "?",
-    "aggregation_strategy": "?",
+    "max_new_tokens": None,
+    "return_full_text": False,
+    "aggregation_strategy": "simple",
 }
 
 DEFAULT_MODEL_SPECS = {
