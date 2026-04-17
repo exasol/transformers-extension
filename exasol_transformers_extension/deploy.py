@@ -4,6 +4,7 @@ scripts, creates connection objects"""
 import logging
 
 import click
+import exasol.python_extension_common.connections.bucketfs_location as bl
 from exasol.python_extension_common.cli.bucketfs_conn_object_cli import (
     BucketfsConnObjectCli,
 )
@@ -25,6 +26,9 @@ from exasol.python_extension_common.connections.pyexasol_connection import (
     open_pyexasol_connection,
 )
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
 from exasol_transformers_extension.deployment.scripts_deployer import ScriptsDeployer
 from exasol_transformers_extension.deployment.te_language_container_deployer import (
     TeLanguageContainerDeployer,
@@ -32,6 +36,7 @@ from exasol_transformers_extension.deployment.te_language_container_deployer imp
 
 DEPLOY_SLC_ARG = "deploy_slc"
 DEPLOY_SCRIPTS_ARG = "deploy_scripts"
+CREATE_DEFAULT_BFS_CONN_ARG = "create-default-bfs-conn"
 CONTAINER_URL_ARG = "container_url"
 CONTAINER_NAME_ARG = "container_name"
 BUCKETFS_CONN_NAME_ARG = "bucketfs_conn_name"
@@ -49,7 +54,7 @@ def version_formatters() -> ParameterFormatters:
 
 
 # If the version is specified, then TE will infer the container name and
-# download URL.  Otherwise the user needs to provide dedicated CLI options.
+# download URL. Otherwise the user needs to provide dedicated CLI options.
 # Variable `formatters` is used to propagate the value of StdParams.version to
 # dependent CLI parameters.
 formatters = {StdParams.version: version_formatters()}
@@ -83,6 +88,14 @@ opts.append(
 )
 opts.append(
     click.Option(
+        [get_bool_opt_name(CREATE_DEFAULT_BFS_CONN_ARG)],
+        type=bool,
+        default=True,
+        help="Create default BucketFS connection",
+    )
+)
+opts.append(
+    click.Option(
         [get_bool_opt_name(DEPLOY_SCRIPTS_ARG)],
         type=bool,
         default=True,
@@ -108,8 +121,11 @@ opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignor
 
 
 def deploy(**kwargs):
-    """Deploy TE slc, scripts, create bucketfs connection object and
-    token connection object."""
+    """
+    Deploy TE slc, scripts, create bucketfs connection object,
+    default bucketfs connection object and
+    token connection object.
+    """
     # Deploy the SLC
     if kwargs[DEPLOY_SLC_ARG]:
         slc_deployer = LanguageContainerDeployerCli(
@@ -126,6 +142,11 @@ def deploy(**kwargs):
     if kwargs[BUCKETFS_CONN_NAME_ARG]:
         bucketfs_conn_deployer = BucketfsConnObjectCli(BUCKETFS_CONN_NAME_ARG)
         bucketfs_conn_deployer(**kwargs)
+
+    # Create default-bucketfs connection object
+    if kwargs[CREATE_DEFAULT_BFS_CONN_ARG]:
+        # cant use BucketfsConnObjectCli because conn_name is not an arg in kwargs
+        bl.create_bucketfs_conn_object(conn_name=DEFAULT_BUCKETFS_CONN_NAME, **kwargs)
 
     # Create token connection object
     if kwargs[TOKEN_CONN_NAME_ARG] and kwargs[TOKEN_ARG]:
