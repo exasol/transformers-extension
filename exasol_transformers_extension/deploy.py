@@ -54,7 +54,7 @@ def version_formatters() -> ParameterFormatters:
 
 
 # If the version is specified, then TE will infer the container name and
-# download URL. Otherwise the user needs to provide dedicated CLI options.
+# download URL. Otherwise, the user needs to provide dedicated CLI options.
 # Variable `formatters` is used to propagate the value of StdParams.version to
 # dependent CLI parameters.
 formatters = {StdParams.version: version_formatters()}
@@ -74,8 +74,8 @@ def get_bool_opt_name(arg_name: str) -> str:
 
 
 opt_lang_alias = {"type": str, "default": "PYTHON3_TE"}
-opt_token = {"type": str, "help": "Huggingface token for private models"}
-make_option_secret(opt_token, prompt="Huggingface token")
+opt_token = {"type": str, "help": "HuggingFace token for private models"}
+make_option_secret(opt_token, prompt="HuggingFace token")
 opts = select_std_options(
     [StdTags.DB, StdTags.BFS, StdTags.SLC],
     formatters=formatters,
@@ -122,8 +122,8 @@ opts.append(click.Option([get_opt_name(TOKEN_ARG)], **opt_token))  # type: ignor
 
 def deploy(**kwargs):
     """
-    Deploy TE slc, scripts, create bucketfs connection object,
-    default bucketfs connection object and
+    Deploy TE slc, scripts, create BucketFS connection object,
+    default BucketFS connection object and
     token connection object.
     """
     # Deploy the SLC

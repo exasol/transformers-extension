@@ -1,3 +1,4 @@
+from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME, DEFAULT_SUBDIR
 from test.integration_tests.with_db.test_upload_model import run_model_upload_test
 
 import exasol.bucketfs as bfs
@@ -13,7 +14,7 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 
 from exasol_transformers_extension.deploy import (
     BUCKETFS_CONN_NAME_ARG,
-    deploy_command,
+    deploy_command, CREATE_DEFAULT_BFS_CONN_ARG, DEPLOY_SLC_ARG, DEPLOY_SCRIPTS_ARG,
 )
 from exasol_transformers_extension.deployment.language_container import export_slc
 
@@ -21,8 +22,6 @@ PATH_IN_BUCKET = "te_end2end"
 BUCKETFS_CONN_NAME = "TE_E2E_BFS_CONN"
 LANGUAGE_ALIAS = "TE_E2E_LANG_ALIAS"
 
-
-# todo test default_bfs_creation
 def test_deploy_cli(
     backend,
     pyexasol_connection,
@@ -71,4 +70,10 @@ def test_deploy_cli(
             )
             run_model_upload_test(
                 bucketfs_cli_args, db_conn, bfs_path, BUCKETFS_CONN_NAME
+            )
+
+            # check if DEFAULT_BUCKETFS_CONN_NAME was created
+            run_model_upload_test(
+                bucketfs_cli_args, db_conn, bfs_path,
+                DEFAULT_BUCKETFS_CONN_NAME, sub_dir=DEFAULT_SUBDIR
             )
