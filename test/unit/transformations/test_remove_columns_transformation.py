@@ -45,7 +45,6 @@ def test_remove_columns_transformation(
         [
             RemoveColumnsTransformation(
                 expected_input_columns=remove_cols,
-                new_columns=[],
                 removed_columns=remove_cols,
             ),
         ]

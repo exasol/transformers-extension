@@ -132,9 +132,7 @@ def test_add_default_columns_transformation(
     transformations = TransformationPipeline(
         [
             AddDefaultColumnsTransformation(
-                expected_input_columns=[],
                 new_columns=default_cols,
-                removed_columns=[],
                 udf_name=udf_name,
                 default_values=additional_dict,
             ),
@@ -205,9 +203,7 @@ def test_add_wrong_default_columns_transformation(
     transformations = TransformationPipeline(
         [
             AddDefaultColumnsTransformation(
-                expected_input_columns=[],
                 new_columns=default_cols,
-                removed_columns=[],
                 udf_name=udf_name,
             ),
         ]
