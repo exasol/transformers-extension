@@ -21,7 +21,11 @@ class AddDefaultColumnsTransformation(Transformation):
     Transformation adds default columns filled with default values to input dataframe.
     Will overwrite existing columns with same name with default values.
 
-    If a column should be added which we do not have default values for, this column
+    You can overwrite the default values in DEFAULT_VALUES by passing a dict with
+    different default values. You can also add columns not present in
+    DEFAULT_VALUES in this dict.
+
+    If a column should be added, but no default_value is found for the column, this column
     and all columns after this column will be added, but will be filled with "None",
     and an error will be added to "error_message"
     """
@@ -32,6 +36,7 @@ class AddDefaultColumnsTransformation(Transformation):
         new_columns: list[str],
         removed_columns: list[str],
         udf_name: str,
+        default_values: dict[str, str] = None,
     ):
         """
         :param expected_input_columns: Transformation does not use any column of  batch_df, so can be empty
@@ -39,11 +44,13 @@ class AddDefaultColumnsTransformation(Transformation):
         :param removed_columns: Transformation does not remove any column of  batch_df, So can be empty
         :param udf_name: Name of the calling UDF class "Ai<name>UDF".
                          Used to decide which default model to load if model_name is in new_columns.
+        :param default_values: Default values for column/value pairs not present in DEFAULT_VALUES.
         """
         self.expected_input_columns = expected_input_columns
         self.new_columns = new_columns
         self.removed_columns = removed_columns
         self.udf_name = udf_name
+        self.default_values = default_values
 
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
@@ -56,6 +63,12 @@ class AddDefaultColumnsTransformation(Transformation):
             if default_column == "model_name":
                 default_model_specs = DEFAULT_MODEL_SPECS[self.udf_name]
                 batch_df[default_column] = default_model_specs.model_name
+            elif (
+                self.default_values is not None
+                and default_column in self.default_values.keys()
+            ):
+                batch_df[default_column] = self.default_values[default_column]
+
             else:
                 batch_df[default_column] = DEFAULT_VALUES[default_column]
         yield batch_df

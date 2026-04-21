@@ -21,7 +21,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
 
 
 @pytest.mark.parametrize(
-    "description, in_dataframe, default_cols, expected_dataframe_shape, expected_error_message, udf_name",
+    "description, in_dataframe, default_cols, additional_dict, expected_dataframe_shape, expected_error_message, udf_name",
     [
         (
             "add all",
@@ -37,6 +37,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
                 "return_full_text",
                 "aggregation_strategy",
             ],
+            None,
             (3, 12),
             "None",
             "model_for_a_specific_udf",
@@ -45,6 +46,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             "add none",
             pd.DataFrame(data),
             [],
+            None,
             (3, 3),
             "None",
             "model_for_a_specific_udf",
@@ -60,6 +62,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
                 "top_k",
                 "return_ranks",
             ],
+            None,
             (3, 9),
             "None",
             "model_for_a_specific_udf",
@@ -78,6 +81,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
                 "return_full_text",
                 "aggregation_strategy",
             ],
+            None,
             (
                 0,
                 10,
@@ -89,6 +93,25 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             "add existing column",
             pd.DataFrame(data | _sub_dir),
             ["sub_dir"],
+            None,
+            (3, 4),
+            "None",
+            "model_for_a_specific_udf",
+        ),
+        (
+            "add additional default value",
+            pd.DataFrame(data),
+            ["sub_dir", "new_default_col"],
+            {"new_default_col": "new_default_value"},
+            (3, 5),
+            "None",
+            "model_for_a_specific_udf",
+        ),
+        (
+            "overwrite existing default value",
+            pd.DataFrame(data),
+            ["sub_dir"],
+            {"sub_dir": "another_sub_dir"},
             (3, 4),
             "None",
             "model_for_a_specific_udf",
@@ -99,6 +122,7 @@ def test_add_default_columns_transformation(
     description,
     in_dataframe,
     default_cols,
+    additional_dict,
     expected_dataframe_shape,
     expected_error_message,
     udf_name,
@@ -112,6 +136,7 @@ def test_add_default_columns_transformation(
                 new_columns=default_cols,
                 removed_columns=[],
                 udf_name=udf_name,
+                default_values=additional_dict,
             ),
         ]
     )
@@ -123,16 +148,23 @@ def test_add_default_columns_transformation(
             expected_error_message in str(error_message)
             for error_message in output_df["error_message"]
         )
-
         assert all(def_col in output_df.columns for def_col in default_cols)
+        if additional_dict is not None:
+            assert all(
+                def_col in output_df.columns for def_col in additional_dict.keys()
+            )
         if "model_name" in default_cols:
             assert all(
                 output_df["model_name"][i] == DEFAULT_MODEL_SPECS[udf_name].model_name
                 for i in output_df.index
             )
             default_cols.remove("model_name")
+
+        all_def_values = (
+            DEFAULT_VALUES | additional_dict if additional_dict else DEFAULT_VALUES
+        )
         assert all(
-            output_df[def_col][i] == DEFAULT_VALUES[def_col]
+            output_df[def_col][i] == all_def_values[def_col]
             for def_col in default_cols
             for i in output_df.index
         )
