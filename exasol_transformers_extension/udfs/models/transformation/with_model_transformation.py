@@ -87,13 +87,13 @@ class WithModelTransformation(Transformation):
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
-                "In order to use this UDF, a BucketFSConnection by the name '{DEFAULT_BUCKETFS_CONN_NAME}' "
+                "In order to use this UDF, a BucketFSConnection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
                 "must be created in the Exasol Database. "
             ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
         else:
             msg = (
                 "The given bucketfs connection by the name of {bucketfs_conn_name} does not exist. "
-                "Either us another connection, or create it in the Exasol Database. "
+                "Either use another connection, or create it in the Exasol Database. "
             ).format(bucketfs_conn_name=bucketfs_conn_name)
         return msg + main_msg
 
