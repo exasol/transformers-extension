@@ -36,7 +36,7 @@ from exasol_transformers_extension.deployment.te_language_container_deployer imp
 
 DEPLOY_SLC_ARG = "deploy_slc"
 DEPLOY_SCRIPTS_ARG = "deploy_scripts"
-CREATE_DEFAULT_BFS_CONN_ARG = "create-default-bfs-conn"
+CREATE_DEFAULT_BFS_CONN_ARG = "create_default_bfs_conn"
 CONTAINER_URL_ARG = "container_url"
 CONTAINER_NAME_ARG = "container_name"
 BUCKETFS_CONN_NAME_ARG = "bucketfs_conn_name"

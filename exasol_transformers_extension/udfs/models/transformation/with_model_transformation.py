@@ -74,28 +74,27 @@ class WithModelTransformation(Transformation):
 
     @staticmethod
     def _build_error_msg(bucketfs_conn_name: str) -> str:
-        #todo do we want to output a list of available connections here?
         main_msg = (
             "You can create the required bucketfs connection by using the 'deploy' command, "
-            "or manually by executing the following: "
-            "CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n"
-            "TO 'bucktfs_address' \n"
-            "USER 'bucketfs_user'  \n"
-            "IDENTIFIED BY 'bucketfs_password'"
+            "or manually by executing the following: \n "
+            "CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n "
+            "TO <bucktfs_address> \n "
+            "USER <bucketfs_user>  \n "
+            "IDENTIFIED BY <bucketfs_password> "
             "If you can not create this connection yourself, "
-            "ask your admin. \n".format(bucketfs_conn_name=bucketfs_conn_name)
-        )
+            "ask your admin. \n"
+        ).format(bucketfs_conn_name=bucketfs_conn_name)
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
                 "In order to use this UDF, a BucketFSConnection by the name '{DEFAULT_BUCKETFS_CONN_NAME}' "
-                "must be created in the Exasol Database."
+                "must be created in the Exasol Database. "
             ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
         else:
             msg = (
                 "The given bucketfs connection by the name of {bucketfs_conn_name} does not exist. "
                 "Either us another connection, or create it in the Exasol Database. "
-            )
+            ).format(bucketfs_conn_name=bucketfs_conn_name)
         return msg + main_msg
 
     def check_cache(
@@ -126,7 +125,7 @@ class WithModelTransformation(Transformation):
             try:
                 bucketfs_conn = self.exa.get_connection(
                     bucketfs_conn_name
-                )  # todo does this fail with non exist con name?
+                )
             except Exception as e:
                 msg = self._build_error_msg(bucketfs_conn_name)
                 raise  ConnectionError(msg) from e
