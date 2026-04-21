@@ -1,7 +1,5 @@
 import dataclasses
 from pathlib import PurePosixPath
-
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
 from test.unit.udf_wrapper_params.base_udf.make_data_row_functions import (
     bucketfs_conn,
     make_input_row,
@@ -11,6 +9,11 @@ from test.unit.udf_wrapper_params.base_udf.make_data_row_functions import (
 )
 
 from exasol_udf_mock_python.connection import Connection
+
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+
 
 @dataclasses.dataclass
 class ErrorDefaultBucketFSConnectionNotExist:
@@ -22,9 +25,10 @@ class ErrorDefaultBucketFSConnectionNotExist:
     batch_size = 2
     data_size = 5
 
-    expected_error_msg =  ( "In order to use this UDF, a BucketFSConnection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
-                "must be created in the Exasol Database. ").format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
-
+    expected_error_msg = (
+        "In order to use this UDF, a BucketFSConnection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
+        "must be created in the Exasol Database. "
+    ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
 
     input_data = make_input_row(bucketfs_conn=DEFAULT_BUCKETFS_CONN_NAME) * data_size
     output_data = (

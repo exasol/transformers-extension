@@ -42,7 +42,7 @@ def run_model_upload_test(
     db_conn: pyexasol.ExaConnection,
     bucketfs_location: bfs.path.PathLike,
     bucketfs_conn_name: str,
-    sub_dir: str = "sub_dir"
+    sub_dir: str = "sub_dir",
 ):
     model_specification = model_params.base_model_specs
     model_specification.task_type = "ai_fill_mask_extended"

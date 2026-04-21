@@ -123,12 +123,10 @@ class WithModelTransformation(Transformation):
             or not model_loader.last_model_loaded_successfully
         ):
             try:
-                bucketfs_conn = self.exa.get_connection(
-                    bucketfs_conn_name
-                )
+                bucketfs_conn = self.exa.get_connection(bucketfs_conn_name)
             except Exception as e:
                 msg = self._build_error_msg(bucketfs_conn_name)
-                raise  ConnectionError(msg) from e
+                raise ConnectionError(msg) from e
 
             # if
             # we need to load a different model

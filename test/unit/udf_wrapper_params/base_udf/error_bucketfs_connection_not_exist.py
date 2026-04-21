@@ -21,9 +21,10 @@ class ErrorBucketFSConnectionNotExist:
     batch_size = 2
     data_size = 5
 
-    expected_error_msg = ("The given bucketfs connection by the name of non_exist_bfs_conn does not exist. "
-                "Either use another connection, or create it in the Exasol Database. ")
-
+    expected_error_msg = (
+        "The given bucketfs connection by the name of non_exist_bfs_conn does not exist. "
+        "Either use another connection, or create it in the Exasol Database. "
+    )
 
     input_data = make_input_row(bucketfs_conn="non_exist_bfs_conn") * data_size
     output_data = (
