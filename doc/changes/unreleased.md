@@ -23,6 +23,7 @@ Code name: T.B.D
 ## Features
 
  * #351: Added functionality for installing default models.
+ * #378. Added creation of default BucketFS-Connection to deploy command
 
 ## Security
 
