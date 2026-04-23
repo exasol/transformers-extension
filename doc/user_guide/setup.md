@@ -55,7 +55,7 @@ However, we recommend to put secrets like passwords and or access tokens into th
 
 #### Default BucketFS Connection
 
-This connection is used in UDF's without a bfs_conn parameter. You can create this connection by using the "deploy" command(see the [Setup section](#deploy-the-extension-to-the-database) below).
+This connection is used in UDF's without a bfs_conn parameter. You can create this connection by using the "deploy" command (see the [Setup section](#deploy-the-extension-to-the-database) below).
 It is also possible to create this connection manually. This works like 
 any other Exasol BucketFS connection, but needs to have the name "EXA_AI_UDF_MODEL_LOCATION".
 
