@@ -26,9 +26,9 @@ class ErrorDefaultBucketFSConnectionNotExist:
     data_size = 5
 
     expected_error_msg = (
-        "In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
-        "must be created in the Exasol Database. "
-    ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
+        f"In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
+        f"must be created in the Exasol Database. "
+    )
 
     input_data = make_input_row(bucketfs_conn=DEFAULT_BUCKETFS_CONN_NAME) * data_size
     output_data = (

@@ -75,26 +75,26 @@ class WithModelTransformation(Transformation):
     @staticmethod
     def _build_error_msg(bucketfs_conn_name: str) -> str:
         main_msg = (
-            "You can create the required BucketFS connection by using the 'deploy' command, "
-            "or manually by executing the following: \n "
-            "CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n "
-            "TO <bucktfs_address> \n "
-            "USER <bucketfs_user>  \n "
-            "IDENTIFIED BY <bucketfs_password> "
-            "If you cannot create this connection yourself, "
-            "ask your admin. \n"
-        ).format(bucketfs_conn_name=bucketfs_conn_name)
+            f"You can create the required BucketFS connection by using the 'deploy' command, "
+            f"or manually by executing the following: \n "
+            f"CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n "
+            f"TO <bucktfs_address> \n "
+            f"USER <bucketfs_user>  \n "
+            f"IDENTIFIED BY <bucketfs_password> "
+            f"If you cannot create this connection yourself, "
+            f"ask your admin. \n"
+        )
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
-                "In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
-                "must be created in the Exasol Database. "
-            ).format(DEFAULT_BUCKETFS_CONN_NAME=DEFAULT_BUCKETFS_CONN_NAME)
+                f"In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
+                f"must be created in the Exasol Database. "
+            )
         else:
             msg = (
-                "The given BucketFS connection by the name of {bucketfs_conn_name} does not exist. "
-                "Either use another connection, or create it in the Exasol Database. "
-            ).format(bucketfs_conn_name=bucketfs_conn_name)
+                f"The given BucketFS connection by the name of {bucketfs_conn_name} does not exist. "
+                f"Either use another connection, or create it in the Exasol Database. "
+            )
         return msg + main_msg
 
     def check_cache(

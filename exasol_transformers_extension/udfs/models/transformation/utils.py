@@ -44,11 +44,7 @@ def _check_input_format(
     """
     if not all(col in df_columns for col in expected_input_columns):
         raise ValueError(
-            "Missing expected input columns for {transformation_name}. "
-            "Expected at least the following columns: {expected_input_columns}"
-            "got these input columns: {df_columns}".format(
-                transformation_name=transformation_name,
-                expected_input_columns=expected_input_columns,
-                df_columns=df_columns,
-            )
+            f"Missing expected input columns for {transformation_name}. "
+            f"Expected at least the following columns: {expected_input_columns} "
+            f"got these input columns: {df_columns}"
         )
