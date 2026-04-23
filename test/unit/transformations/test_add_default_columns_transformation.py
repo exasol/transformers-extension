@@ -21,13 +21,12 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
 
 
 @pytest.mark.parametrize(
-    "description, in_dataframe, default_cols, additional_dict, expected_dataframe_shape, expected_error_message, udf_name",
+    "description, in_dataframe, default_cols, additional_dict, expected_dataframe_shape, expected_error_message",
     [
         (
             "add all",
             pd.DataFrame(data),
             [
-                "model_name",
                 "sub_dir",
                 "bucketfs_conn",
                 "device_id",
@@ -38,9 +37,8 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
                 "aggregation_strategy",
             ],
             None,
-            (3, 12),
+            (3, 11),
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "add none",
@@ -49,13 +47,11 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             None,
             (3, 3),
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "add some",
             pd.DataFrame(data),
             [
-                "model_name",
                 "sub_dir",
                 "bucketfs_conn",
                 "device_id",
@@ -63,15 +59,13 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
                 "return_ranks",
             ],
             None,
-            (3, 9),
+            (3, 8),
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "add to empty df",
             pd.DataFrame(),
             [
-                "model_name",
                 "sub_dir",
                 "bucketfs_conn",
                 "device_id",
@@ -84,10 +78,9 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             None,
             (
                 0,
-                10,
+                9,
             ),  # the dataframe columns will be created, but no rows exist so no rows will be filled
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "add existing column",
@@ -96,16 +89,19 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             None,
             (3, 4),
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "add additional default value",
             pd.DataFrame(data),
-            ["sub_dir", "new_default_col"],
-            {"new_default_col": "new_default_value"},
-            (3, 5),
+            ["sub_dir", "new_default_col", "model_name"],
+            {
+                "new_default_col": "new_default_value",
+                "model_name": DEFAULT_MODEL_SPECS[
+                    "model_for_a_specific_udf"
+                ].model_name,
+            },
+            (3, 6),
             "None",
-            "model_for_a_specific_udf",
         ),
         (
             "overwrite existing default value",
@@ -114,7 +110,6 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             {"sub_dir": "another_sub_dir"},
             (3, 4),
             "None",
-            "model_for_a_specific_udf",
         ),
     ],
 )
@@ -125,7 +120,6 @@ def test_add_default_columns_transformation(
     additional_dict,
     expected_dataframe_shape,
     expected_error_message,
-    udf_name,
 ):
     model_loader_mock = Mock()
 
@@ -133,7 +127,6 @@ def test_add_default_columns_transformation(
         [
             AddDefaultColumnsTransformation(
                 new_columns=default_cols,
-                udf_name=udf_name,
                 default_values=additional_dict,
             ),
         ]
@@ -153,7 +146,8 @@ def test_add_default_columns_transformation(
             )
         if "model_name" in default_cols:
             assert all(
-                output_df["model_name"][i] == DEFAULT_MODEL_SPECS[udf_name].model_name
+                output_df["model_name"][i]
+                == DEFAULT_MODEL_SPECS["model_for_a_specific_udf"].model_name
                 for i in output_df.index
             )
             default_cols.remove("model_name")
@@ -170,23 +164,15 @@ def test_add_default_columns_transformation(
 
 
 @pytest.mark.parametrize(
-    "description, in_dataframe, default_cols, expected_dataframe_shape, expected_error_message, udf_name",
+    "description, in_dataframe, default_cols, additional_dict, expected_dataframe_shape, expected_error_message",
     [
         (
             "add unknown column",
             pd.DataFrame(data),
             ["unknown"],
+            None,
             (3, 4),  # the ensure_output_format still adds the column
             "KeyError: 'unknown'",
-            "model_for_a_specific_udf",
-        ),
-        (
-            "add unknown udf_model",
-            pd.DataFrame(data),
-            ["model_name"],
-            (3, 4),  # the ensure_output_format still adds the column
-            "KeyError: 'unknown_udf_name'",
-            "unknown_udf_name",
         ),
     ],
 )
@@ -194,9 +180,9 @@ def test_add_wrong_default_columns_transformation(
     description,
     in_dataframe,
     default_cols,
+    additional_dict,
     expected_dataframe_shape,
     expected_error_message,
-    udf_name,
 ):
     model_loader_mock = Mock()
 
@@ -204,7 +190,7 @@ def test_add_wrong_default_columns_transformation(
         [
             AddDefaultColumnsTransformation(
                 new_columns=default_cols,
-                udf_name=udf_name,
+                default_values=additional_dict,
             ),
         ]
     )

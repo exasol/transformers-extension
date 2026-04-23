@@ -33,19 +33,15 @@ class AddDefaultColumnsTransformation(Transformation):
     def __init__(
         self,
         new_columns: list[str],
-        udf_name: str,
         default_values: dict[str, str] = None,
     ):
         """
         :param new_columns: Names of the columns to be added to batch_df. Will throw KeyError if column name not known.
-        :param udf_name: Name of the calling UDF class "Ai<name>UDF".
-                         Used to decide which default model to load if model_name is in new_columns.
-        :param default_values: Default values for column/value pairs not present in DEFAULT_VALUES.
+        :param default_values: Optional. Default values for column/value pairs not present in DEFAULT_VALUES.
         """
         self.expected_input_columns = []
         self.new_columns = new_columns
         self.removed_columns = []
-        self.udf_name = udf_name
         self.default_values = default_values
 
     def transform(
@@ -55,11 +51,7 @@ class AddDefaultColumnsTransformation(Transformation):
         add default columns filled with default values to input dataframe.
         """
         for default_column in self.new_columns:
-
-            if default_column == "model_name":
-                default_model_specs = DEFAULT_MODEL_SPECS[self.udf_name]
-                batch_df[default_column] = default_model_specs.model_name
-            elif (
+            if (
                 self.default_values is not None
                 and default_column in self.default_values.keys()
             ):
