@@ -199,6 +199,8 @@ which you might want to use in your UDF:
    columns to the output of the token-classification prediction task.
  - [SpanColumnsZeroShotTransformation](../../exasol_transformers_extension/udfs/models/transformation/span_columns.py) : Transformation for adding result span columns 
    to the output of the zero-shot-classification prediction task.
+ - [RemoveColumnsTransformation](../../exasol_transformers_extension/udfs/models/transformation/remove_columns.py) : Transformation for removing all Columns in removed_columns from the dataframe.
+ - [AddDefaultColumnsTransformation](../../exasol_transformers_extension/udfs/models/transformation/add_default_columns.py): Transformation for adding columns in new_columns and filling them with default values from [default_udf_parameters.py](../../exasol_transformers_extension/deployment/default_udf_parameters.py)
 
 #### 4.2 Implement a new Transformation
 
