@@ -52,7 +52,11 @@ class BaseModelUDF(ABC):
         depending on which Transformations are used.
         You can also change the input and output columns via the transformations.
         """
-        device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
+        # todo cant really add this in a transform because transforms return dfs not torch devices
+        try:
+            device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
+        except KeyError:
+            device_id = None
         self.device = device_management.get_torch_device(device_id)
         self.create_model_loader()
         ctx.reset()

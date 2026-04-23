@@ -28,15 +28,9 @@ from test.unit.udf_wrapper_params.ai_classify_extended.return_mixed_multiple_mod
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
     assert_result_matches_expected_output,
-    create_mock_exa_environment,
-    create_mock_model_factories_with_models,
-    create_mock_pipeline_factory_from_df,
-    create_mock_udf_context,
+    setup_mocks,
 )
-from test.utils.mock_bucketfs_location import (
-    fake_bucketfs_location_from_conn_object,
-    fake_local_bucketfs_path,
-)
+
 from unittest.mock import patch
 
 import pytest
@@ -139,24 +133,17 @@ def test_ai_classify_extended(mock_local_path, mock_create_loc, params):
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
     """
-    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
-    mock_local_path.side_effect = fake_local_bucketfs_path
-
-    model_input_data = params.input_data
-    bfs_connection = params.bfs_connections
+    mock_meta = create_mock_metadata()
     expected_model_counter = params.expected_model_counter
-    zero_shot_models_output_df = params.zero_shot_models_output_df
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
-    mock_meta = create_mock_metadata()
-    mock_ctx = create_mock_udf_context(input_data=model_input_data, mock_meta=mock_meta)
-    mock_exa = create_mock_exa_environment(mock_meta, bfs_connection)
-    mock_base_model_factory, mock_tokenizer_factory = (
-        create_mock_model_factories_with_models(expected_model_counter)
-    )
-    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
-        zero_shot_models_output_df, expected_model_counter
+    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
+     mock_pipeline_factory, mock_ctx) = setup_mocks(
+        mock_create_loc, mock_local_path,
+        params, mock_meta, expected_model_counter,
+        params.input_data,
+        params.zero_shot_models_output_df
     )
 
     udf = AiClassifyExtendedUDF(
@@ -203,24 +190,18 @@ def test_ai_classify_extended_with_span(mock_local_path, mock_create_loc, params
     This test checks combinations of input data to determine correct output data. For this everything the udf uses in
     the background is mocked, and given to the udf. we then check if the resulting output matches the expected output.
     """
-    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
-    mock_local_path.side_effect = fake_local_bucketfs_path
 
-    model_input_data = params.work_with_span_input_data
-    bfs_connection = params.bfs_connections
+    mock_meta = create_mock_metadata_with_span()
     expected_model_counter = params.expected_model_counter
-    zero_shot_models_output_df = params.zero_shot_models_output_df
     batch_size = params.batch_size
     expected_output_data = params.work_with_span_output_data
 
-    mock_meta = create_mock_metadata_with_span()
-    mock_ctx = create_mock_udf_context(input_data=model_input_data, mock_meta=mock_meta)
-    mock_exa = create_mock_exa_environment(mock_meta, bfs_connection)
-    mock_base_model_factory, mock_tokenizer_factory = (
-        create_mock_model_factories_with_models(expected_model_counter)
-    )
-    mock_pipeline_factory = create_mock_pipeline_factory_from_df(
-        zero_shot_models_output_df, expected_model_counter
+    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
+     mock_pipeline_factory, mock_ctx) = setup_mocks(
+        mock_create_loc, mock_local_path,
+        params, mock_meta, expected_model_counter,
+        params.work_with_span_input_data,
+        params.zero_shot_models_output_df
     )
 
     udf = AiClassifyExtendedUDF(
