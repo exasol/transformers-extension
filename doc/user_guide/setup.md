@@ -55,7 +55,7 @@ However, we recommend to put secrets like passwords and or access tokens into th
 
 #### Default BucketFS Connection
 
-This Connection is used in UDF's without a bfs_conn parameter. You can create this connection by using the (see the [Setup section](#deploy-the-extension-to-the-database) below).
+This connection is used in UDF's without a bfs_conn parameter. You can create this connection by using the (see the [Setup section](#deploy-the-extension-to-the-database) below).
 It is also possible to create this connection manually. This works like 
 any other Exasol BucketFS connection, but needs to have the name "EXA_AI_UDF_MODEL_LOCATION".
 
@@ -223,7 +223,7 @@ In addition, this extension provides the following installation options:
 |----------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------|
 | `--[no-]deploy-slc`              | True    | Install SLC as part of the deployment. If False will skip SLC installation                                                   |
 | `--[no-]deploy-scripts`          | True    | Install scripts as part of the deployment. If False will skip script installation                                            |
-| `--[no-]create-default-bfs-conn` | True    | Creates the [default BucketfsConnection](#default-bucketfs-connection). If False will skip connection creation.              |
+| `--[no-]create-default-bfs-conn` | True    | Creates the [default Bucketfs Connection](#default-bucketfs-connection). If False will skip connection creation.              |
 | `--bucketfs-conn-name`           |         | Optional. Name of the [BucketFS connection object](#bucketfs-connections). If empty will not create connection object        |
 | `--token-conn-name`              |         | Optional. Name of the [token connection object](#hugging-face-token) if required. If empty will not create connection object |
 | `--token`                        |         | Optional. The [Huggingface token](#hugging-face-token) if required                                                           |
