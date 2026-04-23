@@ -74,7 +74,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 * `bucketfs_conn`
 
 Specific parameters
-* `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](#getting-started) section.
+* `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](./setup#getting-started) section.
 * `task_type`: See below.
 
 #### Selecting the Task Type
@@ -102,12 +102,12 @@ For information about the available options common to all Exasol extensions, ple
 
 In addition, this command provides the following options:
 
-| Option name    | Comment                                                         |
-|----------------|-----------------------------------------------------------------|
-| `--model-name` | Name of the model, as seen in the Hugging Face hub              |
-| `--task-type`  | See the explanations below                                      |
-| `--sub-dir`    | Sub-directory in the BucketFS where this model should be stored |
-| `--token`      | The [Hugging Face token](#huggingface-token), if required       |
+| Option name    | Comment                                                           |
+|----------------|-------------------------------------------------------------------|
+| `--model-name` | Name of the model, as seen in the Hugging Face hub                |
+| `--task-type`  | See the explanations below                                        |
+| `--sub-dir`    | Sub-directory in the BucketFS where this model should be stored   |
+| `--token`      | The [Hugging Face token](./setup#hugging-face-token), if required |
 
 `--task-type` specifies the type of task for which you plan to use the model, see [Selecting the Task Type](#selecting-the-task-type).
 

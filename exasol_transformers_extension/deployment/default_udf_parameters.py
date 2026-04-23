@@ -7,7 +7,7 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 model_spec_factory = BucketFSModelSpecificationFactory()
 
 DEFAULT_SUBDIR = "TE_default_models"
-DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_FUNCTION_MODEL_LOCATION"
+DEFAULT_BUCKETFS_CONN_NAME = "EXA_AI_MODEL_LOCATION"
 
 DEFAULT_VALUES = {
     "sub_dir": DEFAULT_SUBDIR,

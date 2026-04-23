@@ -8,16 +8,14 @@ from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_t
 from test.utils.parameters import model_params
 
 
-def test_ai_translate_extended_script(
-    setup_database, db_conn, upload_translation_model_to_bucketfs
+def run_ai_translate_extended_script_test(
+    bucketfs_conn_name: str, n_rows: int, db_conn
 ):
-    bucketfs_conn_name, _ = setup_database
-    n_rows = 100
     src_lang = "English"
     target_lang = "German"
     max_new_tokens = 50
     input_data = []
-    for i in range(n_rows):
+    for _ in range(n_rows):
         input_data.append(
             (
                 "",
@@ -48,6 +46,17 @@ def test_ai_translate_extended_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
+    return result, input_data
+
+
+def test_ai_translate_extended_script(
+    setup_database, db_conn, upload_translation_model_to_bucketfs
+):
+    bucketfs_conn_name, _ = setup_database
+    n_rows = 100
+    result, input_data = run_ai_translate_extended_script_test(
+        bucketfs_conn_name, n_rows, db_conn
+    )
 
     # assertions
     assert result[0][-1] is None

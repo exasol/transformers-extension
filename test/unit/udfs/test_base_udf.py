@@ -1,3 +1,9 @@
+from test.unit.udf_wrapper_params.base_udf.error_bucketfs_connection_not_exist import (
+    ErrorBucketFSConnectionNotExist,
+)
+from test.unit.udf_wrapper_params.base_udf.error_default_bfs_conn_not_exist import (
+    ErrorDefaultBucketFSConnectionNotExist,
+)
 from test.unit.udf_wrapper_params.base_udf.error_not_cached_multiple_model_multiple_batch import (
     ErrorNotCachedMultipleModelMultipleBatch,
 )
@@ -111,6 +117,8 @@ def setup_base_udf_tests_and_run(
         MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
         ErrorNotCachedSingleModelMultipleBatch,
         ErrorNotCachedMultipleModelMultipleBatch,
+        ErrorBucketFSConnectionNotExist,
+        ErrorDefaultBucketFSConnectionNotExist,
     ],
 )
 @patch(
@@ -166,6 +174,8 @@ def test_base_model_udf(mock_local_path, mock_create_loc, params):
         MultipleBucketFSConnSingleSubdirSingleModelNameMultipleBatch,
         ErrorNotCachedSingleModelMultipleBatch,
         ErrorNotCachedMultipleModelMultipleBatch,
+        ErrorBucketFSConnectionNotExist,
+        ErrorDefaultBucketFSConnectionNotExist,
     ],
 )
 @patch(
