@@ -22,11 +22,11 @@ DEFAULT_VALUES = {
 
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one
-    "model_for_a_specific_udf": model_spec_factory.create(
+    "AiSentimentUDF": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="task",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
-        sub_dir=Path(DEFAULT_SUBDIR),
+        sub_dir=Path(DEFAULT_SUBDIR),#todo real model
     ),
     "model_for_another_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
