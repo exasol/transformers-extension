@@ -33,24 +33,21 @@ class DefaultValuesMultipleBatchComplete:
         * data_size
     )
 
-    output_single_text_model =  [
-            (
+    output_1_input_row = [(
                 text_data,
                 LABEL_SCORES.label_scores[3].label,
                 LABEL_SCORES.label_scores[3].score,
                 error_msg,
-            )
-        ]#todo
-
+            )]
 
     outputs_single_text = (
-        output_single_text_model * data_size + output_single_text_model * data_size
+        output_1_input_row * data_size + output_1_input_row * data_size
     )
 
-    model_output_single_text_model = [
-        make_model_output_for_one_input_row() * data_size + make_model_output_for_one_input_row() * data_size
-    ]
+    model_output_1_batch = make_model_output_for_one_input_row() * data_size
+    model_output_2_batch = make_model_output_for_one_input_row() * data_size
 
-    text_class_models_output_df_single_text = [
-        model_output_single_text_model
-    ]
+    text_class_models_output_df = [[
+        model_output_1_batch,
+        model_output_2_batch,
+    ]]

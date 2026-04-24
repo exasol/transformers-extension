@@ -54,7 +54,7 @@ def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
      mock_pipeline_factory, mock_ctx) = setup_mocks(
         mock_create_loc, mock_local_path,
         params, mock_meta, expected_model_counter, params.inputs_single_text,
-        params.text_class_models_output_df_single_text
+        params.text_class_models_output_df
 
     )
 

@@ -60,9 +60,9 @@ class AiSentimentUDF(BaseModelUDF):
                     ),
                 ),
                 RemoveColumnsTransformation(
-                    expected_input_columns=["bucketfs_conn", "sub_dir", "model_name",
+                    expected_input_columns=["device_id", "bucketfs_conn", "sub_dir", "model_name",
                                             "return_ranks", "rank"],
-                    removed_columns=["bucketfs_conn", "sub_dir", "model_name",
+                    removed_columns=["device_id", "bucketfs_conn", "sub_dir", "model_name",
                                      "return_ranks", "rank"],
                 ),
             ]
