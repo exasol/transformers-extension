@@ -23,7 +23,7 @@ from exasol_transformers_extension.udfs.models.install_default_models_udf import
 )
 
 TEST_DEFAULT_MODELS = {
-    "model_for_a_specific_udf": model_spec_factory.create(
+    "AiSentimentUDF": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="task",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
@@ -61,7 +61,7 @@ class TestEnvironmentSetup:
     def __init__(self, tmp_dir: Path):
         self.bucketfs_conn_name = DEFAULT_BUCKETFS_CONN_NAME
         self.bucketfs_connection = create_mounted_bucketfs_connection(
-            tmp_dir, f"DEFAULT_BUCKETFS_CONN/"
+            tmp_dir, "DEFAULT_BUCKETFS_CONN/"
         )
 
         self.ctx_data = {}
@@ -93,7 +93,7 @@ def test_install_default_models_udf_implementation(tmp_path):
     env1_bucketfs_files = env1.list_files_in_bucketfs()
 
     expected_model_path_1 = TEST_DEFAULT_MODELS[
-        "model_for_a_specific_udf"
+        "AiSentimentUDF"
     ].get_bucketfs_model_save_path()
     expected_model_path_2 = TEST_DEFAULT_MODELS[
         "model_for_another_udf"
