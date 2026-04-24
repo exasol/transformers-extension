@@ -136,5 +136,9 @@ class WithModelTransformation(Transformation):
             # the model should have been loaded for the previous batch but failed,
             # we try again
             current_device_id = model_df["device_id"].iloc[0]
-            self._load_model(model_loader, bucketfs_conn,
-                             current_model_specification, current_device_id)
+            self._load_model(
+                model_loader,
+                bucketfs_conn,
+                current_model_specification,
+                current_device_id,
+            )

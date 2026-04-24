@@ -58,6 +58,7 @@ def download_model_to_path(model_specification: ModelSpecification, tmpdir_name:
         make_parameters_of_model_contiguous_tensors(downloaded_model)
         downloaded_model.save_pretrained(tmpdir_name)
 
+
 def download_model(model_specification: BucketFSModelSpecification, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp(model_specification.task_type)
     model_path_in_bucketfs = model_specification.get_bucketfs_model_save_path()
@@ -65,6 +66,7 @@ def download_model(model_specification: BucketFSModelSpecification, tmpdir_facto
     bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
     download_model_to_path(model_specification, bucketfs_path_for_model)
     return tmpdir
+
 
 def prepare_model_for_local_bucketfs(
     model_specification: ModelSpecification, tmpdir_factory
@@ -77,6 +79,7 @@ def prepare_model_for_local_bucketfs(
         model_specification, "", model_params.sub_dir
     )
     return download_model(current_model_specs, tmpdir_factory)
+
 
 def prepare_default_model_for_local_bucketfs(
     model_specification: BucketFSModelSpecification, tmpdir_factory

@@ -96,9 +96,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             ["sub_dir", "new_default_col", "model_name"],
             {
                 "new_default_col": "new_default_value",
-                "model_name": DEFAULT_MODEL_SPECS[
-                    "AiSentimentUDF"
-                ].model_name,
+                "model_name": DEFAULT_MODEL_SPECS["AiSentimentUDF"].model_name,
             },
             (3, 6),
             "None",

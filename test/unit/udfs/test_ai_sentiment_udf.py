@@ -1,17 +1,18 @@
-from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentimentUDF
-from test.unit.udf_wrapper_params.ai_sentiment.default_values_multiple_batch import DefaultValuesMultipleBatchComplete
+from test.unit.udf_wrapper_params.ai_sentiment.default_values_multiple_batch import (
+    DefaultValuesMultipleBatchComplete,
+)
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
     assert_result_matches_expected_output,
     setup_mocks,
 )
-
 from unittest.mock import patch
 
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentimentUDF
 
 
 def create_mock_metadata():
@@ -50,12 +51,20 @@ def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
     expected_model_counter = params.expected_model_counter
     mock_meta = create_mock_metadata()
 
-    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
-     mock_pipeline_factory, mock_ctx) = setup_mocks(
-        mock_create_loc, mock_local_path,
-        params, mock_meta, expected_model_counter, params.inputs_single_text,
-        params.text_class_models_output_df
-
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        expected_model_counter,
+        params.inputs_single_text,
+        params.text_class_models_output_df,
     )
 
     udf = AiSentimentUDF(

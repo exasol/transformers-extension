@@ -15,7 +15,6 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     setup_mocks,
 )
-
 from unittest.mock import patch
 
 import pytest
@@ -77,12 +76,20 @@ def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
     batch_size = params.batch_size
     expected_output_data = params.outputs_single_text
 
-    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
-     mock_pipeline_factory, mock_ctx) = setup_mocks(
-        mock_create_loc, mock_local_path,
-        params, mock_meta, expected_model_counter,
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        expected_model_counter,
         params.inputs_single_text,
-        params.text_class_models_output_df_single_text
+        params.text_class_models_output_df_single_text,
     )
 
     udf = AiCustomClassifyUDF(

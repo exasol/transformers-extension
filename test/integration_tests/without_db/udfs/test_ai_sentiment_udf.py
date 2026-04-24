@@ -1,5 +1,3 @@
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
-from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentimentUDF
 from test.integration_tests.without_db.udfs.utils.matcher import (
     ColumnsMatcher,
     ErrorMessageMatcher,
@@ -19,27 +17,25 @@ import pandas as pd
 import pytest
 import torch
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentimentUDF
+
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
 def test_ai_sentiment_extended_udf(
     description, device_id, prepare_default_sentiment_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_default_sentiment_model_for_local_bucketfs
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     n_rows = 3
     batch_size = 2
-    sample_data = [
-        (
-            model_params.text_data + str(i),
-        )
-        for i in range(n_rows)
-    ]
+    sample_data = [(model_params.text_data + str(i),) for i in range(n_rows)]
     columns = [
         "text_data",
     ]
@@ -75,4 +71,3 @@ def test_ai_sentiment_extended_udf(
         and result == NoErrorMessageMatcher()
         and n_unique_labels_per_input == n_labels_per_input_expected
     )
-

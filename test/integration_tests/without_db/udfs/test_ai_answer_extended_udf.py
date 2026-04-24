@@ -47,9 +47,7 @@ def test_ai_answer_extended_udf(
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -129,9 +127,7 @@ def test_ai_answer_extended_udf_on_error_handling(
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -174,8 +170,13 @@ def test_ai_answer_extended_udf_on_error_handling(
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns,
-                               n_rows=n_rows, removed_columns=["device_id"],)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=n_rows,
+            removed_columns=["device_id"],
+        )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NewColumnsEmptyMatcher(new_columns=new_columns)
         and result == ErrorMessageMatcher()

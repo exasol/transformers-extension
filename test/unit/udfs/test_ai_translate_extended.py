@@ -27,7 +27,6 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     setup_mocks,
 )
-
 from unittest.mock import patch
 
 import pytest
@@ -93,12 +92,20 @@ def test_ai_translate_extended(mock_local_path, mock_create_loc, params):
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
-    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
-     mock_pipeline_factory, mock_ctx) = setup_mocks(
-        mock_create_loc, mock_local_path,
-        params, mock_meta, expected_model_counter,
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        expected_model_counter,
         params.input_data,
-        translation_models_output_generator
+        translation_models_output_generator,
     )
 
     udf = AiTranslateExtendedUDF(

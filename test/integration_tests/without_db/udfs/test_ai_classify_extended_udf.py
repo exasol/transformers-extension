@@ -75,9 +75,7 @@ def test_ai_classify_extended_single_text_udf(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
@@ -152,9 +150,7 @@ def test_ai_classify_extended_single_text_udf_with_span(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
@@ -233,9 +229,7 @@ def test_ai_classify_extended_single_text_udf_on_error_handling(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
     )

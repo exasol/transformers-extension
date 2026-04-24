@@ -30,7 +30,6 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     setup_mocks,
 )
-
 from unittest.mock import patch
 
 import pytest
@@ -138,12 +137,20 @@ def test_ai_classify_extended(mock_local_path, mock_create_loc, params):
     batch_size = params.batch_size
     expected_output_data = params.output_data
 
-    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
-     mock_pipeline_factory, mock_ctx) = setup_mocks(
-        mock_create_loc, mock_local_path,
-        params, mock_meta, expected_model_counter,
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        expected_model_counter,
         params.input_data,
-        params.zero_shot_models_output_df
+        params.zero_shot_models_output_df,
     )
 
     udf = AiClassifyExtendedUDF(
@@ -196,12 +203,20 @@ def test_ai_classify_extended_with_span(mock_local_path, mock_create_loc, params
     batch_size = params.batch_size
     expected_output_data = params.work_with_span_output_data
 
-    (mock_exa, mock_base_model_factory, mock_tokenizer_factory,
-     mock_pipeline_factory, mock_ctx) = setup_mocks(
-        mock_create_loc, mock_local_path,
-        params, mock_meta, expected_model_counter,
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        expected_model_counter,
         params.work_with_span_input_data,
-        params.zero_shot_models_output_df
+        params.zero_shot_models_output_df,
     )
 
     udf = AiClassifyExtendedUDF(

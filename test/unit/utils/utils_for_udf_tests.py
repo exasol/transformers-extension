@@ -2,7 +2,10 @@ from test.unit.udfs.output_matcher import (
     Output,
     OutputMatcher,
 )
-from test.utils.mock_bucketfs_location import fake_bucketfs_location_from_conn_object, fake_local_bucketfs_path
+from test.utils.mock_bucketfs_location import (
+    fake_bucketfs_location_from_conn_object,
+    fake_local_bucketfs_path,
+)
 from test.utils.mock_cast import mock_cast
 from typing import (
     Any,
@@ -183,8 +186,16 @@ def make_number_of_strings(input_str: str, desired_number: int):
     """
     return (input_str + f"{i}" for i in range(desired_number))
 
-def setup_mocks(mock_create_loc, mock_local_path, params, mock_meta,
-                expected_model_counter, model_input_data, models_output):
+
+def setup_mocks(
+    mock_create_loc,
+    mock_local_path,
+    params,
+    mock_meta,
+    expected_model_counter,
+    model_input_data,
+    models_output,
+):
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
@@ -203,4 +214,10 @@ def setup_mocks(mock_create_loc, mock_local_path, params, mock_meta,
         mock_pipeline_factory = create_mock_pipeline_factory_from_gen(
             models_output, expected_model_counter
         )
-    return mock_exa, mock_base_model_factory, mock_tokenizer_factory, mock_pipeline_factory, mock_ctx
+    return (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    )

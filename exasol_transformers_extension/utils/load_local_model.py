@@ -5,7 +5,10 @@ import traceback
 import torch
 import transformers.pipelines
 
-from exasol_transformers_extension.utils import bucketfs_operations, device_management
+from exasol_transformers_extension.utils import (
+    bucketfs_operations,
+    device_management,
+)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )

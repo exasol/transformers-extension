@@ -1,16 +1,23 @@
 """Fixtures for loading standard models to Local BucketFS and DB BucketFS for tests"""
-import typing
-from pathlib import PurePosixPath, Path
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
+import typing
+from pathlib import (
+    Path,
+    PurePosixPath,
+)
 from test.fixtures.model_fixture_utils import (
+    prepare_default_model_for_local_bucketfs,
     prepare_model_for_local_bucketfs,
-    upload_model_to_bucketfs, prepare_default_model_for_local_bucketfs,
+    upload_model_to_bucketfs,
 )
 from test.utils.parameters import model_params
 
 import exasol.bucketfs as bfs
 import pytest
+
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 
 
 @pytest.fixture(scope="session")
@@ -57,6 +64,7 @@ def prepare_text_classification_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
     return bucketfs_path
+
 
 @pytest.fixture(scope="session")
 def prepare_default_sentiment_model_for_local_bucketfs(
