@@ -56,6 +56,7 @@ class WithModelTransformation(Transformation):
         model_loader: LoadLocalModel,
         bucketfs_conn: PathLike,
         current_model_specification: BucketFSModelSpecification,
+        current_device_id: str = None,
     ):
         """
         load a model into the cache
@@ -65,6 +66,7 @@ class WithModelTransformation(Transformation):
         )
 
         model_loader.clear_device_memory()
+        model_loader.set_current_device(current_device_id)
         model_loader.set_current_model_specification(current_model_specification)
         model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
@@ -133,4 +135,6 @@ class WithModelTransformation(Transformation):
             # or if
             # the model should have been loaded for the previous batch but failed,
             # we try again
-            self._load_model(model_loader, bucketfs_conn, current_model_specification)
+            current_device_id = model_df["device_id"].iloc[0]
+            self._load_model(model_loader, bucketfs_conn,
+                             current_model_specification, current_device_id)
