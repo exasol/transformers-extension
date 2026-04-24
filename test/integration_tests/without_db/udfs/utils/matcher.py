@@ -95,16 +95,18 @@ class ShapeMatcher:
         self,
         columns: list[str],
         new_columns: list[str],
+        removed_columns: list[str],
         n_rows: int,
         results_per_row: int = 1,
     ):
         self._new_columns = new_columns
         self._columns = columns
+        self._removed_columns = removed_columns
         self._results_per_row = results_per_row
         self._n_rows = n_rows
         self._expected_shape = (
             self._n_rows * self._results_per_row,
-            len(self._columns) + len(self._new_columns) - 1,
+            len(self._columns) + len(self._new_columns) - len(self._removed_columns),
         )
 
     def __eq__(self, other) -> bool:

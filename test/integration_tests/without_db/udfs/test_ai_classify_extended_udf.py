@@ -76,7 +76,7 @@ def test_ai_classify_extended_single_text_udf(
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
+            f"There is no available device({device_id}) to execute the test"
         )
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
@@ -129,6 +129,7 @@ def test_ai_classify_extended_single_text_udf(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows,
             results_per_row=number_results_per_input,
         )
@@ -152,7 +153,7 @@ def test_ai_classify_extended_single_text_udf_with_span(
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
+            f"There is no available device({device_id}) to execute the test"
         )
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
@@ -209,6 +210,7 @@ def test_ai_classify_extended_single_text_udf_with_span(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows,
             results_per_row=number_results_per_input,
         )
@@ -232,7 +234,7 @@ def test_ai_classify_extended_single_text_udf_on_error_handling(
 ):
     if device_id is not None and not torch.cuda.is_available():
         pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
+            f"There is no available device({device_id}) to execute the test"
         )
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
@@ -272,6 +274,7 @@ def test_ai_classify_extended_single_text_udf_on_error_handling(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows * number_results_per_input,
         )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)

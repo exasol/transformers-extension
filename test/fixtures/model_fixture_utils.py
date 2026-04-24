@@ -2,6 +2,7 @@
 BucketFS or BucketFS or Local Directory"""
 
 import time
+import typing
 from contextlib import contextmanager
 from pathlib import Path
 from test.utils import postprocessing
@@ -57,6 +58,13 @@ def download_model_to_path(model_specification: ModelSpecification, tmpdir_name:
         make_parameters_of_model_contiguous_tensors(downloaded_model)
         downloaded_model.save_pretrained(tmpdir_name)
 
+def download_model(model_specification: BucketFSModelSpecification, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp(model_specification.task_type)
+    model_path_in_bucketfs = model_specification.get_bucketfs_model_save_path()
+
+    bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
+    download_model_to_path(model_specification, bucketfs_path_for_model)
+    return tmpdir
 
 def prepare_model_for_local_bucketfs(
     model_specification: ModelSpecification, tmpdir_factory
@@ -68,13 +76,17 @@ def prepare_model_for_local_bucketfs(
     current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
         model_specification, "", model_params.sub_dir
     )
+    return download_model(current_model_specs, tmpdir_factory)
 
-    tmpdir = tmpdir_factory.mktemp(current_model_specs.task_type)
-    model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
+def prepare_default_model_for_local_bucketfs(
+    model_specification: BucketFSModelSpecification, tmpdir_factory
+):
+    """
+    Saves model specified in model_specification at
+    tempdir/task_type/model_specific_path and returns model path.
+    """
 
-    bucketfs_path_for_model = tmpdir / model_path_in_bucketfs
-    download_model_to_path(current_model_specs, bucketfs_path_for_model)
-    return tmpdir
+    return download_model(model_specification, tmpdir_factory)
 
 
 @contextmanager
@@ -83,7 +95,7 @@ def upload_model_to_bucketfs(
     local_model_save_path: Path,
     bucketfs_location: bfs.path.PathLike,
     bucketfs_model_subdir: Path = model_params.sub_dir,
-) -> Path:
+) -> typing.Generator:
     """
     Load model defined in model_specification and saves it to bucketfs_location
     at model_path, returns model_path.
@@ -110,7 +122,7 @@ def upload_model(
     bucketfs_location: bfs.path.PathLike,
     current_model_specification: BucketFSModelSpecification,
     model_dir: Path,
-) -> Path:
+) -> typing.Generator:
     """
     Loads locally saved model from model_dir into bucketfs_location at model
     specific path.

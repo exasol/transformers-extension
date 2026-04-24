@@ -23,8 +23,8 @@ DEFAULT_VALUES = {
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one
     "AiSentimentUDF": model_spec_factory.create(
-        model_name="prajjwal1/bert-tiny",
-        task_type="task",
+        model_name="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
+        task_type="text-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),#todo real model
     ),
