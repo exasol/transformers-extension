@@ -105,14 +105,31 @@ def upload_model_to_bucketfs(
     local_model_save_path should be a tempdir. this is where the model will be
     downloaded to before uploading it to BucketFS.
     """
-    local_model_save_path = download_model_to_standard_local_save_path(
-        model_specification, local_model_save_path
-    )
-    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    bfs_model_specs = get_BucketFSModelSpecification_from_model_Specs(
         model_specification, "", bucketfs_model_subdir
     )
+    with upload_model_to_bucketfs_from_bfs_model_spec(
+        bfs_model_specs, local_model_save_path, bucketfs_location
+    ) as path:
+        yield path
+
+
+def upload_model_to_bucketfs_from_bfs_model_spec(
+    bfs_model_specification: BucketFSModelSpecification,
+    local_model_save_path: Path,
+    bucketfs_location: bfs.path.PathLike,
+) -> typing.Generator:
+    """
+    Load model defined in bfs_model_specification and saves it to bucketfs_location
+    at model_path, returns model_path.
+    local_model_save_path should be a tempdir. this is where the model will be
+    downloaded to before uploading it to BucketFS.
+    """
+    local_model_save_path = download_model_to_standard_local_save_path(
+        bfs_model_specification, local_model_save_path
+    )
     with upload_model(
-        bucketfs_location, current_model_specs, local_model_save_path
+        bucketfs_location, bfs_model_specification, local_model_save_path
     ) as model_path:
         try:
             yield model_path

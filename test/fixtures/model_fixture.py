@@ -9,6 +9,7 @@ from test.fixtures.model_fixture_utils import (
     prepare_default_model_for_local_bucketfs,
     prepare_model_for_local_bucketfs,
     upload_model_to_bucketfs,
+    upload_model_to_bucketfs_from_bfs_model_spec,
 )
 from test.utils.parameters import model_params
 
@@ -71,8 +72,8 @@ def prepare_default_sentiment_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save standard text classification model into it,
-    returns tmpdir-path.
+    Create tmpdir and save default sentiment/text classification pair model
+    into it, returns tmpdir-path.
     The model is defined in DEFAULT_MODEL_SPECS.
     """
     model_specification = DEFAULT_MODEL_SPECS["AiSentimentUDF"]
@@ -87,7 +88,7 @@ def prepare_text_classification_pair_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save default sentiment/text classification pair model
+    Create tmpdir and save default text classification pair model
     into it, returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
@@ -214,6 +215,23 @@ def upload_text_classification_model_to_bucketfs(
     model_specs = model_params.text_classification_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
+        yield path
+
+
+@pytest.fixture(scope="session")
+def upload_default_sentiment_model_to_bucketfs(
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> typing.Generator:
+    """
+    Load default sentiment/text classification model into BucketFS at bucketfs_location,
+    returns BucketFS path
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specs = DEFAULT_MODEL_SPECS["AiSentimentUDF"]
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    with upload_model_to_bucketfs_from_bfs_model_spec(
+        model_specs, tmpdir, bucketfs_location
+    ) as path:
         yield path
 
 
