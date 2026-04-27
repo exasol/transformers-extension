@@ -7,7 +7,7 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 
 
-def test_ai_custom_classify_extended_script(
+def test_ai_sentiment_extended_script(
     setup_database,
     db_conn,
     upload_default_sentiment_model_to_bucketfs,
