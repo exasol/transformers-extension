@@ -15,7 +15,6 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
     extract_unique_param_based_dataframes_on_col_list,
 )
-from exasol_transformers_extension.utils import dataframe_operations
 
 
 class TextGenPredictionTask(PredictionTask):

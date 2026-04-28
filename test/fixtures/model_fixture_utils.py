@@ -14,7 +14,7 @@ from exasol import bucketfs as bfs
 from exasol_transformers_extension.utils import bucketfs_operations
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     make_parameters_of_model_contiguous_tensors,
@@ -75,7 +75,7 @@ def prepare_model_for_local_bucketfs(
     Saves model specified in model_specification at
     tempdir/task_type/model_specific_path and returns model path.
     """
-    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    current_model_specs = get_bucket_fs_model_specification_from_model_specs(
         model_specification, "", model_params.sub_dir
     )
     return download_model(current_model_specs, tmpdir_factory)
@@ -105,7 +105,7 @@ def upload_model_to_bucketfs(
     local_model_save_path should be a tempdir. this is where the model will be
     downloaded to before uploading it to BucketFS.
     """
-    bfs_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    bfs_model_specs = get_bucket_fs_model_specification_from_model_specs(
         model_specification, "", bucketfs_model_subdir
     )
     yield from upload_model_to_bucketfs_from_bfs_model_spec(

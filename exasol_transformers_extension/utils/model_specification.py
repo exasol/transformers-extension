@@ -3,7 +3,6 @@
 import pathlib
 from dataclasses import dataclass
 from pathlib import (
-    Path,
     PurePosixPath,
 )
 
@@ -141,12 +140,9 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
     model_name = ""
     warning = None
     if not found_task_names:
-        try:
-            model_name, task_name, warning = best_guess_model_specs(
-                model_specific_path_suffix, name_prefix
-            )
-        except ValueError as e:
-            raise e
+        model_name, task_name, warning = best_guess_model_specs(
+            model_specific_path_suffix, name_prefix
+        )
 
     # if we found known_task_type in the path, check if one is on the end of the
     # model_specific_path_suffix, and declare this one as the task_type.
@@ -163,12 +159,10 @@ def get_task_and_model_name(found_task_names, model_specific_path_suffix, name_p
             break
 
     if not task_name or not model_name:
-        try:
-            model_name, task_name, warning = best_guess_model_specs(
-                model_specific_path_suffix, name_prefix
-            )
-        except ValueError as e:
-            raise e
+        model_name, task_name, warning = best_guess_model_specs(
+            model_specific_path_suffix, name_prefix
+        )
+
     return model_name, task_name, warning
 
 
@@ -178,12 +172,9 @@ def create_model_specs_from_path(
     path_parts = model_path.parts
     warning = None
 
-    try:
-        name_prefix, model_specific_path_suffix = split_path_using_subdir(
-            path_parts, model_path, sub_dir
-        )
-    except ValueError as e:
-        raise e
+    name_prefix, model_specific_path_suffix = split_path_using_subdir(
+        path_parts, model_path, sub_dir
+    )
 
     # find known task_names in the model_specific_path_suffix:
     found_task_names = [
@@ -192,11 +183,8 @@ def create_model_specs_from_path(
         if key in model_specific_path_suffix
     ]
 
-    try:
-        model_name, task_name, warning = get_task_and_model_name(
-            found_task_names, model_specific_path_suffix, name_prefix
-        )
-    except ValueError as e:
-        raise e
+    model_name, task_name, warning = get_task_and_model_name(
+        found_task_names, model_specific_path_suffix, name_prefix
+    )
 
     return ModelSpecification(model_name, task_name), warning

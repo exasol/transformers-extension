@@ -1,4 +1,8 @@
-import traceback
+"""
+Wrapper for a Transformation which needs to load a model.
+Loads a model if needed, then calls _transformation.transform
+"""
+
 from collections.abc import Iterator
 from os import PathLike
 
@@ -89,12 +93,14 @@ class WithModelTransformation(Transformation):
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
-                f"In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
+                f"In order to use this UDF, a BucketFS Connection by the"
+                f" name {DEFAULT_BUCKETFS_CONN_NAME} "
                 f"must be created in the Exasol Database. "
             )
         else:
             msg = (
-                f"The given BucketFS connection by the name of {bucketfs_conn_name} does not exist. "
+                f"The given BucketFS connection by the name of {bucketfs_conn_name}"
+                f" does not exist. "
                 f"Either use another connection, or create it in the Exasol Database. "
             )
         return msg + main_msg

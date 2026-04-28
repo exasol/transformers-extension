@@ -17,9 +17,7 @@ def test_ai_sentiment_extended_script(
     input_data = []
     for _ in range(n_rows):
         input_data.append(
-            (
-                "I am so happy to be working on the Transformers Extension.",
-            )
+            ("I am so happy to be working on the Transformers Extension.",)
         )
 
     query = (

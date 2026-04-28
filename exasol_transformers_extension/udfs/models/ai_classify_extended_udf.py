@@ -84,7 +84,7 @@ class AiClassifyExtendedUDF(BaseModelUDF):
                     removed_columns=[
                         "labels",
                         "scores",
-                    ],  # get created and renamed, might need to be removed incase of errors
+                    ],  # get created and renamed, might need to be removed in case of errors
                 ),
             ),
             RemoveColumnsTransformation(

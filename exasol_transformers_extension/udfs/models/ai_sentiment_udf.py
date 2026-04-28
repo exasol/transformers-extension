@@ -1,3 +1,7 @@
+"""
+Default UDF class for classifying a given text sequence by sentiment.
+"""
+
 import transformers
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
@@ -29,11 +33,13 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 
 class AiSentimentUDF(BaseModelUDF):
     """
-    UDf for classifying a given text sequence.
+    UDF for classifying a given text sequence by sentiment.
 
     Needs to have "text_data" in the input.
-    Will output to "label", "score", "rank".
-    Does use default values.
+
+    other input will be pulled from default values.
+
+    Will output to "label", "score".
     """
 
     def __init__(

@@ -88,7 +88,7 @@ class ListModelsUDF:
                     ]
                 )
                 self._error_message = None
-            except Exception as exc:
+            except Exception:
                 self._error_message = traceback.format_exc()
                 self._output.append(
                     [bfs_conn_name, sub_dir, "", "", model_path, self._error_message]
