@@ -14,15 +14,19 @@ def test_ai_sentiment_extended_script(
 ):
     n_rows = 100
 
-    input_data = [
-        ("I am so happy to be working on the Transformers Extension.",) * n_rows
-    ]
+    input_data = []
+    for _ in range(n_rows):
+        input_data.append(
+            (
+                "I am so happy to be working on the Transformers Extension.",
+            )
+        )
 
     query = (
         f"SELECT AI_SENTIMENT_EXTENDED("
         f"t.text_data) "
-        f"FROM (VALUES {python_rows_to_sql(input_data)} "
-        f"AS t(text_data));"
+        f"FROM (VALUES {input_data} "
+        f"AS t(text_data,));"
     )
 
     # execute UDF

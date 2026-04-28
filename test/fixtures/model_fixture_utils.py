@@ -133,7 +133,6 @@ def upload_model_to_bucketfs_from_bfs_model_spec(
         try:
             yield model_path
         finally:
-            print("cleanup")
             postprocessing.cleanup_buckets(bucketfs_location, model_path)
 
 
