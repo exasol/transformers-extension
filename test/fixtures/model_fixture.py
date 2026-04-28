@@ -229,10 +229,9 @@ def upload_default_sentiment_model_to_bucketfs(
     """
     model_specs = DEFAULT_MODEL_SPECS["AiSentimentUDF"]
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
-    with upload_model_to_bucketfs_from_bfs_model_spec(
+    yield from upload_model_to_bucketfs_from_bfs_model_spec(
         model_specs, tmpdir, bucketfs_location
-    ) as path:
-        yield path
+    )
 
 
 @pytest.fixture(scope="session")

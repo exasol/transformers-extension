@@ -108,10 +108,9 @@ def upload_model_to_bucketfs(
     bfs_model_specs = get_BucketFSModelSpecification_from_model_Specs(
         model_specification, "", bucketfs_model_subdir
     )
-    with upload_model_to_bucketfs_from_bfs_model_spec(
+    yield from upload_model_to_bucketfs_from_bfs_model_spec(
         bfs_model_specs, local_model_save_path, bucketfs_location
-    ) as path:
-        yield path
+    )
 
 
 def upload_model_to_bucketfs_from_bfs_model_spec(
@@ -134,6 +133,7 @@ def upload_model_to_bucketfs_from_bfs_model_spec(
         try:
             yield model_path
         finally:
+            print("cleanup")
             postprocessing.cleanup_buckets(bucketfs_location, model_path)
 
 
