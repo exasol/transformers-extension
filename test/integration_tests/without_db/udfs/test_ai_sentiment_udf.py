@@ -24,7 +24,7 @@ from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentime
 
 
 @pytest.mark.parametrize("description, device_id", [("on CPU", None), ("on GPU", 0)])
-def test_ai_sentiment_extended_udf(
+def test_ai_sentiment_udf(
     description, device_id, prepare_default_sentiment_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():

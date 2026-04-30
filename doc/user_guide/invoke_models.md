@@ -22,7 +22,7 @@ It will output only the highest scoring result for each input row.
 Example usage:
 
 ```sql
-SELECT AI_SENTIMENT_EXTENDED(
+SELECT AI_SENTIMENT(
     text_data,
 )
 ```

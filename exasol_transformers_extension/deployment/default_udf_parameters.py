@@ -26,7 +26,7 @@ DEFAULT_MODEL_SPECS = {
         model_name="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
         task_type="text-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
-        sub_dir=Path(DEFAULT_SUBDIR),  # todo real model
+        sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "model_for_another_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",

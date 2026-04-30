@@ -77,7 +77,6 @@ class AiCompleteExtendedUDF(BaseModelUDF):
                 ),
                 RemoveColumnsTransformation(
                     removed_columns=["device_id"],
-                    expected_input_columns=["device_id"],
                 ),
             ]
         )

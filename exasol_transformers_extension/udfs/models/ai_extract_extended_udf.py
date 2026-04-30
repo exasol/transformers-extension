@@ -98,7 +98,6 @@ class AiExtractExtendedUDF(BaseModelUDF):
             ),
             RemoveColumnsTransformation(
                 removed_columns=["device_id"],
-                expected_input_columns=["device_id"],
             ),
         ]
         if work_with_spans:

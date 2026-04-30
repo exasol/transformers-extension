@@ -44,7 +44,6 @@ def test_remove_columns_transformation(
     transformations = TransformationPipeline(
         [
             RemoveColumnsTransformation(
-                expected_input_columns=remove_cols,
                 removed_columns=remove_cols,
             ),
         ]
