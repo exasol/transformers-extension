@@ -17,7 +17,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 ### AI Sentiment
 
 This UDF classifies the given text according the sentiment found in the text.
-Will output only the highest scoring result for each input row.
+It will output only the highest scoring result for each input row.
 
 Example usage:
 

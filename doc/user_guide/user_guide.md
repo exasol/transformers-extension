@@ -6,7 +6,7 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 
 The extension provides two types of UDFs:
 
-* Utility UDFs: Managing of Transformers models in the Exasol BucketFS.
+* Utility UDFs: Manage Transformers models in the Exasol BucketFS.
 * Prediction UDFs: Use a downloaded pre-trained model to perform prediction.
 
 ### A Note on UDFs :
@@ -39,7 +39,7 @@ You can find further information on these UDFs [here](manage_models.md).
 
 ### Prediction UDFs
 
-These UDFs call a model stored in the BucketFS, and use it to make predictions on the given input data.
+These UDFs call a model stored in the BucketFS and use it to make predictions on the given input data.
 
 We have selected a curated list of models, which are used in our UDFs. 
 These UDFs require only minimal configuation to use:
@@ -64,7 +64,7 @@ These are the available UDFs:
 | AI Answer Extended          | question-answering       | Extracts answer(s) from a given question text.                       |
 | AI Fill Mask Extended       | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.        |
 | AI Complete Extended        | text-generation          | Predict the continuation of the given text.                          |
-| AI Extract Extended         | token-classification     | Find and lable tokens in a given text.                               |
+| AI Extract Extended         | token-classification     | Find and label tokens in a given text.                               |
 | AI Translate Extended       | translation              | This UDF translates a given text from one language to another.       |
 | AI Classify Extended        | zero-shot-classification | This UDF classifies the input text into classes defined by the user. |
 

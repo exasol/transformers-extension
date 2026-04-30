@@ -1,6 +1,6 @@
 """
 Wrapper for a Transformation which needs to load a model.
-Loads a model if needed, then calls _transformation.transform
+Loads a model if needed, then calls _transformation.transform.
 """
 
 from collections.abc import Iterator
@@ -60,7 +60,7 @@ class WithModelTransformation(Transformation):
         model_loader: LoadLocalModel,
         bucketfs_conn: PathLike,
         current_model_specification: BucketFSModelSpecification,
-        current_device_id: str = None,
+        current_device_id: str | None = None,
     ):
         """
         load a model into the cache
@@ -93,15 +93,15 @@ class WithModelTransformation(Transformation):
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
-                f"In order to use this UDF, a BucketFS Connection by the"
+                "In order to use this UDF, a BucketFS Connection by the"
                 f" name {DEFAULT_BUCKETFS_CONN_NAME} "
-                f"must be created in the Exasol Database. "
+                "must be created in the Exasol Database. "
             )
         else:
             msg = (
                 f"The given BucketFS connection by the name of {bucketfs_conn_name}"
-                f" does not exist. "
-                f"Either use another connection, or create it in the Exasol Database. "
+                " does not exist. "
+                "Either use another connection or create it in the Exasol Database. "
             )
         return msg + main_msg
 
