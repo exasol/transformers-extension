@@ -26,6 +26,7 @@ Code name: T.B.D
  * #378. Added creation of default BucketFS-Connection to deploy command
  * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
  * #381: Added Transformation for removing columns from DataFrame
+ * #353: Added "AI_SENTIMENT" UDF
 
 ## Security
 

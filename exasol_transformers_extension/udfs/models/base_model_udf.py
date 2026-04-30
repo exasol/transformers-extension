@@ -38,7 +38,6 @@ class BaseModelUDF(ABC):
         self.pipeline = pipeline
         self.base_model = base_model
         self.tokenizer = tokenizer
-        self.device = None
         self.model_loader = None
         self.prediction_task = prediction_task
         self.transformations = transformations
@@ -52,13 +51,15 @@ class BaseModelUDF(ABC):
         depending on which Transformations are used.
         You can also change the input and output columns via the transformations.
         """
-        device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
-        self.device = device_management.get_torch_device(device_id)
-        self.create_model_loader()
+        try:
+            device_id = ctx.get_dataframe(1).iloc[0]["device_id"]
+        except KeyError:
+            device_id = None
+        self.create_model_loader(device_id)
         ctx.reset()
 
         while True:
-            batch_df = ctx.get_dataframe(num_rows=self.batch_size, start_col=1)
+            batch_df = ctx.get_dataframe(num_rows=self.batch_size)
             if batch_df is None:
                 break
 
@@ -69,7 +70,7 @@ class BaseModelUDF(ABC):
 
         self.model_loader.clear_device_memory()
 
-    def create_model_loader(self):
+    def create_model_loader(self, device_id: int):
         """
         Creates the model_loader.
         """
@@ -78,5 +79,5 @@ class BaseModelUDF(ABC):
             base_model_factory=self.base_model,
             tokenizer_factory=self.tokenizer,
             task_type=self.prediction_task.task_type,
-            device=self.device,
+            device=device_management.get_torch_device(device_id),
         )

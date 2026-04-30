@@ -4,7 +4,7 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
 
 ### Table of Contents
 
-
+  * [AI Sentiment](#ai-sentiment)
   * [AI Custom Classify Extended](#ai-custom-classify-extended)
   * [AI Entailment Extended](#ai-entailment-extended)
   * [AI Answer Extended](#ai-answer-extended)
@@ -13,6 +13,34 @@ We provide 7 prediction UDFs in the Transformers Extension package. Each perform
   * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
   * [AI Classify Extended](#ai-classify-extended)
+
+### AI Sentiment
+
+This UDF classifies the given text according the sentiment found in the text.
+It will output only the highest scoring result for each input row.
+
+Example usage:
+
+```sql
+SELECT AI_SENTIMENT(
+    text_data,
+)
+```
+
+Input
+* `text_data`: The input text to be classified
+
+Additional output columns
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with which this label was assigned
+
+Example Output:
+
+| TEXT_DATA   | LABEL       | SCORE | ERROR_MESSAGE    |
+|-------------|-------------|-------|------------------|
+| text 1      | "positve"   | 0.87  | None             |
+| text 2      | "negative"  | 0.93  | None             | 
+| ...         | ...         | ...   | ...              |
 
     
 ### AI Custom Classify Extended
@@ -50,7 +78,7 @@ Additional output columns
 * _SCORE_: the confidence with which this label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|--------------|---------|-------|------|---------------|
@@ -96,6 +124,8 @@ Additional output columns
 * _LABEL_: the predicted label for the input text
 * _SCORE_: the confidence with which this label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
+
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | FIRST_TEXT | SECOND_TEXT | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|------------|-------------|--------------|---------|-------|------|---------------|
@@ -145,7 +175,7 @@ Additional output columns
 
 If `top_k` > 1, each input row is repeated for each answer.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|------------|-----------|-------|----------|-------|------|---------------|
@@ -195,7 +225,7 @@ Additional output columns
 
 If `top_k` > 1, each input row is repeated for each prediction.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
@@ -241,7 +271,7 @@ Specific parameters
 Additional output columns
 * _GENERATED_TEXT_: the generated text
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA      | MAX_NEW_TOKENS | RETURN_FULL_TEXT | GENERATED_TEXT                          | ERROR_MESSAGE |
 | ------------- |---------|------------|----------------|----------------|------------------|-----------------------------------------|---------------|
@@ -293,7 +323,7 @@ Additional output columns
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
 | ------------- |---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
@@ -335,8 +365,7 @@ Specific parameters
 Additional output columns
 * _TRANSLATION_TEXT_: the translated text
 
-Example:
-
+Example Output:
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_NEW_TOKENS | TRANSLATION_TEXT | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
@@ -380,7 +409,7 @@ Additional output columns
 * _SCORE_: the confidence with witch the label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | RETURN_RANKS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|-----------|------------------|--------------|--------|-------|------|---------------|

@@ -3,7 +3,6 @@ from collections.abc import Iterator
 from pandas import DataFrame
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
-    DEFAULT_MODEL_SPECS,
     DEFAULT_VALUES,
 )
 from exasol_transformers_extension.udfs.models.transformation.transformation import (

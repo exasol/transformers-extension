@@ -3,7 +3,6 @@ from exasol_transformers_extension.deployment.default_udf_parameters import (
 )
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
-    BucketFSModelSpecificationFactory,
 )
 from exasol_transformers_extension.utils.in_udf_model_downloader import (
     InUDFModelDownloader,

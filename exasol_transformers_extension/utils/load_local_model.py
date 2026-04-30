@@ -5,7 +5,10 @@ import traceback
 import torch
 import transformers.pipelines
 
-from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils import (
+    bucketfs_operations,
+    device_management,
+)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
@@ -57,6 +60,10 @@ class LoadLocalModel:
     ):
         """Set the current_model_specification."""
         self._current_model_specification = current_model_specification
+
+    def set_current_device(self, current_device_id: int) -> None:
+        """Set the current_device_id."""
+        self.device = device_management.get_torch_device(current_device_id)
 
     def load_models(self) -> transformers.pipelines.Pipeline:
         """

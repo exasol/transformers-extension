@@ -23,7 +23,7 @@ from exasol_transformers_extension.udfs.models.ai_complete_extended_udf import (
     AiCompleteExtendedUDF,
 )
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 
 
@@ -40,9 +40,7 @@ def test_ai_complete_extended_udf(
     description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -87,7 +85,13 @@ def test_ai_complete_extended_udf(
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=n_rows,
+            removed_columns=["device_id"],
+        )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NoErrorMessageMatcher()
         and result_df["generated_text"].str.contains(text_data).all()
@@ -110,9 +114,7 @@ def test_max_new_tokens_ai_complete_extended(
     prepare_text_generation_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -123,7 +125,7 @@ def test_max_new_tokens_ai_complete_extended(
     # we load the test models tokenizer to convert input and output to tokens,
     # in order to check if max_new_tokens is respected in the output.
     model_specification = model_params.text_gen_model_specs
-    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    current_model_specs = get_bucket_fs_model_specification_from_model_specs(
         model_specification, bucketfs_conn_name, model_params.sub_dir
     )
     model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
@@ -172,7 +174,13 @@ def test_max_new_tokens_ai_complete_extended(
     result = Result(result_df)
 
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=1)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=1,
+            removed_columns=["device_id"],
+        )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NoErrorMessageMatcher()
         and result_df["generated_text"].str.contains(text_data).all()
@@ -199,9 +207,7 @@ def test_ai_complete_extended_udf_on_error_handlig(
     description, device_id, n_rows, prepare_text_generation_model_for_local_bucketfs
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_text_generation_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -246,7 +252,13 @@ def test_ai_complete_extended_udf_on_error_handlig(
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=n_rows,
+            removed_columns=["device_id"],
+        )
         and result == NewColumnsEmptyMatcher(new_columns=new_columns)
         and result == ErrorMessageMatcher()
     )

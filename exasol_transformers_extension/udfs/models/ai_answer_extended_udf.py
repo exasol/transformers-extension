@@ -17,6 +17,9 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.remove_columns import (
+    RemoveColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
     TransformationPipeline,
 )
@@ -64,6 +67,9 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                         new_columns=["answer", "score", "rank"],
                         removed_columns=[],
                     ),
+                ),
+                RemoveColumnsTransformation(
+                    removed_columns=["device_id"],
                 ),
             ]
         )

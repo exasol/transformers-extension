@@ -1,8 +1,18 @@
+"""
+Default UDF class for classifying a given text sequence by sentiment.
+"""
+
 import transformers
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.text_classification import (
     TextClassifyPredictionTask,
+)
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import (
+    AddDefaultColumnsTransformation,
 )
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
@@ -21,16 +31,15 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 )
 
 
-class AiCustomClassifyUDF(BaseModelUDF):
+class AiSentimentUDF(BaseModelUDF):
     """
-    UDf for classifying a given text sequence.
+    UDF for classifying a given text sequence by sentiment.
 
     Needs to have "text_data" in the input.
-    Will output to "label", "score", "rank".
-    Does not use default values.
 
-    Uses models compatible with the "text-classification" transformers task, and uses
-    AutoModelForSequenceClassification to load said model.
+    other input will be pulled from default values.
+
+    Will output to "label", "score".
     """
 
     def __init__(
@@ -44,6 +53,20 @@ class AiCustomClassifyUDF(BaseModelUDF):
     ):
         transformations = TransformationPipeline(
             [
+                AddDefaultColumnsTransformation(
+                    new_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "return_ranks",
+                        "model_name",
+                    ],
+                    default_values={
+                        "model_name": DEFAULT_MODEL_SPECS[
+                            self.__class__.__name__
+                        ].model_name
+                    },
+                ),
                 UniqueModelDataframeTransformation(),
                 WithModelTransformation(
                     exa,
@@ -55,7 +78,14 @@ class AiCustomClassifyUDF(BaseModelUDF):
                     ),
                 ),
                 RemoveColumnsTransformation(
-                    removed_columns=["device_id"],
+                    removed_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "model_name",
+                        "return_ranks",
+                        "rank",
+                    ],
                 ),
             ]
         )

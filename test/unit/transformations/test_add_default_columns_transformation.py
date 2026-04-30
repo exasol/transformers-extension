@@ -96,9 +96,7 @@ _sub_dir = {"sub_dir": [DEFAULT_VALUES["sub_dir"], "another_subdir", None]}
             ["sub_dir", "new_default_col", "model_name"],
             {
                 "new_default_col": "new_default_value",
-                "model_name": DEFAULT_MODEL_SPECS[
-                    "model_for_a_specific_udf"
-                ].model_name,
+                "model_name": DEFAULT_MODEL_SPECS["AiSentimentUDF"].model_name,
             },
             (3, 6),
             "None",
@@ -147,7 +145,7 @@ def test_add_default_columns_transformation(
         if "model_name" in default_cols:
             assert all(
                 output_df["model_name"][i]
-                == DEFAULT_MODEL_SPECS["model_for_a_specific_udf"].model_name
+                == DEFAULT_MODEL_SPECS["AiSentimentUDF"].model_name
                 for i in output_df.index
             )
             default_cols.remove("model_name")

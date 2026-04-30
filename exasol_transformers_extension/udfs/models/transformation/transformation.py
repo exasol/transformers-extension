@@ -41,14 +41,12 @@ class Transformation(Protocol):
         May throw errors in case the transformation fails.
         Error handling is then done in the TransformationGenerator.
         """
-        pass
 
     def check_input_format(self, df_columns: list[str]) -> None:
         """
         Checks if all needed columns for transform are present, throws error otherwise.
         There is a basic implementation in transformation/utils you may use.
         """
-        pass
 
     def ensure_output_format(self, batch_df: DataFrame) -> DataFrame:
         """
@@ -58,7 +56,6 @@ class Transformation(Protocol):
         will not emit any data.
         There is a basic implementation in transformation/utils you may use.
         """
-        pass
 
 
 class TransformationErrorHandler:

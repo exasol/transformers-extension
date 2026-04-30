@@ -1,14 +1,5 @@
-from test.unit.udf_wrapper_params.text_classification.error_on_prediction_return_HIGHEST_single_model_multiple_batch import (
-    ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
-)
-from test.unit.udf_wrapper_params.text_classification.return_ALL_multiple_model_multiple_batch_complete import (
-    ReturnAllMultipleModelMultipleBatchComplete,
-)
-from test.unit.udf_wrapper_params.text_classification.return_HIGHEST_multiple_model_multiple_batch_complete import (
-    ReturnHighestMultipleModelMultipleBatchComplete,
-)
-from test.unit.udf_wrapper_params.text_classification.return_mixed_single_model_multiple_batch import (
-    ReturnMixedMultipleModelMultipleBatchComplete,
+from test.unit.udf_wrapper_params.ai_sentiment.default_values_multiple_batch import (
+    DefaultValuesMultipleBatchComplete,
 )
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
@@ -21,9 +12,7 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
-from exasol_transformers_extension.udfs.models.ai_custom_classify_extended_udf import (
-    AiCustomClassifyUDF,
-)
+from exasol_transformers_extension.udfs.models.ai_sentiment_udf import AiSentimentUDF
 
 
 def create_mock_metadata():
@@ -31,23 +20,13 @@ def create_mock_metadata():
         script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
-            Column("device_id", int, "INTEGER"),
-            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
-            Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("return_ranks", str, "VARCHAR(2000000)"),
         ],
         output_type="EMITS",
         output_columns=[
-            Column("bucketfs_conn", str, "VARCHAR(2000000)"),
-            Column("sub_dir", str, "VARCHAR(2000000)"),
-            Column("model_name", str, "VARCHAR(2000000)"),
             Column("text_data", str, "VARCHAR(2000000)"),
-            Column("return_ranks", str, "VARCHAR(2000000)"),
             Column("label", str, "VARCHAR(2000000)"),
             Column("score", float, "DOUBLE"),
-            Column("rank", int, "INTEGER"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],
     )
@@ -57,11 +36,7 @@ def create_mock_metadata():
 @pytest.mark.parametrize(
     "params",
     [
-        ReturnAllMultipleModelMultipleBatchComplete,
-        ReturnHighestMultipleModelMultipleBatchComplete,
-        ReturnMixedMultipleModelMultipleBatchComplete,
-        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
-        ErrorOnPredictionReturnHighestSingleModelMultipleBatch,
+        DefaultValuesMultipleBatchComplete,
     ],
 )
 @patch(
@@ -71,10 +46,10 @@ def create_mock_metadata():
     "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
 )
 def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
-    mock_meta = create_mock_metadata()
-    expected_model_counter = params.expected_single_text_model_counter
     batch_size = params.batch_size
     expected_output_data = params.outputs_single_text
+    expected_model_counter = params.expected_model_counter
+    mock_meta = create_mock_metadata()
 
     (
         mock_exa,
@@ -89,10 +64,10 @@ def test_ai_custom_classify_extended(mock_local_path, mock_create_loc, params):
         mock_meta,
         expected_model_counter,
         params.inputs_single_text,
-        params.text_class_models_output_df_single_text,
+        params.text_class_models_output_df,
     )
 
-    udf = AiCustomClassifyUDF(
+    udf = AiSentimentUDF(
         exa=mock_exa,
         batch_size=batch_size,
         base_model=mock_base_model_factory,

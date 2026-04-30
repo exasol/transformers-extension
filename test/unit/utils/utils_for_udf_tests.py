@@ -2,6 +2,10 @@ from test.unit.udfs.output_matcher import (
     Output,
     OutputMatcher,
 )
+from test.utils.mock_bucketfs_location import (
+    fake_bucketfs_location_from_conn_object,
+    fake_local_bucketfs_path,
+)
 from test.utils.mock_cast import mock_cast
 from typing import (
     Any,
@@ -88,7 +92,7 @@ def create_mock_model_factories_with_models(number_of_intended_used_models: int)
     mock_tokenizer_factory, mock_base_model_factory = create_base_mock_model_factories()
 
     mock_models: list[AutoModel | MagicMock] = [
-        create_autospec(AutoModel) for i in range(number_of_intended_used_models)
+        create_autospec(AutoModel) for _ in range(number_of_intended_used_models)
     ]
     mock_cast(mock_base_model_factory.from_pretrained).side_effect = mock_models
 
@@ -124,7 +128,7 @@ def create_mock_pipeline_factory_from_gen(
     """
     mock_pipeline: list[AutoModel | MagicMock] = [
         create_autospec(Pipeline, side_effect=tokenizer_models_output_generator)
-        for i in range(0, number_of_intended_used_models)
+        for _ in range(0, number_of_intended_used_models)
     ]
 
     mock_pipeline_factory: Pipeline | MagicMock = create_autospec(
@@ -181,3 +185,39 @@ def make_number_of_strings(input_str: str, desired_number: int):
     Returns desired number of "input_strX", where X is counting up to desired_number.
     """
     return (input_str + f"{i}" for i in range(desired_number))
+
+
+def setup_mocks(
+    mock_create_loc,
+    mock_local_path,
+    params,
+    mock_meta,
+    expected_model_counter,
+    model_input_data,
+    models_output,
+):
+    mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
+    mock_local_path.side_effect = fake_local_bucketfs_path
+
+    bfs_connections = params.bfs_connections
+
+    mock_ctx = create_mock_udf_context(model_input_data, mock_meta)
+    mock_exa = create_mock_exa_environment(mock_meta, bfs_connections)
+    mock_base_model_factory, mock_tokenizer_factory = (
+        create_mock_model_factories_with_models(expected_model_counter)
+    )
+    if isinstance(models_output, list):
+        mock_pipeline_factory = create_mock_pipeline_factory_from_df(
+            models_output, expected_model_counter
+        )
+    else:
+        mock_pipeline_factory = create_mock_pipeline_factory_from_gen(
+            models_output, expected_model_counter
+        )
+    return (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    )

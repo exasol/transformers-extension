@@ -16,7 +16,6 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
     duplicate_input_rows_for_n_outputs,
     extract_unique_param_based_dataframes_on_col_list,
 )
-from exasol_transformers_extension.utils import dataframe_operations
 
 
 class TokenClassifyPredictionTask(PredictionTask):

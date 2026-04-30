@@ -1,6 +1,5 @@
 from pathlib import (
     Path,
-    PurePosixPath,
 )
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
@@ -60,7 +59,7 @@ class BucketFSModelSpecificationFactory:
         )
 
 
-def get_BucketFSModelSpecification_from_model_Specs(
+def get_bucket_fs_model_specification_from_model_specs(
     model_specification: ModelSpecification, bucketfs_conn_name: str, sub_dir: Path
 ):
     return BucketFSModelSpecification(

@@ -1,3 +1,8 @@
+"""
+Transformation which splits the input DataFrame into multiple DataFrames.
+The splitting into multiple dataframes is determined based on which model-parameters are found.
+"""
+
 from collections.abc import Iterator
 
 from pandas import DataFrame
@@ -37,12 +42,12 @@ class UniqueModelParamsDataframeTransformation(Transformation):
         self.removed_columns = removed_columns
 
     def transform(
-        self, model_df: DataFrame, model_loader: LoadLocalModel
+        self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> Iterator[DataFrame]:
         """
         calls transformation logic.
         """
-        yield from self.prediction_task.extract_unique_param_based_dataframes(model_df)
+        yield from self.prediction_task.extract_unique_param_based_dataframes(batch_df)
 
     def check_input_format(self, df_columns: list[str]):
         """

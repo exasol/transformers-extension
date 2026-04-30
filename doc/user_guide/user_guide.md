@@ -6,20 +6,10 @@ The Transformers Extension provides a Python library with UDFs that allow the us
 
 The extension provides two types of UDFs:
 
-* Utility UDFs: UDFs which deal with installation and deletion of pretrained Transformers models in the Exasol BucketFS.
-* Prediction UDFs: These are a group of UDFs for each supported task. Each of them uses the downloaded pre-trained model and performs prediction. These are the supported tasks:
+* Utility UDFs: Manage Transformers models in the Exasol BucketFS.
+* Prediction UDFs: Use a downloaded pre-trained model to perform prediction.
 
-   1. AI Custom Classify Extended
-   2. AI Entailment Extended
-   3. AI Answer Extended
-   4. AI Fill Mask Extended
-   5. AI Complete Extended
-   6. AI Extract Extended
-   7. AI Translate Extended
-   8. AI Classify Extended
-
-    
-This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol cluster.
+### A Note on UDFs :
 
 User Defined Functions (UDFs) are scripts in various programming languages that can be executed in the Exasol database. They can be used by a user for more flexibility in data processing. With the Transformers Extension, we provide multiple UDFs for you to use on your Exasol database. You can find more detailed documentation on UDFs on the [UDF Scripts page](https://docs.exasol.com/db/latest/database_concepts/udf_scripts.htm).
 
@@ -28,6 +18,62 @@ UDFs and the necessary [Script language Container](https://docs.exasol.com/db/la
 More information on the BucketFS can be found at [docs.exasol.com](https://docs.exasol.com/db/latest/database_concepts/bucketfs/bucketfs.htm).
 
 For prerequisites and the setup-guide, please visit the [Getting started](setup.md) file.
+
+### Utility UDFs
+
+This Exasol Extension provides UDFs for interacting with Hugging Face's Transformers API to use pre-trained models on an Exasol cluster.
+
+These UDFs deal with the installation and deletion of pretrained Transformers models in the Exasol BucketFS.
+
+We provide the following UDFs:
+
+| UDF Name                     | Use                                                            |
+|------------------------------|----------------------------------------------------------------|
+| TE_MODEL_DOWNLOADER_UDF      | Download a specific model from Hugging Face.                   |
+| TE_LIST_MODELS_UDF           | List all models available in the BucketFS.                     |
+| INSTALL_AI_DEFAULT_MODEL_UDF | Install all default models used in the Transformers Extension. |
+| TE_DELETE_MODEL_UDF          | Delete a specific model from the BucketFS.                     |
+
+You can find further information on these UDFs [here](manage_models.md).
+
+
+### Prediction UDFs
+
+These UDFs call a model stored in the BucketFS and use it to make predictions on the given input data.
+
+We have selected a curated list of models, which are used in our UDFs. 
+These UDFs require only minimal configuation to use:
+
+
+| UDF Name      | task_type            | Use                                                                  |
+|---------------|----------------------|----------------------------------------------------------------------|
+| AI Sentiment  | text-classification  | Classifies the given text according the sentiment found in the text. |
+
+However, if you want to configure a task to your specific needs, 
+UDFs with the suffix "Extended" in the name allow you to specify all available 
+parameters for each input row. 
+
+For example, you may want to select a specific model to be used. 
+
+These are the available UDFs:
+
+| UDF Name                    | task_type                | Use                                                                  |
+|-----------------------------|--------------------------|----------------------------------------------------------------------|
+| AI Custom Classify Extended | text-classification      | Classifies the given text into classes known to the model.           |
+| AI Entailment Extended      | text-classification      | Takes two input texts and compares them.                             |
+| AI Answer Extended          | question-answering       | Extracts answer(s) from a given question text.                       |
+| AI Fill Mask Extended       | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.        |
+| AI Complete Extended        | text-generation          | Predict the continuation of the given text.                          |
+| AI Extract Extended         | token-classification     | Find and label tokens in a given text.                               |
+| AI Translate Extended       | translation              | This UDF translates a given text from one language to another.       |
+| AI Classify Extended        | zero-shot-classification | This UDF classifies the input text into classes defined by the user. |
+
+Each UDF uses models for a predefined Transformers task. 
+Models which do not support this task will perform poorly. So take care to match your 
+selected model to the UDF for your desired task.
+
+More details on the available parameters can be found in [detailed documentation](invoke_models.md).
+
 
 ## Common UDF Parameters
 

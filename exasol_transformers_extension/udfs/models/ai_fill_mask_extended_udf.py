@@ -18,6 +18,9 @@ from exasol_transformers_extension.udfs.models.transformation.extract_unique_mod
 from exasol_transformers_extension.udfs.models.transformation.prediction_task import (
     PredictionTaskTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.remove_columns import (
+    RemoveColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.transformation_pipeline import (
     TransformationPipeline,
 )
@@ -73,6 +76,9 @@ class AiFillMaskExtendedUDF(BaseModelUDF):
                             "sequence"
                         ],  # this will be created and the renamed. if that fails we need to remove it
                     ),
+                ),
+                RemoveColumnsTransformation(
+                    removed_columns=["device_id"],
                 ),
             ]
         )

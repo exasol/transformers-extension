@@ -1,4 +1,8 @@
-import traceback
+"""
+Wrapper for a Transformation which needs to load a model.
+Loads a model if needed, then calls _transformation.transform.
+"""
+
 from collections.abc import Iterator
 from os import PathLike
 
@@ -56,6 +60,7 @@ class WithModelTransformation(Transformation):
         model_loader: LoadLocalModel,
         bucketfs_conn: PathLike,
         current_model_specification: BucketFSModelSpecification,
+        current_device_id: str | None = None,
     ):
         """
         load a model into the cache
@@ -65,6 +70,7 @@ class WithModelTransformation(Transformation):
         )
 
         model_loader.clear_device_memory()
+        model_loader.set_current_device(current_device_id)
         model_loader.set_current_model_specification(current_model_specification)
         model_loader.set_bucketfs_model_cache_dir(bucketfs_location)
 
@@ -87,13 +93,15 @@ class WithModelTransformation(Transformation):
 
         if bucketfs_conn_name == DEFAULT_BUCKETFS_CONN_NAME:
             msg = (
-                f"In order to use this UDF, a BucketFS Connection by the name {DEFAULT_BUCKETFS_CONN_NAME} "
-                f"must be created in the Exasol Database. "
+                "In order to use this UDF, a BucketFS Connection by the"
+                f" name {DEFAULT_BUCKETFS_CONN_NAME} "
+                "must be created in the Exasol Database. "
             )
         else:
             msg = (
-                f"The given BucketFS connection by the name of {bucketfs_conn_name} does not exist. "
-                f"Either use another connection, or create it in the Exasol Database. "
+                f"The given BucketFS connection by the name of {bucketfs_conn_name}"
+                " does not exist. "
+                "Either use another connection or create it in the Exasol Database. "
             )
         return msg + main_msg
 
@@ -133,4 +141,10 @@ class WithModelTransformation(Transformation):
             # or if
             # the model should have been loaded for the previous batch but failed,
             # we try again
-            self._load_model(model_loader, bucketfs_conn, current_model_specification)
+            current_device_id = model_df["device_id"].iloc[0]
+            self._load_model(
+                model_loader,
+                bucketfs_conn,
+                current_model_specification,
+                current_device_id,
+            )
