@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
     "pandas>=2.2.3,<3.0.0",
     "torch>=2.8.0,<3",
-    "transformers[torch]>=4.36.2,<5",
+    "transformers[torch]>=4.36.2,<6",
     "Jinja2>=3.1.6,<4",
     "importlib-resources>=6.4.0,<7",
     "click>=8.0.4,<9",
@@ -43,13 +43,13 @@ requires-poetry = ">=2.3.0"
 
 [dependency-groups]
 dev = [
-    "pytest>=7.2.0,<8",
+    "pytest>=7.2.0,<10",
     "exasol-udf-mock-python>=0.3.0",
     "toml>=0.10.2,<0.11",
     "nox>=2023.4.22,<2024",
     "pytest-exasol-slc>=0.3.0",
-    "pytest-exasol-extension>=0.2.1,<1",
-    "exasol-toolbox>=6, <7",
+    "pytest-exasol-extension>=0.2.1,<2",
+    "exasol-toolbox>=6, <8",
     "pandas-stubs>=2.2.0,<3",
     "types-toml>=0.10.0,<0.11",
 ]
