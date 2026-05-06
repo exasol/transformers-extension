@@ -24,7 +24,7 @@ def test_ai_sentiment_script(
         f"SELECT AI_SENTIMENT("
         f"t.text_data) "
         f"FROM (VALUES {input_data} "
-        f"AS t(text_data,));"
+        f"AS t(text_data));"
     )
 
     # execute UDF
