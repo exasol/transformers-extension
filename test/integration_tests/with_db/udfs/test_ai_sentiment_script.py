@@ -29,7 +29,6 @@ def test_ai_sentiment_script(
 
     # execute UDF
     result = db_conn.execute(query).fetchall()
-    print(result)
 
     # assertions
     assert result[0][-1] is None
@@ -43,5 +42,5 @@ def test_ai_sentiment_script(
     # the "acceptable_results" here is the label "positive" with a reasonably high score.
     acceptable_results = ["positive"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.5, label_index=5
+        result, acceptable_results, 1 / 1.5, label_index=1
     )
