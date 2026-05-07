@@ -29,6 +29,7 @@ def test_ai_sentiment_script(
 
     # execute UDF
     result = db_conn.execute(query).fetchall()
+    print(result)
 
     # assertions
     assert result[0][-1] is None
