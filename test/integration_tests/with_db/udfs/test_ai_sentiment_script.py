@@ -23,7 +23,7 @@ def test_ai_sentiment_script(
     query = (
         f"SELECT AI_SENTIMENT("
         f"t.text_data) "
-        f"FROM (VALUES {input_data} "
+        f"FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(text_data));"
     )
 
