@@ -1,11 +1,14 @@
 """Fixtures for setting up the test DB with schema, language alias, UDF install"""
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
+
 from test.utils.parameters import PATH_IN_BUCKET
 from typing import Tuple
 
 import pytest
 from pyexasol import ExaConnection
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
 from exasol_transformers_extension.deployment.scripts_deployer import ScriptsDeployer
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
