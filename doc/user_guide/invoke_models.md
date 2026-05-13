@@ -1,6 +1,6 @@
 # Using Prediction UDFs
 
-We provide 7 prediction UDFs in the Transformers Extension package. Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to the BucketFS and run inference using the user-supplied inputs.
+We provide prediction UDFs in the Transformers Extension package. Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to the BucketFS and run inference using the user-supplied inputs.
 
 ### Table of Contents
 
