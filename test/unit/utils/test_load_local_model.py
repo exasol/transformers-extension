@@ -21,7 +21,6 @@ from exasol_transformers_extension.utils.model_specification import ModelSpecifi
 
 class TestSetup:
     def __init__(self):
-
         self.model_factory_mock: ModelFactoryProtocol | MagicMock = create_autospec(
             ModelFactoryProtocol
         )
@@ -73,6 +72,5 @@ def test_load_function_call():
                 test_setup.tokenizer_factory_mock.from_pretrained
             ).return_value,
             device="cpu",
-            framework="pt",
         )
     ]

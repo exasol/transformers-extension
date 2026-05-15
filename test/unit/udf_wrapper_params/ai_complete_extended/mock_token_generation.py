@@ -35,13 +35,11 @@ class MockPipeline:
         model: MockTextGenerationModel,
         tokenizer: MockSequenceTokenizer,
         device: str,
-        framework: str,
     ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-        self.framework = framework
         MockPipeline.counter += 1
 
     def __call__(self, text_data: list[str], **kwargs) -> list[dict[str, str | float]]:
