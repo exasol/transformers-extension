@@ -64,7 +64,7 @@ def test_install_and_load_huggingface_model(
     bucketfs_conn_name, _ = setup_database
     mspec = BucketFSModelSpecification(
         model_name="t5-small",
-        task_type="translation",
+        task_type="translation",#todo change
         bucketfs_conn_name=bucketfs_conn_name,
         sub_dir=Path("sub_dir"),
     )

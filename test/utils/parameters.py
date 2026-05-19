@@ -10,7 +10,7 @@ PATH_IN_BUCKET = "container"
 @dataclass(frozen=True)
 class ModelParams:
     base_model_specs: ModelSpecification  # this is used for other test, task_name should be set per test
-    seq2seq_model_specs: (
+    translation_model_specs: (
         ModelSpecification  # this model is used for testing ai_translate_extended udf
     )
     q_a_model_specs: (
@@ -37,7 +37,7 @@ model_params = ModelParams(
     base_model_specs=ModelSpecification(
         "bert-base-uncased", "need to set this task_type"
     ),
-    seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
+    translation_model_specs=ModelSpecification("facebook/xglm-564M", "text-generation"),
     q_a_model_specs=ModelSpecification(
         "deepset/tinybert-6l-768d-squad2", "question-answering"
     ),

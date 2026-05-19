@@ -134,7 +134,7 @@ def prepare_translation_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPat
     create tmpdir and save standard translation model into it, returns tmpdir-path
     model is defined in test/utils/parameters.py
     """
-    model_specification = model_params.seq2seq_model_specs
+    model_specification = model_params.translation_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
@@ -289,7 +289,7 @@ def upload_translation_model_to_bucketfs(
     returns BucketFS path
     Model is defined in test/utils/parameters.py.
     """
-    model_specs = model_params.seq2seq_model_specs
+    model_specs = model_params.translation_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path

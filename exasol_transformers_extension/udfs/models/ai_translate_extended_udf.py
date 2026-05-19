@@ -39,8 +39,8 @@ class AiTranslateExtendedUDF(BaseModelUDF):
     Will output to "translation_text".
     Does not use default values.
 
-    Uses models compatible with the "translation" transformers task, and uses
-    AutoModelForSeq2SeqLM to load said model.
+    Uses models compatible with the "text-generation" transformers task, and uses
+    AutoModelCasualLM to load said model.
     """
 
     def __init__(
@@ -48,7 +48,7 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         exa,
         batch_size=100,
         pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForSeq2SeqLM,
+        base_model=transformers.AutoModelForCausalLM,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=TranslatePredictionTask(desired_fields_in_prediction=[]),
     ):

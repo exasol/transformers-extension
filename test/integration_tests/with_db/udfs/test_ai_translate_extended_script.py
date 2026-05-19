@@ -21,7 +21,7 @@ def run_ai_translate_extended_script_test(
                 "",
                 bucketfs_conn_name,
                 str(model_params.sub_dir),
-                model_params.seq2seq_model_specs.model_name,
+                model_params.translation_model_specs.model_name,#todo
                 "The database software company Exasol is based in Nuremberg",
                 src_lang,
                 target_lang,

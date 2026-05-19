@@ -244,7 +244,7 @@ which you might want to use in your UDF:
  - [TokenClassifyPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/token_classification.py) : 
    Task logic for using the "token-classification" transformers task.
  - [TranslatePredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/translation.py): 
-   Task logic for using the "translation" transformers task.
+   Task logic for using the "text-generation" transformers task for translating text.
  - [ZeroShotPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/zero_shot.py) : 
     Task logic for using the "zero-shot-classification" transformers task.
 
