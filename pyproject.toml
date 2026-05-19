@@ -6,7 +6,7 @@ authors = [
     { name = "Umit Buyuksahin", email = "umit.buyuksahin@exasol.com" },
     { name = "Torsten Kilias", email = "torsten.kilias@exasol.com" },
 ]
-requires-python = ">=3.10.0,<3.14"
+requires-python = ">=3.10.0,<3.15"
 readme = "README.md"
 keywords = ["exasol"]
 classifiers = [
