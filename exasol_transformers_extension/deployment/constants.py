@@ -18,6 +18,8 @@ UDF_CALL_TEMPLATES = {
     "ai_translate_extended_udf_call.py": "ai_translate_extended_udf.jinja.sql",
     "delete_model_udf_call.py": "delete_model_udf.jinja.sql",
     "ai_sentiment_udf_call.py": "ai_sentiment_udf.jinja.sql",
+    "ai_classify_udf_call.py": "ai_classify_udf.jinja.sql",
+    "ai_extract_entities_udf_call.py": "ai_extract_entities.jinja.sql",
 }
 
 constants = InstallScriptsConstants(
