@@ -13,9 +13,6 @@ from exasol.python_extension_common.deployment.language_container_validator impo
 
 from exasol_transformers_extension.deploy import (
     BUCKETFS_CONN_NAME_ARG,
-    CREATE_DEFAULT_BFS_CONN_ARG,
-    DEPLOY_SCRIPTS_ARG,
-    DEPLOY_SLC_ARG,
     deploy_command,
 )
 from exasol_transformers_extension.deployment.default_udf_parameters import (

@@ -5,7 +5,6 @@ from pathlib import Path
 
 import nox
 from exasol.toolbox.nox._shared import (
-    _version,
     get_filtered_python_files,
 )
 
@@ -151,7 +150,6 @@ def _code_format(session: Session, mode: Mode, files: list[str]) -> None:
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
-    _version(session, Mode.Fix)
     _pyupgrade(session, files=py_files)
     _code_format(session, Mode.Fix, py_files)
 

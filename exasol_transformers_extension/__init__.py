@@ -1,3 +1,5 @@
 """transformers extension init file"""
 
-__version__ = "3.0.0"
+from importlib.metadata import version
+
+__version__ = version("exasol-transformers-extension")

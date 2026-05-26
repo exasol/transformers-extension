@@ -43,10 +43,18 @@ jobs:
           sudo rm -rf /opt/ghc
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v6
+        uses: exasol/python-toolbox/.github/actions/python-environment@v7
         with:
           python-version: ${{ matrix.python-version }}
           poetry-version: "2.3.0"
 
       - name: Run without_db_integration_tests
-        run: poetry run -- nox -s without_db_integration_tests
+        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version ${{ matrix.exasol-version }}
+
+      - name: Upload Artifacts
+        id: upload-artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
+          path: .coverage
+          include-hidden-files: true
