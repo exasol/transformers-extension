@@ -7,7 +7,6 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "AI_CLASSIFY"(
     candidate_labels VARCHAR(2000000),
     label VARCHAR(2000000),
     score DOUBLE,
-    rank INTEGER,
     error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}

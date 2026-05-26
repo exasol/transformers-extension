@@ -97,7 +97,8 @@ class AiClassifyUDF(BaseModelUDF):
                     "bucketfs_conn",
                     "sub_dir",
                     "model_name",
-                    "return_ranks"
+                    "return_ranks",
+                    "rank"
                 ],
             ),
         ]

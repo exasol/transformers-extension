@@ -4,7 +4,6 @@ from test.integration_tests.utils.model_output_quality_checkers import (
 from test.integration_tests.utils.model_output_result_number_checker import (
     assert_correct_number_of_results,
 )
-from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 
 
 def test_ai_sentiment_script(
