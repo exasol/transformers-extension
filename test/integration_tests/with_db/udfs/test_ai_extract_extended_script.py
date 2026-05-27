@@ -21,7 +21,7 @@ def test_ai_extract_extended_script_without_spans(
     bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
-    for i in range(n_rows):
+    for _ in range(n_rows):
         input_data.append(
             (
                 "",
