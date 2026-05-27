@@ -1,10 +1,12 @@
 from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_extract_entities.make_data_row_functions import (
     make_model_output_for_one_input_row,
-    text_data, make_output_row,
+    make_output_row,
+    text_data,
 )
 
 from exasol_udf_mock_python.connection import Connection
+
 from exasol_transformers_extension.deployment.default_udf_parameters import (
     DEFAULT_BUCKETFS_CONN_NAME,
 )

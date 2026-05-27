@@ -1,5 +1,8 @@
 """Caller for AiExtractEntitiesUDF"""
-from exasol_transformers_extension.udfs.models.ai_extract_entities_udf import AiExtractEntitiesUDF
+
+from exasol_transformers_extension.udfs.models.ai_extract_entities_udf import (
+    AiExtractEntitiesUDF,
+)
 
 udf = AiExtractEntitiesUDF(exa)
 

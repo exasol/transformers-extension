@@ -99,7 +99,6 @@ def prepare_default_classify_model_for_local_bucketfs(
     return bucketfs_path
 
 
-
 @pytest.fixture(scope="session")
 def prepare_text_classification_pair_model_for_local_bucketfs(
     tmpdir_factory,
@@ -140,6 +139,22 @@ def prepare_token_classification_model_for_local_bucketfs(
     """
     model_specification = model_params.token_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
+        model_specification, tmpdir_factory
+    )
+    return bucketfs_path
+
+
+@pytest.fixture(scope="session")
+def prepare_default_token_classification_model_for_local_bucketfs(
+    tmpdir_factory,
+) -> PurePosixPath:
+    """
+    Create tmpdir and save default token classification model into it,
+    returns tmpdir-path.
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specification = DEFAULT_MODEL_SPECS["AiExtractEntitiesUDF"]
+    bucketfs_path = prepare_default_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
     return bucketfs_path
@@ -327,6 +342,22 @@ def upload_token_classification_model_to_bucketfs(
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
+
+
+@pytest.fixture(scope="session")
+def upload_default_token_classification_model_to_bucketfs(
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> typing.Generator:
+    """
+    Load default token classification model into BucketFS at bucketfs_location,
+    returns BucketFS path.
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specs = DEFAULT_MODEL_SPECS["AiExtractEntitiesUDF"]
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    yield from upload_model_to_bucketfs_from_bfs_model_spec(
+        model_specs, tmpdir, bucketfs_location
+    )
 
 
 @pytest.fixture(scope="session")

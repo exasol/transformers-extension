@@ -1,6 +1,3 @@
-import pytest
-import torch
-
 from test.integration_tests.without_db.udfs.utils.matcher import (
     ColumnsMatcher,
     NoErrorMessageMatcher,
@@ -17,11 +14,14 @@ from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
 
 import pandas as pd
+import pytest
+import torch
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
     DEFAULT_BUCKETFS_CONN_NAME,
 )
 from exasol_transformers_extension.udfs.models.ai_classify_udf import AiClassifyUDF
+
 
 def test_ai_classify_udf(
     prepare_default_classify_model_for_local_bucketfs,

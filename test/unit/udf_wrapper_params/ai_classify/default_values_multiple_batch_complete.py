@@ -1,9 +1,16 @@
+from pathlib import PurePosixPath
+from test.unit.udf_wrapper_params.ai_classify_extended.make_data_row_functions import (
+    LABEL_SCORES,
+    candidate_labels,
+    make_model_output_for_one_input_row,
+)
+
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
-from test.unit.udf_wrapper_params.ai_classify_extended.make_data_row_functions import candidate_labels, \
-    make_model_output_for_one_input_row, LABEL_SCORES
-from pathlib import PurePosixPath
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+
 
 class DefaultValuesMultipleBatchComplete:
     expected_model_counter = 1

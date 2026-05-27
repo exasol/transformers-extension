@@ -1,4 +1,5 @@
 """Caller for AiClassifyUDF"""
+
 from exasol_transformers_extension.udfs.models.ai_classify_udf import AiClassifyUDF
 
 udf = AiClassifyUDF(exa)

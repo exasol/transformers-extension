@@ -6,12 +6,16 @@ represent the entire input text and not indicate a substring.
 
 import transformers
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.token_classification import (
     TokenClassifyPredictionTask,
 )
-from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import (
+    AddDefaultColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )
@@ -48,6 +52,7 @@ class AiExtractEntitiesUDF(BaseModelUDF):
 
     Will output to "word", "entity" and "score".
     """
+
     def __init__(
         self,
         exa,
@@ -66,7 +71,7 @@ class AiExtractEntitiesUDF(BaseModelUDF):
                     "bucketfs_conn",
                     "sub_dir",
                     "model_name",
-                    "aggregation_strategy"
+                    "aggregation_strategy",
                 ],
                 default_values={
                     "model_name": DEFAULT_MODEL_SPECS[

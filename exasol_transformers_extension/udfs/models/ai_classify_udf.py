@@ -1,8 +1,12 @@
 import transformers
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import (
+    AddDefaultColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )
@@ -46,6 +50,7 @@ class AiClassifyUDF(BaseModelUDF):
 
     Will output to "label", "score", "rank".
     """
+
     def __init__(
         self,
         exa,
@@ -64,7 +69,7 @@ class AiClassifyUDF(BaseModelUDF):
                     "bucketfs_conn",
                     "sub_dir",
                     "model_name",
-                    "return_ranks"
+                    "return_ranks",
                 ],
                 default_values={
                     "model_name": DEFAULT_MODEL_SPECS[
@@ -98,7 +103,7 @@ class AiClassifyUDF(BaseModelUDF):
                     "sub_dir",
                     "model_name",
                     "return_ranks",
-                    "rank"
+                    "rank",
                 ],
             ),
         ]

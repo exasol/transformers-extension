@@ -9,6 +9,7 @@ from test.integration_tests.without_db.udfs.utils.mock_exa_environment import (
 )
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
+
 import pandas as pd
 import pytest
 import torch
@@ -26,7 +27,6 @@ from exasol_transformers_extension.udfs.models.ai_extract_entities_udf import (
     [
         ("batch input", 3),
         ("single input", 1),
-
     ],
 )
 def test_ai_extract_entities_udf(

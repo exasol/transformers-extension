@@ -1,9 +1,3 @@
-import pytest
-from unittest.mock import patch
-
-from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.mock_meta_data import MockMetaData
-
 from test.unit.udf_wrapper_params.ai_extract_entities.default_values_multiple_batch import (
     DefaultValuesMultipleBatchComplete,
 )
@@ -12,6 +6,11 @@ from test.unit.utils.utils_for_udf_tests import (
     assert_result_matches_expected_output,
     setup_mocks,
 )
+from unittest.mock import patch
+
+import pytest
+from exasol_udf_mock_python.column import Column
+from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
 from exasol_transformers_extension.udfs.models.ai_extract_entities_udf import (
     AiExtractEntitiesUDF,

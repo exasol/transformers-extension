@@ -1,7 +1,6 @@
-
-from test.unit.udf_wrapper_params.ai_classify.default_values_multiple_batch_complete import \
-    DefaultValuesMultipleBatchComplete
-
+from test.unit.udf_wrapper_params.ai_classify.default_values_multiple_batch_complete import (
+    DefaultValuesMultipleBatchComplete,
+)
 from test.unit.utils.utils_for_udf_tests import (
     assert_correct_number_of_results,
     assert_result_matches_expected_output,
@@ -34,11 +33,14 @@ def create_mock_metadata():
         ],
     )
 
+
 @pytest.mark.parametrize("params", [DefaultValuesMultipleBatchComplete])
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
-@patch("exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path")
+@patch(
+    "exasol_transformers_extension.utils.bucketfs_operations.get_local_bucketfs_path"
+)
 def test_ai_classify_udf(mock_local_path, mock_create_loc, params):
     mock_meta = create_mock_metadata()
 
