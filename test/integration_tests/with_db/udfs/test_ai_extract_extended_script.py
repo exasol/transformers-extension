@@ -57,9 +57,6 @@ def test_ai_extract_extended_script_without_spans(
     )
 
     # lenient test for quality of results, will be replaced by deterministic test later
-    results = [[result[i][7], result[i][8]] for i in range(len(result))]
-
-    # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
     assert_lenient_check_of_output_quality_for_result_set(
         result, acceptable_result_sets, acceptance_factor=0.5, label_index=7

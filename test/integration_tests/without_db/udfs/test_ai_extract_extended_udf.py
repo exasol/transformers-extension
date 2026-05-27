@@ -16,7 +16,6 @@ from test.utils.parameters import model_params
 import pandas as pd
 import pytest
 import torch
-from exasol_udf_mock_python.connection import Connection
 
 from exasol_transformers_extension.udfs.models.ai_extract_extended_udf import (
     AiExtractExtendedUDF,
