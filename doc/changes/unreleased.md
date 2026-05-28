@@ -27,6 +27,7 @@ Code name: T.B.D
  * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
  * #381: Added Transformation for removing columns from DataFrame
  * #353: Added "AI_SENTIMENT" UDF
+ * #390: Added "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES" UDF's
 
 ## Security
 
