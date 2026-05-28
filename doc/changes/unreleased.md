@@ -34,6 +34,7 @@ Code name: T.B.D
 * Updated exasol-script-languages-container-tool (3.4.1 -> 3.5.0)
 * Updated exasol-saas-api (2.3.0 -> 2.6.0)
 * #376: Fixed vulnerabilities by updating dependencies
+* #386: Fixed vulnerabilities by updating dependencies
 
 This release fixes vulnerabilities by updating dependencies:
 

@@ -22,8 +22,8 @@ def test_ai_sentiment_script(
     query = (
         f"SELECT AI_SENTIMENT("
         f"t.text_data) "
-        f"FROM (VALUES {input_data} "
-        f"AS t(text_data,));"
+        f"FROM (VALUES {python_rows_to_sql(input_data)} "
+        f"AS t(text_data));"
     )
 
     # execute UDF
@@ -41,5 +41,5 @@ def test_ai_sentiment_script(
     # the "acceptable_results" here is the label "positive" with a reasonably high score.
     acceptable_results = ["positive"]
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.5, label_index=5
+        result, acceptable_results, 1 / 1.5, label_index=1
     )
