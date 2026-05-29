@@ -45,13 +45,18 @@ We have selected a curated list of models, which are used in our UDFs.
 These UDFs require only minimal configuation to use:
 
 
-| UDF Name      | task_type            | Use                                                                  |
-|---------------|----------------------|----------------------------------------------------------------------|
-| AI Sentiment  | text-classification  | Classifies the given text according the sentiment found in the text. |
+| UDF Name            | task_type                 | Use                                                                         |
+|---------------------|---------------------------|-----------------------------------------------------------------------------|
+| AI Sentiment        | text-classification       | Classifies the given text according the sentiment found in the text.        |
+| AI Classify         | zero-shot-classification  | This UDF classifies the input text into classes defined by the user.        |
+| AI Extract Entities | token-classification      | This UDF finds tokens in a given text, and assigns a label to found tokens. |
 
 However, if you want to configure a task to your specific needs, 
 UDFs with the suffix "Extended" in the name allow you to specify all available 
-parameters for each input row. 
+parameters.
+
+You may specify different models/configuration parameters for each input row. Having many different 
+models will however increase the processing time, as the models need to be loaded.
 
 For example, you may want to select a specific model to be used. 
 

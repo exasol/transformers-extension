@@ -15,6 +15,8 @@ expected_script_list_without_span = [
     "TE_LIST_MODELS_UDF",
     "INSTALL_AI_DEFAULT_MODEL_UDF",
     "AI_SENTIMENT",
+    "AI_CLASSIFY",
+    "AI_EXTRACT_ENTITIES",
 ]
 
 expected_script_list_with_span = [
@@ -31,6 +33,8 @@ expected_script_list_with_span = [
     "TE_LIST_MODELS_UDF",
     "INSTALL_AI_DEFAULT_MODEL_UDF",
     "AI_SENTIMENT",
+    "AI_CLASSIFY",
+    "AI_EXTRACT_ENTITIES",
 ]
 
 expected_script_list_all = [
@@ -49,6 +53,8 @@ expected_script_list_all = [
     "TE_LIST_MODELS_UDF",
     "INSTALL_AI_DEFAULT_MODEL_UDF",
     "AI_SENTIMENT",
+    "AI_CLASSIFY",
+    "AI_EXTRACT_ENTITIES",
 ]
 
 

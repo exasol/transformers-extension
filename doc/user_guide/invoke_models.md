@@ -1,6 +1,13 @@
 # Using Prediction UDFs
 
-We provide prediction UDFs in the Transformers Extension package. Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to the BucketFS and run inference using the user-supplied inputs.
+We provide a selection of prediction UDFs in the Transformers Extension package. 
+Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
+These tasks use the model downloaded to the BucketFS and run inference 
+using the user-supplied inputs.
+
+**NOTICE**: For all UDF's with the "EXTENDED" suffix in the name, you may specify
+different models/configuration parameters for each input row. Having many different 
+models will however increase the processing time, as the models need to be loaded.
 
 ### Table of Contents
 
@@ -10,8 +17,10 @@ We provide prediction UDFs in the Transformers Extension package. Each performs 
   * [AI Answer Extended](#ai-answer-extended)
   * [AI Fill Mask Extended](#ai-fill-mask-extended)
   * [AI Complete Extended](#ai-complete-extended)
+  * [AI Extract Entities](#ai-extract-entities)
   * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
+  * [AI Classify](#ai-classify)
   * [AI Classify Extended](#ai-classify-extended)
 
 ### AI Sentiment
@@ -280,9 +289,47 @@ Example Output:
 | ...           | ...     | ...        | ...            | ...            | ...              | ...                                     | ...           |
 
 
+### AI Extract Entities
+
+This UDF finds tokens in a given text, and assigns a label to found tokens.
+
+It uses the "simple" aggregation strategy.
+
+
+```sql
+SELECT AI_EXTRACT_Entities(
+    text_data,
+)
+```
+
+Parameters
+* `text_data`: The text to analyze.
+
+Additional output columns
+* _START_POS_: the index of the starting character of the found token
+* _END_POS_: index of the ending character of the found token
+* _WORD_: the found token
+* _ENTITY_: the token-type the found token was sorted into.
+* _SCORE_: the confidence with which the label was predicted
+
+In case the model returns an empty result for an input row, the row is dropped entirely 
+and not part of the result set.
+
+Example Output:
+
+| TEXT_DATA     | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+|---------------|-----------|---------|------|--------|-------| ------------- |
+| This is text. | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...       | ...     | ...  | ..     | ...   | ...           |
+
+
+
 ### AI Extract Extended
 
-The main goal of this UDF is to find tokens in a given text, and assign a label to found tokens.
+The main goal of this UDF is to find tokens in a given text, 
+and assign a label to found tokens. This works similar to "AI_EXTRACT_ENTITIES", 
+but allows you to select the model used for prediction, as well as configure the 
+used aggregation strategy.
 
 There are two popular subtasks of token classification:
 
@@ -325,10 +372,10 @@ In case the model returns an empty result for an input row, the row is dropped e
 
 Example Output:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
-| ------------- |---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
-| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
-| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+| ------------- |---------|------------|---------------|----------------------|-----------|---------|------|--------|-------| ------------- |
+| conn_name     | dir/    | model_name | This is text. | simple               | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...     | ...        | ...           | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
 ### AI Translate Extended
 
@@ -371,9 +418,43 @@ Example Output:
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
-### AI Classify Extended
+### AI Classify
 
 This UDF classifies the input text into classes defined by the user. 
+The provided classes do not have to be known during the original model training.
+
+The UDF takes candidate labels as a comma-separated string and generates probability 
+scores for each predicted label.
+
+```sql
+SELECT AI_CLASSIFY(
+    text_data,
+    candidate_labels,
+)
+```
+
+Parameters
+* `text_data`: The text to be classified.
+* `candidate_labels`: A list of comma-separated labels, e.g. `label1,label2,label3`. Only these labels will be used in the prediction.
+
+Additional output columns
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with witch the label was assigned
+
+Example Output:
+
+| TEXT_DATA  | CANDIDATE LABELS | LABEL  | SCORE | ERROR_MESSAGE |
+|------------|------------------|--------|-------|---------------|
+| text       | label1,label2..  | label1 | 0.75  | None          |
+| other text | label1,label2..  | label2 | 0.70  | None          |
+| ...        | ...              | ...    | ...   | ...           |
+
+
+### AI Classify Extended
+
+This UDF classifies the input text into classes defined by the user, 
+similar to "AI_CLASSIFY". However, this UDF allows you to select which model 
+to use for the predictions, and can also return multiple results per input.
 The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.

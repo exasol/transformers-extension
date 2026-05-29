@@ -28,6 +28,18 @@ DEFAULT_MODEL_SPECS = {
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
+    "AiClassifyUDF": model_spec_factory.create(
+        model_name="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
+        task_type="zero-shot-classification",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
+    "AiExtractEntitiesUDF": model_spec_factory.create(
+        model_name="dslim/bert-base-NER",
+        task_type="token-classification",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
     "model_for_another_udf": model_spec_factory.create(
         model_name="prajjwal1/bert-tiny",
         task_type="different_task",

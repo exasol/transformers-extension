@@ -37,7 +37,7 @@ class AiSentimentUDF(BaseModelUDF):
 
     Needs to have "text_data" in the input.
 
-    other input will be pulled from default values.
+    Other input will be pulled from default values.
 
     Will output to "label", "score".
     """

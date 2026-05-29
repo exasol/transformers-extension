@@ -6,6 +6,9 @@ from typing import Tuple
 import pytest
 from pyexasol import ExaConnection
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
 from exasol_transformers_extension.deployment.scripts_deployer import ScriptsDeployer
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
@@ -51,6 +54,7 @@ def setup_database(
         time.sleep(30)
 
     bucketfs_connection_factory(BUCKETFS_CONNECTION_NAME, PATH_IN_BUCKET)
+    bucketfs_connection_factory(DEFAULT_BUCKETFS_CONN_NAME, PATH_IN_BUCKET)
     _deploy_scripts(pyexasol_connection, install_all_scripts=True)
     return BUCKETFS_CONNECTION_NAME, SCHEMA_NAME
 

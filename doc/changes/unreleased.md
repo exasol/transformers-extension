@@ -27,6 +27,7 @@ Code name: T.B.D
  * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
  * #381: Added Transformation for removing columns from DataFrame
  * #353: Added "AI_SENTIMENT" UDF
+ * #390: Added "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES" UDF's
 
 ## Security
 
@@ -34,6 +35,7 @@ Code name: T.B.D
 * Updated exasol-script-languages-container-tool (3.4.1 -> 3.5.0)
 * Updated exasol-saas-api (2.3.0 -> 2.6.0)
 * #376: Fixed vulnerabilities by updating dependencies
+* #386: Fixed vulnerabilities by updating dependencies
 
 This release fixes vulnerabilities by updating dependencies:
 

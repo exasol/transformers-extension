@@ -21,7 +21,7 @@ def test_ai_extract_extended_script_without_spans(
     bucketfs_conn_name, _ = setup_database
     aggregation_strategy, n_rows, text_data = setup_common_input_data()
     input_data = []
-    for i in range(n_rows):
+    for _ in range(n_rows):
         input_data.append(
             (
                 "",
@@ -55,9 +55,6 @@ def test_ai_extract_extended_script_without_spans(
     assert_correct_number_of_results_multiple_results_per_input(
         6, 1, input_data[0], result, n_rows
     )
-
-    # lenient test for quality of results, will be replaced by deterministic test later
-    results = [[result[i][7], result[i][8]] for i in range(len(result))]
 
     # lenient test for quality of results, will be replaced by deterministic test later
     acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
