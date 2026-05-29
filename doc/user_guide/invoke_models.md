@@ -293,8 +293,6 @@ Example Output:
 
 This UDF finds tokens in a given text, and assigns a label to found tokens.
 
-There are two popular subtasks of token classification:
-
 It uses the "simple" aggregation strategy.
 
 
