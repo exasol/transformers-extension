@@ -1,5 +1,5 @@
 """
-Task logic for using the "translation" transformers task in a prediction udf.
+Task logic for using the "text-generation" transformers task in a prediction udf.
 """
 
 from collections.abc import Iterator
@@ -19,7 +19,8 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
 
 class TranslatePredictionTask(PredictionTask):
     """
-    Task logic for using the "translation" transformers task in a prediction udf.
+    Task logic for using the "text-generation"transformers task in
+    a prediction udf in order to translate text.
     """
 
     def __init__(
@@ -28,9 +29,9 @@ class TranslatePredictionTask(PredictionTask):
     ):
         super().__init__()
         self.last_created_pipeline = None
-        self.task_type = "translation"
+        self.task_type = "text-generation"
         self._desired_fields_in_prediction = desired_fields_in_prediction
-        self._translation_prefix = "translate {src_lang} to {target_lang}: "
+        self._translation_prefix = "Translate the following text from {src_lang} to {target_lang}: "
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
@@ -67,8 +68,17 @@ class TranslatePredictionTask(PredictionTask):
 
         text_data = list(translation_prefix + model_df["text_data"].astype(str))
         max_new_tokens = int(model_df["max_new_tokens"].iloc[0])
+        print(text_data)
+        results = self.last_created_pipeline(text_data,
+                                             max_new_tokens=max_new_tokens,
+                                             return_full_text=False,
+                                             )
+        #  Batch prediction returns list of list while single prediction just
+        #  return a list. In case of batch predictions, we need to flatten
+        #  2D prediction results to 1D list todo needed?
+        print(results)
+        results = sum(results, []) if isinstance((results[0]), list) else results
 
-        results = self.last_created_pipeline(text_data, max_new_tokens=max_new_tokens)
         return results
 
     def append_predictions_to_input_dataframe(
@@ -102,7 +112,10 @@ class TranslatePredictionTask(PredictionTask):
         """
         results_df_list = []
         for result in predictions:
-            result_df = pd.DataFrame([result])
-            results_df_list.append(result_df)
+            results_df_list.append(
+                pd.DataFrame(
+                    data=[result["generated_text"]], columns=["translation_text"]
+                )
+            )
 
         return results_df_list

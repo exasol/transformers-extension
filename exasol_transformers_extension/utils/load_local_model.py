@@ -86,7 +86,6 @@ class LoadLocalModel:
                 model=loaded_model,
                 tokenizer=loaded_tokenizer,
                 device=self.device,
-                framework="pt",
             )
             self.last_model_loaded_successfully = True
             return last_created_pipeline
