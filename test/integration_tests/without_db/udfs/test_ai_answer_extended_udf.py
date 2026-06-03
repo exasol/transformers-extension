@@ -85,10 +85,15 @@ def test_ai_answer_extended_udf(
     sequence_classifier.run(ctx)
 
     result_dfs = ctx.get_emitted()
+
     result_df = pd.concat(result_dfs)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+        print(result_df)
+    print(result_df["answer"][0])
     new_columns = ["answer", "score", "rank", "error_message"]
 
     result = Result(result_df)
+
     assert (
         result == ScoreMatcher()
         and result == RankDTypeMatcher()

@@ -43,7 +43,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         exa,
         batch_size=100,
         pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForQuestionAnswering,
+        base_model=transformers.AutoModelForCausalLM,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=AnswerPredictionTask(
             desired_fields_in_prediction=["answer", "score"],

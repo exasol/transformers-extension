@@ -37,9 +37,9 @@ model_params = ModelParams(
     base_model_specs=ModelSpecification(
         "bert-base-uncased", "need to set this task_type"
     ),
-    translation_model_specs=ModelSpecification("facebook/xglm-564M", "text-generation"),
+    translation_model_specs=ModelSpecification("Qwen/Qwen3.5-0.8B", "translation"),
     q_a_model_specs=ModelSpecification(
-        "deepset/tinybert-6l-768d-squad2", "question-answering"
+        "Qwen/Qwen3.5-0.8B", "text-generation"
     ),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),

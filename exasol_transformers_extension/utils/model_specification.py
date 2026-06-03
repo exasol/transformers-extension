@@ -15,7 +15,6 @@ class ModelTypeData:
         "fill-mask": transformers.AutoModelForMaskedLM,
         "zero-shot-classification": transformers.AutoModelForSequenceClassification,
         "text-classification": transformers.AutoModelForSequenceClassification,
-        "question-answering": transformers.AutoModelForQuestionAnswering,
         "text-generation": transformers.AutoModelForCausalLM,
         "token-classification": transformers.AutoModelForTokenClassification,
     }
