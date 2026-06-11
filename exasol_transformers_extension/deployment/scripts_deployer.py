@@ -85,7 +85,7 @@ class ScriptsDeployer:
             install_scripts_constants.append(work_without_spans_constants)
         return install_scripts_constants
 
-    def write_create_sql_script(self):#todo wich udfs do we want to deploy with this script?
+    def write_create_sql_script(self, script_path):#todo wich udfs do we want to deploy with this script?
         install_scripts_constants = self._get_constant_set()
         querys = {}
 
@@ -93,7 +93,7 @@ class ScriptsDeployer:
             querys = querys | self._make_script_deployment_querys(constant_set)
 
         print(os.path)
-        with open("./create_script.sql", "w") as create_script:#todo path
+        with open(script_path, "w") as create_script:#todo path
             create_script.write("-- this script is created automatically. Call 'write_create_script' if you need to update it.\n\n")
 
             for query in querys.values():
