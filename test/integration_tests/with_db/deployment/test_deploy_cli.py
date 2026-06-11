@@ -78,7 +78,7 @@ def test_deploy_cli(
             )
 
             # check if DEFAULT_BUCKETFS_CONN_NAME was created
-            run_model_upload_test( # todo this also tests if connection works, but is slower. which do we prefer?
+            run_model_upload_test(  # todo this also tests if connection works, but is slower. which do we prefer?
                 bucketfs_cli_args,
                 db_conn,
                 bfs_path,

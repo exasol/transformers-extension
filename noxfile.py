@@ -1,12 +1,8 @@
 """Nox tasks for starting the test-db and integration tests"""
 
+import subprocess
 import sys
 from pathlib import Path
-
-import subprocess
-from noxconfig import (
-    PROJECT_CONFIG,
-)
 
 import nox
 from exasol.toolbox.nox._shared import (
@@ -20,8 +16,12 @@ from nox import Session
 from exasol_transformers_extension.deployment.language_container import (
     language_container_factory,
 )
-from exasol_transformers_extension.deployment.write_create_script import write_create_script
-from noxconfig import PROJECT_CONFIG
+from exasol_transformers_extension.deployment.write_create_script import (
+    write_create_script,
+)
+from noxconfig import (
+    PROJECT_CONFIG,
+)
 
 sys.path += [str(Path().parent.absolute())]
 ROOT_PATH = Path(__file__).parent
@@ -167,6 +167,7 @@ def fmt_check(session: Session) -> None:
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
     _code_format(session=session, mode=Mode.Check, files=py_files)
 
+
 def _git_create_script_up_to_date() -> int:
     """
     Check if "deployment/create_script.sql" needs to be changed and return the exit code of command git diff.
@@ -184,7 +185,13 @@ def _git_create_script_up_to_date() -> int:
         capture_output=True,
     )  # nosec: B603, B607 - fixed git command; PATH lookup and args are trusted here
     print(p.stdout.decode())
-    return False if "M exasol_transformers_extension/deployment/create_script.sql" in p.stdout.decode() else True
+    return (
+        False
+        if "M exasol_transformers_extension/deployment/create_script.sql"
+        in p.stdout.decode()
+        else True
+    )
+
 
 @nox.session(name="create_script:updated", python=False)
 def updated(_session: Session) -> None:
@@ -194,5 +201,6 @@ def updated(_session: Session) -> None:
         print(
             "create_script changes when running write_create_script.\n"
             "Please run write_create_script and commit the resulting changes!"
+            "(if you run 'nox -s format:fix' this gets fixed automatically)"
         )
         sys.exit(1)
