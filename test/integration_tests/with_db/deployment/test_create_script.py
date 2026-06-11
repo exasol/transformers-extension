@@ -1,16 +1,18 @@
+from pathlib import Path
 from test.utils.db_queries import expected_script_list_all
 
 
 def test_create_script(setup_database, db_conn):
-    """
-    This test performs an installation of the extension.
-    It then runs the model upload test to verify that the installation
-    has brought the system into a ready-to-use state.
-    """
-
     expected_scripts = expected_script_list_all
 
-    with open("./create_script.sql", "w") as create_script:  # todo path
+    # make sure we start out without scripts installed
+    for script_name in expected_scripts:
+        db_conn.execute(f"DROP SCRIPT {script_name};")
+
+    root_dir = Path(__file__).resolve().parent.parent.parent.parent
+    script_path = root_dir / "deployment/create_script.sql"
+
+    with open(script_path, "w") as create_script:
         query = create_script.read()
 
     result = db_conn.execute(query).fetchall()
