@@ -72,15 +72,23 @@ def test_deploy_cli(
             bfs_path = bfs.path.build_path(
                 **backend_aware_bucketfs_params, path=PATH_IN_BUCKET
             )
+
             run_model_upload_test(
                 bucketfs_cli_args, db_conn, bfs_path, BUCKETFS_CONN_NAME
             )
 
             # check if DEFAULT_BUCKETFS_CONN_NAME was created
-            run_model_upload_test(
+            run_model_upload_test( # todo this also tests if connection works, but is slower. which do we prefer?
                 bucketfs_cli_args,
                 db_conn,
                 bfs_path,
                 DEFAULT_BUCKETFS_CONN_NAME,
                 sub_dir=DEFAULT_SUBDIR,
             )
+
+            # check if DEFAULT_BUCKETFS_CONN_NAME was created #todo this version only checks if connection exists
+            list_conns_query = """SELECT CONNECTION_NAME \
+                                  FROM EXA_ALL_CONNECTIONS"""
+            result = db_conn.execute(list_conns_query).fetchall()
+            assert DEFAULT_BUCKETFS_CONN_NAME in result
+            assert BUCKETFS_CONN_NAME in result

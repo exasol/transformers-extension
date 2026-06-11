@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 
 import pyexasol
 from exasol.python_extension_common.connections.pyexasol_connection import (
@@ -27,7 +28,7 @@ class ScriptsDeployer:
         self,
         language_alias: str,
         schema: str,
-        pyexasol_conn: pyexasol.ExaConnection,
+        pyexasol_conn: pyexasol.ExaConnection|None,
         use_spans: bool = False,
         install_all_scripts: bool = False,
     ):
@@ -58,9 +59,8 @@ class ScriptsDeployer:
         self._set_current_schema(self._schema)
         logger.info("Schema %s is opened.", self._schema)
 
-    def _deploy_udf_scripts_from_constants(
-        self, constants_set: InstallScriptsConstants
-    ) -> None:
+    def _make_script_deployment_querys(self, constants_set: InstallScriptsConstants):
+        querys = {}
         for udf_call_src, template_src in constants_set.udf_callers_templates.items():
             udf_content = constants_set.udf_callers_dir.joinpath(
                 udf_call_src
@@ -74,10 +74,43 @@ class ScriptsDeployer:
                 work_with_spans=self._use_spans,
                 install_all_scripts=self._install_all_scripts,
             )
+            querys[template_src] = udf_query
+        return querys
 
-            self._pyexasol_conn.execute(udf_query)
+    def _get_constant_set(self) -> list[InstallScriptsConstants]:
+        install_scripts_constants = [constants]
+        if self._use_spans or self._install_all_scripts:
+            install_scripts_constants.append(work_with_spans_constants)
+        if self._install_all_scripts or not self._use_spans:
+            install_scripts_constants.append(work_without_spans_constants)
+        return install_scripts_constants
+
+    def write_create_sql_script(self):#todo wich udfs do we want to deploy with this script?
+        install_scripts_constants = self._get_constant_set()
+        querys = {}
+
+        for constant_set in install_scripts_constants:
+            querys = querys | self._make_script_deployment_querys(constant_set)
+
+        print(os.path)
+        with open("./create_script.sql", "w") as create_script:#todo path
+            create_script.write("-- this script is created automatically. Call 'write_create_script' if you need to update it.\n\n")
+
+            for query in querys.values():
+                # Write the new data to the file
+                create_script.write(query)
+                create_script.write("\n")
+
+
+    def _deploy_udf_scripts_from_constants(
+        self, constants_set: InstallScriptsConstants
+    ) -> None:
+        querys = self._make_script_deployment_querys(constants_set)
+
+        for query_key in querys:
+            self._pyexasol_conn.execute(querys[query_key])
             logger.debug(
-                "The UDF statement of the template %s is executed.", template_src
+                "The UDF statement of the template %s is executed.", query_key
             )
 
     def _deploy_udf_scripts(self) -> None:
@@ -87,11 +120,7 @@ class ScriptsDeployer:
         but setting install_all_scripts to true overrides this and installs all.
          This can be useful for testing.
         """
-        install_scripts_constants = [constants]
-        if self._use_spans or self._install_all_scripts:
-            install_scripts_constants.append(work_with_spans_constants)
-        if self._install_all_scripts or not self._use_spans:
-            install_scripts_constants.append(work_without_spans_constants)
+        install_scripts_constants = self._get_constant_set()
         for constant_set in install_scripts_constants:
             self._deploy_udf_scripts_from_constants(constant_set)
 
