@@ -56,44 +56,6 @@ def run(ctx):
 
 /
 
-CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_CUSTOM_CLASSIFY_EXTENDED"(
-    device_id INTEGER,
-    bucketfs_conn VARCHAR(2000000),
-    sub_dir VARCHAR(2000000),
-    model_name VARCHAR(2000000),
-    text_data VARCHAR(2000000),
-    return_ranks VARCHAR(2000000)
-    ORDER BY model_name ASC,bucketfs_conn ASC,sub_dir ASC
-)EMITS (
-    bucketfs_conn VARCHAR(2000000),
-    sub_dir VARCHAR(2000000),
-    model_name VARCHAR(2000000),
-    text_data VARCHAR(2000000),
-    return_ranks VARCHAR(2000000),
-    label VARCHAR(2000000),
-    score DOUBLE,
-    rank INTEGER,
-    error_message VARCHAR(2000000) ) AS
-
-"""
-Caller for AiCustomClassifyUDF
-"""
-
-from exasol_transformers_extension.udfs.models.ai_custom_classify_extended_udf import (
-    AiCustomClassifyUDF,
-)
-
-udf = AiCustomClassifyUDF(exa)
-
-
-def run(ctx):
-    """
-    run function for AiCustomClassifyUDF
-    """
-    return udf.run(ctx)
-
-
-/
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ENTAILMENT_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
