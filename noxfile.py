@@ -183,13 +183,14 @@ def _git_create_script_up_to_date() -> int:
         ],
         capture_output=True,
     )  # nosec: B603, B607 - fixed git command; PATH lookup and args are trusted here
+    print(p.stdout.decode())
     return False if "M exasol_transformers_extension/deployment/create_script.sql" in p.stdout.decode() else True
 
 @nox.session(name="create_script:updated", python=False)
 def updated(_session: Session) -> None:
     """Checks if the create_script needs to be updated"""
     write_create_script()
-    if _git_create_script_up_to_date():
+    if not _git_create_script_up_to_date():
         print(
             "create_script changes when running write_create_script.\n"
             "Please run write_create_script and commit the resulting changes!"
