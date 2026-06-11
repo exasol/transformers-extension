@@ -1,9 +1,7 @@
 from test.utils.db_queries import expected_script_list_all
 
 
-def test_create_script(
-    setup_database, db_conn
-):
+def test_create_script(setup_database, db_conn):
     """
     This test performs an installation of the extension.
     It then runs the model upload test to verify that the installation
@@ -18,7 +16,9 @@ def test_create_script(
     result = db_conn.execute(query).fetchall()
     assert result.exit_code == 0
 
-    list_scripts_query = """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS WHERE SCRIPT_LANGUAGE=PYTHON3_TE"""
+    list_scripts_query = (
+        """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS WHERE SCRIPT_LANGUAGE=PYTHON3_TE"""
+    )
     result = db_conn.execute(list_scripts_query).fetchall()
 
     assert result.exit_code == 0

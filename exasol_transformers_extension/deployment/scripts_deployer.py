@@ -28,7 +28,7 @@ class ScriptsDeployer:
         self,
         language_alias: str,
         schema: str,
-        pyexasol_conn: pyexasol.ExaConnection|None,
+        pyexasol_conn: pyexasol.ExaConnection | None,
         use_spans: bool = False,
         install_all_scripts: bool = False,
     ):
@@ -85,7 +85,9 @@ class ScriptsDeployer:
             install_scripts_constants.append(work_without_spans_constants)
         return install_scripts_constants
 
-    def write_create_sql_script(self, script_path):#todo wich udfs do we want to deploy with this script?
+    def write_create_sql_script(
+        self, script_path
+    ):  # todo wich udfs do we want to deploy with this script?
         install_scripts_constants = self._get_constant_set()
         querys = {}
 
@@ -93,14 +95,15 @@ class ScriptsDeployer:
             querys = querys | self._make_script_deployment_querys(constant_set)
 
         print(os.path)
-        with open(script_path, "w") as create_script:#todo path
-            create_script.write("-- this script is created automatically. Call 'write_create_script' if you need to update it.\n\n")
+        with open(script_path, "w") as create_script:  # todo path
+            create_script.write(
+                "-- this script is created automatically. Call 'write_create_script' if you need to update it.\n\n"
+            )
 
             for query in querys.values():
                 # Write the new data to the file
                 create_script.write(query)
                 create_script.write("\n")
-
 
     def _deploy_udf_scripts_from_constants(
         self, constants_set: InstallScriptsConstants
@@ -109,9 +112,7 @@ class ScriptsDeployer:
 
         for query_key in querys:
             self._pyexasol_conn.execute(querys[query_key])
-            logger.debug(
-                "The UDF statement of the template %s is executed.", query_key
-            )
+            logger.debug("The UDF statement of the template %s is executed.", query_key)
 
     def _deploy_udf_scripts(self) -> None:
         """
