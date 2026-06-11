@@ -28,6 +28,7 @@ Code name: T.B.D
  * #381: Added Transformation for removing columns from DataFrame
  * #353: Added "AI_SENTIMENT" UDF
  * #390: Added "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES" UDF's
+ * #391: Added sql create_script to create all UDF's in Database.
 
 ## Security
 

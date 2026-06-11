@@ -73,6 +73,9 @@ been defined. We created separate UDF scripts for each NLP task. You can find
 these tasks and UDF script usage details in the [User Guide](../user_guide/invoke_models.md).
 This section shows you step by step how to add a new NLP task to this library.
 
+** Note: ** After you finish adding you UDF, please run the "write_create_script" 
+function to generate an updated version of the create_script.
+
 ### 1. Add a UDF Template
 The new task's UDF template should be added to the `exasol_transformers_extension/resources/templates/`
 directory. Please pay attention that the UDF script is uses _"SET UDF"_  and the inputs
