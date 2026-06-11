@@ -167,7 +167,7 @@ def fmt_check(session: Session) -> None:
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
     _code_format(session=session, mode=Mode.Check, files=py_files)
 
-def _git_diff_changes_create_script() -> int:
+def _git_create_script_up_to_date() -> int:
     """
     Check if "deployment/create_script.sql" needs to be changed and return the exit code of command git diff.
     The exit code is 0 if there are no changes.
@@ -175,20 +175,21 @@ def _git_diff_changes_create_script() -> int:
     p = subprocess.run(
         [
             "git",
-            "diff",
-            "--quiet",
+            "status",
+            "--porcelain",
+            "-uno",
             "--",
             PROJECT_CONFIG.source_code_path / "deployment/create_script.sql",
         ],
         capture_output=True,
     )  # nosec: B603, B607 - fixed git command; PATH lookup and args are trusted here
-    return p.returncode
+    return False if "M exasol_transformers_extension/deployment/create_script.sql" in p.stdout.decode() else True
 
 @nox.session(name="create_script:updated", python=False)
 def updated(_session: Session) -> None:
     """Checks if the create_script needs to be updated"""
     write_create_script()
-    if _git_diff_changes_create_script() != 0:
+    if _git_create_script_up_to_date():
         print(
             "create_script changes when running write_create_script.\n"
             "Please run write_create_script and commit the resulting changes!"
