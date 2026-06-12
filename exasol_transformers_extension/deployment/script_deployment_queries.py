@@ -69,7 +69,7 @@ class ScriptDeploymentQueries:
         for constant_set in install_scripts_constants:
             queries = queries | self.make_script_deployment_queries(constant_set)
 
-        with open(script_path, "w") as create_script:
+        with open(script_path, "w+") as create_script:
             create_script.write(
                 "-- this script is created automatically. Call 'write_create_script' if you need to update it.\n\n"
             )
