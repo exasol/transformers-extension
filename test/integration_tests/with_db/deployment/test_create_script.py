@@ -16,7 +16,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp("test_create_script")
     script_path = write_create_script(root_dir=tmpdir)
 
-    with open(script_path, "w") as create_script:
+    with open(script_path, "r") as create_script:
         query = create_script.read()
 
     result = db_conn.execute(query).fetchall()
