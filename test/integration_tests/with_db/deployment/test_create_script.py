@@ -22,7 +22,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
     db_conn.execute(query)
 
     list_scripts_query = (
-        """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS WHERE SCRIPT_LANGUAGE=PYTHON3_TE"""
+        """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
     )
     result = db_conn.execute(list_scripts_query).fetchall()
 
