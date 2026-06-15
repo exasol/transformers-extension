@@ -13,7 +13,7 @@ from exasol_transformers_extension.deployment.scripts_deployer import ScriptsDep
 
 BUCKETFS_CONNECTION_NAME = "TEST_TE_BFS_CONNECTION"
 SCHEMA_NAME = "TEST_INTEGRATION"
-LANGUAGE_ALIAS = "TEST_PYTHON3_TE"
+LANGUAGE_ALIAS = "PYTHON3_TE"
 
 
 def _deploy_scripts(
