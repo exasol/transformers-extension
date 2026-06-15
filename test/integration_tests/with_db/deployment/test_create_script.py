@@ -19,8 +19,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
     with open(script_path, "r") as create_script:
         query = create_script.read()
 
-    result = db_conn.execute(query).fetchall()
-    assert result.exit_code == 0
+    db_conn.execute(query)
 
     list_scripts_query = (
         """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS WHERE SCRIPT_LANGUAGE=PYTHON3_TE"""
