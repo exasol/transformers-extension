@@ -25,7 +25,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
         """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
     )
     result = db_conn.execute(list_scripts_query).fetchall()
+    print(result)
 
-    assert result.exit_code == 0
     # verify all expected scripts are known by the database
     assert set(expected_scripts).issubset(set(result))
