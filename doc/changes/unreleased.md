@@ -69,6 +69,7 @@ This release fixes vulnerabilities by updating dependencies:
 
 * #204: Split the user_guide into multiple files
 * #253, #341, #342: Fixed links and improved parameter description in user guide
+* #363: Added documentation for installing default models.
 
 ## Refactorings
 
