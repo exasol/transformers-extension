@@ -24,7 +24,7 @@ from exasol_transformers_extension.udfs.models.model_downloader_udf import (
     ModelDownloaderUDF,
 )
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 
 
@@ -71,7 +71,7 @@ class TestEnvironmentSetup:
     def __init__(self, id: str, tmp_dir: Path, token_conn_name: str):
         self.bucketfs_conn_name = "bucketfs_connection" + id
         self.sub_dir = model_params.sub_dir + id
-        current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+        current_model_specs = get_bucket_fs_model_specification_from_model_specs(
             model_params.tiny_model_specs, self.bucketfs_conn_name, Path(self.sub_dir)
         )
         self.token_conn_name = token_conn_name

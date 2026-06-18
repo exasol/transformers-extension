@@ -1,15 +1,24 @@
 """Class LoadLocalModel for loading locally saved models and tokenizers."""
 
+import traceback
+
 import torch
 import transformers.pipelines
 
-from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils import (
+    bucketfs_operations,
+    device_management,
+)
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
 from exasol_transformers_extension.utils.model_factory_protocol import (
     ModelFactoryProtocol,
 )
+
+
+class ModelLoadError(Exception):
+    """Exception raised when we fail to load a Model."""
 
 
 class LoadLocalModel:
@@ -40,7 +49,6 @@ class LoadLocalModel:
         self._current_model_specification = None
         self._bucketfs_model_cache_dir = None
         self.last_model_loaded_successfully = None
-        self.model_load_error = None
 
     @property
     def current_model_specification(self):
@@ -53,6 +61,10 @@ class LoadLocalModel:
         """Set the current_model_specification."""
         self._current_model_specification = current_model_specification
 
+    def set_current_device(self, current_device_id: int) -> None:
+        """Set the current_device_id."""
+        self.device = device_management.get_torch_device(current_device_id)
+
     def load_models(self) -> transformers.pipelines.Pipeline:
         """
         Loads a locally saved model and tokenizer from model_path.
@@ -61,23 +73,27 @@ class LoadLocalModel:
         :param model_path:            Location of the saved model and tokenizer
         :param current_model_key:     Key of the model to be loaded
         """
+        try:
+            loaded_model = self._base_model_factory.from_pretrained(
+                str(self._bucketfs_model_cache_dir)
+            )
+            loaded_tokenizer = self._tokenizer_factory.from_pretrained(
+                str(self._bucketfs_model_cache_dir)
+            )
 
-        loaded_model = self._base_model_factory.from_pretrained(
-            str(self._bucketfs_model_cache_dir)
-        )
-        loaded_tokenizer = self._tokenizer_factory.from_pretrained(
-            str(self._bucketfs_model_cache_dir)
-        )
-
-        last_created_pipeline = self.pipeline_factory(
-            task=self.task_type,
-            model=loaded_model,
-            tokenizer=loaded_tokenizer,
-            device=self.device,
-            framework="pt",
-        )
-        self.last_model_loaded_successfully = True
-        return last_created_pipeline
+            last_created_pipeline = self.pipeline_factory(
+                task=self.task_type,
+                model=loaded_model,
+                tokenizer=loaded_tokenizer,
+                device=self.device,
+                framework="pt",
+            )
+            self.last_model_loaded_successfully = True
+            return last_created_pipeline
+        except Exception as e:
+            self.last_model_loaded_successfully = False
+            stack_trace = traceback.format_exc()
+            raise ModelLoadError(f"Model loading failed with : {stack_trace}") from e
 
     def set_bucketfs_model_cache_dir(self, bucketfs_location) -> None:
         """

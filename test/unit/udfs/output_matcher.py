@@ -75,7 +75,7 @@ class OutputMatcher:
         """Checks weather two rows are equal"""
         if not self.error_exists(expected_row):
             return expected_row == actual_row
-
-        return self.error_message(expected_row) in self.error_message(
-            actual_row
-        ) and self.input_columns(expected_row) == self.input_columns(actual_row)
+        return (
+            self.error_message(expected_row) in self.error_message(actual_row)
+            and expected_row[0:-2] == actual_row[0:-2]
+        )

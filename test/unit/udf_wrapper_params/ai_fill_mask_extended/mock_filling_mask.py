@@ -2,13 +2,6 @@ from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_fill_mask_extended.mock_sequence_tokenizer import (
     MockSequenceTokenizer,
 )
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
 
 
 class MockFillingMaskModel:
@@ -53,7 +46,7 @@ class MockPipeline:
 
     def __call__(
         self, text_data: list[str], top_k: int
-    ) -> list[dict[str, Union[str, float]]]:
+    ) -> list[dict[str, str | float]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 

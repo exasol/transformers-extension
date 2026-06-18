@@ -4,9 +4,6 @@ from test.unit.utils.utils_for_udf_tests import (
     create_mock_udf_context,
 )
 from test.utils.matchers import AnyOrder
-from typing import (
-    Union,
-)
 from unittest.mock import (
     MagicMock,
     Mock,

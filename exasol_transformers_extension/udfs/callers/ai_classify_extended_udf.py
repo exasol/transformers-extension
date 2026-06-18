@@ -1,9 +1,16 @@
+"""
+Caller for AiClassifyExtendedUDF
+"""
+
 from exasol_transformers_extension.udfs.models.ai_classify_extended_udf import (
-    AiClassifyExtendeUDF,
+    AiClassifyExtendedUDF,
 )
 
-udf = AiClassifyExtendeUDF(exa)
+udf = AiClassifyExtendedUDF(exa)
 
 
 def run(ctx):
+    """
+    run function for AiClassifyExtendedUDF
+    """
     return udf.run(ctx)

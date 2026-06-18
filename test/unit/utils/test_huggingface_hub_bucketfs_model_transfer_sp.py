@@ -1,7 +1,6 @@
 from pathlib import Path
 from test.utils.mock_cast import mock_cast
 from test.utils.parameters import model_params
-from typing import Union
 from unittest.mock import (
     MagicMock,
     call,
@@ -30,19 +29,19 @@ class TestSetup:
     __test__ = False
 
     def __init__(self):
-        self.bucketfs_location_mock: Union[bfs.path.PathLike, MagicMock] = (
-            create_autospec(bfs.path.PathLike)
+        self.bucketfs_location_mock: bfs.path.PathLike | MagicMock = create_autospec(
+            bfs.path.PathLike
         )
-        self.model_factory_mock: Union[ModelFactoryProtocol, MagicMock] = (
-            create_autospec(ModelFactoryProtocol)
+        self.model_factory_mock: ModelFactoryProtocol | MagicMock = create_autospec(
+            ModelFactoryProtocol
         )
-        self.temporary_directory_factory_mock: Union[
-            TemporaryDirectoryFactory, MagicMock
-        ] = create_autospec(TemporaryDirectoryFactory)
-        self.bucketfs_model_uploader_factory_mock: Union[
-            BucketFSModelUploaderFactory, MagicMock
-        ] = create_autospec(BucketFSModelUploaderFactory)
-        self.bucketfs_model_uploader_mock: Union[BucketFSModelUploader, MagicMock] = (
+        self.temporary_directory_factory_mock: TemporaryDirectoryFactory | MagicMock = (
+            create_autospec(TemporaryDirectoryFactory)
+        )
+        self.bucketfs_model_uploader_factory_mock: (
+            BucketFSModelUploaderFactory | MagicMock
+        ) = create_autospec(BucketFSModelUploaderFactory)
+        self.bucketfs_model_uploader_mock: BucketFSModelUploader | MagicMock = (
             create_autospec(BucketFSModelUploader)
         )
         mock_cast(self.bucketfs_model_uploader_factory_mock.create).side_effect = [

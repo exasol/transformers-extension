@@ -30,7 +30,7 @@ def test_ai_custom_classify_extended_script(
     n_rows = 100
 
     input_data = []
-    for i in range(n_rows):
+    for _ in range(n_rows):
         input_data.append(
             (
                 "",

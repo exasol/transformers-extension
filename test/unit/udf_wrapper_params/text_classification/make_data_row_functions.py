@@ -1,6 +1,5 @@
 # default values, used for input/output rows if no other params are given
 from dataclasses import dataclass
-from typing import Union
 
 device_id = None
 bucketfs_conn = "bfs_conn"
@@ -13,9 +12,9 @@ text_data_2 = "My test text 2"
 
 @dataclass
 class LabelScore:
-    label: Union[str, None]
-    score: Union[float, None]
-    rank: Union[int, None]
+    label: str | None
+    score: float | None
+    rank: int | None
 
 
 @dataclass

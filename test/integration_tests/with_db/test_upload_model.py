@@ -22,7 +22,7 @@ from exasol_transformers_extension.upload_model import (
     upload_model_command,
 )
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 
 
@@ -42,11 +42,11 @@ def run_model_upload_test(
     db_conn: pyexasol.ExaConnection,
     bucketfs_location: bfs.path.PathLike,
     bucketfs_conn_name: str,
+    sub_dir: str = "sub_dir",
 ):
-    sub_dir = "sub_dir"
     model_specification = model_params.fill_model_specs
     model_name = model_specification.model_name
-    current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    current_model_specs = get_bucket_fs_model_specification_from_model_specs(
         model_specification, "", Path(sub_dir)
     )
     upload_path = current_model_specs.get_bucketfs_model_save_path()
@@ -57,7 +57,7 @@ def run_model_upload_test(
             get_cli_arg(StdParams.path_in_bucket, str(bucketfs_location)),
             get_cli_arg(MODEL_NAME_ARG, model_name),
             get_cli_arg(SUBDIR_ARG, sub_dir),
-            get_cli_arg(TASK_TYPE_ARG, "fill-mask"),
+            get_cli_arg(TASK_TYPE_ARG, "fill-mask"),#todo  "ai_fill_mask_extended"?
         ]
     )
 

@@ -1,1 +1,22 @@
-poetry.lock linguist-generated=true
+/poetry.lock                                                       linguist-generated
+/.github/workflows/build-and-publish.yml                           linguist-generated
+/.github/workflows/cd.yml                                          linguist-generated
+/.github/workflows/check-release-tag.yml                           linguist-generated
+/.github/workflows/checks.yml                                      linguist-generated
+/.github/workflows/ci.yml                                          linguist-generated
+/.github/workflows/gh-pages.yml                                    linguist-generated
+/.github/workflows/matrix-all.yml                                  linguist-generated
+/.github/workflows/matrix-exasol.yml                               linguist-generated
+/.github/workflows/matrix-python.yml                               linguist-generated
+/.github/workflows/release_droid_upload_github_release_assets.yml  linguist-generated
+/.github/workflows/report.yml                                      linguist-generated
+/.github/workflows/pr-merge.yml                                    linguist-generated
+
+# manual changes in the following files
+
+# /.github/workflows/merge-gate.yml
+# /.github/workflows/onprem-integration-tests.yml
+# /.github/workflows/saas-integration-tests.yml
+# /.github/workflows/slow-checks.yml
+# /.github/workflows/test_pip_install.yaml
+# /.github/workflows/without-db-integration-tests.yml

@@ -1,5 +1,3 @@
-from typing import Union
-
 import exasol.python_extension_common.connections.bucketfs_location as bfs_loc
 import transformers
 
@@ -8,9 +6,6 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 )
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSPFactory,
-)
-from exasol_transformers_extension.utils.model_factory_protocol import (
-    ModelFactoryProtocol,
 )
 
 

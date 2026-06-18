@@ -3,17 +3,12 @@ from test.unit.utils.utils_for_udf_tests import (
     create_mock_exa_environment_with_token_con,
     create_mock_udf_context,
 )
-from test.utils.matchers import AnyOrder
 from test.utils.mock_cast import mock_cast
-from typing import (
-    Union,
-)
 from unittest.mock import (
     MagicMock,
     Mock,
     call,
     create_autospec,
-    patch,
 )
 
 import pytest
@@ -112,9 +107,9 @@ def test_model_downloader(
         mock_cast(
             mock_bucketfs_model_specs[i].get_bucketfs_model_save_path
         ).side_effect = [f"{sub_directory_names[i]}/{base_model_names[i]}"]
-    mock_current_model_specification_factory: Union[
-        BucketFSModelSpecificationFactory, MagicMock
-    ] = create_autospec(BucketFSModelSpecificationFactory)
+    mock_current_model_specification_factory: (
+        BucketFSModelSpecificationFactory | MagicMock
+    ) = create_autospec(BucketFSModelSpecificationFactory)
     mock_cast(mock_current_model_specification_factory.create).side_effect = (
         mock_bucketfs_model_specs
     )
@@ -148,6 +143,5 @@ def test_model_downloader(
         call(token_conn_name, mock_bucketfs_model_specs[i], mock_exa)
         for i in range(count)
     ]
-    print(mock_ctx.output)
     assert mock_ctx.output == mock_return_paths
     assert expected_download_model_calls == download_model_mock.call_args_list

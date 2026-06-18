@@ -1,0 +1,108 @@
+"""
+Task logic for using the "translation" transformers task in a prediction udf.
+"""
+
+from collections.abc import Iterator
+from typing import (
+    Any,
+)
+
+import pandas as pd
+
+from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task import (
+    PredictionTask,
+)
+from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
+    extract_unique_param_based_dataframes_on_col_list,
+)
+
+
+class TranslatePredictionTask(PredictionTask):
+    """
+    Task logic for using the "translation" transformers task in a prediction udf.
+    """
+
+    def __init__(
+        self,
+        desired_fields_in_prediction: list[str],
+    ):
+        super().__init__()
+        self.last_created_pipeline = None
+        self.task_type = "translation"
+        self._desired_fields_in_prediction = desired_fields_in_prediction
+        self._translation_prefix = "translate {src_lang} to {target_lang}: "
+
+    def extract_unique_param_based_dataframes(
+        self, model_df: pd.DataFrame
+    ) -> Iterator[pd.DataFrame]:
+        """
+        Extract unique dataframes having same max_new_tokens, source_language,
+        and target_language parameter values
+
+        :param model_df: Dataframe used in prediction
+
+         :return: Unique model dataframes having same specified parameters
+        """
+        unique_column_names = ["max_new_tokens", "source_language", "target_language"]
+        yield from extract_unique_param_based_dataframes_on_col_list(
+            model_df, unique_column_names
+        )
+
+    def execute_prediction(self, model_df: pd.DataFrame) -> list[dict[str, Any]]:
+        """
+        Predict the given text list using recently loaded models, return
+        translated text
+
+        :param model_df: The dataframe to be predicted
+
+        :return: List of dataframe includes prediction details
+        """
+        source_language = str(model_df["source_language"].iloc[0])
+        target_language = str(model_df["target_language"].iloc[0])
+        translation_prefix = ""
+        if source_language and target_language:
+            translation_prefix = self._translation_prefix.format(
+                src_lang=source_language, target_lang=target_language
+            )
+
+        text_data = list(translation_prefix + model_df["text_data"].astype(str))
+        max_new_tokens = int(model_df["max_new_tokens"].iloc[0])
+
+        results = self.last_created_pipeline(text_data, max_new_tokens=max_new_tokens)
+        return results
+
+    def append_predictions_to_input_dataframe(
+        self,
+        model_df: pd.DataFrame,
+        pred_df_list: list[pd.DataFrame],
+    ) -> pd.DataFrame:
+        """
+        Reformat the dataframe used in prediction, such that each input row
+        has a row for each translated texts
+
+        :param model_df: Dataframe used in prediction
+        :param pred_df_list: List of predictions dataframes
+
+        :return: Prepared dataframe including input data and predictions
+        """
+        pred_df = pd.concat(pred_df_list, axis=0).reset_index(drop=True)
+        model_df = pd.concat([model_df.reset_index(drop=True), pred_df], axis=1)
+
+        return model_df
+
+    def create_dataframes_from_predictions(
+        self, predictions: list[dict[str, Any]]
+    ) -> list[pd.DataFrame]:
+        """
+        Convert predictions to dataframe.
+
+        :param predictions: predictions results
+
+        :return: List of prediction dataframes
+        """
+        results_df_list = []
+        for result in predictions:
+            result_df = pd.DataFrame([result])
+            results_df_list.append(result_df)
+
+        return results_df_list

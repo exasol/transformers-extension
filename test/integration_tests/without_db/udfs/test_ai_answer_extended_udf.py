@@ -47,9 +47,7 @@ def test_ai_answer_extended_udf(
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -86,7 +84,8 @@ def test_ai_answer_extended_udf(
     sequence_classifier = AiAnswerExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["answer", "score", "rank", "error_message"]
 
     result = Result(result_df)
@@ -98,6 +97,7 @@ def test_ai_answer_extended_udf(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows,
             results_per_row=top_k,
         )
@@ -127,9 +127,7 @@ def test_ai_answer_extended_udf_on_error_handling(
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_base_path = prepare_question_answering_model_for_local_bucketfs
     bucketfs_conn_name = "bucketfs_connection"
@@ -166,12 +164,19 @@ def test_ai_answer_extended_udf_on_error_handling(
     sequence_classifier = AiAnswerExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
     new_columns = ["answer", "score", "rank", "error_message"]
 
     result = Result(result_df)
     assert (
-        result == ShapeMatcher(columns=columns, new_columns=new_columns, n_rows=n_rows)
+        result
+        == ShapeMatcher(
+            columns=columns,
+            new_columns=new_columns,
+            n_rows=n_rows,
+            removed_columns=["device_id"],
+        )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NewColumnsEmptyMatcher(new_columns=new_columns)
         and result == ErrorMessageMatcher()

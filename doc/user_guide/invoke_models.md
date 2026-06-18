@@ -1,23 +1,63 @@
 # Using Prediction UDFs
 
-We provide 7 prediction UDFs in the Transformers Extension package. Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary).  These tasks use the model downloaded to the BucketFS and run inference using the user-supplied inputs.
+We provide a selection of prediction UDFs in the Transformers Extension package. 
+Each performs an NLP task through the [transformers API](https://huggingface.co/docs/transformers/task_summary). 
+These tasks use the model downloaded to the BucketFS and run inference 
+using the user-supplied inputs.
+
+**NOTICE**: For all UDF's with the "EXTENDED" suffix in the name, you may specify
+different models/configuration parameters for each input row. Having many different 
+models will however increase the processing time, as the models need to be loaded.
 
 ### Table of Contents
 
-
+  * [AI Sentiment](#ai-sentiment)
   * [AI Custom Classify Extended](#ai-custom-classify-extended)
   * [AI Entailment Extended](#ai-entailment-extended)
   * [AI Answer Extended](#ai-answer-extended)
   * [AI Fill Mask Extended](#ai-fill-mask-extended)
   * [AI Complete Extended](#ai-complete-extended)
+  * [AI Extract Entities](#ai-extract-entities)
   * [AI Extract Extended](#ai-extract-extended)
   * [AI Translate Extended](#ai-translate-extended)
+  * [AI Classify](#ai-classify)
   * [AI Classify Extended](#ai-classify-extended)
+
+### AI Sentiment
+
+This UDF classifies the given text according the sentiment found in the text.
+It will output only the highest scoring result for each input row.
+
+Example usage:
+
+```sql
+SELECT AI_SENTIMENT(
+    text_data,
+)
+```
+
+Input
+* `text_data`: The input text to be classified
+
+Additional output columns
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with which this label was assigned
+
+Example Output:
+
+| TEXT_DATA   | LABEL       | SCORE | ERROR_MESSAGE    |
+|-------------|-------------|-------|------------------|
+| text 1      | "positve"   | 0.87  | None             |
+| text 2      | "negative"  | 0.93  | None             | 
+| ...         | ...         | ...   | ...              |
 
     
 ### AI Custom Classify Extended
 
 This UDF classifies the given text according to a given number of classes of the specified model.
+
+Should be called using a model compatible with the "text-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
 
 Example usage:
 
@@ -47,7 +87,7 @@ Additional output columns
 * _SCORE_: the confidence with which this label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|--------------|---------|-------|------|---------------|
@@ -57,7 +97,11 @@ Example:
 
 ### AI Entailment Extended
 
-This UDF takes two input texts and compares them. Among other things, it can be used to determine if two texts are paraphrases of each other.
+This UDF takes two input texts and compares them. Among other things, it can be used to determine if two 
+texts are paraphrases of each other.
+
+Should be called using a model compatible with the "text-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
 
 Example usage:
 
@@ -90,6 +134,8 @@ Additional output columns
 * _SCORE_: the confidence with which this label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
+Example Output:
+
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | FIRST_TEXT | SECOND_TEXT | RETURN_RANKS | LABEL   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|------------|-------------|--------------|---------|-------|------|---------------|
 | conn_name     | dir/    | model_name | text 1     | text 2      | ALL          | label_1 | 0.75  | 1    | None          |
@@ -101,6 +147,9 @@ Additional output columns
 
 This UDF extracts answer(s) from a given question text. With the `top_k`
 input parameter, up to `k` answers with the best inference scores can be returned.
+Should be called using a model compatible with the "question-answering" transformers 
+task, and uses AutoModelForQuestionAnswering to load said model.
+
 An example usage is given below:
 
 ```sql
@@ -135,7 +184,7 @@ Additional output columns
 
 If `top_k` > 1, each input row is repeated for each answer.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
 |---------------|---------|------------|------------|-----------|-------|----------|-------|------|---------------|
@@ -150,6 +199,10 @@ replace these masks with appropriate tokens.
 I.E the input text could be "<mask> is the best database Software for Machine 
 Learning Enthusiasts.", resulting in an output like "Exasol is the best database 
 Software for Machine Learning Enthusiasts."
+
+Should be called using a model compatible with the "fill_mask" transformers task, and uses 
+AutoModelForMaskedLM to load said model.
+
 
 Example usage:
 
@@ -181,7 +234,7 @@ Additional output columns
 
 If `top_k` > 1, each input row is repeated for each prediction.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | TOP_K | FILLED_TEXT   | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|---------------| ----- |---------------| ----- |------|---------------|
@@ -192,6 +245,12 @@ Example:
 ### AI Complete Extended
 
 This UDF aims to consistently predict the continuation of the given text.  The length of the text to be generated is limited by the `max_new_tokens` parameter.
+Can be configured to do one or the other:
+        * return the whole text ( input text + generated continuation )
+        * return only the newly generated part
+
+Should be called using a model compatible with the "text-generation" transformers task, and uses 
+AutoModelForCausalLM to load said model.
 
 Example usage:
 
@@ -221,7 +280,7 @@ Specific parameters
 Additional output columns
 * _GENERATED_TEXT_: the generated text
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA      | MAX_NEW_TOKENS | RETURN_FULL_TEXT | GENERATED_TEXT                          | ERROR_MESSAGE |
 | ------------- |---------|------------|----------------|----------------|------------------|-----------------------------------------|---------------|
@@ -230,14 +289,56 @@ Example:
 | ...           | ...     | ...        | ...            | ...            | ...              | ...                                     | ...           |
 
 
+### AI Extract Entities
+
+This UDF finds tokens in a given text, and assigns a label to found tokens.
+
+It uses the "simple" aggregation strategy.
+
+
+```sql
+SELECT AI_EXTRACT_Entities(
+    text_data,
+)
+```
+
+Parameters
+* `text_data`: The text to analyze.
+
+Additional output columns
+* _START_POS_: the index of the starting character of the found token
+* _END_POS_: index of the ending character of the found token
+* _WORD_: the found token
+* _ENTITY_: the token-type the found token was sorted into.
+* _SCORE_: the confidence with which the label was predicted
+
+In case the model returns an empty result for an input row, the row is dropped entirely 
+and not part of the result set.
+
+Example Output:
+
+| TEXT_DATA     | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+|---------------|-----------|---------|------|--------|-------| ------------- |
+| This is text. | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...       | ...     | ...  | ..     | ...   | ...           |
+
+
+
 ### AI Extract Extended
 
-The main goal of this UDF is to find tokens in a given text, and assign a label to found tokens.
+The main goal of this UDF is to find tokens in a given text, 
+and assign a label to found tokens. This works similar to "AI_EXTRACT_ENTITIES", 
+but allows you to select the model used for prediction, as well as configure the 
+used aggregation strategy.
 
 There are two popular subtasks of token classification:
 
 *  Named Entity Recognition (NER) which identifies specific entities in a text, such as dates, people, and places.
 *  Part of Speech (PoS) which identifies which words in a text are verbs, nouns, and punctuation.
+
+Should be called using a model compatible with the "token-classification" transformers task, and uses 
+AutoModelForTokenClassification to load said model.
+
 
 ```sql
 SELECT AI_EXTRACT_EXTENDED(
@@ -269,16 +370,19 @@ Additional output columns
 
 In case the model returns an empty result for an input row, the row is dropped entirely and not part of the result set.
 
-Example:
+Example Output:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
-| ------------- |---------|------------|-----------|----------------------|-----------|---------|------|--------|-------| ------------- |
-| conn_name     | dir/    | model_name | text      | simple               | 0         | 4       | text | noun   | 0.75  | None          |
-| ...           | ...     | ...        | ...       | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA     | AGGREGATION_STRATEGY | START_POS | END_POS | WORD | ENTITY | SCORE | ERROR_MESSAGE |
+| ------------- |---------|------------|---------------|----------------------|-----------|---------|------|--------|-------| ------------- |
+| conn_name     | dir/    | model_name | This is text. | simple               | 0         | 4       | text | noun   | 0.75  | None          |
+| ...           | ...     | ...        | ...           | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
 
 ### AI Translate Extended
 
 This UDF translates a given text from one language to another.
+
+Should be called using a model compatible with the "translation" transformers task, and uses 
+AutoModelForSeq2SeqLM to load said model.
 
 ```sql
 SELECT AI_TRANSLATE_EXTENDED(
@@ -308,19 +412,55 @@ Specific parameters
 Additional output columns
 * _TRANSLATION_TEXT_: the translated text
 
-Example:
-
+Example Output:
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | MAX_NEW_TOKENS | TRANSLATION_TEXT | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|-----------------|-----------------|------------|------------------|---------------|
 | conn_name     | dir/    | model_name | context   | English         | German          | 100        | kontext          | None          |
 | ...           | ...     | ...        | ...       | ...             | ...             | ...        | ...              | ...           |
 
+### AI Classify
+
+This UDF classifies the input text into classes defined by the user. 
+The provided classes do not have to be known during the original model training.
+
+The UDF takes candidate labels as a comma-separated string and generates probability 
+scores for each predicted label.
+
+```sql
+SELECT AI_CLASSIFY(
+    text_data,
+    candidate_labels,
+)
+```
+
+Parameters
+* `text_data`: The text to be classified.
+* `candidate_labels`: A list of comma-separated labels, e.g. `label1,label2,label3`. Only these labels will be used in the prediction.
+
+Additional output columns
+* _LABEL_: the predicted label for the input text
+* _SCORE_: the confidence with witch the label was assigned
+
+Example Output:
+
+| TEXT_DATA  | CANDIDATE LABELS | LABEL  | SCORE | ERROR_MESSAGE |
+|------------|------------------|--------|-------|---------------|
+| text       | label1,label2..  | label1 | 0.75  | None          |
+| other text | label1,label2..  | label2 | 0.70  | None          |
+| ...        | ...              | ...    | ...   | ...           |
+
+
 ### AI Classify Extended
 
-This UDF classifies the input text into classes defined by the user. The provided classes do not have to be known during the original model training.
+This UDF classifies the input text into classes defined by the user, 
+similar to "AI_CLASSIFY". However, this UDF allows you to select which model 
+to use for the predictions, and can also return multiple results per input.
+The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability scores for each predicted label.
 
+Should be called using a model compatible with the "zero-shot-classification" transformers task, and uses 
+AutoModelForSequenceClassification to load said model.
 
 ```sql
 SELECT AI_CLASSIFY_EXTENDED(
@@ -350,7 +490,7 @@ Additional output columns
 * _SCORE_: the confidence with witch the label was assigned
 * _RANK_: the rank of the label. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
 
-Example:
+Example Output:
 
 | BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TEXT_DATA | CANDIDATE LABELS | RETURN_RANKS | LABEL  | SCORE | RANK | ERROR_MESSAGE |
 | ------------- |---------|------------|-----------|------------------|--------------|--------|-------|------|---------------|

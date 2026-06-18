@@ -9,7 +9,7 @@ from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 from exasol_transformers_extension.utils.in_udf_model_downloader import (
     InUDFModelDownloader,
@@ -20,7 +20,7 @@ def test_in_udf_model_downloader_test(tmpdir_factory):
     bucketfs_conn_name = "bucketfs_connection"
     sub_dir = "sub_dir"
     tiny_model_specs = model_params.tiny_model_specs
-    bfs_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+    bfs_model_specs = get_bucket_fs_model_specification_from_model_specs(
         tiny_model_specs, bucketfs_conn_name, Path(sub_dir)
     )
     expected_upload_path = bfs_model_specs.get_bucketfs_model_save_path()

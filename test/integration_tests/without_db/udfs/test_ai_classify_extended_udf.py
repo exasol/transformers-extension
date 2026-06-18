@@ -21,7 +21,7 @@ import pytest
 import torch
 
 from exasol_transformers_extension.udfs.models.ai_classify_extended_udf import (
-    AiClassifyExtendeUDF,
+    AiClassifyExtendedUDF,
 )
 
 
@@ -46,10 +46,11 @@ def run_test(sample_data, columns, bucketfs_conn_name, bucketfs_connection, batc
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiClassifyExtendeUDF(exa, batch_size=batch_size)
+    sequence_classifier = AiClassifyExtendedUDF(exa, batch_size=batch_size)
     sequence_classifier.run(ctx)
 
-    result_df = ctx.get_emitted()[0][0]
+    result_dfs = ctx.get_emitted()
+    result_df = pd.concat(result_dfs)
 
     return result_df
 
@@ -74,9 +75,7 @@ def test_ai_classify_extended_single_text_udf(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
@@ -128,6 +127,7 @@ def test_ai_classify_extended_single_text_udf(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows,
             results_per_row=number_results_per_input,
         )
@@ -150,9 +150,7 @@ def test_ai_classify_extended_single_text_udf_with_span(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
 
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
@@ -208,6 +206,7 @@ def test_ai_classify_extended_single_text_udf_with_span(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows,
             results_per_row=number_results_per_input,
         )
@@ -230,9 +229,7 @@ def test_ai_classify_extended_single_text_udf_on_error_handling(
     prepare_zero_shot_classification_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
-        pytest.skip(
-            f"There is no available device({device_id}) " f"to execute the test"
-        )
+        pytest.skip(f"There is no available device({device_id}) to execute the test")
     bucketfs_conn_name, bucketfs_connection = prepare_bucketfs(
         prepare_zero_shot_classification_model_for_local_bucketfs
     )
@@ -271,6 +268,7 @@ def test_ai_classify_extended_single_text_udf_on_error_handling(
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
+            removed_columns=["device_id"],
             n_rows=n_rows * number_results_per_input,
         )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)

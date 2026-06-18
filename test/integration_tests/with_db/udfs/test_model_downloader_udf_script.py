@@ -4,7 +4,7 @@ from test.utils.bucketfs_file_list import get_bucketfs_file_list
 from test.utils.parameters import model_params
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    get_BucketFSModelSpecification_from_model_Specs,
+    get_bucket_fs_model_specification_from_model_specs,
 )
 
 SUB_DIR = "test_downloader_udf_sub_dir{id}"
@@ -19,7 +19,7 @@ def test_model_downloader_udf_script(setup_database, db_conn, bucketfs_location)
     for i in range(n_rows):
         sub_dir = SUB_DIR.format(id=i)
         sub_dirs.append(sub_dir)
-        current_model_specs = get_BucketFSModelSpecification_from_model_Specs(
+        current_model_specs = get_bucket_fs_model_specification_from_model_specs(
             model_params.tiny_model_specs, bucketfs_conn_name, Path(sub_dir)
         )
         model_paths.append(current_model_specs.get_bucketfs_model_save_path())

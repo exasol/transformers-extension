@@ -2,11 +2,6 @@ from pathlib import PurePosixPath
 from test.unit.udf_wrapper_params.ai_complete_extended.mock_sequence_tokenizer import (
     MockSequenceTokenizer,
 )
-from typing import (
-    Dict,
-    List,
-    Union,
-)
 
 
 class MockTextGenerationModel:
@@ -49,9 +44,7 @@ class MockPipeline:
         self.framework = framework
         MockPipeline.counter += 1
 
-    def __call__(
-        self, text_data: list[str], **kwargs
-    ) -> list[dict[str, Union[str, float]]]:
+    def __call__(self, text_data: list[str], **kwargs) -> list[dict[str, str | float]]:
         if "error" in text_data[0]:
             raise Exception("Error while performing prediction.")
 

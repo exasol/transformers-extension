@@ -4,9 +4,6 @@ from test.unit.utils.utils_for_udf_tests import (
 )
 from test.utils.matchers import AnyOrder
 from test.utils.mock_cast import mock_cast
-from typing import (
-    Union,
-)
 from unittest.mock import (
     MagicMock,
     Mock,
@@ -69,16 +66,16 @@ def create_mock_metadata() -> MockMetaData:
 def test_in_udf_model_downloader(
     mock_create_loc, description, count, token_conn_name, token_conn_obj, expected_token
 ):
-    mock_tokenizer_factory: Union[ModelFactoryProtocol, MagicMock] = create_autospec(
+    mock_tokenizer_factory: ModelFactoryProtocol | MagicMock = create_autospec(
         ModelFactoryProtocol
     )
 
-    mock_model_downloader_factory: Union[
-        HuggingFaceHubBucketFSModelTransferSPFactory, MagicMock
-    ] = create_autospec(HuggingFaceHubBucketFSModelTransferSPFactory)
-    mock_model_downloaders: list[
-        Union[HuggingFaceHubBucketFSModelTransferSP, MagicMock]
-    ] = [create_autospec(HuggingFaceHubBucketFSModelTransferSP) for i in range(count)]
+    mock_model_downloader_factory: (
+        HuggingFaceHubBucketFSModelTransferSPFactory | MagicMock
+    ) = create_autospec(HuggingFaceHubBucketFSModelTransferSPFactory)
+    mock_model_downloaders: list[HuggingFaceHubBucketFSModelTransferSP | MagicMock] = [
+        create_autospec(HuggingFaceHubBucketFSModelTransferSP) for i in range(count)
+    ]
     for i in range(count):
         mock_cast(mock_model_downloaders[i].__enter__).side_effect = [
             mock_model_downloaders[i]
