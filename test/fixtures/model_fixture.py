@@ -296,7 +296,7 @@ def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
     bucketfs_location, returns BucketFS path.
     Model is defined in test/utils/parameters.py.
 
-    this one cant use the normal functions, because the task type is illegal and we
+    This one can't use the normal functions, as the task type is illegal and we
     have to create the BucketFSModelSpecification in a specific way.
     """
     model_specs = model_params.illegal_tiny_model_specs

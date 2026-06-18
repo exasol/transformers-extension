@@ -30,8 +30,8 @@ T.B.D
 * `task_type` handling has been changed. 
 The Transformers extension now allows only specific transformers task types in 
 the installation and execution of models.
-You may need to re-install you models from HuggingFace using the new task_types in order to use them.
-Models installed with legacy task_types can still be listed and deleted using th respective UDF's.
+You may need to re-install you models from HuggingFace using the new `task_types` in order to use them.
+Models installed with legacy task_types can still be listed and deleted using the respective UDFs.
 
 * Allowed task_types are: 
              "fill-mask" (previously "filling_mask"),

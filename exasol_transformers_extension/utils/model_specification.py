@@ -137,7 +137,7 @@ def split_path_using_subdir(
     """
     many models have a name like creator-name/model-name or similar.
     but we do not know the format exactly.
-    therefor we assume the directory which includes the config.json file to be
+    therefore, we assume the directory which includes the config.json file to be
     the model_specific_path_suffix, and everything between this and the sub-dir
     to be the model_name_prefix
     """
@@ -183,7 +183,7 @@ def best_guess_model_specs(
         return model_name, task_type, warning
     except:
         error_message = (
-            "couldn't find a task type in path suffix %s" % model_specific_path_suffix
+            "couldn't find a task_type in path suffix %s" % model_specific_path_suffix
         )
         raise ValueError(error_message)
 

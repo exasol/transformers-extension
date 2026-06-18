@@ -76,7 +76,7 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 Specific parameters
 * `token_conn`: The connection name containing the token required for private models. 
 You can use an empty string ('') for public models. For details on how to create a 
-connection object with token information, please check the 
+connection object with token information, please see the 
 [Getting Started](#getting-started) section.
 * `task_type`: See below.
 
@@ -85,11 +85,11 @@ connection object with token information, please check the
 Some models can be used for multiple types of tasks, but Hugging Face Transformers 
 stores different metadata depending on the task of the model, which affects how the 
 model is loaded later. Setting an incorrect task type, or leaving the task type empty 
-may affect the models performance severely.
+may affect the model's performance severely.
 
 Available task types are:
 
-| task_type                    | UDF's using this task_type    |
+| task_type                    | UDFs using this task_type    |
 |------------------------------|-------------------------------|
 | `fill-mask`                  | AI_FILL_MASK_EXTENDED         |
 | `question-answering`         | AI_ANSWER_EXTENDED            |
@@ -101,7 +101,7 @@ Available task types are:
 | `zero-shot-classification`   | AI_CLASSIFY_EXTENDED          |
 
 
-You may use Underscores instead of Dashes.
+Note that you may use underscores (`_`) instead of dashes (`-`).
 
 We also support the installation of models using the following transformers tasks:
 
@@ -110,10 +110,10 @@ We also support the installation of models using the following transformers task
 * `table-question-answering`
 * `feature-extraction`
 
-More info about transformers tasks can be found [here](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task).
+More information about transformers tasks can be found in the [pipeline task parameter description](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task).
 
-However, we do not offer built in UDF's for using these models. So if you need models 
-supporting these tasks, you will need to write your own udf for running it.
+However, we do not offer built in UDFs for using these models. So if you need models 
+supporting these tasks, you will need to write your own UDF for running it.
 
 ### Model Uploader Script
 
@@ -160,7 +160,7 @@ In order to do this, you might need to find out which models are safed in the Ex
 we provide the `TE_LIST_MODELS_UDF`. See details at the end of this section.
 
 Note: If you installed models using a custom task_type, or a task_type we do 
-not support anymore, you are still able to delete these models using both the UDF and the Python API.
+not support anymore, you are still able to list and then delete these models using both the UDF and the Python API.
 
 
 ### Delete Model UDF
