@@ -39,5 +39,5 @@ DEFAULT_MODEL_SPECS = {
         task_type="token-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
-    )
+    ),
 }

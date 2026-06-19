@@ -6,8 +6,8 @@ from pathlib import (
     PurePosixPath,
 )
 from test.fixtures.model_fixture_utils import (
-    prepare_default_model_for_local_bucketfs,
     download_model_to_standard_local_save_path,
+    prepare_default_model_for_local_bucketfs,
     prepare_model_for_local_bucketfs,
     upload_model,
     upload_model_to_bucketfs,
@@ -19,12 +19,11 @@ from test.utils.parameters import model_params
 import exasol.bucketfs as bfs
 import pytest
 
-from exasol_transformers_extension.utils.bucketfs_model_specification import (
-    BucketFSModelSpecification,
-)
-
 from exasol_transformers_extension.deployment.default_udf_parameters import (
     DEFAULT_MODEL_SPECS,
+)
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
 )
 
 
