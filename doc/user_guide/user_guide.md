@@ -42,6 +42,8 @@ You can find further information on these UDFs [here](manage_models.md).
 These UDFs call a model stored in the BucketFS and use it to make predictions on the given input data.
 
 We have selected a curated list of models, which are used in our UDFs. 
+You can install these models using the `install_default_models`- command 
+or the `INSTALL_AI_DEFAULT_MODEL_UDF`.
 These UDFs require only minimal configuation to use:
 
 
