@@ -30,7 +30,7 @@ We provide two options for you to install these default models. You can use the
 `install_default_models`- command 
 or the `INSTALL_AI_DEFAULT_MODEL_UDF`.
 Both versions will install all needed default models in the BucketFS. 
-They will use a predefined BucketFS location to install the odels into.
+They will use a predefined BucketFS location to install the models into.
 
 You can call the `INSTALL_AI_DEFAULT_MODEL_UDF` like this:
 
