@@ -69,7 +69,7 @@ def test_ai_translate_extended_udf(
             None,
             bucketfs_conn_name,
             model_params.sub_dir,
-            model_params.seq2seq_model_specs.model_name,
+            model_params.translation_model_specs.model_name,
             model_params.text_data,
             src_lang,
             target_lang,
@@ -97,6 +97,9 @@ def test_ai_translate_extended_udf(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
+    print(result_df["translation_text"][0])
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+        print(result_df)
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
@@ -159,7 +162,7 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
 
     # we load the test models tokenizer to convert output to tokens,
     # in order to check if max_new_tokens is respected in the output.
-    model_specification = model_params.seq2seq_model_specs
+    model_specification = model_params.translation_model_specs
     current_model_specs = get_bucket_fs_model_specification_from_model_specs(
         model_specification, bucketfs_conn_name, model_params.sub_dir
     )
@@ -174,7 +177,7 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
             None,
             bucketfs_conn_name,
             model_params.sub_dir,
-            model_params.seq2seq_model_specs.model_name,
+            model_params.translation_model_specs.model_name,
             input_text,
             src_lang,
             target_lang,
@@ -197,15 +200,16 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
-    sequence_classifier.run(ctx)
+    text_generator = AiTranslateExtendedUDF(exa, batch_size=batch_size)
+    text_generator.run(ctx)
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+        print(result_df)
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
-    print(result)
     assert (
         result
         == ShapeMatcher(
@@ -293,8 +297,8 @@ def test_ai_translate_extended_udf_on_error_handling(
     ctx = MockContext(input_df=sample_df)
     exa = MockExaEnvironment({bucketfs_conn_name: bucketfs_connection})
 
-    sequence_classifier = AiTranslateExtendedUDF(exa, batch_size=batch_size)
-    sequence_classifier.run(ctx)
+    text_generator = AiTranslateExtendedUDF(exa, batch_size=batch_size)
+    text_generator.run(ctx)
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)

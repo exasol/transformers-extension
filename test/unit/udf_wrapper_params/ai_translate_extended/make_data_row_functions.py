@@ -75,7 +75,7 @@ def make_udf_output_for_one_input_row(
         )
     ]
 
-
+#todo new? or rename?
 def translation_models_output_generator(input_texts, max_new_tokens):
     """
     Makes the output the model returns to the udf for one input batch.

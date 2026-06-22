@@ -13,10 +13,8 @@ import transformers
 class ModelTypeData:
     model_factory_dict = {
         "fill-mask": transformers.AutoModelForMaskedLM,
-        "translation": transformers.AutoModelForSeq2SeqLM,
         "zero-shot-classification": transformers.AutoModelForSequenceClassification,
         "text-classification": transformers.AutoModelForSequenceClassification,
-        "question-answering": transformers.AutoModelForQuestionAnswering,
         "text-generation": transformers.AutoModelForCausalLM,
         "token-classification": transformers.AutoModelForTokenClassification,
     }
@@ -49,8 +47,6 @@ class ModelSpecification:
             task_type = "text-generation"
         elif text == "ai_extract_extended":
             task_type = "token-classification"
-        elif text == "translation":
-            task_type = "translation"
         elif text == "zero_shot_classification":
             task_type = "zero-shot-classification"
         else:

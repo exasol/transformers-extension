@@ -35,13 +35,11 @@ class MockPipeline:
         model: "MockFillingMaskModel",
         tokenizer: MockSequenceTokenizer,
         device: str,
-        framework: str,
     ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-        self.framework = framework
         MockPipeline.counter += 1
 
     def __call__(

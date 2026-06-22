@@ -381,8 +381,8 @@ Example Output:
 
 This UDF translates a given text from one language to another.
 
-Should be called using a model compatible with the "translation" transformers task, and uses 
-AutoModelForSeq2SeqLM to load said model.
+Should be called using a model compatible with the "text_generation" transformers task, and uses 
+AutoModelCasualLM to load said model.
 
 ```sql
 SELECT AI_TRANSLATE_EXTENDED(
