@@ -7,8 +7,8 @@ deleting a model, and listing existing models.
 
 ### Table of Contents
 
-
-* [Store Models in BucketFS](#store-models-in-bucketfs)
+* [Install the Default Models](#install-the-default-models)
+* [Manually Store Models in BucketFS](#manually-store-models-in-bucketfs)
   * [Model Downloader UDF](#model-downloader-udf)
     * [Name Server](#name-server)
     * [Running the UDF](#running-the-udf)
@@ -20,9 +20,39 @@ deleting a model, and listing existing models.
   * [Delete model via a Python Function](#delete-model-via-a-python-function)
 * [List Models UDF](#list-models-udf)
 
+## Install the Default Models
+
+Some of our UDF's use preselected models, so you do not need to 
+configure the UDF's in order to run them. 
+However, you do need to install these default models before using the UDf's.
+
+We provide two options for you to install these default models. You can use the 
+`install_default_models`- command 
+or the `INSTALL_AI_DEFAULT_MODEL_UDF`.
+Both versions will install all needed default models in the BucketFS. 
+They will use a predefined BucketFS location to install the models into.
+
+You can call the `INSTALL_AI_DEFAULT_MODEL_UDF` like this:
+
+```sql
+SELECT INSTALL_AI_DEFAULT_MODEL_UDF()
+```
+
+It will return a table with a `model_path_in_udfs` column and 
+a `model_path_of_tar_file_in_bucketfs` column.
+
+Or you can call the `install_default_models`- command:
+
+```shell
+python -m exasol_transformers_extension.install_default_models <options>
+```
+
+For information about the available options common to all Exasol extensions, 
+please refer to the [documentation][pec-user-guide] in the Exasol Python Extension Common package.
 
 
-## Store Models in BucketFS
+
+## Manually Store Models in BucketFS
 
 Before you can use pre-trained models, the models must be stored in the BucketFS.
 
