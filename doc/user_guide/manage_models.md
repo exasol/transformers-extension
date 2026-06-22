@@ -103,10 +103,6 @@ Available task types are:
 | `translation`                 | AI_TRANSLATE_EXTENDED       |
 | `zero-shot-classification`    | AI_CLASSIFY_EXTENDED        |
 | `zero-shot-classification`    | AI_CLASSIFY                 |
-| `document-question-answering` | NONE                        |
-| `mask-generation`             | NONE                        |
-| `table-question-answering`    | NONE                        |
-| `feature-extraction`          | NONE                        |
 
 
 Note that you may use underscores (`_`) instead of dashes (`-`).
@@ -118,10 +114,27 @@ We also support the installation of models using the following transformers task
 * `table-question-answering`
 * `feature-extraction`
 
-More information about transformers tasks can be found in the [pipeline task parameter description](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task).
-
 However, we do not offer built in UDFs for using these models. So if you need models 
 supporting these tasks, you will need to write your own UDF for running it.
+
+More information about transformers tasks can be found in the [pipeline task parameter description](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task).
+
+##### Legacy Task Types
+
+We previously supported the followin task_types:
+
+ * `ai_fill_mask_extended`
+ * `filling_mask`
+ * `sequence_classification`
+ * `ai_complete_extended`
+ * `ai_extract_extended`
+
+Models installed with these task types are no longer compatible with our
+prediction UDFs. If you still need these models, you will need to re-install 
+them using the new task-types described above.
+
+However, listing and deleting these models will still work using both the UDF and the Python API.
+
 
 ### Model Uploader Script
 

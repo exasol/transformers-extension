@@ -52,8 +52,6 @@ class ModelSpecification:
         Allows for use of dash or underscore.
         Raises a ValueError if given task_type is not recognized.
         """
-        # todo check if docu needs updating, add info about ls/delete of
-        #  legacy task_types?
         allowed_task_types = [
             "fill-mask",
             "translation",
@@ -85,15 +83,15 @@ class ModelSpecification:
         models saved with unknown task_types.
         switches user input(matching udf name) to transformers task types
         """
-        if text == "ai_fill_mask_extended":
+        if text == "ai_fill_mask_extended" or text == "filling_mask":
             task_type = "fill-mask"
         elif text == "question_answering":
             task_type = "question-answering"
         elif text == "sequence_classification":
             task_type = "text-classification"
-        elif text == "ai_complete_extended":
+        elif text == "ai_complete_extended" or text == "text_generation":
             task_type = "text-generation"
-        elif text == "ai_extract_extended":
+        elif text == "ai_extract_extended" or text == "token_classification":
             task_type = "token-classification"
         elif text == "translation":
             task_type = "translation"
