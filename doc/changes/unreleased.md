@@ -4,6 +4,8 @@ Code name: T.B.D
 
 ## Summary
 
+T.B.D
+
 ### BREAKING CHANGES:
 
 * The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
@@ -20,6 +22,21 @@ Code name: T.B.D
 | TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
 | TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
 
+* `task_type` handling has been changed. 
+The Transformers extension now allows only specific transformers task types in 
+the installation and execution of models.
+You may need to re-install you models from HuggingFace using the new `task_types` in order to use them.
+Models installed with legacy task_types can still be listed and deleted using the respective UDFs.
+
+* Allowed task_types are: 
+             "fill-mask" (previously "filling_mask"),
+             "translation",
+             "zero-shot-classification",
+             "text-classification" (previously "sequence_classification"),
+             "question-answering",
+             "text-generation",
+             "token-classification"
+
 ## Features
 
  * #351: Added functionality for installing default models.
@@ -31,6 +48,7 @@ Code name: T.B.D
 
 ## Security
 
+* Updated urllib3 (2.5.0 -> 2.6.3)
 * Updated exasol-integration-test-docker-environment (4.4.1 -> 5.0.0)
 * Updated exasol-script-languages-container-tool (3.4.1 -> 3.5.0)
 * Updated exasol-saas-api (2.3.0 -> 2.6.0)
@@ -83,3 +101,4 @@ This release fixes vulnerabilities by updating dependencies:
 * #372: Added Transformation Protocol and extracted GetPredictionFromBatch into Transformations
 * #374: Extracted Span handling into Transformations
 * #375: Added implementation for a generalized extract_unique_param_based_dataframes function
+* #316: Changed task_types to only allow transformers task_types, allows underscores and dashes

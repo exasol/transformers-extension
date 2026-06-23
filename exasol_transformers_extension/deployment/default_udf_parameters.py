@@ -40,10 +40,4 @@ DEFAULT_MODEL_SPECS = {
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
-    "model_for_another_udf": model_spec_factory.create(
-        model_name="prajjwal1/bert-tiny",
-        task_type="different_task",
-        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
-        sub_dir=Path(DEFAULT_SUBDIR),
-    ),
 }

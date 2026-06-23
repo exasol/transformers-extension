@@ -104,21 +104,67 @@ SELECT TE_MODEL_DOWNLOADER_UDF(
 * `bucketfs_conn`
 
 Specific parameters
-* `token_conn`: The connection name containing the token required for private models. You can use an empty string ('') for public models. For details on how to create a connection object with token information, please check the [Getting Started](./setup#getting-started) section.
+* `token_conn`: The connection name containing the token required for private models. 
+You can use an empty string ('') for public models. For details on how to create a 
+connection object with token information, please see the 
+[Getting Started](./setup#getting-started) section.
 * `task_type`: See below.
 
 #### Selecting the Task Type
 
-Some models can be used for multiple types of tasks, but Hugging Face Transformers stores different metadata depending on the task of the model, which affects how the model is loaded later. Setting an incorrect task type, or leaving the task type empty may affect the models performance severely.
+Some models can be used for multiple types of tasks, but Hugging Face Transformers 
+stores different metadata depending on the task of the model, which affects how the 
+model is loaded later. Setting an incorrect task type, or leaving the task type empty 
+may affect the model's performance severely.
 
 Available task types are:
-* `filling_mask`
-* `question_answering`
-* `sequence_classification`
-* `text_generation`
-* `token_classification`
-* `translation`
-* `zero_shot_classification`
+
+| task_type                     | UDFs using this task_type   |
+|-------------------------------|-----------------------------|
+| `fill-mask`                   | AI_FILL_MASK_EXTENDED       |
+| `question-answering`          | AI_ANSWER_EXTENDED          |
+| `text-classification`         | AI_CUSTOM_CLASSIFY_EXTENDED |
+| `text-classification`         | AI_ENTAILMENT_EXTENDED      |
+| `text-classification`         | AI_SENTIMENT                |
+| `text-classification`         | AI_ENTAILMENT_EXTENDED      |
+| `text-generation`             | AI_COMPLETE_EXTENDED        |
+| `token-classification`        | AI_EXTRACT_EXTENDED         |
+| `token-classification`        | AI_EXTRACT_ENTITIES         |
+| `translation`                 | AI_TRANSLATE_EXTENDED       |
+| `zero-shot-classification`    | AI_CLASSIFY_EXTENDED        |
+| `zero-shot-classification`    | AI_CLASSIFY                 |
+
+
+Note that you may use underscores (`_`) instead of dashes (`-`).
+
+We also support the installation of models using the following transformers tasks:
+
+* `document-question-answering`
+* `mask-generation`
+* `table-question-answering`
+* `feature-extraction`
+
+However, we do not offer built in UDFs for using these models. So if you need models 
+supporting these tasks, you will need to write your own UDF for running it.
+
+More information about transformers tasks can be found in the [pipeline task parameter description](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.pipeline.task).
+
+##### Legacy Task Types
+
+We previously supported the followin task_types:
+
+ * `ai_fill_mask_extended`
+ * `filling_mask`
+ * `sequence_classification`
+ * `ai_complete_extended`
+ * `ai_extract_extended`
+
+Models installed with these task types are no longer compatible with our
+prediction UDFs. If you still need these models, you will need to re-install 
+them using the new task-types described above.
+
+However, listing and deleting these models will still work using both the UDF and the Python API.
+
 
 ### Model Uploader Script
 
@@ -164,10 +210,14 @@ Similar to [Store Models in BucketFS](#store-models-in-bucketfs), you have two o
 In order to do this, you might need to find out which models are safed in the Exasol BucketFS. To do this, 
 we provide the `TE_LIST_MODELS_UDF`. See details at the end of this section.
 
+Note: If you installed models using a custom task_type, or a task_type we do 
+not support anymore, you are still able to list and then delete these models using both the UDF and the Python API.
+
 
 ### Delete Model UDF
 
-Using the `TE_DELETE_MODEL_UDF` below, you can delete a model from BucketFS. The parameter values are similar to that one used in [Store Models in BucketFS](#store-models-in-bucketfs).
+Using the `TE_DELETE_MODEL_UDF` below, you can delete a model from BucketFS. 
+The parameter values are similar to that one used in [Store Models in BucketFS](#store-models-in-bucketfs).
 
 Run the UDF with:
 
@@ -223,6 +273,10 @@ for potential error messages, in addition to the input.
 This UDF will fail to return a model if it was saved with the sub_dir parameter empty, 
 or if no config.json file can be found in the model files.
 
+Note: If you installed models using a custom task_type, or a task_type we do 
+not support anymore, you are still able to list these models using the UDF.
+
+
 Call the UDF like this:
 
 ```sql
@@ -233,8 +287,8 @@ SELECT TE_LIST_MODELS_UDF(
 ```
 Example Output:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TASK_NAME | MODEL_PATH               | ERROR_MESSAGE |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | TASK_TYPE | MODEL_PATH               | ERROR_MESSAGE |
 |---------------|---------|------------|-----------|--------------------------|---------------|
-| conn_name     | dir/    | model_name | task_name | dir/model_name_task_name |  None         |
+| conn_name     | dir/    | model_name | task_type | dir/model_name_task_type |  None         |
 | ...           | ...     | ...        | ...       | ...                      |  ...          |
 
