@@ -46,7 +46,7 @@ def test_install_default_models_cli(
 
         query = (
             f"SELECT AI_SENTIMENT("
-            f"t.text_data,"
+            f"t.text_data"
             f") FROM (VALUES {python_rows_to_sql(input_data)} "
             f"AS t(text_data));"
         )
@@ -59,7 +59,7 @@ def test_install_default_models_cli(
 
         query = (
             f"SELECT  AI_EXTRACT_ENTITIES("
-            f"t.text_data,"
+            f"t.text_data"
             f") FROM (VALUES {python_rows_to_sql(input_data)} "
             f"AS t(text_data));"
         )
@@ -75,7 +75,7 @@ def test_install_default_models_cli(
         query = (
             f"SELECT AI_CLASSIFY("
             f"t.text_data,"
-            f"t.candidate_labels,"
+            f"t.candidate_labels"
             f") FROM (VALUES {python_rows_to_sql(input_data)} "
             f"AS t(text_data, candidate_labels));"
         )
