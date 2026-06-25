@@ -26,7 +26,6 @@ jobs:
       - name: Free Disk Space
         id: free-disk-space
         uses: ./.github/actions/free-diskspace
-
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10

@@ -13,7 +13,8 @@ workflows:
     remove_jobs:
       # This should be activated in #298
       - build-documentation-and-check-links
-
+      # This job should be activated in #298
+      - check-workflows
     step_customizations:
       - action: INSERT_AFTER
         job: lint-code

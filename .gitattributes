@@ -15,3 +15,6 @@ doc/changes/changelog.md  linguist-generated=true
 .github/workflows/merge-gate.yml            linguist-generated=true
 .github/workflows/periodic-validation.yml   linguist-generated=true
 .github/workflows/report.yml                linguist-generated=true
+
+# This will be activated in #298
+# .github/workflows/pr-merge.yml                  linguist-generated=true
