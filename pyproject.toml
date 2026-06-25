@@ -48,7 +48,7 @@ dev = [
     "nox>=2023.4.22,<2024",
     "pytest-exasol-slc>=0.3.0",
     "pytest-exasol-extension>=1.0.0,<2",
-    "exasol-toolbox>=6, <8",
+    "exasol-toolbox>=10, <11",
     "pandas-stubs>=2.2.0,<3",
     "types-toml>=0.10.0,<0.11",
 ]
