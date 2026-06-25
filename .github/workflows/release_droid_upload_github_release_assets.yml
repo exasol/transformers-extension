@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
           python-version: ${{ matrix.python-version }}
           poetry-version: '2.3.0'
