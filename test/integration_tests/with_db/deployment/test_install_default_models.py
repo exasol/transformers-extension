@@ -83,4 +83,4 @@ def test_install_default_models_cli(
         result = db_conn.execute(query).fetchall()
         assert len(result) == 1 and result[0][-1] is None
     finally:
-        postprocessing.cleanup_buckets(bucketfs_location, DEFAULT_VALUES.sub_dir)
+        postprocessing.cleanup_buckets(bucketfs_location, DEFAULT_VALUES["sub_dir"])
