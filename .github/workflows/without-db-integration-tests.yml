@@ -10,8 +10,10 @@ on:
 
 jobs:
   build-matrix:
-    name: Generate Build Matrix
-    uses: ./.github/workflows/matrix-python.yml
+    name: Build Matrix
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["python_versions"]'
     permissions:
       contents: read
 
@@ -45,7 +47,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v7
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python_versions }}
           poetry-version: "2.3.0"
 
       - name: Run without_db_integration_tests
@@ -55,6 +57,6 @@ jobs:
         id: upload-artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
+          name: coverage-python${{ matrix.python_versions }}-exasol${{ matrix.exasol-version }}-slow
           path: .coverage
           include-hidden-files: true
