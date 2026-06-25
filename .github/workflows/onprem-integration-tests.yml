@@ -7,8 +7,8 @@ on:
           required: true
       DOCKER_PASSWORD:
           required: true
-jobs:
 
+jobs:
   run-onprem-integration-tests:
     permissions:
       contents: read

@@ -9,6 +9,12 @@ on:
         required: true
       DOCKER_PASSWORD:
         required: true
+      INTEGRATION_TEAM_SAAS_STAGING_HOST:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_PAT:
+        required: true
       SONAR_TOKEN:
         required: true
 
@@ -57,6 +63,9 @@ jobs:
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      INTEGRATION_TEAM_SAAS_STAGING_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
+      INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
     permissions:
       contents: read
 
