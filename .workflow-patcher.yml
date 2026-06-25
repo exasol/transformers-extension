@@ -39,6 +39,8 @@ workflows:
             id: free-disk-space
             uses: ./.github/actions/free-diskspace
 
+  - name: fast-tests
+    step_customizations:
       - action: INSERT_AFTER
         job: run-unit-tests
         step_id: check-out-repository
@@ -46,5 +48,3 @@ workflows:
           - name: Free Disk Space
             id: free-disk-space
             uses: ./.github/actions/free-diskspace
-
-
