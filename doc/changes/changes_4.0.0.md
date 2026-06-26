@@ -19,7 +19,7 @@ For more information, also take a look at the updated documentation.
 
 ### BREAKING CHANGES:
 
-* The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes where done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
+* The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes were done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
 * All prediction UDFs have been renamed:
 
 | Old UDF Name                               | New UDF Name                |
@@ -36,7 +36,7 @@ For more information, also take a look at the updated documentation.
 * `task_type` handling has been changed. 
 The Transformers extension now allows only specific transformers task types in 
 the installation and execution of models.
-You may need to re-install you models from HuggingFace using the new `task_types` in order to use them.
+You may need to re-install your models from HuggingFace using the new `task_types` in order to use them.
 Models installed with legacy task_types can still be listed and deleted using the respective UDFs.
 
 * Allowed task_types are: 
