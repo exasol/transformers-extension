@@ -1,4 +1,4 @@
-# Transformers Extension 4.0.0, 2025-11-06
+# Transformers Extension 3.0.0, 2025-11-06
 
 Code name: Improved ranking
 
