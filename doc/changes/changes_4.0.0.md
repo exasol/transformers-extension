@@ -1,4 +1,4 @@
-# Transformers Extension 4.0.0, released 2026-06-25
+# Transformers Extension 4.0.0, released 2026-06-26
 
 Code name: AI Functions
 
