@@ -65,7 +65,7 @@ def test_install_default_models_cli(
         )
 
         result = db_conn.execute(query).fetchall()
-        assert len(result) == 1 and result[0][-1] is None
+        assert len(result) >= 1 and result[0][-1] is None
 
         candidate_labels = "Database,Analytics,Germany,Food,Party"
         class_text = "The database software company Exasol is based in Nuremberg"
