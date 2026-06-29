@@ -1,0 +1,115 @@
+# Transformers Extension 4.0.0, released 2026-06-26
+
+Code name: AI Functions
+
+## Summary
+
+This version introduces our new AI Functions, namely the new UDFs
+"AI_SENTIMENT", "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES".
+These new UDFs are designed to be easy to use, only requiring 
+the text data to be used as input.
+
+For users who need more control over the configuration of their prediction UDFs,
+all the existing UDFs are still available, but have been renamed to 
+fit our new naming scheme.
+
+To make the new UDFs possible, we needed to make quite a few changes under the hood. 
+So please read the breaking changes carefully before updating to this version.
+For more information, also take a look at the updated documentation.
+
+### BREAKING CHANGES:
+
+* The `max_length` parameter has been renamed to `max_new_tokens`, and its behavior changed. Both of these changes were done in accordance with changes in the [transformers library](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TextGenerationPipeline).
+* All prediction UDFs have been renamed:
+
+| Old UDF Name                               | New UDF Name                |
+|--------------------------------------------|-----------------------------|
+| TE_FILLING_MASK_UDF                        | AI_FILL_MASK_EXTENDED       |
+| TE_QUESTION_ANSWERING_UDF                  | AI_ANSWER_EXTENDED          |
+| TE_SEQUENCE_CLASSIFICATION_SINGLE_TEXT_UDF | AI_CUSTOM_CLASSIFY_EXTENDED |
+| TE_SEQUENCE_CLASSIFICATION_TEXT_PAIR_UDF   | AI_ENTAILMENT_EXTENDED      |
+| TE_TEXT_GENERATION_UDF                     | AI_COMPLETE_EXTENDED        |
+| TE_TRANSLATION_UDF                         | AI_TRANSLATE_EXTENDED       |
+| TE_TOKEN_CLASSIFICATION_UDF                | AI_EXTRACT_EXTENDED         |
+| TE_ZERO_SHOT_CLASSIFICATION_UDF            | AI_CLASSIFY_EXTENDED        |
+
+* `task_type` handling has been changed. 
+The Transformers extension now allows only specific transformers task types in 
+the installation and execution of models.
+You may need to re-install your models from HuggingFace using the new `task_types` in order to use them.
+Models installed with legacy task_types can still be listed and deleted using the respective UDFs.
+
+* Allowed task_types are: 
+             "fill-mask" (previously "filling_mask"),
+             "translation",
+             "zero-shot-classification",
+             "text-classification" (previously "sequence_classification"),
+             "question-answering",
+             "text-generation",
+             "token-classification"
+
+## Features
+
+ * #351: Added functionality for installing default models.
+ * #378. Added creation of default BucketFS-Connection to deploy command
+ * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
+ * #381: Added Transformation for removing columns from DataFrame
+ * #353: Added "AI_SENTIMENT" UDF
+ * #390: Added "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES" UDF's
+
+## Security
+
+* Updated urllib3 (2.5.0 -> 2.6.3)
+* Updated exasol-integration-test-docker-environment (4.4.1 -> 5.0.0)
+* Updated exasol-script-languages-container-tool (3.4.1 -> 3.5.0)
+* Updated exasol-saas-api (2.3.0 -> 2.6.0)
+* #376: Fixed vulnerabilities by updating dependencies
+* #386: Fixed vulnerabilities by updating dependencies
+
+This release fixes vulnerabilities by updating dependencies:
+
+| Dependency   | Affected | Vulnerabilities     | Fixed in | Updated to |
+|--------------|----------|---------------------|----------|------------|
+| black        | 25.9.0   | GHSA-3936-cmfr-pm3m | 26.3.1   | 25.12.0    |
+| cryptography | 46.0.1   | GHSA-r6ph-v2qm-q3c2 | 46.0.5   | 46.0.6     |
+| cryptography | 46.0.1   | GHSA-m959-cc7f-wv43 | 46.0.6   | 46.0.6     |
+| filelock     | 3.19.1   | GHSA-w853-jp5j-5j7f | 3.20.1   | 3.25.2     |
+| filelock     | 3.19.1   | GHSA-qmgc-5h2g-mvrw | 3.20.3   | 3.25.2     |
+| pip          | 25.3     | GHSA-6vgw-5pg2-w6jp | 26.0     | 26.0.1     |
+| pyasn1       | 0.6.1    | GHSA-63vm-454h-vhhq | 0.6.2    | 0.6.3      |
+| pyasn1       | 0.6.1    | GHSA-jr27-m4p2-rc6r | 0.6.3    | 0.6.3      |
+| pygments     | 2.19.2   | GHSA-5239-wwwm-4pmq | 2.20.0   | 2.20.0     |
+| pynacl       | 1.6.0    | GHSA-mrfv-m5wm-5w6w | 1.6.2    | 1.6.2      |
+| pyopenssl    | 25.1.0   | GHSA-vp96-hxj8-p424 | 26.0.0   | (removed)  |
+| pyopenssl    | 25.1.0   | GHSA-5pwr-322w-8jr4 | 26.0.0   | (removed)  |
+| requests     | 2.32.5   | GHSA-gc5v-m9x4-r6x2 | 2.33.0   | 2.33.1     |
+| tornado      | 6.5.2    | GHSA-78cv-mqj4-43f7 | 6.5.5    | 6.5.5      |
+| tornado      | 6.5.2    | GHSA-qjxf-f2mg-c6mc | 6.5.5    | 6.5.5      |
+| urllib3      | 2.5.0    | GHSA-gm62-xv2j-4w53 | 2.6.0    | 2.6.3      |
+| urllib3      | 2.5.0    | GHSA-2xpw-w6gg-jr37 | 2.6.0    | 2.6.3      |
+| urllib3      | 2.5.0    | GHSA-38jv-5279-wg99 | 2.6.3    | 2.6.3      |
+| virtualenv   | 20.34.0  | GHSA-597g-3phw-6986 | 20.36.1  | 21.2.0     |
+
+## Bugfixes
+
+* #343: Fixed `max_length` parameter being ignored, renamed `max_length` to `max_new_tokens`
+
+## Documentation
+
+* #204: Split the user_guide into multiple files
+* #253, #341, #342: Fixed links and improved parameter description in user guide
+* #363: Added documentation for installing default models.
+
+## Refactorings
+
+* #346: Changed translation_udf unit tests to use StandaloneUdfMock
+* #323: Standardized udf parameter order (changes in TE_DELETE_MODEL_UDF, TE_MODEL_DOWNLOADER_UDF)
+* #350: Renamed all prediction UDFs.
+* #358: Refactored deployment configuration
+* #348: Improved mock model-output for testing max_new_tokens handling in translation unit tests
+* #360: Updated to exasol-toolbox 5.1.1 and relocked vulnerable transitive dependencies
+* #370: Pulled new class PredictionTask out of BaseModelUdf
+* #372: Added Transformation Protocol and extracted GetPredictionFromBatch into Transformations
+* #374: Extracted Span handling into Transformations
+* #375: Added implementation for a generalized extract_unique_param_based_dataframes function
+* #316: Changed task_types to only allow transformers task_types, allows underscores and dashes
