@@ -16,16 +16,16 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
     tmpdir = tmpdir_factory.mktemp("test_create_script")
     script_path = write_create_script(root_dir=tmpdir)
 
-    with open(script_path, "r") as create_script:
-        query = create_script.read()
+    with open(script_path) as create_script:
+        queries = create_script.read()
 
-    db_conn.execute(query)
+    query_list = queries.split("-- next call:\n\n")
 
-    list_scripts_query = (
-        """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
-    )
-    result = db_conn.execute(list_scripts_query).fetchall()
-    print(result)
+    for query in query_list:
+        db_conn.execute(query)
+
+    list_scripts_query = """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
+    result = db_conn.execute(list_scripts_query).fetchall()  # todo
 
     # verify all expected scripts are known by the database
     assert set(expected_scripts).issubset(set(result))
