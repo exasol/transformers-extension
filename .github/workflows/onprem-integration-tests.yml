@@ -9,14 +9,21 @@ on:
           required: true
 
 jobs:
+  build-matrix:
+    name: Build Matrix
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["minimum_python_version"]'
+    permissions:
+      contents: read
+
   run-onprem-integration-tests:
+    needs: [ build-matrix ]
     permissions:
       contents: read
     strategy:
       fail-fast: false
-      matrix:
-        python_version:
-          - "3.10"
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     runs-on:
       labels: int-linux-x64-4core-ubuntu24.04-1
     name: Onprem Integration Tests
@@ -33,7 +40,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: '${{ matrix.python_version }}'
+          python-version: '${{ matrix.minimum_python_version }}'
           poetry-version: '2.3.0'
 
       - name: Allow unprivileged user namespaces
