@@ -14,18 +14,21 @@ jobs:
       matrix:
         python-version: [ '3.10' ]
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+      - name: Check out Repository
+        uses: actions/checkout@v6
         with:
-          tool-cache: true
-          large-packages: false
+          persist-credentials: false
+
+      - name: Free Disk Space
+        id: free-disk-space
+        uses: ./.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
           python-version: ${{ matrix.python-version }}
           poetry-version: '2.3.0'
@@ -34,13 +37,13 @@ jobs:
         run: poetry run -- nox -s export_slc
 
       - name: Upload assets to the GitHub release draft
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@394b3c11c3cfc038b5396ad265c074065cf875c3 # v1.10.2
         with:
           upload_url: ${{ github.event.inputs.upload_url }}
           asset_path: dist/*
 
       - name: Upload script-language container
-        uses: shogo82148/actions-upload-release-asset@v1
+        uses: shogo82148/actions-upload-release-asset@394b3c11c3cfc038b5396ad265c074065cf875c3 # v1.10.2
         with:
           upload_url: ${{ github.event.inputs.upload_url }}
           asset_path: export/exasol_transformers_extension_container*

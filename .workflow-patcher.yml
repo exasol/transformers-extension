@@ -13,7 +13,8 @@ workflows:
     remove_jobs:
       # This should be activated in #298
       - build-documentation-and-check-links
-
+      # This job should be activated in #298
+      - check-workflows
     step_customizations:
       - action: INSERT_AFTER
         job: lint-code
@@ -40,11 +41,19 @@ workflows:
             uses: ./.github/actions/free-diskspace
 
       - action: INSERT_AFTER
+        job: build-package
+        step_id: build-package
+        content:
+          - name: Test pip install
+            id: test-pip-install
+            run: pip install dist/*.whl --extra-index-url https://download.pytorch.org/whl/cpu
+
+  - name: fast-tests
+    step_customizations:
+      - action: INSERT_AFTER
         job: run-unit-tests
         step_id: check-out-repository
         content:
           - name: Free Disk Space
             id: free-disk-space
             uses: ./.github/actions/free-diskspace
-
-
