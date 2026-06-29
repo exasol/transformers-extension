@@ -21,7 +21,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
 
     query_list = queries.split("-- next call:\n\n")
 
-    for query in query_list:
+    for query in query_list[:-1]:
         db_conn.execute(query)
 
     list_scripts_query = """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
