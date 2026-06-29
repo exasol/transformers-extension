@@ -78,3 +78,4 @@ class ScriptDeploymentQueries:
                 # Write the new data to the file
                 create_script.write(query)
                 create_script.write("\n")
+                create_script.write("-- next call:\n\n")  # todo

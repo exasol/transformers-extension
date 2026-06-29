@@ -1,6 +1,7 @@
 """
 Writes SQL queries for the creation of all udf script to create_script.sql
 """
+
 import os
 from pathlib import Path
 
