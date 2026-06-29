@@ -44,7 +44,9 @@ jobs:
           poetry-version: "2.3.0"
 
       - name: Run without_db_integration_tests
-        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version ${{ matrix.exasol-version }}
+        env:
+          EXASOL_VERSION: ${{ matrix.exasol-version }}
+        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version "$EXASOL_VERSION"
 
       - name: Upload Artifacts
         id: upload-artifacts

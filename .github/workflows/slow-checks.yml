@@ -40,6 +40,8 @@ jobs:
   gpu-tests:
     name: Without DB Integrations
     uses: ./.github/workflows/without-db-integration-tests.yml
-    secrets: inherit
+    secrets:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     permissions:
       contents: read
