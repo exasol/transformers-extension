@@ -22,7 +22,7 @@ def test_ai_fill_mask_extended_script(
                 "",
                 bucketfs_conn_name,
                 str(model_params.sub_dir),
-                model_params.base_model_specs.model_name,
+                model_params.fill_model_specs.model_name,
                 text_data,
                 top_k,
             )

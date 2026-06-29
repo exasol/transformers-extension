@@ -4,7 +4,7 @@ from test.integration_tests.utils.model_output_quality_checkers import (
 )
 from test.utils import postprocessing
 
-TASK_TYPE = "ai_fill_mask_extended"
+TASK_TYPE = "fill-mask"
 SUB_DIR = "test_downloader_with_prediction_sub_dir"
 MODEL_NAME = "gaunernst/bert-tiny-uncased"
 

@@ -47,7 +47,7 @@ class DummyPredictionTask(PredictionTask):
     def __init__(self, desired_fields_in_prediction: list[str]):
         super().__init__()
         self.last_created_pipeline = None
-        self.task_type = "dummy-task"
+        self.task_type = "fill-mask"
         self._desired_fields_in_prediction = desired_fields_in_prediction
 
     def extract_unique_param_based_dataframes(

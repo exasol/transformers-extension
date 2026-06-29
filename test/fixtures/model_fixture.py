@@ -6,11 +6,14 @@ from pathlib import (
     PurePosixPath,
 )
 from test.fixtures.model_fixture_utils import (
+    download_model_to_standard_local_save_path,
     prepare_default_model_for_local_bucketfs,
     prepare_model_for_local_bucketfs,
+    upload_model,
     upload_model_to_bucketfs,
     upload_model_to_bucketfs_from_bfs_model_spec,
 )
+from test.utils import postprocessing
 from test.utils.parameters import model_params
 
 import exasol.bucketfs as bfs
@@ -18,6 +21,9 @@ import pytest
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
     DEFAULT_MODEL_SPECS,
+)
+from exasol_transformers_extension.utils.bucketfs_model_specification import (
+    BucketFSModelSpecification,
 )
 
 
@@ -27,8 +33,7 @@ def prepare_fill_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
     Create tmpdir and save standard fill mask model into it, returns tmpdir-path.
     The model is defined in test/utils/parameters.py.
     """
-    model_specification = model_params.base_model_specs
-    model_specification.task_type = "fill-mask"
+    model_specification = model_params.fill_model_specs
     bucketfs_path = prepare_model_for_local_bucketfs(
         model_specification, tmpdir_factory
     )
@@ -104,7 +109,7 @@ def prepare_text_classification_pair_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
     """
-    Create tmpdir and save default text classification pair model
+    Create tmpdir and save standard text classification pair model
     into it, returns tmpdir-path.
     Model is defined in test/utils/parameters.py.
     """
@@ -213,10 +218,9 @@ def upload_fill_mask_model_to_bucketfs(
     returns BucketFS path.
     Model is defined in test/utils/parameters.py.
     """
-    base_model_specs = model_params.base_model_specs
-    base_model_specs.task_type = "fill-mask"
-    tmpdir = tmpdir_factory.mktemp(base_model_specs.task_type)
-    with upload_model_to_bucketfs(base_model_specs, tmpdir, bucketfs_location) as path:
+    fill_model_specs = model_params.fill_model_specs
+    tmpdir = tmpdir_factory.mktemp(fill_model_specs.task_type)
+    with upload_model_to_bucketfs(fill_model_specs, tmpdir, bucketfs_location) as path:
         yield path
 
 
@@ -405,19 +409,35 @@ def upload_tiny_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_tiny_model_to_bucketfs_ls_test_subdir(
+def upload_illegal_tiny_model_to_bucketfs_ls_test_subdir(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> typing.Generator:
     """
-    Load standard zero shot classification model into BucketFS at bucketfs_location, returns BucketFS path.
+    Load standard small model(with illegal task_type) into BucketFS at
+    bucketfs_location, returns BucketFS path.
     Model is defined in test/utils/parameters.py.
+
+    This one can't use the normal functions, as the task type is illegal and we
+    have to create the BucketFSModelSpecification in a specific way.
     """
-    model_specs = model_params.tiny_model_specs
+    model_specs = model_params.illegal_tiny_model_specs
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
-    with upload_model_to_bucketfs(
-        model_specs,
-        tmpdir,
-        bucketfs_location,
-        bucketfs_model_subdir=model_params.ls_test_subdir,
-    ) as path:
-        yield path
+
+    local_model_save_path = download_model_to_standard_local_save_path(
+        model_specs, tmpdir
+    )
+
+    current_model_specs = BucketFSModelSpecification(
+        model_name=model_specs.model_name,
+        task_type="fill-mask",
+        bucketfs_conn_name="",
+        sub_dir=model_params.ls_test_subdir,
+    )
+    current_model_specs.task_type = model_specs.task_type
+    with upload_model(
+        bucketfs_location, current_model_specs, local_model_save_path
+    ) as model_path:
+        try:
+            yield model_path
+        finally:
+            postprocessing.cleanup_buckets(bucketfs_location, model_path)

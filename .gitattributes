@@ -1,22 +1,20 @@
-/poetry.lock                                                       linguist-generated
-/.github/workflows/build-and-publish.yml                           linguist-generated
-/.github/workflows/cd.yml                                          linguist-generated
-/.github/workflows/check-release-tag.yml                           linguist-generated
-/.github/workflows/checks.yml                                      linguist-generated
-/.github/workflows/ci.yml                                          linguist-generated
-/.github/workflows/gh-pages.yml                                    linguist-generated
-/.github/workflows/matrix-all.yml                                  linguist-generated
-/.github/workflows/matrix-exasol.yml                               linguist-generated
-/.github/workflows/matrix-python.yml                               linguist-generated
-/.github/workflows/release_droid_upload_github_release_assets.yml  linguist-generated
-/.github/workflows/report.yml                                      linguist-generated
-/.github/workflows/pr-merge.yml                                    linguist-generated
+# Core Data and Locks
+poetry.lock               linguist-generated=true
+doc/changes/changelog.md  linguist-generated=true
 
-# manual changes in the following files
+# PTB GitHub Workflows (CI/CD & Publishing)
+.github/workflows/build-and-publish.yml     linguist-generated=true
+.github/workflows/cd.yml                    linguist-generated=true
+.github/workflows/check-release-tag.yml     linguist-generated=true
+.github/workflows/checks.yml                linguist-generated=true
+.github/workflows/ci.yml                    linguist-generated=true
+.github/workflows/dependency-update.yml     linguist-generated=true
+.github/workflows/fast-tests.yml            linguist-generated=true
+.github/workflows/gh-pages.yml              linguist-generated=true
+.github/workflows/matrix.yml                linguist-generated=true
+.github/workflows/merge-gate.yml            linguist-generated=true
+.github/workflows/periodic-validation.yml   linguist-generated=true
+.github/workflows/report.yml                linguist-generated=true
 
-# /.github/workflows/merge-gate.yml
-# /.github/workflows/onprem-integration-tests.yml
-# /.github/workflows/saas-integration-tests.yml
-# /.github/workflows/slow-checks.yml
-# /.github/workflows/test_pip_install.yaml
-# /.github/workflows/without-db-integration-tests.yml
+# This will be activated in #298
+# .github/workflows/pr-merge.yml                  linguist-generated=true

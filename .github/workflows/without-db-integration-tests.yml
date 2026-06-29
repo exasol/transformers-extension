@@ -10,8 +10,10 @@ on:
 
 jobs:
   build-matrix:
-    name: Generate Build Matrix
-    uses: ./.github/workflows/matrix-python.yml
+    name: Build Matrix
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["python_versions"]'
     permissions:
       contents: read
 
@@ -26,35 +28,31 @@ jobs:
     name: Without-DB Tests
     needs: [ build-matrix ]
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+      - name: Check out Repository
+        uses: actions/checkout@v6
         with:
-          tool-cache: true
-          large-packages: false
-      - name: Free disk space by removing large directories
-        run: |
-          sudo rm -rf /usr/local/graalvm/
-          sudo rm -rf /usr/local/.ghcup/
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/local/share/chromium
-          sudo rm -rf /usr/local/lib/node_modules
-          sudo rm -rf /opt/ghc
+          persist-credentials: false
+
+      - name: Free Disk Space
+        id: free-disk-space
+        uses: ./.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python_versions }}
           poetry-version: "2.3.0"
 
       - name: Run without_db_integration_tests
-        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version ${{ matrix.exasol-version }}
+        env:
+          EXASOL_VERSION: ${{ matrix.exasol-version }}
+        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version "$EXASOL_VERSION"
 
       - name: Upload Artifacts
         id: upload-artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
+          name: coverage-python${{ matrix.python_versions }}-exasol${{ matrix.exasol-version }}-slow
           path: .coverage
           include-hidden-files: true
+          overwrite: false
