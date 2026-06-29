@@ -190,6 +190,10 @@ jobs:
         id: build-package
         run: poetry run -- nox -s package:check
 
+      - name: Test pip install
+        id: test-pip-install
+        run: pip install dist/*.whl --extra-index-url https://download.pytorch.org/whl/cpu
+
   audit-workflows:
     name: Audit Workflows
     runs-on: "ubuntu-24.04"

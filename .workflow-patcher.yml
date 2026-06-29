@@ -40,6 +40,14 @@ workflows:
             id: free-disk-space
             uses: ./.github/actions/free-diskspace
 
+      - action: INSERT_AFTER
+        job: build-package
+        step_id: build-package
+        content:
+          - name: Test pip install
+            id: test-pip-install
+            run: pip install dist/*.whl --extra-index-url https://download.pytorch.org/whl/cpu
+
   - name: fast-tests
     step_customizations:
       - action: INSERT_AFTER
