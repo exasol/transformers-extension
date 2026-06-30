@@ -29,6 +29,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
 
     print(set(result))
     print("____________________________________")
+
     print(set(expected_scripts))
 
     # verify all expected scripts are known by the database
