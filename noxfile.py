@@ -89,7 +89,7 @@ def onprem_integration_tests(session):
         "-s",
         "--backend=onprem",
         "--itde-db-version=external",
-        "test/integration_tests/with_db/deployment/test_create_script.py",
+        "test/integration_tests/with_db",
     )
 
 
