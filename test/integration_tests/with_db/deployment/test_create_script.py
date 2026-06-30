@@ -1,4 +1,3 @@
-from pathlib import Path
 from test.utils.db_queries import expected_script_list_all
 
 from exasol_transformers_extension.deployment.write_create_script import (
@@ -25,14 +24,8 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
         db_conn.execute(query)
 
     list_scripts_query = """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
-    result = db_conn.execute(list_scripts_query).fetchall()  # todo
+    result = db_conn.execute(list_scripts_query).fetchall()
     found_scripts = [x[0] for x in result]
-
-    print(set(found_scripts))
-    print("____________________________________")
-
-    print(set(expected_scripts))
 
     # verify all expected scripts are known by the database
     assert set(expected_scripts).issubset(set(found_scripts))
-
