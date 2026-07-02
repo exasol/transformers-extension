@@ -39,8 +39,8 @@ def test_ai_sentiment_script(
 
     # Since in this test the input is a sentence with positive sentiment,
     # which the default sentiment model can detect,
-    # the "acceptable_results" here is the label "positive" with a reasonably high score.
-    acceptable_results = ["positive"]
+    # the "acceptable_results" here is the label "Positive" with a reasonably high score.
+    acceptable_results = ["Positive"]
     assert_lenient_check_of_output_quality_with_score(
         result, acceptable_results, 1 / 1.5, label_index=1
     )

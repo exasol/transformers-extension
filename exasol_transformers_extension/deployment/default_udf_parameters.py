@@ -23,19 +23,19 @@ DEFAULT_VALUES = {
 DEFAULT_MODEL_SPECS = {
     # these are placeholder model specs, remove them once we have decided on a real one
     "AiSentimentUDF": model_spec_factory.create(
-        model_name="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
+        model_name="tabularisai/robust-sentiment-analysis",
         task_type="text-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "AiClassifyUDF": model_spec_factory.create(
-        model_name="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
+        model_name="MoritzLaurer/ModernBERT-large-zeroshot-v2.0",
         task_type="zero-shot-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "AiExtractEntitiesUDF": model_spec_factory.create(
-        model_name="dslim/bert-base-NER",
+        model_name="guishe/nuner-v2_fewnerd_fine_super",
         task_type="token-classification",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
