@@ -17,5 +17,3 @@ T.B.D
 ## Documentation
 
 ## Refactorings
-
-* #395: Update to PTB 10.0.0
