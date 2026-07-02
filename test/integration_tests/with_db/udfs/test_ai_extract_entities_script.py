@@ -31,7 +31,7 @@ def test_ai_extract_entities_script_without_spans(
         6, 0, input_data[0], result, n_rows
     )
 
-    acceptable_result_sets = [["Exasol", "ORG"], ["Nuremberg", "LOC"]]
+    acceptable_result_sets = [["Exasol", "organization_company"], ["Nuremberg", "location"]]
     assert_lenient_check_of_output_quality_for_result_set(
         result, acceptable_result_sets, acceptance_factor=0.5, label_index=3
     )
