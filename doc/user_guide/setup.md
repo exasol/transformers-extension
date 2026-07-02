@@ -231,5 +231,5 @@ In addition, this extension provides the following installation options:
 
 #### Create Script
 
-There is a SQL script called in "exasol_transformers_extension/deployment/create_script.sql". You can run this script 
+There is a SQL script in "exasol_transformers_extension/deployment/create_script.sql". You can run this script in SQL Editor
 to install the udfs (not the SLC) in your Exasol Database.
