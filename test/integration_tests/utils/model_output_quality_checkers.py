@@ -7,6 +7,7 @@ def assert_lenient_check_of_output_quality_with_score(
     acceptable_results: list,
     acceptance_factor: float,
     label_index: int = 5,
+    high_confidence_threshold: float = 0.8,
 ):
     """
     Checks whether enough of the results are of "good quality".
@@ -22,7 +23,8 @@ def assert_lenient_check_of_output_quality_with_score(
                          | label acceptable  | label unacceptable
     --------------------------------------------------------------
     high confidence       | acceptable        |  bad result
-    (result_score > 0.8)  |                   |
+    (result_score >
+    high_confidence_threshold)|               |
     --------------------------------------------------------------
     other confidence      | result not        |  result not
     (result_score between | good enough to    |  good enough to
@@ -43,7 +45,8 @@ def assert_lenient_check_of_output_quality_with_score(
         result_label = result_i[label_index]
         result_score = result_i[label_index + 1]
         if (
-            contains(result_label, acceptable_results) and result_score > 0.8
+            contains(result_label, acceptable_results)
+            and result_score > high_confidence_threshold
         ):  # check if confidence on good results is reasonably high
             number_accepted_results += 1
         elif result_score < 0.2 and not contains(result_label, acceptable_results):

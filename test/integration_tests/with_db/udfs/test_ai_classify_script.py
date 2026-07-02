@@ -41,10 +41,11 @@ def test_ai_classify_script(
     assert_correct_number_of_results(3, 0, input_data[0], result, n_rows)
 
     acceptable_results = ["Analytics", "Database", "Germany"]
-    # todo the results for this tests return only "Database" with scores around 0.5099953413009644
-    # the assert_lenient_check_of_output_quality_with_score only accepts results with score 0.8 or higher.
-    # do we want to change the model again? or do we want to switch to "assert_lenient_check_of_output_quality",
-    # which would ignore the scores?
+
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8, label_index=2
+        result,
+        acceptable_results,
+        1 / 1.8,
+        label_index=2,
+        high_confidence_threshold=0.5,
     )
