@@ -167,6 +167,34 @@ jobs:
         id: check-format
         run: poetry run -- nox -s format:check
 
+  check-create_script_up_to_date:
+    name: Check if the create_script is up to date
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+    steps:
+      - name: Check out Repository
+        id: check-out-repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Free Disk Space
+        id: free-disk-space
+        uses: ./.github/actions/free-diskspace
+
+      - name: Set up Python & Poetry Environment
+        id: set-up-python-and-poetry-environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
+
+      - name: Check create_script
+        id: check-create_script
+        run: poetry run -- nox -s create_script:updated
+
+
   build-package:
     name: Build Package
     runs-on: "ubuntu-24.04"

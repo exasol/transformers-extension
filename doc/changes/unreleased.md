@@ -10,6 +10,8 @@ T.B.D
 
 ## Features
 
+ * #391: Added sql create_script to create all UDF's in Database.
+
 ## Security
 
 ## Bugfixes

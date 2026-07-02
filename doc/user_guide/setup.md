@@ -21,6 +21,7 @@ Here you find information on prerequisites for using the Transformers Extension,
   * [Deploy the Extension to the Database](#deploy-the-extension-to-the-database)
     * [The Pre-built Language Container](#the-pre-built-language-container)
     * [List of Options](#list-of-options)
+    * [Create Script](#create-script)
     
 ## Prerequisites
 
@@ -37,7 +38,7 @@ Normally, the connection object is created as part of the Transformers Extension
 
 This section describes how this object can be created manually.
 
-The format of the connection object is as following:
+The format of the connection object is as follows:
   ```sql
   CREATE OR REPLACE CONNECTION <BUCKETFS_CONNECTION_NAME>
       TO '<BUCKETFS_ADDRESS>'
@@ -60,7 +61,7 @@ It is also possible to create this connection manually. This works like
 any other Exasol BucketFS connection, but needs to have the name "EXA_AI_MODEL_LOCATION".
 
   ```sql
-  CREATE OR REPLACE CONNECTION <EXA_AI_MODEL_LOCATION>
+  CREATE OR REPLACE CONNECTION EXA_AI_MODEL_LOCATION
       TO '<BUCKETFS_ADDRESS>'
       USER '<BUCKETFS_USER>'
       IDENTIFIED BY '<BUCKETFS_PASSWORD>'
@@ -228,3 +229,7 @@ In addition, this extension provides the following installation options:
 | `--token-conn-name`              |         | Optional. Name of the [token connection object](#hugging-face-token) if required. If empty will not create connection object |
 | `--token`                        |         | Optional. The [Huggingface token](#hugging-face-token) if required                                                           |
 
+#### Create Script
+
+There is a SQL script in "exasol_transformers_extension/deployment/create_script.sql". You can run this script in SQL Editor
+to install the udfs (not the SLC) in your Exasol Database.
