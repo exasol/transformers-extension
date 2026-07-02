@@ -5,8 +5,6 @@ Writes SQL queries for the creation of all udf script to create_script.sql
 import os
 from pathlib import Path
 
-from pygments.lexers import sql
-
 from exasol_transformers_extension.deployment.script_deployment_queries import (
     ScriptDeploymentQueries,
 )
