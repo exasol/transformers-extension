@@ -48,7 +48,7 @@ model_params = ModelParams(
     fill_model_specs=ModelSpecification("bert-base-uncased", "fill_mask"),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification(
-        "deepset/tinybert-6l-768d-squad2", "question-answering"
+        "openai-community/gpt2", "text-generation"
     ),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),

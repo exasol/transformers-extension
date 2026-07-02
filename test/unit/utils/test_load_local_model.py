@@ -73,6 +73,5 @@ def test_load_function_call():
                 test_setup.tokenizer_factory_mock.from_pretrained
             ).return_value,
             device="cpu",
-            framework="pt",
         )
     ]
