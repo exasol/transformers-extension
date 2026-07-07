@@ -32,8 +32,8 @@ def test_ai_extract_entities_script_without_spans(
     )
 
     acceptable_result_sets = [
-        ["Exasol", "organization_company"],
-        ["Nuremberg", "location"],
+        [" Exasol", "organization_company"],
+        [" Nuremberg", "location"],
     ]
     assert_lenient_check_of_output_quality_for_result_set(
         result, acceptable_result_sets, acceptance_factor=0.5, label_index=3
