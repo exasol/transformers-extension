@@ -130,7 +130,7 @@ def test_max_new_tokens_ai_complete_extended(
     )
     model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
     tokenizer = AutoTokenizer.from_pretrained(
-        str(bucketfs_base_path / model_path_in_bucketfs)
+        str(bucketfs_base_path / model_path_in_bucketfs), local_files_only=True
     )
 
     input_tokenized = tokenizer(

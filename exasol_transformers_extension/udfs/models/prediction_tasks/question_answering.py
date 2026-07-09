@@ -55,9 +55,11 @@ class AnswerPredictionTask(PredictionTask):
         #todo make test with multiple questions?
         questions = model_df["question"]
         text_data_df = list(model_df["context_text"] + " " + questions)
+        print(text_data_df)
         top_k = int(model_df["top_k"].iloc[0])
-        results = self.last_created_pipeline(
-            text_inputs = text_data_df, top_k=top_k, return_full_text=False)
+        results = self.last_created_pipeline(#todo top_k does not seem to do anything, but should
+            text_inputs = text_data_df, top_k=top_k, return_full_text=False, do_sample=True,
+        temperature = 0.3, num_beams=2, repetition_penalty=1.5)
 
         # We need to separate the answer to one question from the answers to
         # multiple questions, such that results of one question could be
@@ -65,8 +67,9 @@ class AnswerPredictionTask(PredictionTask):
         # - either a dict or list of dicts where top_k>1
         # in both cases we need to put the answer(s) in a list to make sure that
         # the answer(s) is from a single question
-        results = [results] if len(questions) == 1 else results
+        #results = [results] if len(questions) == 1 else results
         print(results)
+        print("___________")
         return results
 
     def append_predictions_to_input_dataframe(

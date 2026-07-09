@@ -54,18 +54,18 @@ def test_ai_answer_extended_udf(
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
-    question = "Where is the Exasol?"
+    question = "Where is the company Exasol?"
     sample_data = [
         (
             None,
             bucketfs_conn_name,
             model_params.sub_dir,
             model_params.q_a_model_specs.model_name,
-            question,
-            model_params.text_data,
+            question + f"{i}",
+            model_params.text_data + f"{i}",
             top_k,
         )
-        for _ in range(n_rows)
+        for i in range(n_rows)
     ]
     columns = [
         "device_id",
@@ -86,14 +86,11 @@ def test_ai_answer_extended_udf(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
-    new_columns = ["answer", "score", "rank", "error_message"]
+    new_columns = ["answer", "error_message"]
 
     result = Result(result_df)
     assert (
-        result == ScoreMatcher()
-        and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=top_k)
-        and result
+        result
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
@@ -166,7 +163,7 @@ def test_ai_answer_extended_udf_on_error_handling(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
-    new_columns = ["answer", "score", "rank", "error_message"]
+    new_columns = ["answer", "error_message"]
 
     result = Result(result_df)
     assert (

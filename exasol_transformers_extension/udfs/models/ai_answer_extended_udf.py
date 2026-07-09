@@ -35,7 +35,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
     Will output to "answer", "score", "rank".
     Does not use default values.
     Uses models compatible with the "question-answering" transformers task,
-     and uses AutoModelForQuestionAnswering to load said model.
+     and uses AutoModelForCausalLM to load said model.
     """
 
     def __init__(
@@ -46,7 +46,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         base_model=transformers.AutoModelForCausalLM,#AutoModelForCausalLM
         tokenizer=transformers.AutoTokenizer,
         prediction_task=AnswerPredictionTask(
-            desired_fields_in_prediction=["answer", "score"],
+            desired_fields_in_prediction=["answer"],
         ),
     ):
 
@@ -55,7 +55,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                 UniqueModelDataframeTransformation(),
                 UniqueModelParamsDataframeTransformation(
                     prediction_task=prediction_task,
-                    expected_input_columns=["top_k"],
+                    expected_input_columns=["top_k"],#todo delete top_k?
                     new_columns=[],
                     removed_columns=[],
                 ),
@@ -64,7 +64,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                     PredictionTaskTransformation(
                         prediction_task=prediction_task,
                         expected_input_columns=["question", "context_text", "top_k"],
-                        new_columns=["answer", "score", "rank"],
+                        new_columns=["answer"],
                         removed_columns=[],
                     ),
                 ),
