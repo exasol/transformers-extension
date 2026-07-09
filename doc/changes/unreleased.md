@@ -18,4 +18,5 @@ T.B.D
 
 ## Refactorings
 
-* #395: Update to PTB 10.0.0
+* #395: Update to exasol-toolbox 10.0.0
+* #402: Updated to exasol-toolbox 10.2.1
