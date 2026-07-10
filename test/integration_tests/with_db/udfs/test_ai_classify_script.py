@@ -41,6 +41,11 @@ def test_ai_classify_script(
     assert_correct_number_of_results(3, 0, input_data[0], result, n_rows)
 
     acceptable_results = ["Analytics", "Database", "Germany"]
+
     assert_lenient_check_of_output_quality_with_score(
-        result, acceptable_results, 1 / 1.8, label_index=2
+        result,
+        acceptable_results,
+        1 / 1.8,
+        label_index=2,
+        high_confidence_threshold=0.5,
     )

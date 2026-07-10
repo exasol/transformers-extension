@@ -20,3 +20,4 @@ T.B.D
 
 * #395: Update to exasol-toolbox 10.0.0
 * #402: Update to exasol-toolbox 10.2.1
+
