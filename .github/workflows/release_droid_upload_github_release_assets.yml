@@ -15,8 +15,7 @@ jobs:
         python-version: [ '3.10' ]
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
-      id-token: write
+      contents: write # zizmor: ignore[github-env] - We need to upload the release files;
     steps:
       - name: Check out Repository
         uses: actions/checkout@v6
@@ -52,4 +51,5 @@ jobs:
         env:
           POETRY_HTTP_BASIC_PYPI_USERNAME: "__token__"
           POETRY_HTTP_BASIC_PYPI_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
-        run: poetry publish
+        run: poetry publish # zizmor: ignore[use-trusted-publishing] - Trusted Publishing is not usable from this reusable workflow yet; see https://github.com/exasol/python-toolbox/issues/871
+
