@@ -1,4 +1,4 @@
-# Transformers Extension 4.0.1, 2026-07-08
+# Transformers Extension 4.0.1, 2026-07-10
 
 Code name: Default Models
 
