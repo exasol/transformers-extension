@@ -1,3 +1,5 @@
+import pandas as pd
+
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils import postprocessing
 
@@ -8,12 +10,11 @@ from exasol.python_extension_common.cli.std_options import (
 )
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
-    DEFAULT_VALUES,
+    DEFAULT_VALUES, DEFAULT_BUCKETFS_CONN_NAME, DEFAULT_SUBDIR,
 )
 from exasol_transformers_extension.install_default_models import (
     install_default_models_command,
 )
-
 
 def test_install_default_models_cli(
     bucketfs_cli_args,
@@ -33,12 +34,29 @@ def test_install_default_models_cli(
     result = runner.invoke(
         install_default_models_command, args=args_string, catch_exceptions=False
     )
+
     if result.exit_code != 0:
         print("Exception:", result.exception)
         print("ExcInfo:", result.exc_info)
         print("STDERR:", result.stderr_bytes)
         print("STDOUT:", result.stdout_bytes)
     assert result.exit_code == 0
+
+    input_data_set = [(DEFAULT_BUCKETFS_CONN_NAME, DEFAULT_SUBDIR)]
+    ls_query = (
+        f"SELECT TE_LIST_MODELS_UDF("
+        f"t.bucketfs_conn_name, "
+        f"t.sub_dir "
+        f") FROM (VALUES {python_rows_to_sql(input_data_set)} "
+        f"AS t(bucketfs_conn_name, "
+        f"sub_dir));"
+    )
+
+    # execute UDF
+    result = db_conn.execute(ls_query).fetchall()
+
+    with pd.option_context("display.max_rows", None, "display.max_columns", None):
+        print(result)
 
     try:
         sentiment_text = "I am so happy to be working on the Transformers Extension."
@@ -52,6 +70,7 @@ def test_install_default_models_cli(
         )
 
         result = db_conn.execute(query).fetchall()
+        print(result[0][-1])
         assert len(result) == 1 and result[0][-1] is None
 
         extract_text = "The database software company Exasol is based in Nuremberg"
