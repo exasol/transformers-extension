@@ -31,6 +31,9 @@ from exasol_transformers_extension.udfs.models.transformation.remove_columns imp
 from exasol_transformers_extension.udfs.models.transformation.span_columns import (
     SpanColumnsTokenClassificationTransformation,
 )
+from exasol_transformers_extension.udfs.models.transformation.strip_whitespace_from_columns import (
+    StripWhitespaceTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )
@@ -107,6 +110,11 @@ class AiExtractEntitiesUDF(BaseModelUDF):
                         "aggregation_strategy",
                     ],
                 ),
+            ),
+            StripWhitespaceTransformation(
+                expected_input_columns=[
+                    "word",
+                ],
             ),
             RemoveColumnsTransformation(
                 removed_columns=[
