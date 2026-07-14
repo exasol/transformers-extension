@@ -27,7 +27,7 @@ class ModelFactoryProtocol(Protocol):
 
         :model_name:        model name, or path to locally saved model files
         :cache_dir:         optional. Path where downloaded model should be cached
-        :use_auth_token:    optional. token for Huggingface hub private models
+        :token:             optional. token for Huggingface hub private models
         """
 
     def save_pretrained(self, save_directory: str | Path):
