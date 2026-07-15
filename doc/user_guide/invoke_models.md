@@ -28,6 +28,8 @@ models will however increase the processing time, as the models need to be loade
 This UDF classifies the given text according the sentiment found in the text.
 It will output only the highest scoring result for each input row.
 
+This UDF uses the [tabularisai/robust-sentiment-analysis](https://huggingface.co/tabularisai/robust-sentiment-analysis) model.
+
 Example usage:
 
 ```sql
@@ -295,9 +297,11 @@ This UDF finds tokens in a given text, and assigns a label to found tokens.
 
 It uses the "simple" aggregation strategy.
 
+This UDF uses the [guishe/nuner-v2_fewnerd_fine_super](https://huggingface.co/guishe/nuner-v2_fewnerd_fine_super/tree/main) model.
+
 
 ```sql
-SELECT AI_EXTRACT_Entities(
+SELECT AI_EXTRACT_ENTITIES(
     text_data,
 )
 ```
@@ -425,6 +429,9 @@ The provided classes do not have to be known during the original model training.
 
 The UDF takes candidate labels as a comma-separated string and generates probability 
 scores for each predicted label.
+
+This UDF uses the [MoritzLaurer/ModernBERT-large-zeroshot-v2.0](https://huggingface.co/MoritzLaurer/ModernBERT-large-zeroshot-v2.0) model.
+
 
 ```sql
 SELECT AI_CLASSIFY(
