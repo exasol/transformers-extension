@@ -5,7 +5,6 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "AI_ANSWER_EXTENDED"(
     model_name VARCHAR(2000000),
     question VARCHAR(2000000),
     context_text VARCHAR(2000000),
-    top_k INTEGER
     ORDER BY {{ ordered_columns | join(" ASC,") }} ASC
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
@@ -13,10 +12,7 @@ CREATE OR REPLACE {{ language_alias }} SET SCRIPT "AI_ANSWER_EXTENDED"(
     model_name VARCHAR(2000000),
     question VARCHAR(2000000),
     context_text VARCHAR(2000000),
-    top_k INTEGER,
     answer VARCHAR(2000000),
-    score DOUBLE,
-    rank INTEGER,
     error_message VARCHAR(2000000) ) AS
 
 {{ script_content }}

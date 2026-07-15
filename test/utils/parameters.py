@@ -63,7 +63,7 @@ model_params = ModelParams(
         "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
         "zero-shot-classification",
     ),
-    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "fill-mask"),
+    tiny_model_specs=ModelSpecification("marklkelly/bert-tiny-injection-detector", "fill-mask"),
     illegal_tiny_model_specs=create_illegal_tiny_model_specs(),
     text_data="The database software company Exasol is based in Nuremberg",
     sub_dir="model_sub_dir",

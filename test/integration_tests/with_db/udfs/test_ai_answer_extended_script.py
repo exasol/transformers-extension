@@ -15,9 +15,8 @@ def test_ai_answer_extended_script(
     question = "Where is Exasol based?"
 
     n_rows = 100
-    top_k = 1
     input_data = []
-    for i in range(n_rows):
+    for _ in range(n_rows):
         input_data.append(
             (
                 "",
@@ -26,7 +25,6 @@ def test_ai_answer_extended_script(
                 model_params.q_a_model_specs.model_name,
                 question,
                 "The database software company Exasol is based in Nuremberg",
-                top_k,
             )
         )
 
@@ -38,10 +36,9 @@ def test_ai_answer_extended_script(
         f"t.model_name, "
         f"t.question, "
         f"t.context_text, "
-        f"t.top_k"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, sub_dir, "
-        f"model_name, question, context_text, top_k));"
+        f"model_name, question, context_text));"
     )
 
     # execute sequence classification UDF
@@ -50,9 +47,9 @@ def test_ai_answer_extended_script(
     # assertions
     assert result[0][-1] is None
 
-    # added_columns = answer,score,rank,error_message
+    # added_columns = answer,error_message
     # removed_columns = device_id
-    assert_correct_number_of_results(4, 1, input_data[0], result, n_rows)
+    assert_correct_number_of_results(2, 1, input_data[0], result, n_rows)
 
-    acceptable_results = ["Nuremberg", "Germany"]
+    acceptable_results = ["Nuremberg", "Germany"]#todo model seems to repeate the context text messing up this check.
     assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 6)

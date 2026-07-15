@@ -8,8 +8,8 @@ from typing import (
 
 
 class MockQuestionAnsweringModel:
-    def __init__(self, answer: str, score: float, rank: int):
-        self.result = {"answer": answer, "score": score, "rank": rank}
+    def __init__(self, answer: str):
+        self.result = {"answer": answer}
 
     @classmethod
     def from_pretrained(cls, model_path):
@@ -20,7 +20,7 @@ class MockQuestionAnsweringFactory:
     def __init__(self, mock_models: dict[PurePosixPath, MockQuestionAnsweringModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_path):
+    def from_pretrained(self, model_path, local_files_only=True):
         return self.mock_models[PurePosixPath(model_path)]
 
 

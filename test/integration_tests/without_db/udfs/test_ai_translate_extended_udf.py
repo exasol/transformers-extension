@@ -207,7 +207,6 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
-    print(result)
     assert (
         result
         == ShapeMatcher(

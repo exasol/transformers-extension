@@ -24,13 +24,13 @@ from exasol_transformers_extension.udfs.models.install_default_models_udf import
 
 TEST_DEFAULT_MODELS = {
     "AiSentimentUDF": model_spec_factory.create(
-        model_name="prajjwal1/bert-tiny",
+        model_name="marklkelly/bert-tiny-injection-detector",
         task_type="fill_mask",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "model_for_another_udf": model_spec_factory.create(
-        model_name="prajjwal1/bert-tiny",
+        model_name="marklkelly/bert-tiny-injection-detector",
         task_type="fill_mask",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),

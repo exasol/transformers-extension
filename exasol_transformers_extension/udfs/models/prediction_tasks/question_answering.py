@@ -36,9 +36,7 @@ class AnswerPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield from extract_unique_param_based_dataframes_on_col_list(
-            model_df, ["top_k"]
-        )
+        yield model_df #todo do we want to add new ones? max new tokens?
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -56,15 +54,14 @@ class AnswerPredictionTask(PredictionTask):
         questions = model_df["question"]
         text_data_df = list(model_df["context_text"] + " " + questions)
         print(text_data_df)
-        top_k = int(model_df["top_k"].iloc[0])
-        results = self.last_created_pipeline(#todo top_k does not seem to do anything, but should
-            text_inputs = text_data_df, top_k=top_k, return_full_text=False, do_sample=True,
+        results = self.last_created_pipeline(
+            text_inputs = text_data_df, return_full_text=False, do_sample=True,
         temperature = 0.3, num_beams=2, repetition_penalty=1.5)
 
         # We need to separate the answer to one question from the answers to
         # multiple questions, such that results of one question could be
-        # - a dict where top_k=1, or
-        # - either a dict or list of dicts where top_k>1
+        # - a dict, or
+        # - either a dict or list of dicts
         # in both cases we need to put the answer(s) in a list to make sure that
         # the answer(s) is from a single question
         #results = [results] if len(questions) == 1 else results

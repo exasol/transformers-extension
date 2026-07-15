@@ -55,7 +55,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                 UniqueModelDataframeTransformation(),
                 UniqueModelParamsDataframeTransformation(
                     prediction_task=prediction_task,
-                    expected_input_columns=["top_k"],#todo delete top_k?
+                    expected_input_columns=[],
                     new_columns=[],
                     removed_columns=[],
                 ),
@@ -63,7 +63,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
                     exa,
                     PredictionTaskTransformation(
                         prediction_task=prediction_task,
-                        expected_input_columns=["question", "context_text", "top_k"],
+                        expected_input_columns=["question", "context_text"],
                         new_columns=["answer"],
                         removed_columns=[],
                     ),

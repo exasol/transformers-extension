@@ -205,12 +205,17 @@ def get_task_and_model_name(found_task_types, model_specific_path_suffix, name_p
     # disregard found_task_types form other positions in the model_specific_path_suffix
     for found_task_type in found_task_types:
         if model_specific_path_suffix.endswith("_" + found_task_type):
-            model_name = "/".join(
-                [
-                    name_prefix,
-                    model_specific_path_suffix.removesuffix("_" + found_task_type),
-                ]
-            )
+            if name_prefix:
+                model_name = "/".join(
+                    [
+                        name_prefix,
+                        model_specific_path_suffix.removesuffix("_" + found_task_type),
+                    ]
+                )
+            else:
+                model_name = model_specific_path_suffix.removesuffix("_" + found_task_type)
+
+            print(model_name)
             task_type = found_task_type
             break
 

@@ -42,12 +42,11 @@ class MultipleModelMultipleBatchComplete:
     expected_model_counter = 2
     batch_size = 2
     data_size = 2
-    top_k = 2
 
     input_data = [
-        (None, "bfs_conn1", "sub_dir1", "model1", "question", "context", top_k)
+        (None, "bfs_conn1", "sub_dir1", "model1", "question", "context")
     ] * data_size + [
-        (None, "bfs_conn2", "sub_dir2", "model2", "question", "context", top_k)
+        (None, "bfs_conn2", "sub_dir2", "model2", "question", "context")
     ] * data_size
     output_data = [
         (
@@ -56,26 +55,20 @@ class MultipleModelMultipleBatchComplete:
             "model1",
             "question",
             "context",
-            top_k,
             "answer 1",
-            0.1,
-            1,
             None,
         )
-    ] * data_size * top_k + [
+    ] * data_size + [
         (
             "bfs_conn2",
             "sub_dir2",
             "model2",
             "question",
             "context",
-            top_k,
             "answer 2",
-            0.2,
-            1,
             None,
         )
-    ] * data_size * top_k
+    ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
     base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
@@ -89,10 +82,10 @@ class MultipleModelMultipleBatchComplete:
         {
             PurePosixPath(
                 base_cache_dir1, "sub_dir1", "model1_question-answering"
-            ): MockQuestionAnsweringModel(answer="answer 1", score=0.1, rank=1),
+            ): MockQuestionAnsweringModel(answer="answer 1"),
             PurePosixPath(
                 base_cache_dir2, "sub_dir2", "model2_question-answering"
-            ): MockQuestionAnsweringModel(answer="answer 2", score=0.2, rank=1),
+            ): MockQuestionAnsweringModel(answer="answer 2"),
         }
     )
 

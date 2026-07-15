@@ -21,7 +21,7 @@ class MockTextGenerationFactory:
     def __init__(self, mock_models: dict[PurePosixPath, MockTextGenerationModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_path):
+    def from_pretrained(self, model_path, local_files_only=True):
         # the cache_dir path already has model_name
         return self.mock_models[PurePosixPath(model_path)]
 
