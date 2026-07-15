@@ -1,18 +1,34 @@
 import enum
 import warnings
-from typing import Any, Union
+from typing import (
+    Any,
+    Union,
+)
 
 import torch
-from transformers import add_end_docstrings, GenerationConfig, AutoModelForSeq2SeqLM
-from transformers.models.auto.modeling_auto import MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES
-from transformers.pipelines import PIPELINE_REGISTRY, logger
-from transformers.pipelines.base import build_pipeline_init_args, Pipeline
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    GenerationConfig,
+    add_end_docstrings,
+)
+from transformers.models.auto.modeling_auto import (
+    MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES,
+)
+from transformers.pipelines import (
+    PIPELINE_REGISTRY,
+    logger,
+)
+from transformers.pipelines.base import (
+    Pipeline,
+    build_pipeline_init_args,
+)
 from transformers.tokenization_utils_base import TruncationStrategy
 
 
 class ReturnType(enum.Enum):
     TENSORS = 0
     TEXT = 1
+
 
 @add_end_docstrings(build_pipeline_init_args(has_tokenizer=True))
 class Text2TextGenerationPipeline(Pipeline):
@@ -75,9 +91,7 @@ class Text2TextGenerationPipeline(Pipeline):
         super().__init__(*args, **kwargs)
 
         supported_models = MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES
-        self.check_model_type(
-            supported_models
-        )
+        self.check_model_type(supported_models)
 
     def _sanitize_parameters(
         self,
@@ -102,10 +116,14 @@ class Text2TextGenerationPipeline(Pipeline):
             postprocess_params["return_type"] = return_type
 
         if clean_up_tokenization_spaces is not None:
-            postprocess_params["clean_up_tokenization_spaces"] = clean_up_tokenization_spaces
+            postprocess_params["clean_up_tokenization_spaces"] = (
+                clean_up_tokenization_spaces
+            )
 
         if stop_sequence is not None:
-            stop_sequence_ids = self.tokenizer.encode(stop_sequence, add_special_tokens=False)
+            stop_sequence_ids = self.tokenizer.encode(
+                stop_sequence, add_special_tokens=False
+            )
             if len(stop_sequence_ids) > 1:
                 warnings.warn(
                     "Stopping on a multiple token sequence is not yet supported on transformers. The first token of"
@@ -131,7 +149,9 @@ class Text2TextGenerationPipeline(Pipeline):
         prefix = self.prefix if self.prefix is not None else ""
         if isinstance(args[0], list):
             if self.tokenizer.pad_token_id is None:
-                raise ValueError("Please make sure that the tokenizer has a pad_token_id when using a batch input")
+                raise ValueError(
+                    "Please make sure that the tokenizer has a pad_token_id when using a batch input"
+                )
             args = ([prefix + arg for arg in args[0]],)
             padding = True
 
@@ -148,7 +168,9 @@ class Text2TextGenerationPipeline(Pipeline):
             del inputs["token_type_ids"]
         return inputs
 
-    def __call__(self, *args: Union[str, list[str]], **kwargs: Any) -> list[dict[str, str]]:
+    def __call__(
+        self, *args: Union[str, list[str]], **kwargs: Any
+    ) -> list[dict[str, str]]:
         r"""
         Generate the output text(s) using text(s) given as inputs.
 
@@ -186,7 +208,9 @@ class Text2TextGenerationPipeline(Pipeline):
             return [res[0] for res in result]
         return result
 
-    def preprocess(self, inputs, truncation=TruncationStrategy.DO_NOT_TRUNCATE, **kwargs):
+    def preprocess(
+        self, inputs, truncation=TruncationStrategy.DO_NOT_TRUNCATE, **kwargs
+    ):
         inputs = self._parse_and_tokenize(inputs, truncation=truncation, **kwargs)
         return inputs
 
@@ -205,7 +229,9 @@ class Text2TextGenerationPipeline(Pipeline):
             generate_kwargs.get("min_length", self.generation_config.min_length),
             generate_kwargs.get("max_length", self.generation_config.max_length),
         )
-        model_inputs["input_ids"] = mi_tensor#the lists are tensors now. already change in input?
+        model_inputs["input_ids"] = (
+            mi_tensor  # the lists are tensors now. already change in input?
+        )
         model_inputs["attention_mask"] = am
         # User-defined `generation_config` passed to the pipeline call take precedence
         if "generation_config" not in generate_kwargs:
@@ -216,7 +242,12 @@ class Text2TextGenerationPipeline(Pipeline):
         output_ids = output_ids.reshape(in_b, out_b // in_b, *output_ids.shape[1:])
         return {"output_ids": output_ids}
 
-    def postprocess(self, model_outputs, return_type=ReturnType.TEXT, clean_up_tokenization_spaces=False):
+    def postprocess(
+        self,
+        model_outputs,
+        return_type=ReturnType.TEXT,
+        clean_up_tokenization_spaces=False,
+    ):
         records = []
         for output_ids in model_outputs["output_ids"][0]:
             if return_type == ReturnType.TENSORS:
@@ -269,7 +300,13 @@ class TranslationPipeline(Text2TextGenerationPipeline):
             )
         return True
 
-    def preprocess(self, *args, truncation=TruncationStrategy.DO_NOT_TRUNCATE, src_lang=None, tgt_lang=None):
+    def preprocess(
+        self,
+        *args,
+        truncation=TruncationStrategy.DO_NOT_TRUNCATE,
+        src_lang=None,
+        tgt_lang=None,
+    ):
         if getattr(self.tokenizer, "_build_translation_inputs", None):
             return self.tokenizer._build_translation_inputs(
                 *args, truncation=truncation, src_lang=src_lang, tgt_lang=tgt_lang
@@ -278,7 +315,9 @@ class TranslationPipeline(Text2TextGenerationPipeline):
             return super()._parse_and_tokenize(*args, truncation=truncation)
 
     def _sanitize_parameters(self, src_lang=None, tgt_lang=None, **kwargs):
-        preprocess_params, forward_params, postprocess_params = super()._sanitize_parameters(**kwargs)
+        preprocess_params, forward_params, postprocess_params = (
+            super()._sanitize_parameters(**kwargs)
+        )
         if src_lang is not None:
             preprocess_params["src_lang"] = src_lang
         if tgt_lang is not None:
@@ -325,10 +364,11 @@ class TranslationPipeline(Text2TextGenerationPipeline):
         """
         return super().__call__(*args, **kwargs)
 
-PIPELINE_REGISTRY.register_pipeline(#todo where should this live?
+
+PIPELINE_REGISTRY.register_pipeline(  # todo where should this live?
     task="translation",
     pipeline_class=TranslationPipeline,
     pt_model=AutoModelForSeq2SeqLM,
-    default={"pt": ("user/awesome-model", "branch-name")},#todo no default model
+    default={"pt": ("user/awesome-model", "branch-name")},  # todo no default model
     type="text",
 )

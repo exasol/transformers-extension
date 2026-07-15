@@ -47,9 +47,7 @@ def create_illegal_tiny_model_specs():
 model_params = ModelParams(
     fill_model_specs=ModelSpecification("bert-base-uncased", "fill_mask"),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
-    q_a_model_specs=ModelSpecification(
-        "openai-community/gpt2", "text-generation"
-    ),
+    q_a_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),
     text_classification_model_specs=ModelSpecification(
@@ -63,7 +61,9 @@ model_params = ModelParams(
         "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
         "zero-shot-classification",
     ),
-    tiny_model_specs=ModelSpecification("marklkelly/bert-tiny-injection-detector", "fill-mask"),
+    tiny_model_specs=ModelSpecification(
+        "marklkelly/bert-tiny-injection-detector", "fill-mask"
+    ),
     illegal_tiny_model_specs=create_illegal_tiny_model_specs(),
     text_data="The database software company Exasol is based in Nuremberg",
     sub_dir="model_sub_dir",

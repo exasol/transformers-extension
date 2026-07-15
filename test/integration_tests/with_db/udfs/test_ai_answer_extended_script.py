@@ -51,5 +51,8 @@ def test_ai_answer_extended_script(
     # removed_columns = device_id
     assert_correct_number_of_results(2, 1, input_data[0], result, n_rows)
 
-    acceptable_results = ["Nuremberg", "Germany"]#todo model seems to repeate the context text messing up this check.
+    acceptable_results = [
+        "Nuremberg",
+        "Germany",
+    ]  # todo model seems to repeate the context text messing up this check.
     assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 6)

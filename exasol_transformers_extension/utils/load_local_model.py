@@ -6,7 +6,9 @@ import torch
 import transformers.pipelines
 from transformers import AutoModelForSeq2SeqLM
 
-from exasol_transformers_extension.udfs.models.transformers_pipelines.translation import TranslationPipeline
+from exasol_transformers_extension.udfs.models.transformers_pipelines.translation import (
+    TranslationPipeline,
+)
 from exasol_transformers_extension.utils import (
     bucketfs_operations,
     device_management,

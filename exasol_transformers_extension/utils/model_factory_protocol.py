@@ -19,7 +19,7 @@ class ModelFactoryProtocol(Protocol):
         model_name: str,
         cache_dir: Optional[Path] = None,
         token: Optional[str] = None,
-        local_files_only: bool =True,
+        local_files_only: bool = True,
     ) -> transformers.PreTrainedModel:
         """
         Either downloads a model from Huggingface Hub(all parameters required),

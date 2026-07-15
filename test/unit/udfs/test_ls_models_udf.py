@@ -185,5 +185,3 @@ def test_ls_udf(tmpdir_factory):
     assert_result_matches_expected_output_order_agnostic(
         mock_ctx.output, expected_output, ["bucketfs_conn", "sub_dir"], sort_by_column=4
     )
-
-

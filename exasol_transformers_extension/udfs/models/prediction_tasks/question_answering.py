@@ -36,7 +36,7 @@ class AnswerPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield model_df #todo do we want to add new ones? max new tokens?
+        yield model_df  # todo do we want to add new ones? max new tokens?
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -49,14 +49,19 @@ class AnswerPredictionTask(PredictionTask):
 
         :return: List of dataframes holding prediction results
         """
-        #todo change docu
-        #todo make test with multiple questions?
+        # todo change docu
+        # todo make test with multiple questions?
         questions = model_df["question"]
         text_data_df = list(model_df["context_text"] + " " + questions)
         print(text_data_df)
         results = self.last_created_pipeline(
-            text_inputs = text_data_df, return_full_text=False, do_sample=True,
-        temperature = 0.3, num_beams=2, repetition_penalty=1.5)
+            text_inputs=text_data_df,
+            return_full_text=False,
+            do_sample=True,
+            temperature=0.3,
+            num_beams=2,
+            repetition_penalty=1.5,
+        )
 
         # We need to separate the answer to one question from the answers to
         # multiple questions, such that results of one question could be
@@ -64,7 +69,7 @@ class AnswerPredictionTask(PredictionTask):
         # - either a dict or list of dicts
         # in both cases we need to put the answer(s) in a list to make sure that
         # the answer(s) is from a single question
-        #results = [results] if len(questions) == 1 else results
+        # results = [results] if len(questions) == 1 else results
         print(results)
         print("___________")
         return results
@@ -100,18 +105,16 @@ class AnswerPredictionTask(PredictionTask):
         results_df_list = []
         for result in predictions:
             print(result)
-            #result_df = (
+            # result_df = (
             #    pd.DataFrame([result])
             #    if isinstance(result, dict)
             #    else pd.DataFrame(result)
-            #)
+            # )
             results_df_list.append(
-                pd.DataFrame(
-                    data=[result[0]["generated_text"]], columns=["answer"]
-                )
+                pd.DataFrame(data=[result[0]["generated_text"]], columns=["answer"])
             )
-            #result_df = result_df[self._desired_fields_in_prediction]
-            #result_df = create_rank_from_score(result_df)#todo no rank anymore?
-            #results_df_list.append(result_df)
+            # result_df = result_df[self._desired_fields_in_prediction]
+            # result_df = create_rank_from_score(result_df)#todo no rank anymore?
+            # results_df_list.append(result_df)
 
         return results_df_list
