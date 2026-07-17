@@ -55,7 +55,7 @@ class AnswerPredictionTask(PredictionTask):
         text_data_df = list(model_df["context_text"] + " " + questions)
         print(text_data_df)
         results = self.last_created_pipeline(
-            text_inputs=text_data_df,
+            text_data_df,
             return_full_text=False,
             do_sample=True,
             temperature=0.3,
@@ -70,8 +70,7 @@ class AnswerPredictionTask(PredictionTask):
         # in both cases we need to put the answer(s) in a list to make sure that
         # the answer(s) is from a single question
         # results = [results] if len(questions) == 1 else results
-        print(results)
-        print("___________")
+
         return results
 
     def append_predictions_to_input_dataframe(

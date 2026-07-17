@@ -79,6 +79,6 @@ class AiAnswerExtendedUDF(BaseModelUDF):
             pipeline,
             base_model,
             tokenizer,
-            prediction_task,
-            transformations,
+            prediction_task=prediction_task,
+            transformations=transformations,
         )

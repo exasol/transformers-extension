@@ -1,37 +1,6 @@
 from pathlib import PurePosixPath
-from test.unit.udf_wrapper_params.ai_answer_extended.mock_question_answering import (
-    MockPipeline,
-    MockQuestionAnsweringFactory,
-    MockQuestionAnsweringModel,
-)
 
 from exasol_udf_mock_python.connection import Connection
-
-
-def udf_wrapper():
-    from test.unit.udf_wrapper_params.ai_answer_extended.mock_sequence_tokenizer import (
-        MockSequenceTokenizer,
-    )
-    from test.unit.udf_wrapper_params.ai_answer_extended.multiple_model_multiple_batch_complete import (
-        MultipleModelMultipleBatchComplete as params,
-    )
-
-    from exasol_udf_mock_python.udf_context import UDFContext
-
-    from exasol_transformers_extension.udfs.models.ai_answer_extended_udf import (
-        AiAnswerExtendedUDF,
-    )
-
-    udf = AiAnswerExtendedUDF(
-        exa,
-        batch_size=params.batch_size,
-        pipeline=params.mock_pipeline,
-        base_model=params.mock_factory,
-        tokenizer=MockSequenceTokenizer,
-    )
-
-    def run(ctx: UDFContext):
-        udf.run(ctx)
 
 
 class MultipleModelMultipleBatchComplete:
@@ -48,7 +17,8 @@ class MultipleModelMultipleBatchComplete:
     ] * data_size + [
         (None, "bfs_conn2", "sub_dir2", "model2", "question", "context")
     ] * data_size
-    output_data = [
+
+    expected_output_data = [
         (
             "bfs_conn1",
             "sub_dir1",
@@ -71,23 +41,14 @@ class MultipleModelMultipleBatchComplete:
     ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
-    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn")
+    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn")
 
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),
         "bfs_conn2": Connection(address=f"file://{base_cache_dir2}"),
     }
-    mock_factory = MockQuestionAnsweringFactory(
-        {
-            PurePosixPath(
-                base_cache_dir1, "sub_dir1", "model1_question-answering"
-            ): MockQuestionAnsweringModel(answer="answer 1"),
-            PurePosixPath(
-                base_cache_dir2, "sub_dir2", "model2_question-answering"
-            ): MockQuestionAnsweringModel(answer="answer 2"),
-        }
-    )
 
-    mock_pipeline = MockPipeline
-    udf_wrapper = udf_wrapper
+    model_output_df_model1 = [[[{"generated_text": "answer 1"}]] * data_size]  # * 2
+    model_output_df_model2 = [[[{"generated_text": "answer 2"}]] * data_size]
+    models_output_df = [model_output_df_model1, model_output_df_model2]
