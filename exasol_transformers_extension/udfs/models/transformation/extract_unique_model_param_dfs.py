@@ -1,6 +1,7 @@
 """
 Transformation which splits the input DataFrame into multiple DataFrames.
-The splitting into multiple dataframes is determined based on which model-parameters are found.
+The splitting into multiple dataframes is determined based on which
+model-parameters are found.
 """
 
 from collections.abc import Iterator

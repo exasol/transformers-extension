@@ -1,3 +1,7 @@
+"""
+UDF which downloads a pretrained model
+"""
+
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecificationFactory,
 )
@@ -14,9 +18,10 @@ class ModelDownloaderUDF:
     Must be called with the following Input Parameter:
 
 
-    bucketfs_conn            | sub_dir                 | model_name                 | token_conn
-    ----------------------------------------------------------------------------------------------------
-    BucketFS connection | directory to save model | name of Huggingface model | name of token connection
+    bucketfs_conn       | sub_dir       | model_name        | token_conn
+    -------------------------------------------------------------------------
+    BucketFS connection | directory to  | name of           | name of token
+                        |save model in  | Huggingface model | connection
 
     returns <sub_dir/model_name> , <path of model BucketFS>
     """

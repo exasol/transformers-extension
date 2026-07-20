@@ -15,8 +15,9 @@ class InUDFModelDownloader:
     into the BucketFS.  Returns the BucketFS location where the model is
     uploaded.
 
-    Note: This function can be called from a UDF. If you need to call from outside a UDF, use
-    utils.model_utils.install_huggingface_model instead, which takes a bucketfs_location as input
+    Note: This function can be called from a UDF. If you need to call from outside a
+    UDF, use utils.model_utils.install_huggingface_model instead,
+    which takes a bucketfs_location as input
 
     """
 

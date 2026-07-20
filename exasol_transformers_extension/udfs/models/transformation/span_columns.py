@@ -1,3 +1,8 @@
+"""
+Transformations for adding result span columns to the output of Prediction-Tasks
+which support spans.
+"""
+
 from collections.abc import Iterator
 
 from pandas import (
@@ -36,8 +41,8 @@ class SpanColumnsTokenClassificationTransformation(Transformation):
 
     def rename_columns(self, model_df: DataFrame) -> DataFrame:
         """
-        we use different column-names in udf with span and without, so need to rename them.
-        this decision was made as to improve the naming of the columns without
+        we use different column-names in udf with span and without, so need to rename
+        them. This decision was made as to improve the naming of the columns without
         breaking the interface of the existing udf
         """
         model_df = model_df.rename(columns=self.renamed_columns)
@@ -109,6 +114,10 @@ class SpanColumnsZeroShotTransformation(Transformation):
     def transform(
         self, batch_df: DataFrame, model_loader: LoadLocalModel
     ) -> Iterator[DataFrame]:
+        """
+        do the main transformation of adding result span columns to the output of the
+        zero-shot-classification prediction task
+        """
         batch_df = _create_new_empty_columns(batch_df, self.new_columns)
         # drop columns which are made superfluous by the spans to save data transfer
         yield _drop_old_columns(batch_df, self.removed_columns)

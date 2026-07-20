@@ -24,9 +24,9 @@ class AddDefaultColumnsTransformation(Transformation):
     different default values. You can also add columns not present in
     DEFAULT_VALUES in this dict.
 
-    If a column should be added, but no default_value is found for the column, this column
-    and all columns after this column will be added, but will be filled with "None",
-    and an error will be added to "error_message"
+    If a column should be added, but no default_value is found for the column,
+    this column and all columns after this column will be added,
+    but will be filled with "None", and an error will be added to "error_message".
     """
 
     def __init__(
@@ -35,8 +35,10 @@ class AddDefaultColumnsTransformation(Transformation):
         default_values: dict[str, str] = None,
     ):
         """
-        :param new_columns: Names of the columns to be added to batch_df. Will throw KeyError if column name not known.
-        :param default_values: Optional. Default values for column/value pairs not present in DEFAULT_VALUES.
+        :param new_columns: Names of the columns to be added to batch_df.
+               Will throw KeyError if column name not known.
+        :param default_values: Optional. Default values for column/value pairs not
+               present in DEFAULT_VALUES.
         """
         self.expected_input_columns = []
         self.new_columns = new_columns

@@ -20,7 +20,7 @@ class BucketFSModelSpecification(ModelSpecification):
             Name of the model. This is the same name as it's seen on the Huggingface
             model card, for example 'cross-encoder/nli-deberta-base'.
         task_type:
-            Name of an NLP task, fill-mask, question-answering,
+            Name of an NLP task, fill-mask,
             text-classification, text-generation, token-classification,
             translation, zero-shot-classification.
         bucketfs_conn_name:

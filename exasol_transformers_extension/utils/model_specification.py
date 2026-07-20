@@ -22,7 +22,6 @@ class ModelTypeData:
         "translation": transformers.AutoModelForSeq2SeqLM,
         "zero-shot-classification": transformers.AutoModelForSequenceClassification,
         "text-classification": transformers.AutoModelForSequenceClassification,
-        "question-answering": transformers.AutoModelForQuestionAnswering,
         "text-generation": transformers.AutoModelForCausalLM,
         "token-classification": transformers.AutoModelForTokenClassification,
         # we don't have built-in udf's which use the task_types below
@@ -57,7 +56,6 @@ class ModelSpecification:
             "translation",
             "zero-shot-classification",
             "text-classification",
-            "question-answering",
             "text-generation",
             "token-classification",
             # we don't have built-in udf's which use the task_types below

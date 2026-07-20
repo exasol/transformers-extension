@@ -53,10 +53,10 @@ def test_ai_answer_extended_udf(
             bucketfs_conn_name,
             model_params.sub_dir,
             model_params.q_a_model_specs.model_name,
-            question + f"{i}",
-            model_params.text_data + f"{i}",
+            question,
+            model_params.text_data,
         )
-        for i in range(n_rows)
+        for _ in range(n_rows)
     ]
     columns = [
         "device_id",

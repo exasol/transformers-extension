@@ -90,7 +90,7 @@ fail-under = 7.4
 # Additionally, a maximum module size can be defined here.
 [tool.pylint.format]
 max-line-length = 88
-max-module-lines = 800
+max-module-lines = 400
 
 [tool.mypy]
 plugins = [
@@ -110,7 +110,9 @@ module = [
     # exa not defined
     "exasol_transformers_extension.udfs.callers.*",
     # list[...] vs list[DataFrame]
-    "exasol_transformers_extension.udfs.models.*"
+    "exasol_transformers_extension.udfs.models.*",
+    # this is copied from the transformers package and has no types specified in inputs
+    "exasol_transformers_extension.udfs.models.transformers_pipelines.translation.*"
 ]
 ignore_missing_imports = true
 ignore_errors = true
@@ -132,3 +134,5 @@ unfixable = []
 projectKey = "com.exasol:transformers-extension"
 host.url = "https://sonarcloud.io"
 organization = "exasol"
+# this is copied from the transformers package and has no types specified in inputs
+exclusions = "exasol_transformers_extension/udfs/models/transformers_pipelines/translation.py"

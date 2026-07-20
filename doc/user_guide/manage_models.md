@@ -119,20 +119,20 @@ may affect the model's performance severely.
 
 Available task types are:
 
-| task_type                     | UDFs using this task_type   |
-|-------------------------------|-----------------------------|
-| `fill-mask`                   | AI_FILL_MASK_EXTENDED       |
-| `question-answering`          | AI_ANSWER_EXTENDED          |
-| `text-classification`         | AI_CUSTOM_CLASSIFY_EXTENDED |
-| `text-classification`         | AI_ENTAILMENT_EXTENDED      |
-| `text-classification`         | AI_SENTIMENT                |
-| `text-classification`         | AI_ENTAILMENT_EXTENDED      |
-| `text-generation`             | AI_COMPLETE_EXTENDED        |
-| `token-classification`        | AI_EXTRACT_EXTENDED         |
-| `token-classification`        | AI_EXTRACT_ENTITIES         |
-| `translation`                 | AI_TRANSLATE_EXTENDED       |
-| `zero-shot-classification`    | AI_CLASSIFY_EXTENDED        |
-| `zero-shot-classification`    | AI_CLASSIFY                 |
+| task_type                   | UDFs using this task_type   |
+|-----------------------------|-----------------------------|
+| `fill-mask`                 | AI_FILL_MASK_EXTENDED       |
+| `text-generation`           | AI_ANSWER_EXTENDED          |
+| `text-classification`       | AI_CUSTOM_CLASSIFY_EXTENDED |
+| `text-classification`       | AI_ENTAILMENT_EXTENDED      |
+| `text-classification`       | AI_SENTIMENT                |
+| `text-classification`       | AI_ENTAILMENT_EXTENDED      |
+| `text-generation`           | AI_COMPLETE_EXTENDED        |
+| `token-classification`      | AI_EXTRACT_EXTENDED         |
+| `token-classification`      | AI_EXTRACT_ENTITIES         |
+| `translation`               | AI_TRANSLATE_EXTENDED       |
+| `zero-shot-classification`  | AI_CLASSIFY_EXTENDED        |
+| `zero-shot-classification`  | AI_CLASSIFY                 |
 
 
 Note that you may use underscores (`_`) instead of dashes (`-`).

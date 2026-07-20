@@ -8,6 +8,13 @@ T.B.D
 
 ### BREAKING CHANGES:
 
+In transformers version 5, the Pipelines for question-answering has
+been removed. For our AI_ANSWER_EXTEDNED udf, we replaced it with 
+the text-generation Pipeline. You will not be able to use you old question-answering
+models with this new implementation, switch to text-generation models instead.
+(The translation Pipeline was also removed, but we decided to maintain it ourselves for 
+now, so the AI_TRANSLATE_EXTENDED udf is unaffected.)
+
 ## Features
 
 ## Security
@@ -20,4 +27,5 @@ T.B.D
 
 * #395: Update to exasol-toolbox 10.0.0
 * #402: Update to exasol-toolbox 10.2.1
+* #407: Updated to transformers version 5
 

@@ -31,10 +31,10 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 class AiAnswerExtendedUDF(BaseModelUDF):
     """
     UDF for answering a given "question" about a given "context_text"
-    Needs to have "question", "context_text", "top_k" in the input.
-    Will output to "answer", "score", "rank".
+    Needs to have "question", "context_text", in the input.
+    Will output to "answer".
     Does not use default values.
-    Uses models compatible with the "question-answering" transformers task,
+    Uses models compatible with the "text-generation" transformers task,
      and uses AutoModelForCausalLM to load said model.
     """
 
@@ -43,7 +43,7 @@ class AiAnswerExtendedUDF(BaseModelUDF):
         exa,
         batch_size=100,
         pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForCausalLM,  # AutoModelForCausalLM
+        base_model=transformers.AutoModelForCausalLM,
         tokenizer=transformers.AutoTokenizer,
         prediction_task=AnswerPredictionTask(
             desired_fields_in_prediction=["answer"],

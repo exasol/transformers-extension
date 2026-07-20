@@ -64,16 +64,16 @@ For example, you may want to select a specific model to be used.
 
 These are the available UDFs:
 
-| UDF Name                    | task_type                | Use                                                                  |
-|-----------------------------|--------------------------|----------------------------------------------------------------------|
-| AI Custom Classify Extended | text-classification      | Classifies the given text into classes known to the model.           |
-| AI Entailment Extended      | text-classification      | Takes two input texts and compares them.                             |
-| AI Answer Extended          | question-answering       | Extracts answer(s) from a given question text.                       |
-| AI Fill Mask Extended       | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.        |
-| AI Complete Extended        | text-generation          | Predict the continuation of the given text.                          |
-| AI Extract Extended         | token-classification     | Find and label tokens in a given text.                               |
-| AI Translate Extended       | translation              | This UDF translates a given text from one language to another.       |
-| AI Classify Extended        | zero-shot-classification | This UDF classifies the input text into classes defined by the user. |
+| UDF Name                    | task_type                | Use                                                                    |
+|-----------------------------|--------------------------|------------------------------------------------------------------------|
+| AI Custom Classify Extended | text-classification      | Classifies the given text into classes known to the model.             |
+| AI Entailment Extended      | text-classification      | Takes two input texts and compares them.                               |
+| AI Answer Extended          | text-generation          | Extracts answer(s) from a given question text. Uses LLM for this task. |
+| AI Fill Mask Extended       | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.          |
+| AI Complete Extended        | text-generation          | Predict the continuation of the given text.                            |
+| AI Extract Extended         | token-classification     | Find and label tokens in a given text.                                 |
+| AI Translate Extended       | translation              | This UDF translates a given text from one language to another.         |
+| AI Classify Extended        | zero-shot-classification | This UDF classifies the input text into classes defined by the user.   |
 
 Each UDF uses models for a predefined Transformers task. 
 Models which do not support this task will perform poorly. So take care to match your 

@@ -1,3 +1,9 @@
+"""
+translation pipeline lifted from transformers v.4.57.6, because it got deleted.
+Adjusted to work with version 5.
+Used in the translation prediction task.
+"""
+## pylint: skip-file
 import enum
 import warnings
 from typing import (
@@ -52,13 +58,8 @@ class Text2TextGenerationPipeline(Pipeline):
     [{'generated_text': 'question: Who created the RuPERTa-base?'}]
     ```
 
-    Learn more about the basics of using a pipeline in the [pipeline tutorial](../pipeline_tutorial). You can pass text
-    generation parameters to this pipeline to control stopping criteria, decoding strategy, and more. Learn more about
-    text generation parameters in [Text generation strategies](../generation_strategies) and [Text
-    generation](text_generation).
-
     This Text2TextGenerationPipeline pipeline can currently be loaded from [`pipeline`] using the following task
-    identifier: `"text2text-generation"`.
+    identifier: `"text2text-generation"`.(would need to be registered first)
 
     The models that this pipeline can use are models that have been fine-tuned on a translation task. See the
     up-to-date list of available models on

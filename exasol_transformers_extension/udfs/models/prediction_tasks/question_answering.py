@@ -1,5 +1,6 @@
 """
-Task logic for using the "question-answering" transformers task in a prediction udf.
+Task logic for using the "text-generation" transformers task for question
+answering in a prediction udf.
 """
 
 from collections.abc import Iterator
@@ -13,15 +14,14 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
-    create_rank_from_score,
     duplicate_input_rows_for_n_outputs,
-    extract_unique_param_based_dataframes_on_col_list,
 )
 
 
 class AnswerPredictionTask(PredictionTask):
     """
-    Task logic for using the "question-answering" transformers task in a prediction udf.
+    Task logic for using the "text-generation" transformers task for
+    question answering  in a prediction udf.
     """
 
     def __init__(
@@ -49,11 +49,11 @@ class AnswerPredictionTask(PredictionTask):
 
         :return: List of dataframes holding prediction results
         """
-        # todo change docu
-        # todo make test with multiple questions?
         questions = model_df["question"]
-        text_data_df = list(model_df["context_text"] + " " + questions)
-        print(text_data_df)
+        text_data_df = list(
+            "question: " + questions + "context: " + model_df["context_text"]
+        )
+
         results = self.last_created_pipeline(
             text_data_df,
             return_full_text=False,
@@ -62,14 +62,6 @@ class AnswerPredictionTask(PredictionTask):
             num_beams=2,
             repetition_penalty=1.5,
         )
-
-        # We need to separate the answer to one question from the answers to
-        # multiple questions, such that results of one question could be
-        # - a dict, or
-        # - either a dict or list of dicts
-        # in both cases we need to put the answer(s) in a list to make sure that
-        # the answer(s) is from a single question
-        # results = [results] if len(questions) == 1 else results
 
         return results
 
@@ -103,17 +95,9 @@ class AnswerPredictionTask(PredictionTask):
         """
         results_df_list = []
         for result in predictions:
-            print(result)
-            # result_df = (
-            #    pd.DataFrame([result])
-            #    if isinstance(result, dict)
-            #    else pd.DataFrame(result)
-            # )
+
             results_df_list.append(
                 pd.DataFrame(data=[result[0]["generated_text"]], columns=["answer"])
             )
-            # result_df = result_df[self._desired_fields_in_prediction]
-            # result_df = create_rank_from_score(result_df)#todo no rank anymore?
-            # results_df_list.append(result_df)
 
         return results_df_list

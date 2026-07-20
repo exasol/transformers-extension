@@ -81,7 +81,8 @@ class WithModelTransformation(Transformation):
     @staticmethod
     def _build_error_msg(bucketfs_conn_name: str) -> str:
         main_msg = (
-            f"You can create the required BucketFS connection by using the 'deploy' command, "
+            f"You can create the required BucketFS connection by using the "
+            f"'deploy' command, "
             f"or manually by executing the following: \n "
             f"CREATE OR REPLACE  CONNECTION {bucketfs_conn_name}  \n "
             f"TO <bucktfs_address> \n "

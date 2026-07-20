@@ -47,8 +47,8 @@ def test_ai_answer_extended_script(
     # assertions
     assert result[0][-1] is None
 
-    # added_columns = answer,error_message
-    # removed_columns = device_id
+    # added_columns : answer,error_message
+    # removed_columns : device_id
     assert_correct_number_of_results(2, 1, input_data[0], result, n_rows)
 
     acceptable_results = [
