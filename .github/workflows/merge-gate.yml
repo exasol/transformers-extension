@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 10.2.1.
+# Last generated with exasol-toolbox version 10.3.0.
 name: Merge-Gate
 
 on:
@@ -68,7 +68,6 @@ jobs:
       INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
     permissions:
       contents: read
-
 
   # This job ensures inputs have been executed successfully.
   allow-merge:
