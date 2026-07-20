@@ -3,6 +3,7 @@ translation pipeline lifted from transformers v.4.57.6, because it got deleted.
 Adjusted to work with version 5.
 Used in the translation prediction task.
 """
+
 ## pylint: skip-file
 import enum
 import warnings
