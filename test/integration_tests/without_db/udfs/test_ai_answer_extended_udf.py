@@ -76,6 +76,7 @@ def test_ai_answer_extended_udf(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
+
     new_columns = ["answer", "error_message"]
 
     result = Result(result_df)

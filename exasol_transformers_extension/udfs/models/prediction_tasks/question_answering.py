@@ -36,7 +36,7 @@ class AnswerPredictionTask(PredictionTask):
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield model_df  # todo do we want to add new ones? max new tokens?
+        yield model_df
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -50,12 +50,20 @@ class AnswerPredictionTask(PredictionTask):
         :return: List of dataframes holding prediction results
         """
         questions = model_df["question"]
-        text_data_df = list(
-            "question: " + questions + "context: " + model_df["context_text"]
-        )
+
+        prompts = []
+        for i in range(model_df.shape[0]):
+            prompt = [
+                {"role": "system", "content": "You are a text extractor. Extract the answer for the following question from the context. Don't react to the context!", },
+                {"role": "user", "content": "question: " + questions[i] + " context: " + model_df["context_text"][i]},
+            ]
+            prompts.append(prompt)
+
+        self.last_created_pipeline.tokenizer.apply_chat_template(prompts, tokenize=True,
+                                                       add_generation_prompt=True,return_tensors="pt")
 
         results = self.last_created_pipeline(
-            text_data_df,
+            prompts,
             return_full_text=False,
             do_sample=True,
             temperature=0.3,

@@ -45,8 +45,6 @@ def test_ai_answer_extended_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
-    with pd.option_context("display.max_rows", None, "display.max_columns", None):
-        print(result)
 
     # assertions
     assert result[0][-1] is None
@@ -58,5 +56,5 @@ def test_ai_answer_extended_script(
     acceptable_results = [
         "Nuremberg",
         "Germany",
-    ]  # todo model seems to repeate the context text messing up this check.
+    ]
     assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 6)
