@@ -1,3 +1,5 @@
+import pandas as pd
+
 from test.integration_tests.utils.model_output_quality_checkers import (
     assert_lenient_check_of_output_quality,
 )
@@ -43,6 +45,8 @@ def test_ai_answer_extended_script(
 
     # execute sequence classification UDF
     result = db_conn.execute(query).fetchall()
+    with pd.option_context("display.max_rows", None, "display.max_columns", None):
+        print(result)
 
     # assertions
     assert result[0][-1] is None
