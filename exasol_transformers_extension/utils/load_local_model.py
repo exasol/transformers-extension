@@ -85,14 +85,6 @@ class LoadLocalModel:
                 str(self._bucketfs_model_cache_dir), local_files_only=True
             )
 
-            transformers.pipelines.PIPELINE_REGISTRY.register_pipeline(  # todo where put?
-                task="translation",
-                pipeline_class=TranslationPipeline,
-                pt_model=AutoModelForSeq2SeqLM,
-                default={"pt": ("user/awesome-model", "branch-name")},
-                type="text",
-            )
-
             last_created_pipeline = self.pipeline_factory(
                 task=self.task_type,
                 model=loaded_model,

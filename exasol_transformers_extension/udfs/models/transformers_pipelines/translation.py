@@ -366,11 +366,3 @@ class TranslationPipeline(Text2TextGenerationPipeline):
         """
         return super().__call__(*args, **kwargs)
 
-
-PIPELINE_REGISTRY.register_pipeline(  # todo where should this live?
-    task="translation",
-    pipeline_class=TranslationPipeline,
-    pt_model=AutoModelForSeq2SeqLM,
-    default={"pt": ("user/awesome-model", "branch-name")},  # todo no default model
-    type="text",
-)
