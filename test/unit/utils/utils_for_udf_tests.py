@@ -12,6 +12,7 @@ from typing import (
 )
 from unittest.mock import (
     MagicMock,
+    Mock,
     create_autospec,
 )
 
@@ -107,10 +108,13 @@ def create_mock_pipeline_factory_from_df(
     Ths mock gets a list of tokenizer_models_outputs as side_effect, enabling it to return them in order when called.
     This mock_pipeline is feed into a mock_pipeline_factory.
     """
-    mock_pipeline: list[AutoModel | MagicMock] = [
+    mock_pipeline: list[Pipeline | MagicMock] = [
         create_autospec(Pipeline, side_effect=tokenizer_models_output_df[i])
         for i in range(0, number_of_intended_used_models)
     ]
+
+    for p in mock_pipeline:
+        p.tokenizer = Mock(return_value=True)
 
     mock_pipeline_factory: Pipeline | MagicMock = create_autospec(
         Pipeline, side_effect=mock_pipeline
@@ -206,6 +210,9 @@ def setup_mocks(
     mock_base_model_factory, mock_tokenizer_factory = (
         create_mock_model_factories_with_models(expected_model_counter)
     )
+    print("first")
+    print(mock_base_model_factory)
+    print(mock_tokenizer_factory)
     if isinstance(models_output, list):
         mock_pipeline_factory = create_mock_pipeline_factory_from_df(
             models_output, expected_model_counter

@@ -54,13 +54,26 @@ class AnswerPredictionTask(PredictionTask):
         prompts = []
         for i in range(model_df.shape[0]):
             prompt = [
-                {"role": "system", "content": "You are a text extractor. Extract the answer for the following question from the context. Don't react to the context!", },
-                {"role": "user", "content": "question: " + questions[i] + " context: " + model_df["context_text"][i]},
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant who extracts an answer to a given question "
+                    "from a given context. Only use the given context to answer the question. "
+                    "Give only the answer without any other details. "
+                    "Don't react to the given context!",
+                },
+                {
+                    "role": "user",
+                    "content": "question: "
+                    + questions[i]
+                    + " context: "
+                    + model_df["context_text"][i],
+                },
             ]
             prompts.append(prompt)
 
-        self.last_created_pipeline.tokenizer.apply_chat_template(prompts, tokenize=True,
-                                                       add_generation_prompt=True,return_tensors="pt")
+        self.last_created_pipeline.tokenizer.apply_chat_template(
+            prompts, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+        )
 
         results = self.last_created_pipeline(
             prompts,

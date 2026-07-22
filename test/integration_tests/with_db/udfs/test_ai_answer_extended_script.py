@@ -1,5 +1,3 @@
-import pandas as pd
-
 from test.integration_tests.utils.model_output_quality_checkers import (
     assert_lenient_check_of_output_quality,
 )
@@ -8,6 +6,8 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 )
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils.parameters import model_params
+
+import pandas as pd
 
 
 def test_ai_answer_extended_script(

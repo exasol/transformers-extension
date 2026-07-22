@@ -49,7 +49,9 @@ def create_illegal_tiny_model_specs():
 model_params = ModelParams(
     fill_model_specs=ModelSpecification("bert-base-uncased", "fill_mask"),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
-    q_a_model_specs=ModelSpecification("HuggingFaceTB/SmolLM2-135M-Instruct", "text-generation"),
+    q_a_model_specs=ModelSpecification(
+        "HuggingFaceTB/SmolLM2-135M-Instruct", "text-generation"
+    ),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),
     text_classification_model_specs=ModelSpecification(
