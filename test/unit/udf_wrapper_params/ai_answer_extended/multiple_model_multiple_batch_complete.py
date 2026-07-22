@@ -41,8 +41,8 @@ class MultipleModelMultipleBatchComplete:
     ] * data_size
 
     tmpdir_name = "_".join(("/tmpdir", __qualname__))
-    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn")
-    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn")
+    base_cache_dir1 = PurePosixPath(tmpdir_name, "bfs_conn1")
+    base_cache_dir2 = PurePosixPath(tmpdir_name, "bfs_conn2")
 
     bfs_connections = {
         "bfs_conn1": Connection(address=f"file://{base_cache_dir1}"),

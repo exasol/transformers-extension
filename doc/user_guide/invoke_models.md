@@ -147,8 +147,8 @@ Example Output:
 
 ### AI Answer Extended
 
-This UDF extracts answer(s) to question from a given context text. Uses LLMs for 
-this, so the answer is also influenced by the "knowledge" of the model, 
+This UDF extracts an answer to a question from a given context text. It uses LLMs for 
+this, so the answer is also influenced by the training of the model, 
 not only the information in the context-text.
 Should be called using a model compatible with the "text-generation" transformers 
 task, and uses AutoModelForCausalLM to load said model.
