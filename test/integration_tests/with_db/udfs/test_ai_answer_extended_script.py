@@ -37,7 +37,7 @@ def test_ai_answer_extended_script(
         f"t.sub_dir, "
         f"t.model_name, "
         f"t.question, "
-        f"t.context_text, "
+        f"t.context_text"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(device_id, bucketfs_conn_name, sub_dir, "
         f"model_name, question, context_text));"
