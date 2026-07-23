@@ -57,4 +57,4 @@ def test_ai_answer_extended_script(
         "Nuremberg",
         "Germany",
     ]
-    assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 6)
+    assert_lenient_check_of_output_quality(result, acceptable_results, 0.5, 5)
