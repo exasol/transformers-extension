@@ -42,7 +42,7 @@ class ListModelsUDF:
     @staticmethod
     def _check_if_model_config(filepath: Path) -> bool:
         try:
-            AutoConfig.from_pretrained(filepath)
+            AutoConfig.from_pretrained(filepath, local_files_only=True)
             return True
         except Exception:
             return False

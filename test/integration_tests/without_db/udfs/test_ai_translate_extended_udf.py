@@ -165,7 +165,7 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
     )
     model_path_in_bucketfs = current_model_specs.get_bucketfs_model_save_path()
     tokenizer = AutoTokenizer.from_pretrained(
-        str(bucketfs_base_path / model_path_in_bucketfs)
+        str(bucketfs_base_path / model_path_in_bucketfs), local_files_only=True
     )
 
     batch_size = 2
@@ -205,7 +205,6 @@ def test_ai_translate_extended_udf_max_new_tokens_effective(
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
-    print(result)
     assert (
         result
         == ShapeMatcher(

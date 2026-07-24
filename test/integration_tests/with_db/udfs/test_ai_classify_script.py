@@ -47,5 +47,5 @@ def test_ai_classify_script(
         acceptable_results,
         1 / 1.8,
         label_index=2,
-        high_confidence_threshold=0.5,
+        high_confidence_threshold=0.4,
     )

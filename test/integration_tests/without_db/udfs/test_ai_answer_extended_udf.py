@@ -3,10 +3,7 @@ from test.integration_tests.without_db.udfs.utils.matcher import (
     ErrorMessageMatcher,
     NewColumnsEmptyMatcher,
     NoErrorMessageMatcher,
-    RankDTypeMatcher,
-    RankMonotonicMatcher,
     Result,
-    ScoreMatcher,
     ShapeMatcher,
 )
 from test.integration_tests.without_db.udfs.utils.mock_context import MockContext
@@ -27,23 +24,18 @@ from exasol_transformers_extension.udfs.models.ai_answer_extended_udf import (
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, n_rows, top_k",
+    "description,  device_id, n_rows",
     [
-        ("on CPU with batch input, single answer", None, 3, 1),
-        ("on CPU with batch input, multiple answers", None, 3, 2),
-        ("on CPU with single input, single answer", None, 1, 1),
-        ("on CPU with single input, multiple answers", None, 1, 2),
-        ("on GPU with batch input, single answer", 0, 3, 1),
-        ("on GPU with batch input, multiple answers", 0, 3, 2),
-        ("on GPU with single input, single answer", 0, 1, 1),
-        ("on GPU with single input, multiple answers", 0, 1, 2),
+        ("on CPU with batch input, single answer", None, 3),
+        ("on CPU with single input, single answer", None, 1),
+        ("on GPU with batch input, single answer", 0, 3),
+        ("on GPU with single input, single answer", 0, 1),
     ],
 )
 def test_ai_answer_extended_udf(
     description,
     device_id,
     n_rows,
-    top_k,
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -54,7 +46,7 @@ def test_ai_answer_extended_udf(
     bucketfs_connection = create_mounted_bucketfs_connection(bucketfs_base_path)
 
     batch_size = 2
-    question = "Where is the Exasol?"
+    question = "Where is the company Exasol?"
     sample_data = [
         (
             None,
@@ -63,7 +55,6 @@ def test_ai_answer_extended_udf(
             model_params.q_a_model_specs.model_name,
             question,
             model_params.text_data,
-            top_k,
         )
         for _ in range(n_rows)
     ]
@@ -74,7 +65,6 @@ def test_ai_answer_extended_udf(
         "model_name",
         "question",
         "context_text",
-        "top_k",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
@@ -86,20 +76,17 @@ def test_ai_answer_extended_udf(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
-    new_columns = ["answer", "score", "rank", "error_message"]
+
+    new_columns = ["answer", "error_message"]
 
     result = Result(result_df)
     assert (
-        result == ScoreMatcher()
-        and result == RankDTypeMatcher()
-        and result == RankMonotonicMatcher(n_rows=n_rows, results_per_row=top_k)
-        and result
+        result
         == ShapeMatcher(
             columns=columns,
             new_columns=new_columns,
             removed_columns=["device_id"],
             n_rows=n_rows,
-            results_per_row=top_k,
         )
         and result == ColumnsMatcher(columns=columns[1:], new_columns=new_columns)
         and result == NoErrorMessageMatcher()
@@ -107,23 +94,18 @@ def test_ai_answer_extended_udf(
 
 
 @pytest.mark.parametrize(
-    "description,  device_id, n_rows, top_k",
+    "description,  device_id, n_rows",
     [
-        ("on CPU with batch input, single answer", None, 3, 1),
-        ("on CPU with batch input, multiple answers", None, 3, 2),
-        ("on CPU with single input, single answer", None, 1, 1),
-        ("on CPU with single input, multiple answers", None, 1, 2),
-        ("on GPU with batch input, single answer", 0, 3, 1),
-        ("on GPU with batch input, multiple answers", 0, 3, 2),
-        ("on GPU with single input, single answer", 0, 1, 1),
-        ("on GPU with single input, multiple answers", 0, 1, 2),
+        ("on CPU with batch input, single answer", None, 3),
+        ("on CPU with single input, single answer", None, 1),
+        ("on GPU with batch input, single answer", 0, 3),
+        ("on GPU with single input, single answer", 0, 1),
     ],
 )
 def test_ai_answer_extended_udf_on_error_handling(
     description,
     device_id,
     n_rows,
-    top_k,
     prepare_question_answering_model_for_local_bucketfs,
 ):
     if device_id is not None and not torch.cuda.is_available():
@@ -143,7 +125,6 @@ def test_ai_answer_extended_udf_on_error_handling(
             "not existing model",
             question,
             model_params.text_data,
-            top_k,
         )
         for _ in range(n_rows)
     ]
@@ -154,7 +135,6 @@ def test_ai_answer_extended_udf_on_error_handling(
         "model_name",
         "question",
         "context_text",
-        "top_k",
     ]
 
     sample_df = pd.DataFrame(data=sample_data, columns=columns)
@@ -166,7 +146,7 @@ def test_ai_answer_extended_udf_on_error_handling(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
-    new_columns = ["answer", "score", "rank", "error_message"]
+    new_columns = ["answer", "error_message"]
 
     result = Result(result_df)
     assert (

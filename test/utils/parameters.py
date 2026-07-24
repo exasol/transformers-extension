@@ -37,7 +37,9 @@ class ModelParams:
 
 
 def create_illegal_tiny_model_specs():
-    illegal_tiny_model_specs = ModelSpecification("prajjwal1/bert-tiny", "fill-mask")
+    illegal_tiny_model_specs = ModelSpecification(
+        "marklkelly/bert-tiny-injection-detector", "fill-mask"
+    )
     illegal_tiny_model_specs.task_type = (
         illegal_tiny_model_specs.legacy_set_task_type_from_udf_name("illegal-task-type")
     )
@@ -48,7 +50,7 @@ model_params = ModelParams(
     fill_model_specs=ModelSpecification("bert-base-uncased", "fill_mask"),
     seq2seq_model_specs=ModelSpecification("t5-small", "translation"),
     q_a_model_specs=ModelSpecification(
-        "deepset/tinybert-6l-768d-squad2", "question-answering"
+        "HuggingFaceTB/SmolLM2-135M-Instruct", "text-generation"
     ),
     text_gen_model_specs=ModelSpecification("openai-community/gpt2", "text-generation"),
     token_model_specs=ModelSpecification("dslim/bert-base-NER", "token-classification"),
@@ -63,9 +65,11 @@ model_params = ModelParams(
         "MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33",
         "zero-shot-classification",
     ),
-    tiny_model_specs=ModelSpecification("prajjwal1/bert-tiny", "fill-mask"),
+    tiny_model_specs=ModelSpecification(
+        "marklkelly/bert-tiny-injection-detector", "fill-mask"
+    ),
     illegal_tiny_model_specs=create_illegal_tiny_model_specs(),
-    text_data="The database software company Exasol is based in Nuremberg",
+    text_data="The database software company Exasol is based in Nuremberg.",
     sub_dir="model_sub_dir",
     ls_test_subdir="ls_test_subdir",
 )

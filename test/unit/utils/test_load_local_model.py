@@ -60,10 +60,10 @@ def test_load_function_call():
     test_setup.loader.load_models()
 
     assert test_setup.model_factory_mock.mock_calls == [
-        call.from_pretrained(str(model_save_path))
+        call.from_pretrained(str(model_save_path), local_files_only=True)
     ]
     assert test_setup.tokenizer_factory_mock.mock_calls == [
-        call.from_pretrained(str(model_save_path))
+        call.from_pretrained(str(model_save_path), local_files_only=True)
     ]
     assert test_setup.mock_pipeline.mock_calls == [
         call(
@@ -73,6 +73,5 @@ def test_load_function_call():
                 test_setup.tokenizer_factory_mock.from_pretrained
             ).return_value,
             device="cpu",
-            framework="pt",
         )
     ]

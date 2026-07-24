@@ -4,7 +4,11 @@ import traceback
 
 import torch
 import transformers.pipelines
+from transformers import AutoModelForSeq2SeqLM
 
+from exasol_transformers_extension.udfs.models.transformers_pipelines.translation import (
+    TranslationPipeline,
+)
 from exasol_transformers_extension.utils import (
     bucketfs_operations,
     device_management,
@@ -75,10 +79,10 @@ class LoadLocalModel:
         """
         try:
             loaded_model = self._base_model_factory.from_pretrained(
-                str(self._bucketfs_model_cache_dir)
+                str(self._bucketfs_model_cache_dir), local_files_only=True
             )
             loaded_tokenizer = self._tokenizer_factory.from_pretrained(
-                str(self._bucketfs_model_cache_dir)
+                str(self._bucketfs_model_cache_dir), local_files_only=True
             )
 
             last_created_pipeline = self.pipeline_factory(
@@ -86,7 +90,6 @@ class LoadLocalModel:
                 model=loaded_model,
                 tokenizer=loaded_tokenizer,
                 device=self.device,
-                framework="pt",
             )
             self.last_model_loaded_successfully = True
             return last_created_pipeline

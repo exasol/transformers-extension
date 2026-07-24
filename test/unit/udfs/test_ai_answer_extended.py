@@ -7,21 +7,13 @@ from test.unit.udf_wrapper_params.ai_answer_extended.error_on_prediction_single_
 from test.unit.udf_wrapper_params.ai_answer_extended.multiple_model_multiple_batch_complete import (
     MultipleModelMultipleBatchComplete,
 )
-from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_multiple_size_single_model_multiple_batch_complete import (
-    MultipleTopkMultipleSizeSingleModelNameMultipleBatch,
-)
-from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_multiple_size_single_model_single_batch_complete import (
-    MultipleTopkMultipleSizeSingleModelNameSingleBatch,
-)
-from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_single_size_single_model_multiple_batch_complete import (
-    MultipleTopkSingleSizeSingleModelNameMultipleBatch,
-)
-from test.unit.udf_wrapper_params.ai_answer_extended.multiple_topk_single_size_single_model_single_batch_complete import (
-    MultipleTopkSingleSizeSingleModelNameSingleBatch,
-)
 from test.unit.udfs.output_matcher import (
     Output,
     OutputMatcher,
+)
+from test.unit.utils.utils_for_udf_tests import (
+    assert_correct_number_of_results,
+    setup_mocks,
 )
 from test.utils.mock_bucketfs_location import (
     fake_bucketfs_location_from_conn_object,
@@ -31,15 +23,16 @@ from unittest.mock import patch
 
 import pytest
 from exasol_udf_mock_python.column import Column
-from exasol_udf_mock_python.group import Group
-from exasol_udf_mock_python.mock_exa_environment import MockExaEnvironment
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
-from exasol_udf_mock_python.udf_mock_executor import UDFMockExecutor
+
+from exasol_transformers_extension.udfs.models.ai_answer_extended_udf import (
+    AiAnswerExtendedUDF,
+)
 
 
-def create_mock_metadata(udf_wrapper):
+def create_mock_metadata():
     meta = MockMetaData(
-        script_code_wrapper_function=udf_wrapper,
+        script_code_wrapper_function=None,
         input_type="SET",
         input_columns=[
             Column("device_id", int, "INTEGER"),
@@ -48,7 +41,6 @@ def create_mock_metadata(udf_wrapper):
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("question", str, "VARCHAR(2000000)"),
             Column("context_text", str, "VARCHAR(2000000)"),
-            Column("top_k", int, "INTEGER"),
         ],
         output_type="EMITS",
         output_columns=[
@@ -57,10 +49,7 @@ def create_mock_metadata(udf_wrapper):
             Column("model_name", str, "VARCHAR(2000000)"),
             Column("question", str, "VARCHAR(2000000)"),
             Column("context_text", str, "VARCHAR(2000000)"),
-            Column("top_k", int, "INTEGER"),
             Column("answer", str, "VARCHAR(2000000)"),
-            Column("score", float, "DOUBLE"),
-            Column("rank", int, "INTEGER"),
             Column("error_message", str, "VARCHAR(2000000)"),
         ],
     )
@@ -71,10 +60,6 @@ def create_mock_metadata(udf_wrapper):
     "params",
     [
         MultipleModelMultipleBatchComplete,
-        MultipleTopkSingleSizeSingleModelNameSingleBatch,
-        MultipleTopkSingleSizeSingleModelNameMultipleBatch,
-        MultipleTopkMultipleSizeSingleModelNameSingleBatch,
-        MultipleTopkMultipleSizeSingleModelNameMultipleBatch,
         ErrorOnPredictionSingleModelMultipleBatch,
         ErrorOnPredictionMultipleModelMultipleBatch,
     ],
@@ -90,20 +75,43 @@ def test_ai_answer_extended(mock_local_path, mock_create_loc, params):
     mock_create_loc.side_effect = fake_bucketfs_location_from_conn_object
     mock_local_path.side_effect = fake_local_bucketfs_path
 
-    executor = UDFMockExecutor()
-    meta = create_mock_metadata(params.udf_wrapper)
+    mock_meta = create_mock_metadata()
 
-    exa = MockExaEnvironment(metadata=meta, connections=params.bfs_connections)
+    (
+        mock_exa,
+        mock_base_model_factory,
+        mock_tokenizer_factory,
+        mock_pipeline_factory,
+        mock_ctx,
+    ) = setup_mocks(
+        mock_create_loc,
+        mock_local_path,
+        params,
+        mock_meta,
+        params.expected_model_counter,
+        params.input_data,
+        params.models_output_df,
+    )
 
-    result = executor.run([Group(params.input_data)], exa)
-    result_output = Output(result[0].rows)
-    expected_output = Output(params.output_data)
-    n_input_columns = len(meta.input_columns) - 1
+    udf = AiAnswerExtendedUDF(
+        exa=mock_exa,
+        batch_size=params.batch_size,
+        base_model=mock_base_model_factory,
+        tokenizer=mock_tokenizer_factory,
+        pipeline=mock_pipeline_factory,
+    )
 
-    try:
-        assert (
-            OutputMatcher(result_output, n_input_columns) == expected_output
-            and params.mock_pipeline.counter == params.expected_model_counter
-        )
-    finally:
-        params.mock_pipeline.counter = 0
+    udf.run(mock_ctx)
+    result = mock_ctx.output
+    result_output = Output(result)
+    expected_output = Output(params.expected_output_data)
+    n_input_columns = len(mock_meta.input_columns) - 1
+
+    assert_correct_number_of_results(
+        result, mock_meta.output_columns, params.expected_output_data
+    )
+
+    assert (
+        OutputMatcher(result_output, n_input_columns) == expected_output
+        and len(mock_pipeline_factory.mock_calls) == params.expected_model_counter
+    )

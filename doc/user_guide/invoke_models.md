@@ -147,10 +147,11 @@ Example Output:
 
 ### AI Answer Extended
 
-This UDF extracts answer(s) from a given question text. With the `top_k`
-input parameter, up to `k` answers with the best inference scores can be returned.
-Should be called using a model compatible with the "question-answering" transformers 
-task, and uses AutoModelForQuestionAnswering to load said model.
+This UDF extracts an answer to a question from a given context text. It uses LLMs for 
+this, so the answer is also influenced by the training of the model, 
+not only the information in the context-text.
+Should be called using a model compatible with the "text-generation" transformers 
+task, and uses AutoModelForCausalLM to load said model.
 
 An example usage is given below:
 
@@ -161,8 +162,7 @@ SELECT AI_ANSWER_EXTENDED(
     sub_dir,
     model_name,
     question,
-    context_text,
-    top_k
+    context_text
 )
 ```
 
@@ -175,24 +175,17 @@ SELECT AI_ANSWER_EXTENDED(
 Specific parameters
 * `question`: The question text
 * `context_text`: The context text, associated with the question
-* `top_k`: The number of answers to return.
-   * Note that, `k` number of answers are not guaranteed.
-   * If there are not enough options in the context, it might return less than `top_k` answers, see the [top_k parameter of the QuestionAnswering Pipeline](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.QuestionAnsweringPipeline.__call__).
 
 Additional output columns
 * _ANSWER_: the predicted answer for the input question
-* _SCORE_: the confidence with which this answer was generated
-* _RANK_: the rank of the answer. In this context, all predictions/labels for one input are ranked by their score. rank=1 means best result/highest score.
-
-If `top_k` > 1, each input row is repeated for each answer.
 
 Example Output:
 
-| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT   | TOP_K | ANSWER   | SCORE | RANK | ERROR_MESSAGE |
-|---------------|---------|------------|------------|-----------|-------|----------|-------|------|---------------|
-| conn_name     | dir/    | model_name | question_1 | context_1 | 2     | answer_1 | 0.75  | 1    | None          |
-| conn_name     | dir/    | model_name | question_2 | context_1 | 2     | answer_2 | 0.70  | 2    | None          |
-| ...           | ...     | ...        | ...        | ...       | ...   | ...      | ...   | ..   | ...           |
+| BUCKETFS_CONN | SUB_DIR | MODEL_NAME | QUESTION   | CONTEXT    | ANSWER   | ERROR_MESSAGE |
+|---------------|---------|------------|------------|------------|----------|---------------|
+| conn_name     | dir/    | model_name | question_1 | context_1  | answer_1 | None          |
+| conn_name     | dir/    | model_name | question_2 | context_1  | answer_2 | None          |
+| ...           | ...     | ...        | ...        | ...        | ...      | ...           |
 
 ### AI Fill Mask Extended
 

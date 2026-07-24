@@ -4,7 +4,7 @@
 The Transformers Extension proposes to use large pre-trained models using 
 [Transformers API](https://huggingface.co/docs/transformers/index) in Exasol 
 Database. These models can be used for many predictive tasks such as text 
-classification, question-answering, text generation  etc. in the field of NLP.
+classification, text generation  etc. in the field of NLP.
 
 
 ## Design Considerations:

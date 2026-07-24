@@ -13,7 +13,7 @@ class MockFillingMaskModel:
         return self
 
     @classmethod
-    def from_pretrained(cls, model_name, cache_dir, use_auth_token):
+    def from_pretrained(cls, model_name, cache_dir, token):
         return cls
 
 
@@ -21,7 +21,7 @@ class MockFillingMaskFactory:
     def __init__(self, mock_models: dict[PurePosixPath, MockFillingMaskModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_path):
+    def from_pretrained(self, model_path, local_files_only=True):
         # the model_path path already has model_name
         return self.mock_models[PurePosixPath(model_path)]
 
@@ -35,13 +35,11 @@ class MockPipeline:
         model: "MockFillingMaskModel",
         tokenizer: MockSequenceTokenizer,
         device: str,
-        framework: str,
     ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-        self.framework = framework
         MockPipeline.counter += 1
 
     def __call__(

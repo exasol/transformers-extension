@@ -231,7 +231,8 @@ which you might want to use in your UDF:
  - [FillMaskPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/fill_mask.py): 
    Task logic for using the "fill-mask" transformers task.
  - [AnswerPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/question_answering.py) :     
-   Task logic for using the "question-answering" transformers task.
+   Task logic for using the "text-generation" transformers task 
+   used to mimic removed "question-answering transformers task.
  - [EntailmentPredictionTask](../../exasol_transformers_extension/udfs/models/prediction_tasks/text_classification.py) : 
     Task logic for using the "text-classification" transformers task.
     Expects two text inputs per row.

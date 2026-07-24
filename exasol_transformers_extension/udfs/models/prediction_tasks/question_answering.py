@@ -1,5 +1,6 @@
 """
-Task logic for using the "question-answering" transformers task in a prediction udf.
+Task logic for using the "text-generation" transformers task for question
+answering in a prediction udf.
 """
 
 from collections.abc import Iterator
@@ -13,15 +14,14 @@ from exasol_transformers_extension.udfs.models.prediction_tasks.prediction_task 
     PredictionTask,
 )
 from exasol_transformers_extension.udfs.models.prediction_tasks.utils import (
-    create_rank_from_score,
     duplicate_input_rows_for_n_outputs,
-    extract_unique_param_based_dataframes_on_col_list,
 )
 
 
 class AnswerPredictionTask(PredictionTask):
     """
-    Task logic for using the "question-answering" transformers task in a prediction udf.
+    Task logic for using the "text-generation" transformers task for
+    question answering  in a prediction udf.
     """
 
     def __init__(
@@ -30,15 +30,13 @@ class AnswerPredictionTask(PredictionTask):
     ):
         super().__init__()
         self.last_created_pipeline = None
-        self.task_type = "question-answering"
+        self.task_type = "text-generation"
         self._desired_fields_in_prediction = desired_fields_in_prediction
 
     def extract_unique_param_based_dataframes(
         self, model_df: pd.DataFrame
     ) -> Iterator[pd.DataFrame]:
-        yield from extract_unique_param_based_dataframes_on_col_list(
-            model_df, ["top_k"]
-        )
+        yield model_df
 
     def execute_prediction(
         self, model_df: pd.DataFrame
@@ -51,20 +49,41 @@ class AnswerPredictionTask(PredictionTask):
 
         :return: List of dataframes holding prediction results
         """
-        questions = list(model_df["question"])
-        contexts = list(model_df["context_text"])
-        top_k = int(model_df["top_k"].iloc[0])
-        results = self.last_created_pipeline(
-            question=questions, context=contexts, top_k=top_k
+        questions = model_df["question"]
+
+        prompts = []
+        for i in range(model_df.shape[0]):
+            prompt = [
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant who extracts an answer to a given question "
+                    "from a given context. Only use the given context to answer the question. "
+                    "Give only the answer without any other details. "
+                    "Don't react to the given context!",
+                },
+                {
+                    "role": "user",
+                    "content": "question: "
+                    + questions[i]
+                    + " context: "
+                    + model_df["context_text"][i],
+                },
+            ]
+            prompts.append(prompt)
+
+        self.last_created_pipeline.tokenizer.apply_chat_template(
+            prompts, tokenize=True, add_generation_prompt=True, return_tensors="pt"
         )
 
-        # We need to separate the answer to one question from the answers to
-        # multiple questions, such that results of one question could be
-        # - a dict where top_k=1, or
-        # - either a dict or list of dicts where top_k>1
-        # in both cases we need to put the answer(s) in a list to make sure that
-        # the answer(s) is from a single question
-        results = [results] if len(questions) == 1 else results
+        results = self.last_created_pipeline(
+            prompts,
+            return_full_text=False,
+            do_sample=True,
+            temperature=0.3,
+            num_beams=2,
+            repetition_penalty=1.5,
+        )
+
         return results
 
     def append_predictions_to_input_dataframe(
@@ -97,13 +116,9 @@ class AnswerPredictionTask(PredictionTask):
         """
         results_df_list = []
         for result in predictions:
-            result_df = (
-                pd.DataFrame([result])
-                if isinstance(result, dict)
-                else pd.DataFrame(result)
+
+            results_df_list.append(
+                pd.DataFrame(data=[result[0]["generated_text"]], columns=["answer"])
             )
-            result_df = result_df[self._desired_fields_in_prediction]
-            result_df = create_rank_from_score(result_df)
-            results_df_list.append(result_df)
 
         return results_df_list

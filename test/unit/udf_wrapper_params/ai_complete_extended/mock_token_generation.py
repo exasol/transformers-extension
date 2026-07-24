@@ -21,7 +21,7 @@ class MockTextGenerationFactory:
     def __init__(self, mock_models: dict[PurePosixPath, MockTextGenerationModel]):
         self.mock_models = mock_models
 
-    def from_pretrained(self, model_path):
+    def from_pretrained(self, model_path, local_files_only=True):
         # the cache_dir path already has model_name
         return self.mock_models[PurePosixPath(model_path)]
 
@@ -35,13 +35,11 @@ class MockPipeline:
         model: MockTextGenerationModel,
         tokenizer: MockSequenceTokenizer,
         device: str,
-        framework: str,
     ):
         self.task_type = task
         self.model = model
         self.tokenizer = tokenizer
         self.device = device
-        self.framework = framework
         MockPipeline.counter += 1
 
     def __call__(self, text_data: list[str], **kwargs) -> list[dict[str, str | float]]:

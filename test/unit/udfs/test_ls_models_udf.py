@@ -1,11 +1,9 @@
 import os
-import pathlib
 from pathlib import Path
 from test.unit.utils.utils_for_base_udf_tests import (
     create_mock_metadata,
 )
 from test.unit.utils.utils_for_udf_tests import (
-    assert_result_matches_expected_output,
     assert_result_matches_expected_output_order_agnostic,
     create_mock_exa_environment,
     create_mock_udf_context,
@@ -46,7 +44,7 @@ def create_mock_metadata():
 
 
 def setup_fake_model_files(
-    mock_bucketfs_location, bfs_conn_name, sub_dir, token_model_specs, qa_model_specs
+    mock_bucketfs_location, bfs_conn_name, sub_dir, token_model_specs, fill_model_specs
 ):
     # real bucketfs would create these dirs, but tempdir does not
     mock_bucketfs_location.mkdir(Path(sub_dir))
@@ -75,12 +73,12 @@ def setup_fake_model_files(
 
     mock_bucketfs_location.mkdir(Path(sub_dir) / "deepset")
     mock_bucketfs_location.mkdir(
-        Path(sub_dir) / qa_model_specs.get_model_specific_path_suffix()
+        Path(sub_dir) / fill_model_specs.get_model_specific_path_suffix()
     )
     os.mknod(
         mock_bucketfs_location
         / sub_dir
-        / qa_model_specs.get_model_specific_path_suffix()
+        / fill_model_specs.get_model_specific_path_suffix()
         + "/config.json"
     )
 
@@ -132,12 +130,12 @@ def setup_fake_model_files(
         (
             bfs_conn_name,
             sub_dir,
-            qa_model_specs.model_name,
-            qa_model_specs.task_type,
+            fill_model_specs.model_name,
+            fill_model_specs.task_type,
             str(
                 mock_bucketfs_location
                 / sub_dir
-                / (qa_model_specs.get_model_specific_path_suffix())
+                / (fill_model_specs.get_model_specific_path_suffix())
             ),
             None,
         ),
@@ -160,7 +158,7 @@ def setup_fake_model_files(
 def test_ls_udf(tmpdir_factory):
     # get specs for valid huggingface models
     token_model_specs = model_params.token_model_specs
-    qa_model_specs = model_params.q_a_model_specs
+    fill_model_specs = model_params.fill_model_specs
     sub_dir = "subdir"
     mock_bucketfs_location = tmpdir_factory.mktemp("test_list_models")
 
@@ -171,7 +169,7 @@ def test_ls_udf(tmpdir_factory):
         bfs_conn_name,
         sub_dir,
         token_model_specs,
-        qa_model_specs,
+        fill_model_specs,
     )
 
     mock_meta = create_mock_metadata()
