@@ -18,7 +18,7 @@ jobs:
       contents: write # zizmor: ignore[github-env] - We need to upload the release files;
     steps:
       - name: Check out Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 

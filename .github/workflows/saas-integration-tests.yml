@@ -35,7 +35,7 @@ jobs:
     name: Saas Integration Tests
     steps:
       - name: Check out Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
