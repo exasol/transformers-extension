@@ -9,6 +9,8 @@ from pydantic import computed_field
 
 
 class Config(BaseConfig):
+    python_version_for_slow_checks: str = "3.12"
+
     @computed_field  # type: ignore[misc]
     @property
     def has_documentation(self) -> bool:

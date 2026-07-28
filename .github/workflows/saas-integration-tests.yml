@@ -19,7 +19,7 @@ jobs:
     name: Build Matrix
     uses: ./.github/workflows/matrix.yml
     with:
-      matrix_keys_json: '["minimum_python_version"]'
+      matrix_keys_json: '["python_version_for_slow_checks"]'
     permissions:
       contents: read
 
@@ -35,7 +35,7 @@ jobs:
     name: Saas Integration Tests
     steps:
       - name: Check out Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 

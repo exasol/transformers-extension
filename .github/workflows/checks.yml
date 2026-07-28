@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -85,7 +85,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -117,7 +117,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -149,7 +149,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -176,7 +176,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -203,7 +203,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -226,7 +226,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
