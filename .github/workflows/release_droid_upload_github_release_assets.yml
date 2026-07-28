@@ -12,7 +12,7 @@ jobs:
   release:
     strategy:
       matrix:
-        python-version: [ '3.12' ]
+        python-version: [ '3.10' ]
     runs-on: ubuntu-24.04
     permissions:
       contents: write # zizmor: ignore[github-env] - We need to upload the release files;
