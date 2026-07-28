@@ -8,7 +8,7 @@ from exasol_transformers_extension.deployment.language_container import (
 
 _DOCKERFILE_TEMPLATE = """
 COPY dependencies/requirements.txt /project/requirements.txt
-RUN python3.10 -m pip install -r /project/requirements.txt{0}
+RUN python3.12 -m pip install -r /project/requirements.txt{0}
 RUN something_else
 """
 
