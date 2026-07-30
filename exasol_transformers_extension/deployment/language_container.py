@@ -4,7 +4,6 @@ from contextlib import contextmanager
 
 from exasol.python_extension_common.deployment.language_container_builder import (
     LanguageContainerBuilder,
-    exclude_cuda,
     find_path_backwards,
 )
 
@@ -16,8 +15,8 @@ def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> 
     dockerfile_file = "flavor_base/dependencies/Dockerfile"
     dockerfile = container_builder.read_file(dockerfile_file)
     install_pattern = (
-        r"^\s*(?i:run)\s+python\d.\d+\s+-m\s+pip\s+install"
-        r"\s+-r\s+/project/requirements.txt"
+        r"^\s*(?i:run)\s+python\d.\d\d+\s+-m\s+pip\s+install"
+        r"\s+--break-system-packages\s+-r\s+/project/requirements.txt"
     )
     install_extra = "--extra-index-url https://download.pytorch.org/whl/cpu"
     dockerfile = re.sub(
@@ -25,6 +24,8 @@ def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> 
     )
     container_builder.write_file(dockerfile_file, dockerfile)
 
+def requirement_filter(line: str) -> bool:
+    return not line.startswith("nvidia") and not line.startswith("cuda") and not line.startswith("triton")
 
 @contextmanager
 def language_container_factory():
@@ -32,7 +33,7 @@ def language_container_factory():
         add_pytorch_to_requirements(container_builder)
         project_directory = find_path_backwards("pyproject.toml", __file__).parent
         container_builder.prepare_flavor(
-            project_directory, requirement_filter=exclude_cuda
+            project_directory, requirement_filter=requirement_filter
         )
         yield container_builder
 
