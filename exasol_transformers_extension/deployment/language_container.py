@@ -24,8 +24,14 @@ def add_pytorch_to_requirements(container_builder: LanguageContainerBuilder) -> 
     )
     container_builder.write_file(dockerfile_file, dockerfile)
 
+
 def requirement_filter(line: str) -> bool:
-    return not line.startswith("nvidia") and not line.startswith("cuda") and not line.startswith("triton")
+    return (
+        not line.startswith("nvidia")
+        and not line.startswith("cuda")
+        and not line.startswith("triton")
+    )
+
 
 @contextmanager
 def language_container_factory():
