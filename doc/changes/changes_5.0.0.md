@@ -1,4 +1,4 @@
-# Transformers Extension 5.0.0, 2026-07-28
+# Transformers Extension 5.0.0, 2026-07-30
 
 Code name: Dependency Updates
 
