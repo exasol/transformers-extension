@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 
 import pyexasol
 from exasol.python_extension_common.connections.pyexasol_connection import (
@@ -11,6 +12,9 @@ from exasol_transformers_extension.deployment import deployment_utils as utils
 from exasol_transformers_extension.deployment.constants import constants
 from exasol_transformers_extension.deployment.install_scripts_constants import (
     InstallScriptsConstants,
+)
+from exasol_transformers_extension.deployment.script_deployment_queries import (
+    ScriptDeploymentQueries,
 )
 from exasol_transformers_extension.deployment.work_with_spans_constants import (
     work_with_spans_constants,
@@ -58,28 +62,6 @@ class ScriptsDeployer:
         self._set_current_schema(self._schema)
         logger.info("Schema %s is opened.", self._schema)
 
-    def _deploy_udf_scripts_from_constants(
-        self, constants_set: InstallScriptsConstants
-    ) -> None:
-        for udf_call_src, template_src in constants_set.udf_callers_templates.items():
-            udf_content = constants_set.udf_callers_dir.joinpath(
-                udf_call_src
-            ).read_text()
-
-            udf_query = utils.load_and_render_statement(
-                template_src,
-                script_content=udf_content,
-                language_alias=self._language_alias,
-                ordered_columns=constants_set.ordered_columns,
-                work_with_spans=self._use_spans,
-                install_all_scripts=self._install_all_scripts,
-            )
-
-            self._pyexasol_conn.execute(udf_query)
-            logger.debug(
-                "The UDF statement of the template %s is executed.", template_src
-            )
-
     def _deploy_udf_scripts(self) -> None:
         """
         Deploy udf according to use_spans and install_all_scripts.
@@ -87,13 +69,21 @@ class ScriptsDeployer:
         but setting install_all_scripts to true overrides this and installs all.
          This can be useful for testing.
         """
-        install_scripts_constants = [constants]
-        if self._use_spans or self._install_all_scripts:
-            install_scripts_constants.append(work_with_spans_constants)
-        if self._install_all_scripts or not self._use_spans:
-            install_scripts_constants.append(work_without_spans_constants)
+        sdq_creator = ScriptDeploymentQueries(
+            language_alias=self._language_alias,
+            use_spans=self._use_spans,
+            install_all_scripts=self._install_all_scripts,
+        )
+        install_scripts_constants = sdq_creator.get_constant_set()
+
         for constant_set in install_scripts_constants:
-            self._deploy_udf_scripts_from_constants(constant_set)
+            queries = sdq_creator.make_script_deployment_queries(constant_set)
+
+            for query_key in queries:
+                self._pyexasol_conn.execute(queries[query_key])
+                logger.debug(
+                    "The UDF statement of the template %s is executed.", query_key
+                )
 
     def deploy_scripts(self) -> None:
         current_schema = self._get_current_schema()

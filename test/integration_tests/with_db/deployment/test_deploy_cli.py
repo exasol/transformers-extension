@@ -72,6 +72,7 @@ def test_deploy_cli(
             bfs_path = bfs.path.build_path(
                 **backend_aware_bucketfs_params, path=PATH_IN_BUCKET
             )
+
             run_model_upload_test(
                 bucketfs_cli_args, db_conn, bfs_path, BUCKETFS_CONN_NAME
             )
