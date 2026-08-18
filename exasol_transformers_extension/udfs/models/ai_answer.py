@@ -1,14 +1,15 @@
 """
-UDF for translating text. Will prompt the model with
-"translate <source_language> to <target_language>: <text-data>" #todo update
+Default UDF for answering a given "question" about a given "context_text"
 """
 
 import transformers
 
+from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
-from exasol_transformers_extension.udfs.models.prediction_tasks.translation import (
-    TranslatePredictionTask,
+from exasol_transformers_extension.udfs.models.prediction_tasks.question_answering import (
+    AnswerPredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )
@@ -29,18 +30,12 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 )
 
 
-class AiTranslateExtendedUDF(BaseModelUDF):
+class AiAnswerUDF(BaseModelUDF):
     """
-    UDF for translating text. Will prompt the model with
-    "translate <source_language> to <target_language>: <text-data>" #todo update
-
-    Needs to have  "max_new_tokens", "text_data", "source_language",
-    "target_language" in the input.
-    Will output to "translation_text".
-    Does not use default values.
-
-    Uses models compatible with the "translation" transformers task, and uses
-    AutoModelForSeq2SeqLM to load said model.
+    Default UDF for answering a given "question" about a given "context_text"
+    Needs to have "question", "context_text", in the input.
+    Other input will be pulled from default values.
+    Will output to "answer".
     """
 
     def __init__(
@@ -48,20 +43,32 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         exa,
         batch_size=100,
         pipeline=transformers.pipeline,
-        base_model=transformers.AutoModelForSeq2SeqLM,
+        base_model=transformers.AutoModelForCausalLM,
         tokenizer=transformers.AutoTokenizer,
-        prediction_task=TranslatePredictionTask(desired_fields_in_prediction=[]),
+        prediction_task=AnswerPredictionTask(
+            desired_fields_in_prediction=["answer"],
+        ),
     ):
+
         transformations = TransformationPipeline(
             [
+                AddDefaultColumnsTransformation(
+                    new_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "model_name",
+                    ],
+                    default_values={
+                        "model_name": DEFAULT_MODEL_SPECS[
+                            self.__class__.__name__
+                        ].model_name
+                    },
+                ),
                 UniqueModelDataframeTransformation(),
                 UniqueModelParamsDataframeTransformation(
                     prediction_task=prediction_task,
-                    expected_input_columns=[
-                        "max_new_tokens",
-                        "source_language",
-                        "target_language",
-                    ],
+                    expected_input_columns=[],
                     new_columns=[],
                     removed_columns=[],
                 ),
@@ -69,18 +76,18 @@ class AiTranslateExtendedUDF(BaseModelUDF):
                     exa,
                     PredictionTaskTransformation(
                         prediction_task=prediction_task,
-                        new_columns=["translation_text"],
-                        expected_input_columns=[
-                            "source_language",
-                            "target_language",
-                            "text_data",
-                            "max_new_tokens",
-                        ],
+                        expected_input_columns=["question", "context_text"],
+                        new_columns=["answer"],
                         removed_columns=[],
                     ),
                 ),
                 RemoveColumnsTransformation(
-                    removed_columns=["device_id"],
+                    removed_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "model_name",
+                    ],
                 ),
             ]
         )

@@ -19,9 +19,6 @@ from exasol_transformers_extension.udfs.models.transformation.prediction_task im
 from exasol_transformers_extension.udfs.models.transformation.remove_columns import (
     RemoveColumnsTransformation,
 )
-from exasol_transformers_extension.udfs.models.transformation.span_columns import (
-    SpanColumnsZeroShotTransformation,
-)
 from exasol_transformers_extension.udfs.models.transformation.transformation import (
     Transformation,
 )

@@ -1,14 +1,16 @@
 """
-UDF for translating text. Will prompt the model with
+Default UDF for translating text. Will prompt the model with
 "translate <source_language> to <target_language>: <text-data>" #todo update
 """
 
 import transformers
 
+from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.translation import (
     TranslatePredictionTask,
 )
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )
@@ -29,18 +31,14 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 )
 
 
-class AiTranslateExtendedUDF(BaseModelUDF):
+class AiTranslateUDF(BaseModelUDF):
     """
-    UDF for translating text. Will prompt the model with
+    Default UDF for translating text. Will prompt the model with
     "translate <source_language> to <target_language>: <text-data>" #todo update
-
-    Needs to have  "max_new_tokens", "text_data", "source_language",
-    "target_language" in the input.
+    #todo which langs does the model support?
+    Needs to have  "text_data".
+    Other input will be pulled from default values.
     Will output to "translation_text".
-    Does not use default values.
-
-    Uses models compatible with the "translation" transformers task, and uses
-    AutoModelForSeq2SeqLM to load said model.
     """
 
     def __init__(
@@ -54,6 +52,20 @@ class AiTranslateExtendedUDF(BaseModelUDF):
     ):
         transformations = TransformationPipeline(
             [
+                AddDefaultColumnsTransformation(
+                    new_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "model_name",
+                        "max_new_tokens",
+                    ],
+                    default_values={
+                        "model_name": DEFAULT_MODEL_SPECS[
+                            self.__class__.__name__
+                        ].model_name
+                    },
+                ),
                 UniqueModelDataframeTransformation(),
                 UniqueModelParamsDataframeTransformation(
                     prediction_task=prediction_task,
@@ -80,7 +92,13 @@ class AiTranslateExtendedUDF(BaseModelUDF):
                     ),
                 ),
                 RemoveColumnsTransformation(
-                    removed_columns=["device_id"],
+                    removed_columns=[
+                        "device_id",
+                        "bucketfs_conn",
+                        "sub_dir",
+                        "model_name",
+                        "max_new_tokens",
+                    ],
                 ),
             ]
         )
