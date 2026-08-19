@@ -40,7 +40,7 @@ DEFAULT_MODEL_SPECS = {
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "AiTranslateUDF": model_spec_factory.create(
-        model_name="guishe/nuner-v2_fewnerd_fine_ser",#todo
+        model_name="google-t5/t5-small",#todo?
         task_type="translation",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
