@@ -1,6 +1,6 @@
-from exasol_transformers_extension.udfs.models.ai_answer import AiAnswerUDF
-from test.unit.udf_wrapper_params.ai_answer.default_values_multiple_batch_complete import \
-    DefaultValuesMultipleBatchComplete
+from test.unit.udf_wrapper_params.ai_answer.default_values_multiple_batch_complete import (
+    DefaultValuesMultipleBatchComplete,
+)
 from test.unit.udfs.output_matcher import (
     Output,
     OutputMatcher,
@@ -19,6 +19,7 @@ import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
 
+from exasol_transformers_extension.udfs.models.ai_answer import AiAnswerUDF
 
 
 def create_mock_metadata():
@@ -40,10 +41,7 @@ def create_mock_metadata():
     return meta
 
 
-@pytest.mark.parametrize(
-    "params",
-    [DefaultValuesMultipleBatchComplete]
-)
+@pytest.mark.parametrize("params", [DefaultValuesMultipleBatchComplete])
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
@@ -58,7 +56,7 @@ def test_ai_answer(mock_local_path, mock_create_loc, params):
     mock_meta = create_mock_metadata()
     print(params.input_data)
     print(params.model_output_dfs)
-    #[[{'generated_text': 'answer 1'}], [{'generated_text': 'answer 1'}]]
+    # [[{'generated_text': 'answer 1'}], [{'generated_text': 'answer 1'}]]
     (
         mock_exa,
         mock_base_model_factory,

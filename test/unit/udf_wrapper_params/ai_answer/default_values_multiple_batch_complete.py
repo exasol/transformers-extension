@@ -2,7 +2,9 @@ from pathlib import PurePosixPath
 
 from exasol_udf_mock_python.connection import Connection
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
 
 
 class DefaultValuesMultipleBatchComplete:

@@ -55,6 +55,7 @@ def prepare_default_question_answering_model_for_local_bucketfs(
     )
     return bucketfs_path
 
+
 @pytest.fixture(scope="session")
 def prepare_question_answering_model_for_local_bucketfs(
     tmpdir_factory,
@@ -192,6 +193,7 @@ def prepare_translation_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPat
     )
     return bucketfs_path
 
+
 @pytest.fixture(scope="session")
 def prepare_default_translation_model_for_local_bucketfs(
     tmpdir_factory,
@@ -270,7 +272,7 @@ def upload_question_answering_model_to_bucketfs(
 
 
 @pytest.fixture(scope="session")
-def upload_default_question_answering_model_to_bucketfs(#todo just remove the other ones?
+def upload_default_question_answering_model_to_bucketfs(  # todo just remove the other ones?
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
 ) -> typing.Generator:
     """
@@ -283,6 +285,7 @@ def upload_default_question_answering_model_to_bucketfs(#todo just remove the ot
     yield from upload_model_to_bucketfs_from_bfs_model_spec(
         model_specs, tmpdir, bucketfs_location
     )
+
 
 @pytest.fixture(scope="session")
 def upload_text_classification_model_to_bucketfs(
@@ -408,6 +411,7 @@ def upload_default_token_classification_model_to_bucketfs(
         model_specs, tmpdir, bucketfs_location
     )
 
+
 @pytest.fixture(scope="session")
 def upload_default_translation_model_to_bucketfs(
     bucketfs_location: bfs.path.PathLike, tmpdir_factory
@@ -422,6 +426,7 @@ def upload_default_translation_model_to_bucketfs(
     yield from upload_model_to_bucketfs_from_bfs_model_spec(
         model_specs, tmpdir, bucketfs_location
     )
+
 
 @pytest.fixture(scope="session")
 def upload_translation_model_to_bucketfs(

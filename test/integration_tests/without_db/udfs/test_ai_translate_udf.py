@@ -1,5 +1,3 @@
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
-from exasol_transformers_extension.udfs.models.ai_translate import AiTranslateUDF
 from test.integration_tests.without_db.udfs.utils.matcher import (
     NoErrorMessageMatcher,
     Result,
@@ -14,6 +12,11 @@ from test.utils.parameters import model_params
 
 import pandas as pd
 import pytest
+
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+from exasol_transformers_extension.udfs.models.ai_translate import AiTranslateUDF
 
 
 @pytest.mark.parametrize(
@@ -75,4 +78,3 @@ def test_ai_translate_extended_udf(
         )
         and result == NoErrorMessageMatcher()
     )
-

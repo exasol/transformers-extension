@@ -4,12 +4,16 @@ Default UDF for answering a given "question" about a given "context_text"
 
 import transformers
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.question_answering import (
     AnswerPredictionTask,
 )
-from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import (
+    AddDefaultColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )

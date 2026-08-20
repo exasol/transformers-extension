@@ -1,5 +1,3 @@
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_BUCKETFS_CONN_NAME
-from exasol_transformers_extension.udfs.models.ai_answer import AiAnswerUDF
 from test.integration_tests.without_db.udfs.utils.matcher import (
     ColumnsMatcher,
     NoErrorMessageMatcher,
@@ -16,13 +14,17 @@ from test.utils.parameters import model_params
 import pandas as pd
 import pytest
 
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_BUCKETFS_CONN_NAME,
+)
+from exasol_transformers_extension.udfs.models.ai_answer import AiAnswerUDF
 
 
 @pytest.mark.parametrize(
     "description, n_rows",
     [
         ("on CPU with batch input, single answer", 3),
-        ("on CPU with single input, single answer",  1),
+        ("on CPU with single input, single answer", 1),
     ],
 )
 def test_ai_answer_udf(

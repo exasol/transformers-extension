@@ -42,13 +42,17 @@ def make_input_row(
         )
     ]
 
-def make_translation_text(translation_text=translation_text,
-                          max_new_tokens=max_new_tokens,
-                          error_msg=error_msg):
+
+def make_translation_text(
+    translation_text=translation_text,
+    max_new_tokens=max_new_tokens,
+    error_msg=error_msg,
+):
     translation_text = (
         translation_text + str(max_new_tokens) if not error_msg else translation_text
     )
     return translation_text
+
 
 def make_udf_output_for_one_input_row(
     bucketfs_conn=bucketfs_conn,
@@ -65,7 +69,9 @@ def make_udf_output_for_one_input_row(
     Creates the output row for translation_udf as a list,
     using default values for all parameters that are not specified.
     """
-    translation_text = make_translation_text(translation_text,max_new_tokens, error_msg)
+    translation_text = make_translation_text(
+        translation_text, max_new_tokens, error_msg
+    )
     return [
         (
             bucketfs_conn,

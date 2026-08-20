@@ -1,4 +1,3 @@
-
 from test.integration_tests.utils.model_output_quality_checkers import (
     assert_lenient_check_of_output_quality,
 )
@@ -8,9 +7,7 @@ from test.integration_tests.utils.model_output_result_number_checker import (
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 
 
-def run_ai_translate_script_test(
-    n_rows: int, db_conn
-):
+def run_ai_translate_script_test(n_rows: int, db_conn):
     src_lang = "English"
     target_lang = "German"
     input_data = []
@@ -42,7 +39,8 @@ def test_ai_translate_script(
 ):
     n_rows = 100
     result, input_data = run_ai_translate_script_test(
-        n_rows, db_conn,
+        n_rows,
+        db_conn,
     )
 
     # assertions

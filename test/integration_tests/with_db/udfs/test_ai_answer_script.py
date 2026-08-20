@@ -8,8 +8,7 @@ from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_t
 
 
 def test_ai_answer_script(
-    setup_database, db_conn,
-    upload_default_question_answering_model_to_bucketfs
+    setup_database, db_conn, upload_default_question_answering_model_to_bucketfs
 ):
     question = "Where is Exasol based?"
 

@@ -5,12 +5,16 @@ Default UDF for translating text. Will prompt the model with
 
 import transformers
 
-from exasol_transformers_extension.deployment.default_udf_parameters import DEFAULT_MODEL_SPECS
+from exasol_transformers_extension.deployment.default_udf_parameters import (
+    DEFAULT_MODEL_SPECS,
+)
 from exasol_transformers_extension.udfs.models.base_model_udf import BaseModelUDF
 from exasol_transformers_extension.udfs.models.prediction_tasks.translation import (
     TranslatePredictionTask,
 )
-from exasol_transformers_extension.udfs.models.transformation.add_default_columns import AddDefaultColumnsTransformation
+from exasol_transformers_extension.udfs.models.transformation.add_default_columns import (
+    AddDefaultColumnsTransformation,
+)
 from exasol_transformers_extension.udfs.models.transformation.extract_unique_model_dfs import (
     UniqueModelDataframeTransformation,
 )

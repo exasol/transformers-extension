@@ -1,6 +1,6 @@
-from exasol_transformers_extension.udfs.models.ai_translate import AiTranslateUDF
-from test.unit.udf_wrapper_params.ai_translate.default_values_multiple_batch_complete import \
-    DefaultValuesMultipleBatchComplete
+from test.unit.udf_wrapper_params.ai_translate.default_values_multiple_batch_complete import (
+    DefaultValuesMultipleBatchComplete,
+)
 from test.unit.udf_wrapper_params.ai_translate_extended.make_data_row_functions import (
     translation_models_output_generator,
 )
@@ -14,6 +14,8 @@ from unittest.mock import patch
 import pytest
 from exasol_udf_mock_python.column import Column
 from exasol_udf_mock_python.mock_meta_data import MockMetaData
+
+from exasol_transformers_extension.udfs.models.ai_translate import AiTranslateUDF
 
 
 def create_mock_metadata():
@@ -37,10 +39,7 @@ def create_mock_metadata():
     return meta
 
 
-@pytest.mark.parametrize(
-    "params",
-    [DefaultValuesMultipleBatchComplete]
-)
+@pytest.mark.parametrize("params", [DefaultValuesMultipleBatchComplete])
 @patch(
     "exasol.python_extension_common.connections.bucketfs_location.create_bucketfs_location_from_conn_object"
 )
