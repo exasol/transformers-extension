@@ -6,7 +6,6 @@ from test.integration_tests.utils.model_output_result_number_checker import (
     assert_correct_number_of_results,
 )
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
-from test.utils.parameters import model_params
 
 
 def run_ai_translate_script_test(
@@ -28,7 +27,7 @@ def run_ai_translate_script_test(
         f"SELECT AI_TRANSLATE("
         f"t.text_data, "
         f"t.source_language, "
-        f"t.target_language, "
+        f"t.target_language"
         f") FROM (VALUES {python_rows_to_sql(input_data)} "
         f"AS t(text_data, source_language, target_language));"
     )
