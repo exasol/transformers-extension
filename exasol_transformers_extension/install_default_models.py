@@ -1,6 +1,7 @@
 """
 Downloads default models from HuggingFace hub and then transfers model to database
 """
+
 import click
 import transformers as huggingface
 from exasol.python_extension_common.cli.std_options import (

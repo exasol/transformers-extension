@@ -50,9 +50,7 @@ class AiTranslateExtendedUDF(BaseModelUDF):
         pipeline=transformers.pipeline,
         base_model=transformers.AutoModelForSeq2SeqLM,
         tokenizer=transformers.AutoTokenizer,
-        prediction_task=TranslatePredictionTask(
-            desired_fields_in_prediction=[]
-        ),
+        prediction_task=TranslatePredictionTask(desired_fields_in_prediction=[]),
     ):
         transformations = TransformationPipeline(
             [
