@@ -1,3 +1,6 @@
+"""
+Downloads default models from HuggingFace hub and then transfers model to database
+"""
 import click
 import transformers as huggingface
 from exasol.python_extension_common.cli.std_options import (
@@ -18,7 +21,7 @@ opts = select_std_options([StdTags.BFS])
 
 def install_default_models(**kwargs) -> None:
     """
-    Downloads default models from Huggingface hub and the transfers model to database
+    Downloads default models from HuggingFace hub and then transfers model to database
     """
     default_models = DEFAULT_MODEL_SPECS
     bucketfs_location = create_bucketfs_location(**kwargs)

@@ -1,3 +1,8 @@
+"""
+default parameters used to fill empty parameters default udfs input data in order for
+the Transformations to run.
+Use AddDefaultColumnsTransformation to add these.
+"""
 from pathlib import Path
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
