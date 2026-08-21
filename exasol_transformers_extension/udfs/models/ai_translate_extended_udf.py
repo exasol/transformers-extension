@@ -1,6 +1,6 @@
 """
 UDF for translating text. Will prompt the model with
-"translate <source_language> to <target_language>: <text-data>" #todo update
+"translate <source_language> to <target_language>: <text-data>"
 """
 
 import transformers
@@ -32,7 +32,7 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 class AiTranslateExtendedUDF(BaseModelUDF):
     """
     UDF for translating text. Will prompt the model with
-    "translate <source_language> to <target_language>: <text-data>" #todo update
+    "translate <source_language> to <target_language>: <text-data>"
 
     Needs to have  "max_new_tokens", "text_data", "source_language",
     "target_language" in the input.

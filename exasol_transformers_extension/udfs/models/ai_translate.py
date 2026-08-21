@@ -38,8 +38,10 @@ from exasol_transformers_extension.udfs.models.transformation.with_model_transfo
 class AiTranslateUDF(BaseModelUDF):
     """
     Default UDF for translating text. Will prompt the model with
-    "translate <source_language> to <target_language>: <text-data>" #todo update
-    #todo which langs does the model support?
+    "translate <source_language> to <target_language>: <text-data>"
+
+    Uses google-t5/t5-base.
+
     Needs to have  "text_data".
     Other input will be pulled from default values.
     Will output to "translation_text".

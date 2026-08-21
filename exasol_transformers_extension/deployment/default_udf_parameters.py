@@ -15,7 +15,7 @@ DEFAULT_VALUES = {
     "device_id": None,
     "top_k": 1,
     "return_ranks": "HIGHEST",
-    "max_new_tokens": 256,  # todo document!
+    "max_new_tokens": 256,
     "return_full_text": False,
     "aggregation_strategy": "simple",
 }
@@ -40,7 +40,7 @@ DEFAULT_MODEL_SPECS = {
         sub_dir=Path(DEFAULT_SUBDIR),
     ),
     "AiTranslateUDF": model_spec_factory.create(
-        model_name="google-t5/t5-small",  # todo?
+        model_name="google-t5/t5-base",
         task_type="translation",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
