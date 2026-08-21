@@ -41,6 +41,22 @@ def prepare_fill_mask_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPath:
 
 
 @pytest.fixture(scope="session")
+def prepare_default_question_answering_model_for_local_bucketfs(
+    tmpdir_factory,
+) -> PurePosixPath:
+    """
+    Create tmpdir and save the default question-answering model
+    into it, returns tmpdir-path.
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specification = DEFAULT_MODEL_SPECS["AiAnswerUDF"]
+    bucketfs_path = prepare_default_model_for_local_bucketfs(
+        model_specification, tmpdir_factory
+    )
+    return bucketfs_path
+
+
+@pytest.fixture(scope="session")
 def prepare_question_answering_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
@@ -179,6 +195,22 @@ def prepare_translation_model_for_local_bucketfs(tmpdir_factory) -> PurePosixPat
 
 
 @pytest.fixture(scope="session")
+def prepare_default_translation_model_for_local_bucketfs(
+    tmpdir_factory,
+) -> PurePosixPath:
+    """
+    Create tmpdir and save default translation model into it,
+    returns tmpdir-path.
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specification = DEFAULT_MODEL_SPECS["AiTranslateUDF"]
+    bucketfs_path = prepare_default_model_for_local_bucketfs(
+        model_specification, tmpdir_factory
+    )
+    return bucketfs_path
+
+
+@pytest.fixture(scope="session")
 def prepare_zero_shot_classification_model_for_local_bucketfs(
     tmpdir_factory,
 ) -> PurePosixPath:
@@ -237,6 +269,22 @@ def upload_question_answering_model_to_bucketfs(
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     with upload_model_to_bucketfs(model_specs, tmpdir, bucketfs_location) as path:
         yield path
+
+
+@pytest.fixture(scope="session")
+def upload_default_question_answering_model_to_bucketfs(  # todo just remove the other ones?
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> typing.Generator:
+    """
+    Load default q-a into BucketFS at bucketfs_location,
+    returns BucketFS path
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specs = DEFAULT_MODEL_SPECS["AiAnswerUDF"]
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    yield from upload_model_to_bucketfs_from_bfs_model_spec(
+        model_specs, tmpdir, bucketfs_location
+    )
 
 
 @pytest.fixture(scope="session")
@@ -358,6 +406,22 @@ def upload_default_token_classification_model_to_bucketfs(
     The model is defined in DEFAULT_MODEL_SPECS.
     """
     model_specs = DEFAULT_MODEL_SPECS["AiExtractEntitiesUDF"]
+    tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
+    yield from upload_model_to_bucketfs_from_bfs_model_spec(
+        model_specs, tmpdir, bucketfs_location
+    )
+
+
+@pytest.fixture(scope="session")
+def upload_default_translation_model_to_bucketfs(
+    bucketfs_location: bfs.path.PathLike, tmpdir_factory
+) -> typing.Generator:
+    """
+    Load standard translation model into BucketFS at bucketfs_location,
+    returns BucketFS path.
+    The model is defined in DEFAULT_MODEL_SPECS.
+    """
+    model_specs = DEFAULT_MODEL_SPECS["AiTranslateUDF"]
     tmpdir = tmpdir_factory.mktemp(model_specs.task_type)
     yield from upload_model_to_bucketfs_from_bfs_model_spec(
         model_specs, tmpdir, bucketfs_location
