@@ -51,7 +51,7 @@ def test_ai_translate_extended(mock_local_path, mock_create_loc, params):
     expected_model_counter = params.expected_model_counter
     batch_size = params.batch_size
     expected_output_data = params.output_data
-    print(params.input_data)
+
     (
         mock_exa,
         mock_base_model_factory,

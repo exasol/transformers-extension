@@ -68,13 +68,11 @@ def test_ai_translate_extended_udf(
     new_columns = ["translation_text", "error_message"]
 
     result = Result(result_df)
-    assert (
-        result
-        == ShapeMatcher(
-            columns=columns,
-            new_columns=new_columns,
-            n_rows=len(languages),
-            removed_columns=[],
-        )
-        and result == NoErrorMessageMatcher()
+
+    assert result == ShapeMatcher(
+        columns=columns,
+        new_columns=new_columns,
+        n_rows=len(languages),
+        removed_columns=[],
     )
+    assert result == NoErrorMessageMatcher()

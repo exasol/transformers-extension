@@ -54,9 +54,7 @@ def test_ai_answer(mock_local_path, mock_create_loc, params):
     mock_local_path.side_effect = fake_local_bucketfs_path
 
     mock_meta = create_mock_metadata()
-    print(params.input_data)
-    print(params.model_output_dfs)
-    # [[{'generated_text': 'answer 1'}], [{'generated_text': 'answer 1'}]]
+
     (
         mock_exa,
         mock_base_model_factory,
@@ -91,7 +89,5 @@ def test_ai_answer(mock_local_path, mock_create_loc, params):
         result, mock_meta.output_columns, params.expected_output_data
     )
 
-    assert (
-        OutputMatcher(result_output, n_input_columns) == expected_output
-        and len(mock_pipeline_factory.mock_calls) == params.expected_model_counter
-    )
+    assert OutputMatcher(result_output, n_input_columns) == expected_output
+    assert len(mock_pipeline_factory.mock_calls) == params.expected_model_counter

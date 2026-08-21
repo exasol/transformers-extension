@@ -58,20 +58,13 @@ def test_ai_answer_udf(
 
     result_dfs = ctx.get_emitted()
     result_df = pd.concat(result_dfs)
-    with pd.option_context("display.max_rows", None, "display.max_columns", None):
-        print(result_df)
 
     new_columns = ["answer", "error_message"]
 
     result = Result(result_df)
-    assert (
-        result
-        == ShapeMatcher(
-            columns=columns,
-            new_columns=new_columns,
-            removed_columns=[],
-            n_rows=n_rows,
-        )
-        and result == ColumnsMatcher(columns=columns, new_columns=new_columns)
-        and result == NoErrorMessageMatcher()
+
+    assert result == ShapeMatcher(
+        columns=columns, new_columns=new_columns, removed_columns=[], n_rows=n_rows
     )
+    assert result == ColumnsMatcher(columns=columns, new_columns=new_columns)
+    assert result == NoErrorMessageMatcher()
