@@ -51,8 +51,10 @@ def test_ai_translate_script(
         added_columns, removed_columns, input_data[0], result, n_rows
     )
 
-    acceptable_results = ["Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg",
-                          "Das Datenbank-Software-Unternehmen Exasol hat seinen Sitz in Nürnberg."]
+    acceptable_results = [
+        "Die Datenbanksoftware Exasol hat ihren Sitz in Nürnberg",
+        "Das Datenbank-Software-Unternehmen Exasol hat seinen Sitz in Nürnberg.",
+    ]
     assert_lenient_check_of_output_quality(
         result, acceptable_results, acceptance_factor=0.5, label_index=3
     )

@@ -1,6 +1,6 @@
 """
 Default UDF for translating text. Will prompt the model with
-"translate <source_language> to <target_language>: <text-data>" #todo update
+"translate <source_language> to <target_language>: <text-data>"
 """
 
 import transformers
@@ -42,7 +42,8 @@ class AiTranslateUDF(BaseModelUDF):
 
     Uses google-t5/t5-base.
 
-    Needs to have  "text_data".
+    Needs to have "text_data", "source_language",
+    "target_language" in the input.
     Other input will be pulled from default values.
     Will output to "translation_text".
     """
