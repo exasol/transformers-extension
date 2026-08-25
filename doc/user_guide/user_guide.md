@@ -47,11 +47,13 @@ or the `INSTALL_AI_DEFAULT_MODEL_UDF`.
 These UDFs require only minimal configuation to use:
 
 
-| UDF Name            | task_type                 | Use                                                                         |
-|---------------------|---------------------------|-----------------------------------------------------------------------------|
-| AI Sentiment        | text-classification       | Classifies the given text according the sentiment found in the text.        |
-| AI Classify         | zero-shot-classification  | This UDF classifies the input text into classes defined by the user.        |
-| AI Extract Entities | token-classification      | This UDF finds tokens in a given text, and assigns a label to found tokens. |
+| UDF Name                                                    | task_type                | Use                                                                         |
+|-------------------------------------------------------------|--------------------------|-----------------------------------------------------------------------------|
+| [AI Sentiment](invoke_models.md#ai-sentiment)               | text-classification      | Classifies the given text according the sentiment found in the text.        |
+| [AI Classify](invoke_models.md#ai-classify)                 | zero-shot-classification | This UDF classifies the input text into classes defined by the user.        |
+| [AI Extract Entities](invoke_models.md#ai-extract-entities) | token-classification     | This UDF finds tokens in a given text, and assigns a label to found tokens. |
+| [AI Answer](invoke_models.md#ai-answer)                     | text-generation          | Extracts answer(s) from a given question text. Uses LLM for this task.      |
+| [AI Translate](invoke_models.md#ai-translate)               | translation              | This UDF translates a given text from one language to another.              |
 
 However, if you want to configure a task to your specific needs, 
 UDFs with the suffix "Extended" in the name allow you to specify all available 
@@ -64,16 +66,16 @@ For example, you may want to select a specific model to be used.
 
 These are the available UDFs:
 
-| UDF Name                    | task_type                | Use                                                                    |
-|-----------------------------|--------------------------|------------------------------------------------------------------------|
-| AI Custom Classify Extended | text-classification      | Classifies the given text into classes known to the model.             |
-| AI Entailment Extended      | text-classification      | Takes two input texts and compares them.                               |
-| AI Answer Extended          | text-generation          | Extracts answer(s) from a given question text. Uses LLM for this task. |
-| AI Fill Mask Extended       | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.          |
-| AI Complete Extended        | text-generation          | Predict the continuation of the given text.                            |
-| AI Extract Extended         | token-classification     | Find and label tokens in a given text.                                 |
-| AI Translate Extended       | translation              | This UDF translates a given text from one language to another.         |
-| AI Classify Extended        | zero-shot-classification | This UDF classifies the input text into classes defined by the user.   |
+| UDF Name                                                                    | task_type                | Use                                                                    |
+|-----------------------------------------------------------------------------|--------------------------|------------------------------------------------------------------------|
+| [AI Custom Classify Extended](invoke_models.md#ai-custom-classify-extended) | text-classification      | Classifies the given text into classes known to the model.             |
+| [AI Entailment Extended](invoke_models.md#ai-entailment-extended)           | text-classification      | Takes two input texts and compares them.                               |
+| [AI Answer Extended](invoke_models.md#ai-answer-extended)                   | text-generation          | Extracts answer(s) from a given question text. Uses LLM for this task. |
+| [AI Fill Mask Extended](invoke_models.md#ai-fill-mask-extended)             | fill-mask                | Replace ```<mask>``` tokens in the input with predicted text.          |
+| [AI Complete Extended](invoke_models.md#ai-complete-extended)               | text-generation          | Predict the continuation of the given text.                            |
+| [AI Extract Extended](invoke_models.md#ai-extract-extended)                 | token-classification     | Find and label tokens in a given text.                                 |
+| [AI Translate Extended](invoke_models.md#ai-translate-extended)             | translation              | This UDF translates a given text from one language to another.         |
+| [AI Classify Extended](invoke_models.md#ai-classify-extended)               | zero-shot-classification | This UDF classifies the input text into classes defined by the user.   |
 
 Each UDF uses models for a predefined Transformers task. 
 Models which do not support this task will perform poorly. So take care to match your 

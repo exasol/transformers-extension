@@ -14,11 +14,13 @@ models will however increase the processing time, as the models need to be loade
   * [AI Sentiment](#ai-sentiment)
   * [AI Custom Classify Extended](#ai-custom-classify-extended)
   * [AI Entailment Extended](#ai-entailment-extended)
+  * [AI Answer](#ai-answer)
   * [AI Answer Extended](#ai-answer-extended)
   * [AI Fill Mask Extended](#ai-fill-mask-extended)
   * [AI Complete Extended](#ai-complete-extended)
   * [AI Extract Entities](#ai-extract-entities)
   * [AI Extract Extended](#ai-extract-extended)
+  * [AI Translate](#ai-translate)
   * [AI Translate Extended](#ai-translate-extended)
   * [AI Classify](#ai-classify)
   * [AI Classify Extended](#ai-classify-extended)
@@ -143,6 +145,38 @@ Example Output:
 | conn_name     | dir/    | model_name | text 1     | text 2      | ALL          | label_1 | 0.75  | 1    | None          |
 | conn_name     | dir/    | model_name | text 1     | text 2      | ALL          | label_2 | 0.23  | 2    | None          |
 | ...           | ...     | ...        | ...        | ...         | ...          | ...     | ...   | ...  | ...           |
+
+
+### AI Answer
+
+This UDF extracts an answer to a question from a given context text. 
+It uses the [HuggingFaceTB/SmolLM2-135M-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct) for 
+this, so the answer is also influenced by the training of the model, 
+not only the information in the context-text.
+
+An example usage is given below:
+
+```sql
+SELECT AI_ANSWER(
+    question,
+    context_text
+)
+```
+
+Parameters
+* `question`: The question text
+* `context_text`: The context text, associated with the question
+
+Additional output columns
+* _ANSWER_: the predicted answer for the input question
+
+Example Output:
+
+| QUESTION   | CONTEXT    | ANSWER   | ERROR_MESSAGE |
+|------------|------------|----------|---------------|
+| question_1 | context_1  | answer_1 | None          |
+| question_2 | context_2  | answer_2 | None          |
+| ...        | ...        | ...      | ...           |
 
 
 ### AI Answer Extended
@@ -373,6 +407,40 @@ Example Output:
 | ------------- |---------|------------|---------------|----------------------|-----------|---------|------|--------|-------| ------------- |
 | conn_name     | dir/    | model_name | This is text. | simple               | 0         | 4       | text | noun   | 0.75  | None          |
 | ...           | ...     | ...        | ...           | ...                  | ...       | ...     | ...  | ..     | ...   | ...           |
+
+
+### AI Translate
+
+This UDF translates a given text from one language to another.
+
+It uses the [google-t5/t5-base](https://huggingface.co/google-t5/t5-base/tree/main) model. 
+It also sets the "max_new_tokens" parameter to 256. This influences the possible length
+of the outputs.
+If you get incomplete outputs, you need to either split your input over multiple rows,
+or use the [AI_TRANSLATE_EXTENDED](#ai-translate-extended) udf instead.
+
+```sql
+SELECT AI_TRANSLATE(
+    text_data,
+    source_language,
+    target_language
+)
+```
+
+Parameters:
+* `text_data`: The text to translate.
+* `source_language`: The language of the input. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+* `target_language`:  The language of the desired output. Required for multilingual models only. (see [Transformers Translation API](https://huggingface.co/docs/transformers/main_classes/pipelines#transformers.TranslationPipeline.__call__)).
+
+Additional output columns
+* _TRANSLATION_TEXT_: the translated text
+
+Example Output:
+| TEXT_DATA | SOURCE_LANGUAGE | TARGET_LANGUAGE | TRANSLATION_TEXT | ERROR_MESSAGE |
+|-----------|-----------------|-----------------|------------------|---------------|
+| context   | English         | German          |  kontext         | None          |
+| ...       | ...             | ...             |  ...             | ...           |
+
 
 ### AI Translate Extended
 

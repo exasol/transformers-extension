@@ -6,7 +6,7 @@ sub_dir = "sub_dir"
 model_name = "model"
 
 text_data = "text"
-source_lanuage = "English"
+source_language = "English"
 target_language = "German"
 
 translation_text = "text übersetzt, "
@@ -21,7 +21,7 @@ def make_input_row(
     sub_dir=sub_dir,
     model_name=model_name,
     text_data=text_data,
-    source_language=source_lanuage,
+    source_language=source_language,
     target_language=target_language,
     max_new_tokens=max_new_tokens,
 ):
@@ -43,12 +43,23 @@ def make_input_row(
     ]
 
 
+def make_translation_text(
+    translation_text=translation_text,
+    max_new_tokens=max_new_tokens,
+    error_msg=error_msg,
+):
+    translation_text = (
+        translation_text + str(max_new_tokens) if not error_msg else translation_text
+    )
+    return translation_text
+
+
 def make_udf_output_for_one_input_row(
     bucketfs_conn=bucketfs_conn,
     sub_dir=sub_dir,
     model_name=model_name,
     text_data=text_data,
-    source_language=source_lanuage,
+    source_language=source_language,
     target_language=target_language,
     max_new_tokens=max_new_tokens,
     translation_text=translation_text,
@@ -58,8 +69,8 @@ def make_udf_output_for_one_input_row(
     Creates the output row for translation_udf as a list,
     using default values for all parameters that are not specified.
     """
-    translation_text = (
-        translation_text + str(max_new_tokens) if not error_msg else translation_text
+    translation_text = make_translation_text(
+        translation_text, max_new_tokens, error_msg
     )
     return [
         (

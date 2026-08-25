@@ -1,3 +1,9 @@
+"""
+default parameters used to fill empty parameters default udfs input data in order for
+the Transformations to run.
+Use AddDefaultColumnsTransformation to add these.
+"""
+
 from pathlib import Path
 
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
@@ -15,13 +21,12 @@ DEFAULT_VALUES = {
     "device_id": None,
     "top_k": 1,
     "return_ranks": "HIGHEST",
-    "max_new_tokens": None,
+    "max_new_tokens": 256,
     "return_full_text": False,
     "aggregation_strategy": "simple",
 }
 
 DEFAULT_MODEL_SPECS = {
-    # these are placeholder model specs, remove them once we have decided on a real one
     "AiSentimentUDF": model_spec_factory.create(
         model_name="tabularisai/robust-sentiment-analysis",
         task_type="text-classification",
@@ -37,6 +42,18 @@ DEFAULT_MODEL_SPECS = {
     "AiExtractEntitiesUDF": model_spec_factory.create(
         model_name="guishe/nuner-v2_fewnerd_fine_super",
         task_type="token-classification",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
+    "AiTranslateUDF": model_spec_factory.create(
+        model_name="google-t5/t5-base",
+        task_type="translation",
+        bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
+        sub_dir=Path(DEFAULT_SUBDIR),
+    ),
+    "AiAnswerUDF": model_spec_factory.create(
+        model_name="HuggingFaceTB/SmolLM2-135M-Instruct",
+        task_type="text-generation",
         bucketfs_conn_name=DEFAULT_BUCKETFS_CONN_NAME,
         sub_dir=Path(DEFAULT_SUBDIR),
     ),

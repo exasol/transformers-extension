@@ -6,9 +6,7 @@ from test.utils.db_queries import (
     expected_script_list_with_span,
     expected_script_list_without_span,
 )
-from typing import Any
 
-import exasol.bucketfs as bfs
 import pytest
 from exasol.pytest_backend import BACKEND_ONPREM
 from exasol.python_extension_common.deployment.language_container_validator import (

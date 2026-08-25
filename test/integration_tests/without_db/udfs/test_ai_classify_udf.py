@@ -14,8 +14,6 @@ from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
 
 import pandas as pd
-import pytest
-import torch
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
     DEFAULT_BUCKETFS_CONN_NAME,
