@@ -175,7 +175,7 @@ Example Output:
 | QUESTION   | CONTEXT    | ANSWER   | ERROR_MESSAGE |
 |------------|------------|----------|---------------|
 | question_1 | context_1  | answer_1 | None          |
-| question_2 | context_1  | answer_2 | None          |
+| question_2 | context_2  | answer_2 | None          |
 | ...        | ...        | ...      | ...           |
 
 
