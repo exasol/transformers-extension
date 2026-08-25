@@ -416,7 +416,7 @@ This UDF translates a given text from one language to another.
 It uses the [google-t5/t5-base](https://huggingface.co/google-t5/t5-base/tree/main) model. 
 It also sets the "max_new_tokens" parameter to 256. This influences the possible length
 of the outputs.
-If you get incomplete outputs, yu need to either split your input over multiple rows,
+If you get incomplete outputs, you need to either split your input over multiple rows,
 or use the [AI_TRANSLATE_EXTENDED](#ai-translate-extended) udf instead.
 
 ```sql
