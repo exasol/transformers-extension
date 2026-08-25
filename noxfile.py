@@ -60,13 +60,13 @@ def saas_integration_tests(session):
     # We need to use an external database here, because the itde plugin doesn't
     # provide all necessary options to
     # configure the database. See the start_database session.
-    #session.run(
-    #    "pytest",
-    #    "--setup-show",
-    #    "-s",
-    #    "--backend=saas",
-    #    "test/integration_tests/with_db",
-    #)
+    session.run(
+        "pytest",
+        "--setup-show",
+        "-s",
+        "--backend=saas",
+        "test/integration_tests/with_db",
+    )
 
 
 @nox.session(python=False)
@@ -83,7 +83,7 @@ def onprem_integration_tests(session):
         "-s",
         "--backend=onprem",
         "--itde-db-version=external",
-        "test/integration_tests/with_db/udfs/test_ai_translate_script.py",
+        "test/integration_tests/with_db",
     )
 
 
