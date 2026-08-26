@@ -179,8 +179,7 @@ CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ANSWER_EXTENDED"(
     sub_dir VARCHAR(2000000),
     model_name VARCHAR(2000000),
     question VARCHAR(2000000),
-    context_text VARCHAR(2000000),
-    top_k INTEGER
+    context_text VARCHAR(2000000)
     ORDER BY model_name ASC,bucketfs_conn ASC,sub_dir ASC
 )EMITS (
     bucketfs_conn VARCHAR(2000000),
@@ -188,10 +187,7 @@ CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ANSWER_EXTENDED"(
     model_name VARCHAR(2000000),
     question VARCHAR(2000000),
     context_text VARCHAR(2000000),
-    top_k INTEGER,
     answer VARCHAR(2000000),
-    score DOUBLE,
-    rank INTEGER,
     error_message VARCHAR(2000000) ) AS
 
 """
@@ -208,6 +204,34 @@ udf = AiAnswerExtendedUDF(exa)
 def run(ctx):
     """
     run function for AiAnswerExtendedUDF
+    """
+    return udf.run(ctx)
+
+
+/
+-- next call:
+
+CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ANSWER"(
+    question VARCHAR(2000000),
+    context_text VARCHAR(2000000)
+)EMITS (
+    question VARCHAR(2000000),
+    context_text VARCHAR(2000000),
+    answer VARCHAR(2000000),
+    error_message VARCHAR(2000000) ) AS
+
+"""
+Caller for AiAnswerUDF
+"""
+
+from exasol_transformers_extension.udfs.models.ai_answer import AiAnswerUDF
+
+udf = AiAnswerUDF(exa)
+
+
+def run(ctx):
+    """
+    run function for AiAnswerUDF
     """
     return udf.run(ctx)
 
@@ -330,6 +354,36 @@ udf = AiTranslateExtendedUDF(exa)
 def run(ctx):
     """
     run function for AiTranslateExtendedUDF
+    """
+    return udf.run(ctx)
+
+
+/
+-- next call:
+
+CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_TRANSLATE"(
+    text_data VARCHAR(2000000),
+    source_language VARCHAR(2000000),
+    target_language VARCHAR(2000000)
+)EMITS (
+    text_data VARCHAR(2000000),
+    source_language VARCHAR(2000000),
+    target_language VARCHAR(2000000),
+    translation_text VARCHAR(2000000),
+    error_message VARCHAR(2000000)) AS
+
+"""
+Caller for AiTranslateUDF
+"""
+
+from exasol_transformers_extension.udfs.models.ai_translate import AiTranslateUDF
+
+udf = AiTranslateUDF(exa)
+
+
+def run(ctx):
+    """
+    run function for AiTranslateUDF
     """
     return udf.run(ctx)
 

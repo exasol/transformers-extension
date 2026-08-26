@@ -1,8 +1,7 @@
-import pandas as pd
-
 from test.integration_tests.with_db.udfs.python_rows_to_sql import python_rows_to_sql
 from test.utils import postprocessing
 
+import pandas as pd
 from click.testing import CliRunner
 from exasol.python_extension_common.cli.std_options import (
     StdParams,
@@ -10,11 +9,14 @@ from exasol.python_extension_common.cli.std_options import (
 )
 
 from exasol_transformers_extension.deployment.default_udf_parameters import (
-    DEFAULT_VALUES, DEFAULT_BUCKETFS_CONN_NAME, DEFAULT_SUBDIR,
+    DEFAULT_BUCKETFS_CONN_NAME,
+    DEFAULT_SUBDIR,
+    DEFAULT_VALUES,
 )
 from exasol_transformers_extension.install_default_models import (
     install_default_models_command,
 )
+
 
 def test_install_default_models_cli(
     bucketfs_cli_args,
