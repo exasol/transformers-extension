@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from subprocess import CalledProcessError, PIPE, STDOUT, run
+from subprocess import (
+    PIPE,
+    STDOUT,
+    CalledProcessError,
+    run,
+)
 
 from exasol.toolbox.config import BaseConfig
 from pydantic import computed_field
