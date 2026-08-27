@@ -1,5 +1,6 @@
 """Class LoadLocalModel for loading locally saved models and tokenizers."""
 
+import os
 import traceback
 
 import torch
@@ -78,11 +79,17 @@ class LoadLocalModel:
         :param current_model_key:     Key of the model to be loaded
         """
         try:
+            model_path = str(self._bucketfs_model_cache_dir)
+            
+            # Verify the path exists and is local
+            if not os.path.exists(model_path):
+                raise ModelLoadError(f"Model path does not exist: {model_path}")
+            
             loaded_model = self._base_model_factory.from_pretrained(
-                str(self._bucketfs_model_cache_dir), local_files_only=True
+                model_path, local_files_only=True
             )
             loaded_tokenizer = self._tokenizer_factory.from_pretrained(
-                str(self._bucketfs_model_cache_dir), local_files_only=True
+                model_path, local_files_only=True
             )
 
             last_created_pipeline = self.pipeline_factory(
