@@ -116,6 +116,6 @@ def test_model_downloader_udf_implementation(tmp_path):
     env1_bucketfs_files = env1.list_files_in_bucketfs()
     assert ctx.get_emitted()[0] == (
         str(env1.model_path),
-        str(env1.model_path.with_suffix(".tar.gz")),
+        str(env1.model_path.with_suffix(".tar")),
     )
     assert ctx.get_emitted()[0][1] in env1_bucketfs_files

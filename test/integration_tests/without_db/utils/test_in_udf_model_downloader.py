@@ -36,7 +36,7 @@ def test_in_udf_model_downloader_test(tmpdir_factory):
     )
 
     expected_bucketfs_upload_location = (
-        bucketfs_base_path / expected_upload_path.with_suffix(".tar.gz")
+        bucketfs_base_path / expected_upload_path.with_suffix(".tar")
     )
     assert expected_bucketfs_upload_location.isfile()
     assert expected_upload_path == PosixPath(model_path)

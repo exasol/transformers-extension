@@ -5,6 +5,7 @@ from pathlib import Path
 import exasol.bucketfs as bfs
 
 from exasol_transformers_extension.utils import bucketfs_operations
+from exasol_transformers_extension.utils.bucketfs_operations import ArchiveFormat
 
 
 class BucketFSModelUploader:
@@ -18,7 +19,11 @@ class BucketFSModelUploader:
         self._model_path = bucketfs_model_path
         self._bucketfs_location = bucketfs_location
 
-    def upload_directory(self, directory: Path) -> Path:
+    def upload_directory(
+        self,
+        directory: Path,
+        archive_format: ArchiveFormat = ArchiveFormat.TAR,
+    ) -> Path:
         """
         Uploads given (model)-directory to the BucketFS.
         """
@@ -26,6 +31,7 @@ class BucketFSModelUploader:
             model_directory=str(directory),
             bucketfs_model_path=self._model_path,
             bucketfs_location=self._bucketfs_location,
+            archive_format=archive_format,
         )
 
 

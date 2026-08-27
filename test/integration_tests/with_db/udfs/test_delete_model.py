@@ -70,7 +70,7 @@ def populate_models(setup_database, db_conn, bucketfs_location):
 
 def _build_path(model_location: BucketFSModelSpecification, bucketfs_location):
     p = bucketfs_location / model_location.get_bucketfs_model_save_path().with_suffix(
-        ".tar.gz"
+        ".tar"
     )
     return p
 

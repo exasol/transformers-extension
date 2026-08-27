@@ -10,6 +10,7 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
 )
 from exasol_transformers_extension.utils.bucketfs_operations import (
+    ArchiveFormat,
     create_save_pretrained_model_path,
 )
 from exasol_transformers_extension.utils.model_factory_protocol import (
@@ -56,6 +57,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
         token: Optional[str],
         temporary_directory_factory: TemporaryDirectoryFactory = TemporaryDirectoryFactory(),
         bucketfs_model_uploader_factory: BucketFSModelUploaderFactory = BucketFSModelUploaderFactory(),
+        archive_format: ArchiveFormat = ArchiveFormat.TAR,
     ):
         self._token = token
         self._model_specification = model_specification
@@ -63,6 +65,7 @@ class HuggingFaceHubBucketFSModelTransferSP:
         self._bucketfs_model_uploader = bucketfs_model_uploader_factory.create(
             model_path=bucketfs_model_path, bucketfs_location=bucketfs_location
         )
+        self._archive_format = archive_format
         self._tmpdir = temporary_directory_factory.create()
         self._tmpdir_name = Path(self._tmpdir.__enter__())
         self._save_pretrained_model_path = create_save_pretrained_model_path(
@@ -96,8 +99,12 @@ class HuggingFaceHubBucketFSModelTransferSP:
 
         returns: Path of the uploaded model in the BucketFS
         """
+        if self._archive_format is ArchiveFormat.TAR:
+            return self._bucketfs_model_uploader.upload_directory(
+                self._save_pretrained_model_path
+            )
         return self._bucketfs_model_uploader.upload_directory(
-            self._save_pretrained_model_path
+            self._save_pretrained_model_path, self._archive_format
         )
 
 
@@ -112,6 +119,7 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
         model_specification: ModelSpecification,
         model_path: Path,
         token: Optional[str],
+        archive_format: ArchiveFormat = ArchiveFormat.TAR,
     ) -> HuggingFaceHubBucketFSModelTransferSP:
         """
         Creates a HuggingFaceHubBucketFSModelTransferSP object.
@@ -129,4 +137,5 @@ class HuggingFaceHubBucketFSModelTransferSPFactory:
             model_specification=model_specification,
             bucketfs_model_path=model_path,
             token=token,
+            archive_format=archive_format,
         )

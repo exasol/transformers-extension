@@ -25,3 +25,4 @@ T.B.D
 * Split on-prem slow integration tests into separate per-file jobs and correctly pass
   paths containing special characters.
 * Replaced project `tarfile` usage with `fastar` for BucketFS model archive creation and extraction tests.
+* Use uncompressed `.tar` archives for new model uploads while retaining support for existing `.tar.gz` archives.
