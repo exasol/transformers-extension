@@ -15,6 +15,8 @@ T.B.D
 
 ## Bugfixes
 
+* Avoid storing model archives twice during BucketFS uploads.
+
 ## Documentation
 
 ## Refactorings

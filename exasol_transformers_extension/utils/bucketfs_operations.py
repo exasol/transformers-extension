@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import shutil
 import tempfile
 from pathlib import (
     Path,
     PurePosixPath,
 )
-from typing import BinaryIO
 
 import exasol.bucketfs as bfs
 import fastar
@@ -25,25 +23,22 @@ def upload_model_files_to_bucketfs(
     """
     uploads model in tmpdir_name to model_path in bucketfs_location
     """
-    with tempfile.TemporaryFile() as fileobj:
-        create_tar_of_directory(Path(model_directory), fileobj)
-        fileobj.seek(0)
+    with tempfile.TemporaryDirectory() as temporary_directory:
         model_upload_tar_file_path = bucketfs_model_path.with_suffix(".tar.gz")
         bucketfs_model_location = bucketfs_location / model_upload_tar_file_path
-        bucketfs_model_location.write(fileobj)
+        archive_path = Path(temporary_directory) / model_upload_tar_file_path.name
+        create_tar_of_directory(Path(model_directory), archive_path)
+        with archive_path.open("rb") as archive_file:
+            bucketfs_model_location.write(archive_file)
         return model_upload_tar_file_path
 
 
-def create_tar_of_directory(path: Path, fileobj: BinaryIO) -> None:
-    """Tar the contents of "path" into "fileobj", used for model upload."""
-    with tempfile.TemporaryDirectory() as temporary_directory:
-        archive_path = Path(temporary_directory) / "model.tar.gz"
-        # fastar.open is provided by the Rust extension and is not visible to Pylint.
-        with fastar.open(archive_path, "w:gz") as tar:  # pylint: disable=no-member
-            for subpath in path.glob("*"):
-                tar.append(path=subpath, arcname=subpath.name)
-        with archive_path.open("rb") as archive_file:
-            shutil.copyfileobj(archive_file, fileobj)
+def create_tar_of_directory(path: Path, archive_path: Path) -> None:
+    """Create a tar archive of "path" at "archive_path"."""
+    # fastar.open is provided by the Rust extension and is not visible to Pylint.
+    with fastar.open(archive_path, "w:gz") as tar:  # pylint: disable=no-member
+        for subpath in path.glob("*"):
+            tar.append(path=subpath, arcname=subpath.name)
 
 
 def get_local_bucketfs_path(

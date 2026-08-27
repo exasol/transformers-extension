@@ -1,4 +1,3 @@
-import io
 from pathlib import Path
 from unittest.mock import (
     Mock,
@@ -33,11 +32,15 @@ def test_upload_model_files_to_bucketfs(test_content, tmp_path):
     bucket = bfs.MountedBucket(base_path=str(tmp_path))
     bucketfs_location = bfs.path.BucketPath(path_in_bucket, bucket)
     model_path = Path("test_model_path")
-    upload_model_files_to_bucketfs(
-        bucketfs_location=bucketfs_location,
-        bucketfs_model_path=model_path,
-        model_directory=str(test_content),
-    )
+    with patch(
+        "exasol_transformers_extension.utils.bucketfs_operations.tempfile.TemporaryFile",
+        side_effect=AssertionError("TemporaryFile must not be used for uploads"),
+    ):
+        upload_model_files_to_bucketfs(
+            bucketfs_location=bucketfs_location,
+            bucketfs_model_path=model_path,
+            model_directory=str(test_content),
+        )
     expected_tar_path = tmp_path / path_in_bucket / model_path.with_suffix(".tar.gz")
     assert expected_tar_path.exists()
 
@@ -70,11 +73,8 @@ def create_snapshot_directory(model_name, ref, tmp_path):
 
 
 def test_create_tar_of_directory(test_content, tmp_path):
-    fileobj = io.BytesIO()
-    create_tar_of_directory(test_content, fileobj)
-    fileobj.seek(0)
-    archive_path = tmp_path / "test.tar.gz"
-    archive_path.write_bytes(fileobj.getvalue())
+    archive_path = tmp_path.parent / f"{tmp_path.name}.tar.gz"
+    create_tar_of_directory(test_content, archive_path)
     extracted_archive_path = tmp_path / "extracted"
     with fastar.open(archive_path, "r") as archive:
         archive.unpack(extracted_archive_path)
