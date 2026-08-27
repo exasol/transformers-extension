@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import tarfile
+import shutil
 import tempfile
 from pathlib import (
     Path,
@@ -11,6 +11,7 @@ from pathlib import (
 from typing import BinaryIO
 
 import exasol.bucketfs as bfs
+import fastar
 from exasol.saas.client.api_access import get_database_id  # type: ignore
 
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
@@ -35,9 +36,13 @@ def upload_model_files_to_bucketfs(
 
 def create_tar_of_directory(path: Path, fileobj: BinaryIO) -> None:
     """Tar the contents of "path" into "fileobj", used for model upload."""
-    with tarfile.open(name="model.tar.gz", mode="w|gz", fileobj=fileobj) as tar:
-        for subpath in path.glob("*"):
-            tar.add(name=subpath, arcname=subpath.name)
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        archive_path = Path(temporary_directory) / "model.tar.gz"
+        with fastar.open(archive_path, "w:gz") as tar:
+            for subpath in path.glob("*"):
+                tar.append(path=subpath, arcname=subpath.name)
+        with archive_path.open("rb") as archive_file:
+            shutil.copyfileobj(archive_file, fileobj)
 
 
 def get_local_bucketfs_path(

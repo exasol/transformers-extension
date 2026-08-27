@@ -1,4 +1,3 @@
-import tarfile
 from pathlib import Path
 from test.utils.mock_connections import create_mounted_bucketfs_connection
 from test.utils.parameters import model_params
@@ -7,6 +6,7 @@ from unittest.mock import (
     create_autospec,
 )
 
+import fastar
 from exasol.python_extension_common.connections.bucketfs_location import (
     create_bucketfs_location_from_conn_object,
 )
@@ -88,8 +88,8 @@ def test_load_local_model_with_huggingface_model_transfer(tmp_path):
     )
 
     sub_dir_path = tmp_path / sub_dir
-    with tarfile.open(str(sub_dir_path / downloaded_model_path)) as tar:
-        tar.extractall(path=str(sub_dir_path))
+    with fastar.open(sub_dir_path / downloaded_model_path, "r") as archive:
+        archive.unpack(sub_dir_path)
 
     test_setup.loader.set_current_model_specification(
         current_model_specification=test_setup.mock_current_model_specification
