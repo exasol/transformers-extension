@@ -110,3 +110,20 @@ reduction from the uncompressed archive size.
 The ratios use the median timings from the compressed and uncompressed runs.
 The large-model results use one repetition, so they should be treated as
 indicative rather than statistically robust.
+
+## Reproducing the benchmark
+
+The benchmark runner is available at
+[benchmark/tarfile_fastar.py](../../benchmark/tarfile_fastar.py). Pass each
+model as `--model NAME=PATH`, use a persistent `--work-dir`, and select the
+JSON output path with `--output`:
+
+```shell
+poetry run python benchmark/tarfile_fastar.py \
+  --model bert-tiny=/path/to/bert-tiny \
+  --model qwen3-4b=/path/to/qwen3-4b \
+  --output benchmark-results.json \
+  --work-dir /path/to/persistent/benchmark-work
+```
+
+Use `--uncompressed-only` to benchmark only `.tar` archives.
