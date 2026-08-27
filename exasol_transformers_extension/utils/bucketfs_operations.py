@@ -38,7 +38,8 @@ def create_tar_of_directory(path: Path, fileobj: BinaryIO) -> None:
     """Tar the contents of "path" into "fileobj", used for model upload."""
     with tempfile.TemporaryDirectory() as temporary_directory:
         archive_path = Path(temporary_directory) / "model.tar.gz"
-        with fastar.open(archive_path, "w:gz") as tar:
+        # fastar.open is provided by the Rust extension and is not visible to Pylint.
+        with fastar.open(archive_path, "w:gz") as tar:  # pylint: disable=no-member
             for subpath in path.glob("*"):
                 tar.append(path=subpath, arcname=subpath.name)
         with archive_path.open("rb") as archive_file:
