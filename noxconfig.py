@@ -13,6 +13,16 @@ class Config(BaseConfig):
 
     @computed_field  # type: ignore[misc]
     @property
+    def onprem_integration_test_files(self) -> list[str]:
+        """Returns sorted root-relative on-prem integration test file paths."""
+        test_directory = self.root_path / "test/integration_tests/with_db"
+        return sorted(
+            test_file.relative_to(self.root_path).as_posix()
+            for test_file in test_directory.rglob("test_*.py")
+        )
+
+    @computed_field  # type: ignore[misc]
+    @property
     def has_documentation(self) -> bool:
         """
         Indicates that the project serves Sphinx-based documentation. With a few
