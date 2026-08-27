@@ -13,7 +13,7 @@ jobs:
     name: Build Matrix
     uses: ./.github/workflows/matrix.yml
     with:
-      matrix_keys_json: '["python_version_for_slow_checks"]'
+      matrix_keys_json: '["python_version_for_slow_checks", "onprem_integration_test_files"]'
     permissions:
       contents: read
 
@@ -26,7 +26,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     runs-on:
       labels: int-linux-x64-4core-ubuntu24.04-1
-    name: Onprem Integration Tests
+    name: Onprem Integration Tests (${{ matrix.onprem_integration_test_files }})
     steps:
       - name: Check out Repository
         uses: actions/checkout@v7
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: '${{ matrix.minimum_python_version }}'
+          python-version: '${{ matrix.python_version_for_slow_checks }}'
           poetry-version: '2.3.0'
 
       - name: Allow unprivileged user namespaces
@@ -50,7 +50,8 @@ jobs:
         run: poetry run -- nox -s start_database
 
       - name: Run test onprem_integration_tests
-        run: poetry run -- nox -s onprem_integration_tests
+        run: poetry run -- nox -s onprem_integration_tests -- "$ONPREM_INTEGRATION_TEST_FILE"
         env: # Set the secret as an input
+          ONPREM_INTEGRATION_TEST_FILE: ${{ matrix.onprem_integration_test_files }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}

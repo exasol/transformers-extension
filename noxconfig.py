@@ -3,6 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+from subprocess import (
+    PIPE,
+    STDOUT,
+    CalledProcessError,
+    run,
+)
 
 from exasol.toolbox.config import BaseConfig
 from pydantic import computed_field
@@ -10,6 +16,52 @@ from pydantic import computed_field
 
 class Config(BaseConfig):
     python_version_for_slow_checks: str = "3.12"
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def onprem_integration_test_files(self) -> list[str]:
+        """Returns sorted test files collected by pytest for on-prem tests."""
+        test_directory = "test/integration_tests/with_db"
+        try:
+            pytest_collection = run(
+                [
+                    "pytest",
+                    "--collect-only",
+                    "-q",
+                    "--backend=onprem",
+                    "--itde-db-version=external",
+                    test_directory,
+                ],
+                check=True,
+                cwd=self.root_path,
+                stderr=STDOUT,
+                stdout=PIPE,
+                text=True,
+            )
+        except CalledProcessError as error:
+            raise RuntimeError(f"Pytest collection failed:\n{error.stdout}") from error
+        return sorted(
+            {
+                node_id.split("::", maxsplit=1)[0]
+                for node_id in pytest_collection.stdout.splitlines()
+                if node_id.startswith(f"{test_directory}/") and "::" in node_id
+            }
+        )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def saas_integration_test_files(self) -> list[str]:
+        """Returns the explicit SaaS integration test allowlist."""
+        return [
+            "test/integration_tests/with_db/deployment/test_deploy_cli.py",
+            "test/integration_tests/with_db/test_upload_model.py",
+            "test/integration_tests/with_db/udfs/test_model_downloader_udf_script.py",
+            "test/integration_tests/with_db/udfs/test_prediction_with_downloader_udf.py",
+            "test/integration_tests/with_db/udfs/test_delete_model.py",
+            "test/integration_tests/with_db/udfs/test_ls_models_script.py",
+            "test/integration_tests/with_db/udfs/test_ai_sentiment_script.py",
+            "test/integration_tests/with_db/udfs/test_ai_answer_extended_script.py",
+        ]
 
     @computed_field  # type: ignore[misc]
     @property
