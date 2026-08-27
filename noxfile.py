@@ -60,12 +60,13 @@ def saas_integration_tests(session):
     # We need to use an external database here, because the itde plugin doesn't
     # provide all necessary options to
     # configure the database. See the start_database session.
+    test_targets = session.posargs or ["test/integration_tests/with_db"]
     session.run(
         "pytest",
         "--setup-show",
         "-s",
         "--backend=saas",
-        "test/integration_tests/with_db",
+        *test_targets,
     )
 
 
