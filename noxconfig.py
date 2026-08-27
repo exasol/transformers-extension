@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from subprocess import CalledProcessError, PIPE, STDOUT, run
 
 from exasol.toolbox.config import BaseConfig
 from pydantic import computed_field
@@ -14,11 +15,32 @@ class Config(BaseConfig):
     @computed_field  # type: ignore[misc]
     @property
     def onprem_integration_test_files(self) -> list[str]:
-        """Returns sorted root-relative on-prem integration test file paths."""
-        test_directory = self.root_path / "test/integration_tests/with_db"
+        """Returns sorted test files collected by pytest for on-prem tests."""
+        test_directory = "test/integration_tests/with_db"
+        try:
+            pytest_collection = run(
+                [
+                    "pytest",
+                    "--collect-only",
+                    "-q",
+                    "--backend=onprem",
+                    "--itde-db-version=external",
+                    test_directory,
+                ],
+                check=True,
+                cwd=self.root_path,
+                stderr=STDOUT,
+                stdout=PIPE,
+                text=True,
+            )
+        except CalledProcessError as error:
+            raise RuntimeError(f"Pytest collection failed:\n{error.stdout}") from error
         return sorted(
-            test_file.relative_to(self.root_path).as_posix()
-            for test_file in test_directory.rglob("test_*.py")
+            {
+                node_id.split("::", maxsplit=1)[0]
+                for node_id in pytest_collection.stdout.splitlines()
+                if node_id.startswith(f"{test_directory}/") and "::" in node_id
+            }
         )
 
     @computed_field  # type: ignore[misc]
