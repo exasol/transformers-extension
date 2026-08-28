@@ -25,12 +25,15 @@ from pathlib import Path
 from typing import (
     Any,
     Callable,
+    Literal,
 )
 
 import fastar
 
 Backend = str
 CreateArchive = Callable[[Path, Path, bool], None]
+TarCreateMode = Literal["w", "w:gz"]
+TarExtractMode = Literal["r", "r:gz"]
 
 
 @dataclass(frozen=True)
@@ -55,28 +58,36 @@ def _manifest(directory: Path) -> dict[str, int]:
     }
 
 
+def _tar_create_mode(compressed: bool) -> TarCreateMode:
+    return "w:gz" if compressed else "w"
+
+
+def _tar_extract_mode(compressed: bool) -> TarExtractMode:
+    return "r:gz" if compressed else "r"
+
+
 def _create_with_tarfile(source: Path, archive: Path, compressed: bool) -> None:
-    mode = "w:gz" if compressed else "w"
+    mode = _tar_create_mode(compressed)
     with tarfile.open(archive, mode) as output:
         for path in sorted(source.iterdir()):
             output.add(path, arcname=path.name)
 
 
 def _create_with_fastar(source: Path, archive: Path, compressed: bool) -> None:
-    mode = "w:gz" if compressed else "w"
+    mode = _tar_create_mode(compressed)
     with fastar.open(archive, mode) as output:  # pylint: disable=no-member
         for path in sorted(source.iterdir()):
             output.append(path=path, arcname=path.name)
 
 
 def _extract_with_tarfile(archive: Path, destination: Path) -> None:
-    mode = "r:gz" if archive.name.endswith(".gz") else "r"
+    mode = _tar_extract_mode(archive.name.endswith(".gz"))
     with tarfile.open(archive, mode) as source:
         source.extractall(destination)
 
 
 def _extract_with_fastar(archive: Path, destination: Path) -> None:
-    mode = "r:gz" if archive.name.endswith(".gz") else "r"
+    mode = _tar_extract_mode(archive.name.endswith(".gz"))
     with fastar.open(archive, mode) as source:  # pylint: disable=no-member
         source.unpack(to=destination)
 
@@ -85,6 +96,10 @@ def _measure(function: Callable[[], None]) -> float:
     start = time.perf_counter()
     function()
     return (time.perf_counter() - start) * 1000
+
+
+def _extract_archive(case: BenchmarkCase, archive: Path, destination: Path) -> None:
+    case.extract(archive, destination)
 
 
 def _benchmark(case: BenchmarkCase) -> dict[str, Any]:
@@ -105,7 +120,7 @@ def _benchmark(case: BenchmarkCase) -> dict[str, Any]:
         shutil.rmtree(destination, ignore_errors=True)
         destination.mkdir()
         extraction_samples.append(
-            _measure(lambda destination=destination: case.extract(archive, destination))
+            _measure(lambda: _extract_archive(case, archive, destination))
         )
         if _manifest(destination) != manifest:
             raise RuntimeError(f"Extraction validation failed for {archive}")
