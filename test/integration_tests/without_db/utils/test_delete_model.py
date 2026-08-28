@@ -70,7 +70,7 @@ def test_delete_model(make_test_environment):
     legacy_archive_path = test_env.bucketfs_location / model_tar_path.with_suffix(
         ".tar.gz"
     )
-    legacy_archive_path.write_bytes(b"legacy tar.gz archive")
+    legacy_archive_path.write(b"legacy tar.gz archive")
 
     delete_model(
         bucketfs_location=test_env.bucketfs_location,
