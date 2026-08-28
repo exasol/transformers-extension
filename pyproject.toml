@@ -29,6 +29,7 @@ dependencies = [
     "sacremoses>=0.0.53",
     "bitsandbytes>=0.45.0",
     "exasol-python-extension-common>=0.9.0,<0.17.0",
+    "fastar>=0.12,<1",
     "numpy<=1.26.4",
 ]
 dynamic = ["dependencies"]

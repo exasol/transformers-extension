@@ -1,5 +1,3 @@
-import io
-import tarfile
 from pathlib import Path
 from unittest.mock import (
     Mock,
@@ -7,6 +5,7 @@ from unittest.mock import (
 )
 
 import exasol.bucketfs as bfs
+import fastar
 import pytest
 from exasol_udf_mock_python.connection import Connection
 
@@ -33,11 +32,15 @@ def test_upload_model_files_to_bucketfs(test_content, tmp_path):
     bucket = bfs.MountedBucket(base_path=str(tmp_path))
     bucketfs_location = bfs.path.BucketPath(path_in_bucket, bucket)
     model_path = Path("test_model_path")
-    upload_model_files_to_bucketfs(
-        bucketfs_location=bucketfs_location,
-        bucketfs_model_path=model_path,
-        model_directory=str(test_content),
-    )
+    with patch(
+        "exasol_transformers_extension.utils.bucketfs_operations.tempfile.TemporaryFile",
+        side_effect=AssertionError("TemporaryFile must not be used for uploads"),
+    ):
+        upload_model_files_to_bucketfs(
+            bucketfs_location=bucketfs_location,
+            bucketfs_model_path=model_path,
+            model_directory=str(test_content),
+        )
     expected_tar_path = tmp_path / path_in_bucket / model_path.with_suffix(".tar.gz")
     assert expected_tar_path.exists()
 
@@ -69,22 +72,29 @@ def create_snapshot_directory(model_name, ref, tmp_path):
     (tmp_path / config_path).write_text("config.json")
 
 
-def test_create_tar_of_directory(test_content):
-    fileobj = io.BytesIO()
-    create_tar_of_directory(test_content, fileobj)
-    fileobj.seek(0)
-    with tarfile.open(name="test.tar.gz", mode="r|gz", fileobj=fileobj) as tar:
-        assert tar.getnames() == [
-            "test_model_name",
-            "test_model_name/.no_exist",
-            "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
-            "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/tokenizer_config.json",
-            "test_model_name/blobs",
-            "test_model_name/blobs/234608c922aaf3989d6a772af31711fbbdd62e3a",
-            "test_model_name/snapshots",
-            "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
-            "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json",
-        ]
+def test_create_tar_of_directory(test_content, tmp_path):
+    archive_path = tmp_path.parent / f"{tmp_path.name}.tar.gz"
+    create_tar_of_directory(test_content, archive_path)
+    extracted_archive_path = tmp_path / "extracted"
+    with fastar.open(archive_path, "r") as archive:
+        archive.unpack(extracted_archive_path)
+
+    extracted_model_path = extracted_archive_path / "test_model_name"
+    assert extracted_model_path.is_dir()
+    assert sorted(
+        str(path.relative_to(extracted_archive_path))
+        for path in extracted_archive_path.rglob("*")
+    ) == [
+        "test_model_name",
+        "test_model_name/.no_exist",
+        "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
+        "test_model_name/.no_exist/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/tokenizer_config.json",
+        "test_model_name/blobs",
+        "test_model_name/blobs/234608c922aaf3989d6a772af31711fbbdd62e3a",
+        "test_model_name/snapshots",
+        "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
+        "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json",
+    ]
 
 
 @pytest.mark.parametrize(
