@@ -19,6 +19,7 @@ from exasol_transformers_extension.utils.bucketfs_operations import (
 )
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSP,
+    HuggingFaceHubBucketFSModelTransferSPFactory,
     ModelFactoryProtocol,
 )
 from exasol_transformers_extension.utils.temporary_directory_factory import (
@@ -145,3 +146,15 @@ def test_upload_function_call_with_tar_gz():
     assert mock_cast(
         test_setup.bucketfs_model_uploader_mock.upload_directory
     ).mock_calls == [call(model_save_path, ArchiveFormat.TAR_GZ)]
+
+
+def test_factory_propagates_archive_format():
+    transfer = HuggingFaceHubBucketFSModelTransferSPFactory().create(
+        bucketfs_location=MagicMock(),
+        model_specification=model_params.tiny_model_specs,
+        model_path=Path("model"),
+        token=None,
+        archive_format=ArchiveFormat.TAR_GZ,
+    )
+
+    assert transfer._archive_format is ArchiveFormat.TAR_GZ
