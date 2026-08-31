@@ -80,11 +80,11 @@ class LoadLocalModel:
         """
         try:
             model_path = str(self._bucketfs_model_cache_dir)
-            
+
             # Verify the path exists and is local
             if not os.path.exists(model_path):
                 raise ModelLoadError(f"Model path does not exist: {model_path}")
-            
+
             loaded_model = self._base_model_factory.from_pretrained(
                 model_path, local_files_only=True
             )

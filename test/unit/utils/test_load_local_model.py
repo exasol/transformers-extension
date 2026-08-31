@@ -6,6 +6,8 @@ from unittest.mock import (
     create_autospec,
 )
 
+import pytest
+
 from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
@@ -21,12 +23,9 @@ from exasol_transformers_extension.utils.model_factory_protocol import (
 )
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
 
-import pytest
-
 
 class TestSetup:
     def __init__(self):
-
         self.model_factory_mock: ModelFactoryProtocol | MagicMock = create_autospec(
             ModelFactoryProtocol
         )
