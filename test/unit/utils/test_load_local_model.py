@@ -12,11 +12,16 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
 from exasol_transformers_extension.utils.bucketfs_operations import (
     create_save_pretrained_model_path,
 )
-from exasol_transformers_extension.utils.load_local_model import LoadLocalModel
+from exasol_transformers_extension.utils.load_local_model import (
+    LoadLocalModel,
+    ModelLoadError,
+)
 from exasol_transformers_extension.utils.model_factory_protocol import (
     ModelFactoryProtocol,
 )
 from exasol_transformers_extension.utils.model_specification import ModelSpecification
+
+import pytest
 
 
 class TestSetup:
@@ -46,12 +51,13 @@ class TestSetup:
         )
 
 
-def test_load_function_call():
+def test_load_function_call(tmp_path):
     test_setup = TestSetup()
     model_save_path = create_save_pretrained_model_path(
-        test_setup.cache_dir,
+        tmp_path,
         ModelSpecification(test_setup.model_name, test_setup.model_task),
     )
+    model_save_path.mkdir(parents=True)
 
     test_setup.loader._bucketfs_model_cache_dir = model_save_path
     test_setup.loader.set_current_model_specification(
@@ -75,3 +81,15 @@ def test_load_function_call():
             device="cpu",
         )
     ]
+
+
+def test_load_function_call_with_missing_path(tmp_path):
+    test_setup = TestSetup()
+    model_save_path = create_save_pretrained_model_path(
+        tmp_path,
+        ModelSpecification(test_setup.model_name, test_setup.model_task),
+    )
+    test_setup.loader._bucketfs_model_cache_dir = model_save_path
+
+    with pytest.raises(ModelLoadError, match="Model path does not exist"):
+        test_setup.loader.load_models()
