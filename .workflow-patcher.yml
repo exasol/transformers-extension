@@ -26,6 +26,14 @@ workflows:
             uses: ./.github/actions/free-diskspace
 
       - action: INSERT_AFTER
+        job: check-format
+        step_id: check-format
+        content:
+          - name: Check create_script
+            id: check-create-script
+            run: poetry run -- nox -s create_script:updated
+
+      - action: INSERT_AFTER
         job: build-package
         step_id: build-package
         content:
