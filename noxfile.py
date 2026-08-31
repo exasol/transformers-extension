@@ -103,13 +103,13 @@ def without_db_integration_tests(session):
     # We need to use an external database here, because the itde plugin doesn't
     # provide all necessary options to
     # configure the database. See the start_database session.
-    #session.run(
-    #    "pytest",#todo
-   #     "--setup-show",
-    #    "-s",
-    #    "--itde-db-version=external",
-   #     "test/integration_tests/without_db",
-    #)
+    session.run(
+        "pytest",
+        "--setup-show",
+        "-s",
+        "--itde-db-version=external",
+        "test/integration_tests/without_db",
+    )
 
 
 @nox.session(python=False)
