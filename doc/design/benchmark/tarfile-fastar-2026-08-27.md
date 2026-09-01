@@ -114,12 +114,12 @@ indicative rather than statistically robust.
 ## Reproducing the benchmark
 
 The benchmark runner is available at
-[benchmark/tarfile_fastar.py](../../benchmark/tarfile_fastar.py). Pass each
+[tarfile_fastar.py](tarfile_fastar.py). Pass each
 model as `--model NAME=PATH`, use a persistent `--work-dir`, and select the
 JSON output path with `--output`:
 
 ```shell
-poetry run python benchmark/tarfile_fastar.py \
+poetry run python doc/design/benchmark/tarfile_fastar.py \
   --model bert-tiny=/path/to/bert-tiny \
   --model qwen3-4b=/path/to/qwen3-4b \
   --output benchmark-results.json \

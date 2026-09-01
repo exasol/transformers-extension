@@ -26,3 +26,9 @@ Supported tasks:
 ## System Design and Architecture
 
 ![System Design Diagram](./images/TE_Architecture.drawio.png "System Design Diagram")
+
+## Tar Archive Benchmark
+
+The [`tarfile` versus `fastar` benchmark](./design/benchmark/tarfile-fastar-2026-08-27.md)
+documents the archive creation and extraction measurements that informed the
+use of `fastar` for model archives.

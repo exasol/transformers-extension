@@ -2,7 +2,7 @@
 
 Example::
 
-    poetry run python benchmark/tarfile_fastar.py \
+    poetry run python doc/design/benchmark/tarfile_fastar.py \
         --model bert-tiny=/path/to/bert-tiny \
         --model qwen3-4b=/path/to/qwen3-4b \
         --output benchmark-results.json \
