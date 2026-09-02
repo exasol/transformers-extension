@@ -11,6 +11,13 @@ T.B.D
 
 ## Features
 
+ * #351: Added functionality for installing default models.
+ * #378. Added creation of default BucketFS-Connection to deploy command
+ * #383: Added Transformation for adding columns to DataFrame and filling them with default values.
+ * #381: Added Transformation for removing columns from DataFrame
+ * #353: Added "AI_SENTIMENT" UDF
+ * #390: Added "AI_CLASSIFY" and "AI_EXTRACT_ENTITIES" UDF's
+ * #391: Added sql create_script to create all UDF's in Database.
 ## Security
 
 ## Bugfixes

@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 10.2.1.
+# Last generated with exasol-toolbox version 10.4.0.
 name: Checks
 
 on:
@@ -167,6 +167,10 @@ jobs:
       - name: Check Format
         id: check-format
         run: poetry run -- nox -s format:check
+
+      - name: Check create_script
+        id: check-create-script
+        run: poetry run -- nox -s create_script:updated
 
   build-package:
     name: Build Package
