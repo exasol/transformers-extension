@@ -73,9 +73,7 @@ def run_model_upload_test(
             print("STDOUT:", result.stdout_bytes)
         assert result.exit_code == 0
         time.sleep(20)
-        bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(
-            ".tar.gz"
-        )
+        bucketfs_upload_location = bucketfs_location / upload_path.with_suffix(".tar")
         assert bucketfs_upload_location.is_file()
 
         text_data = "Exasol is an analytics <mask> management software company."

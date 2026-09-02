@@ -14,10 +14,12 @@ from exasol_transformers_extension.utils.bucketfs_model_uploader import (
     BucketFSModelUploaderFactory,
 )
 from exasol_transformers_extension.utils.bucketfs_operations import (
+    ArchiveFormat,
     create_save_pretrained_model_path,
 )
 from exasol_transformers_extension.utils.huggingface_hub_bucketfs_model_transfer_sp import (
     HuggingFaceHubBucketFSModelTransferSP,
+    HuggingFaceHubBucketFSModelTransferSPFactory,
     ModelFactoryProtocol,
 )
 from exasol_transformers_extension.utils.temporary_directory_factory import (
@@ -28,7 +30,7 @@ from exasol_transformers_extension.utils.temporary_directory_factory import (
 class TestSetup:
     __test__ = False
 
-    def __init__(self):
+    def __init__(self, archive_format=ArchiveFormat.TAR):
         self.bucketfs_location_mock: bfs.path.PathLike | MagicMock = create_autospec(
             bfs.path.PathLike
         )
@@ -59,6 +61,7 @@ class TestSetup:
             token=self.token,
             temporary_directory_factory=self.temporary_directory_factory_mock,
             bucketfs_model_uploader_factory=self.bucketfs_model_uploader_factory_mock,
+            archive_format=archive_format,
         )
 
     def reset_mocks(self):
@@ -129,3 +132,29 @@ def test_upload_function_call():
     assert mock_cast(
         test_setup.bucketfs_model_uploader_mock.upload_directory
     ).mock_calls == [call(model_save_path)]
+
+
+def test_upload_function_call_with_tar_gz():
+    test_setup = TestSetup(ArchiveFormat.TAR_GZ)
+    test_setup.downloader.upload_to_bucketfs()
+    cache_dir = mock_cast(
+        test_setup.temporary_directory_factory_mock.create().__enter__
+    ).return_value
+    model_save_path = create_save_pretrained_model_path(
+        cache_dir, test_setup.model_specification
+    )
+    assert mock_cast(
+        test_setup.bucketfs_model_uploader_mock.upload_directory
+    ).mock_calls == [call(model_save_path, ArchiveFormat.TAR_GZ)]
+
+
+def test_factory_propagates_archive_format():
+    transfer = HuggingFaceHubBucketFSModelTransferSPFactory().create(
+        bucketfs_location=MagicMock(),
+        model_specification=model_params.tiny_model_specs,
+        model_path=Path("model"),
+        token=None,
+        archive_format=ArchiveFormat.TAR_GZ,
+    )
+
+    assert transfer._archive_format is ArchiveFormat.TAR_GZ

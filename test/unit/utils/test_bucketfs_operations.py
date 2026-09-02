@@ -1,6 +1,7 @@
 from pathlib import Path
 from unittest.mock import (
     Mock,
+    call,
     patch,
 )
 
@@ -9,7 +10,11 @@ import fastar
 import pytest
 from exasol_udf_mock_python.connection import Connection
 
+from exasol_transformers_extension.utils.bucketfs_model_uploader import (
+    BucketFSModelUploader,
+)
 from exasol_transformers_extension.utils.bucketfs_operations import (
+    ArchiveFormat,
     NotParentError,
     create_tar_of_directory,
     relative_to,
@@ -27,7 +32,13 @@ def test_content(tmp_path):
     return tmp_path
 
 
-def test_upload_model_files_to_bucketfs(test_content, tmp_path):
+@pytest.mark.parametrize(
+    ("archive_format", "archive_suffix"),
+    [(ArchiveFormat.TAR, ".tar"), (ArchiveFormat.TAR_GZ, ".tar.gz")],
+)
+def test_upload_model_files_to_bucketfs(
+    test_content, tmp_path, archive_format, archive_suffix
+):
     path_in_bucket = "abcd"
     bucket = bfs.MountedBucket(base_path=str(tmp_path))
     bucketfs_location = bfs.path.BucketPath(path_in_bucket, bucket)
@@ -40,8 +51,11 @@ def test_upload_model_files_to_bucketfs(test_content, tmp_path):
             bucketfs_location=bucketfs_location,
             bucketfs_model_path=model_path,
             model_directory=str(test_content),
+            archive_format=archive_format,
         )
-    expected_tar_path = tmp_path / path_in_bucket / model_path.with_suffix(".tar.gz")
+    expected_tar_path = (
+        tmp_path / path_in_bucket / model_path.with_suffix(archive_suffix)
+    )
     assert expected_tar_path.exists()
 
 
@@ -72,9 +86,15 @@ def create_snapshot_directory(model_name, ref, tmp_path):
     (tmp_path / config_path).write_text("config.json")
 
 
-def test_create_tar_of_directory(test_content, tmp_path):
-    archive_path = tmp_path.parent / f"{tmp_path.name}.tar.gz"
-    create_tar_of_directory(test_content, archive_path)
+@pytest.mark.parametrize(
+    ("archive_format", "archive_suffix"),
+    [(ArchiveFormat.TAR, ".tar"), (ArchiveFormat.TAR_GZ, ".tar.gz")],
+)
+def test_create_tar_of_directory(
+    test_content, tmp_path, archive_format, archive_suffix
+):
+    archive_path = tmp_path.parent / f"{tmp_path.name}{archive_suffix}"
+    create_tar_of_directory(test_content, archive_path, archive_format)
     extracted_archive_path = tmp_path / "extracted"
     with fastar.open(archive_path, "r") as archive:
         archive.unpack(extracted_archive_path)
@@ -95,6 +115,22 @@ def test_create_tar_of_directory(test_content, tmp_path):
         "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837",
         "test_model_name/snapshots/6f75de8b60a9f8a2fdf7b69cbd86d9e64bcb3837/config.json",
     ]
+
+
+@patch(
+    "exasol_transformers_extension.utils.bucketfs_model_uploader.bucketfs_operations"
+)
+def test_model_uploader_forwards_archive_format(bucketfs_operations_mock, tmp_path):
+    uploader = BucketFSModelUploader(Path("model"), Mock())
+
+    uploader.upload_directory(tmp_path, ArchiveFormat.TAR_GZ)
+
+    assert bucketfs_operations_mock.upload_model_files_to_bucketfs.call_args == call(
+        model_directory=str(tmp_path),
+        bucketfs_model_path=Path("model"),
+        bucketfs_location=uploader._bucketfs_location,
+        archive_format=ArchiveFormat.TAR_GZ,
+    )
 
 
 @pytest.mark.parametrize(

@@ -24,4 +24,5 @@ T.B.D
 * Updated SaaS CI to run the selected `with_db` integration tests in a single job.
 * Split on-prem slow integration tests into separate per-file jobs and correctly pass
   paths containing special characters.
-* Replaced project `tarfile` usage with `fastar` for BucketFS model archive creation and extraction tests.
+* #400: Replaced project `tarfile` usage with `fastar` for BucketFS model archive creation and extraction tests.
+* #400: Use uncompressed `.tar` archives for new model uploads while retaining support for existing `.tar.gz` archives.

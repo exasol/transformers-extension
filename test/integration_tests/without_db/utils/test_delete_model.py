@@ -67,6 +67,10 @@ def test_delete_model(make_test_environment):
 
     absolute_path = test_env.bucketfs_location / model_tar_path
     assert absolute_path.exists(), absolute_path
+    legacy_archive_path = test_env.bucketfs_location / model_tar_path.with_suffix(
+        ".tar.gz"
+    )
+    legacy_archive_path.write(b"legacy tar.gz archive")
 
     delete_model(
         bucketfs_location=test_env.bucketfs_location,
@@ -74,3 +78,4 @@ def test_delete_model(make_test_environment):
     )
 
     assert not absolute_path.exists(), absolute_path
+    assert not legacy_archive_path.exists(), legacy_archive_path

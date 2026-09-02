@@ -1,6 +1,7 @@
 import contextlib
 from pathlib import Path
 from unittest.mock import (
+    MagicMock,
     Mock,
     call,
 )
@@ -16,9 +17,38 @@ from exasol_transformers_extension.utils.bucketfs_model_specification import (
     BucketFSModelSpecification,
 )
 from exasol_transformers_extension.utils.model_utils import (
+    delete_model,
     install_huggingface_model,
     load_huggingface_pipeline,
 )
+
+
+def test_delete_model_removes_both_archive_formats():
+    bucketfs_location = MagicMock()
+    tar_archive = Mock()
+    tar_gz_archive = Mock()
+    bucketfs_location.__truediv__.side_effect = [tar_archive, tar_gz_archive]
+    model_spec = Mock()
+    model_spec.get_bucketfs_model_save_path.return_value = Path("model")
+
+    delete_model(bucketfs_location, model_spec)
+
+    tar_archive.rm.assert_called_once_with()
+    tar_gz_archive.rm.assert_called_once_with()
+
+
+def test_delete_model_raises_when_no_archive_exists():
+    bucketfs_location = MagicMock()
+    tar_archive = Mock()
+    tar_gz_archive = Mock()
+    tar_archive.rm.side_effect = FileNotFoundError
+    tar_gz_archive.rm.side_effect = FileNotFoundError
+    bucketfs_location.__truediv__.side_effect = [tar_archive, tar_gz_archive]
+    model_spec = Mock()
+    model_spec.get_bucketfs_model_save_path.return_value = Path("model")
+
+    with pytest.raises(FileNotFoundError):
+        delete_model(bucketfs_location, model_spec)
 
 
 @pytest.fixture

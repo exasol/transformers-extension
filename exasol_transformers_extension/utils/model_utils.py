@@ -139,6 +139,14 @@ def delete_model(
     """
     model_path = model_spec.get_bucketfs_model_save_path()
 
-    delete_path = bucketfs_location / model_path.with_suffix(".tar.gz")
-
-    delete_path.rm()
+    archive_deleted = False
+    missing_archive_error = None
+    for archive_suffix in (".tar", ".tar.gz"):
+        delete_path = bucketfs_location / model_path.with_suffix(archive_suffix)
+        try:
+            delete_path.rm()
+            archive_deleted = True
+        except FileNotFoundError as error:
+            missing_archive_error = error
+    if not archive_deleted and missing_archive_error is not None:
+        raise missing_archive_error

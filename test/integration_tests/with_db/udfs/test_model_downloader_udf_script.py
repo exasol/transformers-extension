@@ -55,11 +55,11 @@ def test_model_downloader_udf_script(setup_database, db_conn, bucketfs_location)
             bucketfs_files.append(get_bucketfs_file_list(sub_dir_location))
 
         expected_result = [
-            (str(model_path), str(model_path.with_suffix(".tar.gz")))
+            (str(model_path), str(model_path.with_suffix(".tar")))
             for index, model_path in enumerate(model_paths)
         ]
         expected_bfs_files = [
-            [str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar.gz"))]
+            [str(model_path.relative_to(sub_dirs[index]).with_suffix(".tar"))]
             for index, model_path in enumerate(model_paths)
         ]
 
