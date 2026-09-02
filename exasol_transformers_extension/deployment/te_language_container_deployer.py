@@ -15,7 +15,7 @@ class TeLanguageContainerDeployer(LanguageContainerDeployer):
     LanguageContainerDeployer for Transformers Extension Language Container
     """
 
-    SLC_NAME = "exasol_transformers_extension_container_release.tar.gz"
+    SLC_NAME = "exasol_transformers_extension_container_release_x64.tar.gz"
     SLC_URL_FORMATTER = (
         "https://github.com/exasol/transformers-extension/releases/download/{version}/"
         + SLC_NAME
