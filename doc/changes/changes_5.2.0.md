@@ -4,7 +4,7 @@ Code name: Improved model upload
 
 ## Summary
 
-In this Release, the upload of models to the has 
+In this Release, the upload of models to the BucketFS has 
 gotten a rework to allow the use of bigger models.
 
 We also added a new script which installs all available UDF's in Database.
