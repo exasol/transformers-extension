@@ -1,4 +1,4 @@
-# Transformers Extension 5.2.0, 2026-09-02
+# Transformers Extension 5.2.0, 2026-09-03
 
 Code name: Improved model upload
 
