@@ -11,7 +11,7 @@ on:
 jobs:
   build-matrix:
     name: Build Matrix
-    uses: ./.github/workflows/matrix.yml
+    uses: $/.github/workflows/matrix.yml
     with:
       matrix_keys_json: '["python_versions"]'
     permissions:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Free Disk Space
         id: free-disk-space
-        uses: ./.github/actions/free-diskspace
+        uses: $/.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10
