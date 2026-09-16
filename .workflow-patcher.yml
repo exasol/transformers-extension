@@ -7,7 +7,7 @@ workflows:
         content:
           - name: Free Disk Space
             id: free-disk-space
-            uses: ./.github/actions/free-diskspace
+            uses: $/.github/actions/free-diskspace
 
       - action: INSERT_AFTER
         job: lint-typing
@@ -15,7 +15,7 @@ workflows:
         content:
           - name: Free Disk Space
             id: free-disk-space
-            uses: ./.github/actions/free-diskspace
+            uses: $/.github/actions/free-diskspace
 
       - action: INSERT_AFTER
         job: check-format
@@ -23,7 +23,7 @@ workflows:
         content:
           - name: Free Disk Space
             id: free-disk-space
-            uses: ./.github/actions/free-diskspace
+            uses: $/.github/actions/free-diskspace
 
       - action: INSERT_AFTER
         job: check-format
@@ -49,4 +49,4 @@ workflows:
         content:
           - name: Free Disk Space
             id: free-disk-space
-            uses: ./.github/actions/free-diskspace
+            uses: $/.github/actions/free-diskspace

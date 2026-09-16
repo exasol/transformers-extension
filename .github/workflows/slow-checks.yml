@@ -18,7 +18,7 @@ on:
 jobs:
   onprem-integration-tests:
     name: Onprem Integrations
-    uses: ./.github/workflows/onprem-integration-tests.yml
+    uses: $/.github/workflows/onprem-integration-tests.yml
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -27,7 +27,7 @@ jobs:
 
   saas-integration-tests:
     name: Saas Integrations
-    uses: ./.github/workflows/saas-integration-tests.yml
+    uses: $/.github/workflows/saas-integration-tests.yml
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -39,7 +39,7 @@ jobs:
 
   gpu-tests:
     name: Without DB Integrations
-    uses: ./.github/workflows/without-db-integration-tests.yml
+    uses: $/.github/workflows/without-db-integration-tests.yml
     secrets:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

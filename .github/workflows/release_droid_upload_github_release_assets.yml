@@ -24,7 +24,7 @@ jobs:
 
       - name: Free Disk Space
         id: free-disk-space
-        uses: ./.github/actions/free-diskspace
+        uses: $/.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10
@@ -52,4 +52,3 @@ jobs:
           POETRY_HTTP_BASIC_PYPI_USERNAME: "__token__"
           POETRY_HTTP_BASIC_PYPI_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
         run: poetry publish # zizmor: ignore[use-trusted-publishing] - Trusted Publishing is not usable from this reusable workflow yet; see https://github.com/exasol/python-toolbox/issues/871
-
