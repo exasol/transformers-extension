@@ -18,10 +18,7 @@ def test_create_script(setup_database, db_conn, tmpdir_factory):
     with open(script_path) as create_script:
         queries = create_script.read()
 
-    query_list = queries.split("-- next call:\n\n")
-
-    for query in query_list[:-1]:
-        db_conn.execute(query)
+    db_conn.execute_sql_script(queries)
 
     list_scripts_query = """SELECT SCRIPT_NAME FROM EXA_ALL_SCRIPTS"""
     result = db_conn.execute(list_scripts_query).fetchall()

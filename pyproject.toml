@@ -1,6 +1,6 @@
 [project]
 name = "exasol-transformers-extension"
-version = "5.2.0"
+version = "5.2.1"
 description = "An Exasol extension for using state-of-the-art pretrained machine learning models via the Hugging Face Transformers API."
 authors = [
     { name = "Umit Buyuksahin", email = "umit.buyuksahin@exasol.com" },
@@ -23,7 +23,7 @@ dependencies = [
     "Jinja2>=3.1.6,<4",
     "importlib-resources>=6.4.0,<7",
     "click>=8.0.4,<9",
-    "pyexasol>=0.25.0,<2",
+    "pyexasol>=2.0.0,<3",
     "exasol-bucketfs>=1.0.0",
     "tenacity>=8.2.2,<9",
     "sacremoses>=0.0.53",
