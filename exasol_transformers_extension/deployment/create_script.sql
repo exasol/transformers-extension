@@ -30,8 +30,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SCALAR SCRIPT "INSTALL_AI_DEFAULT_MODEL_UDF"(...)
        EMITS (
     model_path_in_udfs VARCHAR(2000000),
@@ -57,8 +55,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SCALAR SCRIPT "TE_LIST_MODELS_UDF"(
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000)
@@ -89,8 +85,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_CUSTOM_CLASSIFY_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -129,8 +123,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ENTAILMENT_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -171,8 +163,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ANSWER_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -209,8 +199,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_ANSWER"(
     question VARCHAR(2000000),
     context_text VARCHAR(2000000)
@@ -237,8 +225,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_FILL_MASK_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -277,8 +263,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_COMPLETE_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -317,8 +301,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_TRANSLATE_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -359,8 +341,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_TRANSLATE"(
     text_data VARCHAR(2000000),
     source_language VARCHAR(2000000),
@@ -389,8 +369,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "TE_DELETE_MODEL_UDF"(
     bucketfs_conn VARCHAR(2000000),
     sub_dir VARCHAR(2000000),
@@ -424,8 +402,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_SENTIMENT"(
     text_data VARCHAR(2000000)
 )EMITS (
@@ -447,8 +423,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_CLASSIFY"(
     text_data VARCHAR(2000000),
     candidate_labels VARCHAR(2000000)
@@ -472,8 +446,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_EXTRACT_ENTITIES"(
     text_data VARCHAR(2000000)
 )EMITS (
@@ -500,8 +472,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_EXTRACT_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -542,8 +512,6 @@ def run(ctx):
 
 
 /
--- next call:
-
 CREATE OR REPLACE PYTHON3_TE SET SCRIPT "AI_CLASSIFY_EXTENDED"(
     device_id INTEGER,
     bucketfs_conn VARCHAR(2000000),
@@ -584,5 +552,3 @@ def run(ctx):
 
 
 /
--- next call:
-
