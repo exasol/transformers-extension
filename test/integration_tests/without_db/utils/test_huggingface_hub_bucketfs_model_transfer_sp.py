@@ -70,7 +70,7 @@ def bucketfs_location_mock():
 
 
 def test_download_with_model(bucketfs_location_mock):
-    with tempfile.TemporaryDirectory() as folder:
+    with tempfile.TemporaryDirectory():
         test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
@@ -85,7 +85,7 @@ def test_download_with_model(bucketfs_location_mock):
 
 
 def test_download_with_duplicate_model(bucketfs_location_mock):
-    with tempfile.TemporaryDirectory() as folder:
+    with tempfile.TemporaryDirectory():
         test_setup = TestSetup(bucketfs_location_mock)
         base_model_factory: ModelFactoryProtocol = AutoModel
         test_setup.downloader.download_from_huggingface_hub(
