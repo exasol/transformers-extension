@@ -6,12 +6,11 @@ authors = [
     { name = "Umit Buyuksahin", email = "umit.buyuksahin@exasol.com" },
     { name = "Torsten Kilias", email = "torsten.kilias@exasol.com" },
 ]
-requires-python = ">=3.10.0,<3.14"
+requires-python = ">=3.11,<3.14"
 readme = "README.md"
 keywords = ["exasol"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13"
