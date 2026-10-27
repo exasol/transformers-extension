@@ -4,7 +4,7 @@
 
 | Dependency                    | Purpose                       | License            |
 |-------------------------------|-------------------------------|--------------------|
-| [Python 3][python]            | Python version 3.10 and above | PSF                |
+| [Python 3][python]            | Python version 3.11 and above | PSF                |
 
 
 ## Test Dependencies

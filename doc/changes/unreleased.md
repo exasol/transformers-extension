@@ -18,3 +18,5 @@ T.B.D
 ## Documentation
 
 ## Refactorings
+
+* #429: Removed support for Python 3.10, added support for Python 3.14, and updated to exasol-toolbox version 12.0.0

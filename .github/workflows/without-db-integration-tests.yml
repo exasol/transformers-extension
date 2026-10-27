@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
     runs-on:
-      labels: int-linux-x64-2core-ubuntu24.04-1
+      labels: int-linux-x64-2core-ubuntu26.04-1
     name: Without-DB Tests
     needs: [ build-matrix ]
     steps:
@@ -38,7 +38,7 @@ jobs:
         uses: $/.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v10
+        uses: exasol/python-toolbox/.github/actions/python-environment@v12
         with:
           python-version: ${{ matrix.python_versions }}
           poetry-version: "2.3.0"
@@ -46,7 +46,9 @@ jobs:
       - name: Run without_db_integration_tests
         env:
           EXASOL_VERSION: ${{ matrix.exasol-version }}
-        run: poetry run -- nox -s without_db_integration_tests -- --coverage --db-version "$EXASOL_VERSION"
+        run: |
+          printf 'yes\n' | poetry cache clear --all
+          poetry run -- nox -s without_db_integration_tests -- --coverage --db-version "$EXASOL_VERSION"
 
       - name: Upload Artifacts
         id: upload-artifacts
