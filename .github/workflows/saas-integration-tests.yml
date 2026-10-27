@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-26.04"
     name: Saas Integration Tests (Python ${{ matrix.python_version_for_slow_checks }})
     steps:
       - name: Check out Repository
@@ -44,7 +44,7 @@ jobs:
         uses: $/.github/actions/free-diskspace
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v10
+        uses: exasol/python-toolbox/.github/actions/python-environment@v12
         with:
           python-version: '${{ matrix.python_version_for_slow_checks }}'
           poetry-version: '2.3.0'
