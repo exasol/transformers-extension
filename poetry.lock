@@ -1589,14 +1589,14 @@ simplejson = ">=3.16.0"
 
 [[package]]
 name = "exasol-python-extension-common"
-version = "0.16.0"
+version = "1.0.0"
 description = "A collection of common utilities for Exasol extensions."
 optional = false
-python-versions = "<3.14,>=3.10"
+python-versions = "<3.15,>=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "exasol_python_extension_common-0.16.0-py3-none-any.whl", hash = "sha256:39c5dfd27afa44a3bdc26f6b8e345da6ccf550c18a841f5754352a1d94ae7f3a"},
-    {file = "exasol_python_extension_common-0.16.0.tar.gz", hash = "sha256:60ad4e148244b7b62c3cc687fc63eb6406f8a45b6767e70ecda940aeaaf43f03"},
+    {file = "exasol_python_extension_common-1.0.0-py3-none-any.whl", hash = "sha256:b51396989927a416c6e2a08036eacb17d67323976096361fb004ad73b1224da9"},
+    {file = "exasol_python_extension_common-1.0.0.tar.gz", hash = "sha256:876b2fafa5ae655763fe47a70e73397f276209366fefbb7465a83516a431035d"},
 ]
 
 [package.dependencies]
@@ -3660,6 +3660,30 @@ nicer-shell = ["ipython"]
 
 [[package]]
 name = "networkx"
+version = "3.6"
+description = "Python package for creating and manipulating graphs and networks"
+optional = false
+python-versions = ">=3.11"
+groups = ["main", "dev"]
+markers = "python_version >= \"3.12\""
+files = [
+    {file = "networkx-3.6-py3-none-any.whl", hash = "sha256:cdb395b105806062473d3be36458d8f1459a4e4b98e236a66c3a48996e07684f"},
+    {file = "networkx-3.6.tar.gz", hash = "sha256:285276002ad1f7f7da0f7b42f004bcba70d381e936559166363707fdad3d72ad"},
+]
+
+[package.extras]
+benchmarking = ["asv", "virtualenv"]
+default = ["matplotlib (>=3.8)", "numpy (>=1.25)", "pandas (>=2.0)", "scipy (>=1.11.2)"]
+developer = ["mypy (>=1.15)", "pre-commit (>=4.1)"]
+doc = ["intersphinx-registry", "myst-nb (>=1.1)", "numpydoc (>=1.8.0)", "pillow (>=10)", "pydata-sphinx-theme (>=0.16)", "sphinx (>=8.0)", "sphinx-gallery (>=0.18)", "texext (>=0.6.7)"]
+example = ["cairocffi (>=1.7)", "contextily (>=1.6)", "igraph (>=0.11)", "iplotx (>=0.9.0)", "momepy (>=0.7.2)", "osmnx (>=2.0.0)", "scikit-learn (>=1.5)", "seaborn (>=0.13)"]
+extra = ["lxml (>=4.6)", "pydot (>=3.0.1)", "pygraphviz (>=1.14)", "sympy (>=1.10)"]
+release = ["build (>=0.10)", "changelist (==0.5)", "twine (>=4.0)", "wheel (>=0.40)"]
+test = ["pytest (>=7.2)", "pytest-cov (>=4.0)", "pytest-xdist (>=3.0)"]
+test-extras = ["pytest-mpl", "pytest-randomly"]
+
+[[package]]
+name = "networkx"
 version = "3.6.1"
 description = "Python package for creating and manipulating graphs and networks"
 optional = false
@@ -3678,30 +3702,6 @@ developer = ["mypy (>=1.15)", "pre-commit (>=4.1)"]
 doc = ["intersphinx-registry", "myst-nb (>=1.1)", "numpydoc (>=1.8.0)", "pillow (>=10)", "pydata-sphinx-theme (>=0.16)", "sphinx (>=8.0)", "sphinx-gallery (>=0.18)", "texext (>=0.6.7)"]
 example = ["cairocffi (>=1.7)", "contextily (>=1.6)", "igraph (>=0.11)", "iplotx (>=0.9.0)", "momepy (>=0.7.2)", "osmnx (>=2.0.0)", "scikit-learn (>=1.5)", "seaborn (>=0.13)"]
 extra = ["lxml (>=4.6)", "pydot (>=3.0.1)", "pygraphviz (>=1.14)", "sympy (>=1.10)"]
-release = ["build (>=0.10)", "changelist (==0.5)", "twine (>=4.0)", "wheel (>=0.40)"]
-test = ["pytest (>=7.2)", "pytest-cov (>=4.0)", "pytest-xdist (>=3.0)"]
-test-extras = ["pytest-mpl", "pytest-randomly"]
-
-[[package]]
-name = "networkx"
-version = "3.7"
-description = "Python package for creating and manipulating graphs and networks"
-optional = false
-python-versions = "!=3.14.1,>=3.12"
-groups = ["main", "dev"]
-markers = "python_version >= \"3.12\""
-files = [
-    {file = "networkx-3.7-py3-none-any.whl", hash = "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0"},
-    {file = "networkx-3.7.tar.gz", hash = "sha256:fd77a511bd90f39f3d016351345b52cf5319b813bdca01de3f755d3cca62e96a"},
-]
-
-[package.extras]
-benchmarking = ["asv (>=0.6.5)", "py-rattler (>=0.21,<0.22)", "virtualenv"]
-default = ["matplotlib (>=3.10)", "numpy (>=2.2)", "pandas (>=2.3)", "scipy (>=1.15)"]
-developer = ["mypy (>=1.15)", "pre-commit (>=4.1)"]
-doc = ["intersphinx-registry", "myst-nb (>=1.1)", "numpydoc (>=1.8.0)", "pillow (>=10)", "pydata-sphinx-theme (>=0.16)", "sphinx (>=8.0)", "sphinx-gallery (>=0.18)", "texext (>=0.6.7)"]
-example = ["cairocffi (>=1.7)", "contextily (>=1.6)", "hiveplotlib (>=0.28)", "igraph (>=0.11)", "iplotx (>=0.9.0)", "momepy (>=0.7.2)", "osmnx (>=2.0.0)", "scikit-learn (>=1.6)", "seaborn (>=0.13)"]
-extra = ["lxml (>=4.6)", "pydot (>=3.0.1)", "pygraphviz (>=2.0)", "sympy (>=1.10)"]
 release = ["build (>=0.10)", "changelist (==0.5)", "twine (>=4.0)", "wheel (>=0.40)"]
 test = ["pytest (>=7.2)", "pytest-cov (>=4.0)", "pytest-xdist (>=3.0)"]
 test-extras = ["pytest-mpl", "pytest-randomly"]
@@ -4916,18 +4916,18 @@ pyyaml = ">=6.0.3,<7.0.0"
 
 [[package]]
 name = "pytest-exasol-extension"
-version = "1.0.1"
+version = "1.1.0"
 description = ""
 optional = false
-python-versions = "<3.14,>=3.10"
+python-versions = "<3.15,>=3.10"
 groups = ["dev"]
 files = [
-    {file = "pytest_exasol_extension-1.0.1-py3-none-any.whl", hash = "sha256:16d1197f4cadd96b7b457c678fdb23ffd01117944a6061405a4b0d494429ea0e"},
-    {file = "pytest_exasol_extension-1.0.1.tar.gz", hash = "sha256:cdf46d9ea7309b69e987d13ba42d2d2681d04bb4e274e26662c78fa499e05a41"},
+    {file = "pytest_exasol_extension-1.1.0-py3-none-any.whl", hash = "sha256:60fa8a432b9bd2306395b6c1d1255ae47e165d71eb8d03bbc4f3dc3fd091de05"},
+    {file = "pytest_exasol_extension-1.1.0.tar.gz", hash = "sha256:6f8eaf8df7841629c410869b6b7cd5c44e06438bcdba75563b3fbd820662779b"},
 ]
 
 [package.dependencies]
-exasol-python-extension-common = ">=0.12.1,<1"
+exasol-python-extension-common = ">=1,<2"
 exasol-saas-api = ">=2.3,<3"
 pyexasol = ">=1.0.0,<3"
 pytest = ">=7,<10"
@@ -4935,22 +4935,23 @@ pytest-exasol-backend = ">=1.1,<2"
 
 [[package]]
 name = "pytest-exasol-slc"
-version = "1.1.1"
+version = "1.2.0"
 description = ""
 optional = false
-python-versions = "<3.14,>=3.10"
+python-versions = "<3.15,>=3.10"
 groups = ["dev"]
 files = [
-    {file = "pytest_exasol_slc-1.1.1-py3-none-any.whl", hash = "sha256:57ec8ce7dfd3883273d5f3b5b26850d67d5187389b134f5d4dd2c196a68e1269"},
-    {file = "pytest_exasol_slc-1.1.1.tar.gz", hash = "sha256:f1fc59aa2f29a9284b1c30607527b7eb9e46d219f6a1c655de55023f62f41501"},
+    {file = "pytest_exasol_slc-1.2.0-py3-none-any.whl", hash = "sha256:42357f6ee05ba20ff809ed8235c7d3c305a06f2519370017f0033bbb3ba373e6"},
+    {file = "pytest_exasol_slc-1.2.0.tar.gz", hash = "sha256:cb7fea0450e5e50c36e9776550f17c73dbb7ed4933bb7978940532442c41cad8"},
 ]
 
 [package.dependencies]
-exasol-python-extension-common = {version = ">=0.16.0,<1.0.0", extras = ["slc-tool"]}
-exasol-saas-api = ">=2.8,<3"
+exasol-python-extension-common = {version = ">=1.0.0,<2", extras = ["slc-tool"]}
+exasol-saas-api = ">=2.10.0,<3"
+pyexasol = ">=2.3.0,<3.0.0"
 pytest = ">=9,<10"
 pytest-exasol-backend = ">=1.1,<2"
-pytest-exasol-extension = ">=0.2.4,<2"
+pytest-exasol-extension = ">=1.1.0,<2"
 
 [[package]]
 name = "python-daemon"
@@ -5683,7 +5684,7 @@ description = "C version of reader, parser and emitter for ruamel.yaml derived f
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
-markers = "platform_python_implementation == \"CPython\""
+markers = "platform_python_implementation == \"CPython\" and python_version < \"3.14\""
 files = [
     {file = "ruamel_yaml_clib-0.2.15-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:88eea8baf72f0ccf232c22124d122a7f26e8a24110a0273d9bcddcb0f7e1fa03"},
     {file = "ruamel_yaml_clib-0.2.15-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9b6f7d74d094d1f3a4e157278da97752f16ee230080ae331fcc219056ca54f77"},
@@ -6507,7 +6508,7 @@ description = "Standard library imghdr redistribution. \"dead battery\"."
 optional = false
 python-versions = "*"
 groups = ["dev"]
-markers = "python_version == \"3.13\""
+markers = "python_version >= \"3.13\""
 files = [
     {file = "standard_imghdr-3.10.14-py3-none-any.whl", hash = "sha256:cdf6883163349624dee9a81d2853a20260337c4cd41c04e99c082e01833a08e2"},
     {file = "standard_imghdr-3.10.14.tar.gz", hash = "sha256:2598fe2e7c540dbda34b233295e10957ab8dc8ac6f3bd9eaa8d38be167232e52"},
@@ -7451,5 +7452,5 @@ files = [
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.11,<3.14"
-content-hash = "ad1c3f4334f21a7d7575e9838c42523c2ec5bb245b0ae68b6e377776c0dbcc95"
+python-versions = ">=3.11,<3.15"
+content-hash = "7a5da8181fe2b68cebbc11d4c5c1b91f18c1e320d26616eb4de6f124c5bd0eca"
