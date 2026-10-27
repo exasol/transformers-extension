@@ -47,7 +47,7 @@ jobs:
         env:
           EXASOL_VERSION: ${{ matrix.exasol-version }}
         run: |
-          poetry cache clear --all
+          printf 'yes\n' | poetry cache clear --all
           poetry run -- nox -s without_db_integration_tests -- --coverage --db-version "$EXASOL_VERSION"
 
       - name: Upload Artifacts
